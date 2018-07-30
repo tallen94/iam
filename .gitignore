@@ -1,0 +1,4 @@
+apps
+dist
+node_modules
+*.tgz
