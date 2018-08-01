@@ -15,6 +15,10 @@ export class NodeClient {
     return this.clientCommunicator.get("getStatus");
   }
 
+  public getAddress() {
+    return this.clientCommunicator.get("address");
+  }
+
   public update(file: any): Promise<any> {
     return this.clientCommunicator.post("update", { file: file });
   }

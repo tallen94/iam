@@ -1,10 +1,8 @@
-import * as Shell from "shelljs";
 import * as Lodash from "lodash";
-import * as UUID from "uuid";
 import * as Multer from "multer";
 
 import {
-  ServerCommunicator, ClientCommunicator, NodeClient, Node
+  ServerCommunicator, Node
 } from "../modules";
 
 export class NodeApi {
@@ -28,7 +26,33 @@ export class NodeApi {
      * method: GET
      */
     this.serverCommunicator.get("/getStatus", (req: any, res: any) => {
-      res.status(200).send({ data: this.node.getStatus() });
+      if (this.getNode().getThread() == 0) {
+        res.status(200).send({ data: [this.node.getStatus()] });
+      } else {
+        this.node.getNext().getStatus()
+        .then((outList: any[]) => {
+          const resultList = Lodash.concat(outList, this.getNode().getAddress());
+          res.status(200).send({ data: resultList });
+        });
+      }
+    });
+
+    /**
+     * Get name.
+     *
+     * path: /address,
+     * method: GET
+     */
+    this.serverCommunicator.get("/address", (req: any, res: any) => {
+      if (this.getNode().getThread() == 0) {
+        res.status(200).send({ data: [this.getNode().getAddress()] });
+      } else {
+        this.node.getNext().getAddress()
+        .then((outList: any[]) => {
+          const resultList = Lodash.concat(outList, this.getNode().getAddress());
+          res.status(200).send({ data: resultList });
+        });
+      }
     });
 
     /**
@@ -93,5 +117,9 @@ export class NodeApi {
     return this.serverCommunicator.listen().then(() => {
       return this.node;
     });
+  }
+
+  public getNode(): Node {
+    return this.node;
   }
 }

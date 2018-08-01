@@ -1,19 +1,24 @@
 import * as Shell from "shelljs";
-import * as Lodash from "lodash";
 
-import { NodeClient, ClientCommunicator } from "../modules";
+import { NodeClient } from "../modules";
 
 export class Node {
+  private thread: number;
   private address: string;
   private status: string;
   private next: NodeClient;
   private stack: Promise<any>;
 
-  constructor(address: string, next?: NodeClient) {
+  constructor(thread: number, address: string, next?: NodeClient) {
+    this.thread = thread;
     this.address = address;
     this.status = "OK";
     this.next = next;
     this.stack = Promise.resolve();
+  }
+
+  public getThread(): number {
+    return this.thread;
   }
 
   public getAddress(): string {
