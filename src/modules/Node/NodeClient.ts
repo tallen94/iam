@@ -16,7 +16,7 @@ export class NodeClient {
   }
 
   public getAddress() {
-    return this.clientCommunicator.get("address");
+    return this.clientCommunicator.get("getAddress");
   }
 
   public update(file: any): Promise<any> {

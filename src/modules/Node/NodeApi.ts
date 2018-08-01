@@ -22,7 +22,7 @@ export class NodeApi {
     /**
      * Health check.
      *
-     * path: /status
+     * path: /getStatus
      * method: GET
      */
     this.serverCommunicator.get("/getStatus", (req: any, res: any) => {
@@ -40,10 +40,10 @@ export class NodeApi {
     /**
      * Get name.
      *
-     * path: /address,
+     * path: /getAddress,
      * method: GET
      */
-    this.serverCommunicator.get("/address", (req: any, res: any) => {
+    this.serverCommunicator.get("/getAddress", (req: any, res: any) => {
       if (this.getNode().getThread() == 0) {
         res.status(200).send({ data: [this.getNode().getAddress()] });
       } else {
