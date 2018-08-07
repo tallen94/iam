@@ -96,8 +96,8 @@ export class NodeApi {
       Promise.resolve()
       .then(() => { // Upload the program
         return Promise.all([
-          this.node.getShell().sshCp("~/iam/deploy/deploy.tgz", "iam/deploy.tgz", "pi", address, []),
-          this.node.getShell().sshCp("~/iam/deploy/deploy.service", "iam/deploy.service", "pi", address, [])
+          this.node.getShell().sshCp("~/iam/deploy.tgz", "iam/deploy.tgz", "pi", address, []),
+          this.node.getShell().sshCp("~/iam/deploy.service", "iam/deploy.service", "pi", address, [])
         ]);
       })
       .then(() => { // Install the program

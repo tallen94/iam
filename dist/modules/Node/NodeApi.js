@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const Lodash = require("lodash");
 const Multer = require("multer");
-const Config = require("../../config.json");
 class NodeApi {
     constructor(node, serverCommunicator) {
         this.node = node;
@@ -63,7 +62,7 @@ class NodeApi {
             }, (thread) => {
                 this.node.getNext().update(req.body.package, thread)
                     .then(() => {
-                    return this.node.getShell().npmInstall("/home/pi/iam/deploy.tgz");
+                    return this.node.getShell().npmInstall("~/iam/deploy.tgz");
                 })
                     .then(() => {
                     res.status(200).send("Updated");
@@ -79,14 +78,12 @@ class NodeApi {
          * body { address: string }
          */
         this.serverCommunicator.post("/clone", (req, res) => {
-            const index = Config["index"];
-            const size = Config["size"];
             const address = req.body.address;
             Promise.resolve()
                 .then(() => {
                 return Promise.all([
-                    this.node.getShell().sshCp("~/iam/deploy/deploy.tgz", "iam/deploy.tgz", "pi", address, []),
-                    this.node.getShell().sshCp("~/iam/deploy/deploy.service", "iam/deploy.service", "pi", address, [])
+                    this.node.getShell().sshCp("~/iam/deploy.tgz", "iam/deploy.tgz", "pi", address, []),
+                    this.node.getShell().sshCp("~/iam/deploy.service", "iam/deploy.service", "pi", address, [])
                 ]);
             })
                 .then(() => {
