@@ -1,8 +1,18 @@
+import * as Config from "./config.json";
+import * as IP from "ip";
+
 import {
-  Cluster
+  Cluster,
+  NodeApi,
+  NodeClient,
+  NodeShell
 } from "./modules/modules";
 
-const cluster = new Cluster(5);
-cluster.startCluster().then(() => {
+const index =  Config["index"];
+const client: NodeClient = Cluster.createClient(IP.address(), 5000);
+const shell: NodeShell = Cluster.createShell();
+const server: NodeApi = Cluster.createServer(index, IP.address(), 5000, shell, client);
+
+server.serve().then(() => {
   console.log("Started");
 });

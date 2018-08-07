@@ -1,31 +1,28 @@
 import * as Lodash from "lodash";
 
 import {
+  NodeShell,
   NodeClient,
   NodeApi,
   Node,
   ServerCommunicator,
-  ClientCommunicator
+  ClientCommunicator,
+  ShellCommunicator
 } from "../modules";
 
 export class Cluster {
   private servers: NodeApi[];
-  private head: NodeClient;
 
   public constructor(size: number) {
     this.servers = [];
-    this.head = this.createClient(0);
 
-    for (let i =  size - 1; i >= 0; i--) {
-      const index = i == size - 1 ? 0 : i + 1;
-      const client: NodeClient = this.createClient(i);
-      const server: NodeApi = this.createServer(index, i, client);
+    for (let i = 0; i < size; i++) {
+      const nextIndex = i == size - 1 ? 0 : i + 1;
+      const client: NodeClient = Cluster.createClient("localhost", 5000 + i);
+      const shell: NodeShell = Cluster.createShell();
+      const server: NodeApi = Cluster.createServer(i, "localhost", 5000 + nextIndex, shell, client);
       this.servers.push(server);
     }
-  }
-
-  public getHead() {
-    return this.head;
   }
 
   public startCluster() {
@@ -34,29 +31,24 @@ export class Cluster {
     }));
   }
 
-  private createServer(index: number, thread: number, next?: NodeClient): NodeApi {
-    const nodeAddress = this.getAddress(index);
-    const nodeServer = new ServerCommunicator(this.getPort(index));
-    const node = new Node(thread, nodeAddress, next);
+  public static createServer(index: number, domain: string, port: number, shell: NodeShell, next: NodeClient): NodeApi {
+    const address = "http://" + domain + ":" + port;
+    const nodeServer = new ServerCommunicator(port);
+    const node = new Node(index, address, shell, next);
     const nodeApi = new NodeApi(node, nodeServer);
     return nodeApi;
   }
 
-  private createClient(index: number): NodeClient {
-    const clientCommunicator: ClientCommunicator = new ClientCommunicator(this.getAddress(index));
+  public static createClient(domain: string, port: number): NodeClient {
+    const address = "http://" + domain + ":" + port;
+    const clientCommunicator: ClientCommunicator = new ClientCommunicator(address);
     const nodeClient: NodeClient = new NodeClient(clientCommunicator);
     return nodeClient;
   }
 
-  private getName(port: number) {
-    return "localhost"; // "iam" + index;
-  }
-
-  private getPort(index: number) {
-    return 5000 + index;
-  }
-
-  private getAddress(index: number) {
-    return "http://" + this.getName(index) + ":" + this.getPort(index);
+  public static createShell(): NodeShell {
+    const shellCommunicator: ShellCommunicator = new ShellCommunicator();
+    const nodeShell: NodeShell = new NodeShell(shellCommunicator);
+    return nodeShell;
   }
 }

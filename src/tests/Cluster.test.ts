@@ -1,10 +1,15 @@
+import * as Lodash from "lodash";
 import {
   Cluster,
-  Node
+  Node,
+  ClientCommunicator,
+  NodeClient
 } from "../modules/modules";
 
 const NUM_NODES = 5;
 const cluster = new Cluster(NUM_NODES);
+const headClient = new ClientCommunicator("http://localhost:5000");
+const headNode = new NodeClient(headClient);
 
 it("should start " + NUM_NODES + " servers with status OK", () => {
   return cluster.startCluster().then((nodes: Node[]) => {
@@ -13,13 +18,16 @@ it("should start " + NUM_NODES + " servers with status OK", () => {
 });
 
 it("should obtain " + NUM_NODES + " statuses", () => {
-  return cluster.getHead().getStatus().then((statuses: string[]) => {
+  return headNode.getStatus().then((statuses: string[]) => {
     expect(statuses.length).toBe(NUM_NODES);
+    Lodash.each(statuses, (status: string) => {
+      expect(status).toBe("OK");
+    });
   });
 });
 
 it("should obtain " + NUM_NODES + " addresses", () => {
-  return cluster.getHead().getAddress().then((addresses: string[]) => {
+  return headNode.getAddress().then((addresses: string[]) => {
     expect(addresses.length).toBe(NUM_NODES);
   });
 });

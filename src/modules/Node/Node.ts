@@ -1,18 +1,23 @@
 import * as Shell from "shelljs";
 
-import { NodeClient } from "../modules";
+import {
+  NodeClient,
+  NodeShell
+} from "../modules";
 
 export class Node {
   private thread: number;
   private address: string;
   private status: string;
+  private shell: NodeShell;
   private next: NodeClient;
   private stack: Promise<any>;
 
-  constructor(thread: number, address: string, next?: NodeClient) {
+  constructor(thread: number, address: string, shell: NodeShell, next: NodeClient) {
     this.thread = thread;
     this.address = address;
     this.status = "OK";
+    this.shell = shell;
     this.next = next;
     this.stack = Promise.resolve();
   }
@@ -37,6 +42,10 @@ export class Node {
     return this.next;
   }
 
+  public getShell(): NodeShell {
+    return this.shell;
+  }
+
   public getStack(): Promise<any> {
     return this.stack;
   }
@@ -44,18 +53,6 @@ export class Node {
   public addToStack(promise: Promise<any>) {
     this.stack = this.stack.then((status) => {
       return promise;
-    });
-  }
-
-  public setNext(next: NodeClient) {
-    this.next = next;
-  }
-
-  public execute(command: string): Promise<string> {
-    return new Promise((resolve, reject) => {
-      Shell.exec(command, (code: number, out: string, err: any) => {
-        resolve(out);
-      });
     });
   }
 }

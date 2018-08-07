@@ -11,16 +11,16 @@ export class NodeClient {
     this.clientCommunicator = clientCommunicator;
   }
 
-  public getStatus(): Promise<any> {
-    return this.clientCommunicator.get("getStatus");
+  public getStatus(thread?: number): Promise<any> {
+    return this.clientCommunicator.post("getStatus", { thread: thread });
   }
 
-  public getAddress() {
-    return this.clientCommunicator.get("getAddress");
+  public getAddress(thread?: number) {
+    return this.clientCommunicator.post("getAddress", { thread: thread });
   }
 
-  public update(file: any): Promise<any> {
-    return this.clientCommunicator.post("update", { file: file });
+  public update(file: any, thread?: number): Promise<any> {
+    return this.clientCommunicator.post("update", { file: file, thread: thread });
   }
 
   public execute(command: string, threads: number): Promise<any> {

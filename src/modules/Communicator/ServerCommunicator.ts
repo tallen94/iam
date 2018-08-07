@@ -1,7 +1,6 @@
 import * as Express from "express";
 import * as Http from "http";
 import * as BodyParser from "body-parser";
-import { resolve } from "url";
 
 export class ServerCommunicator {
   private api: Express.Application;
