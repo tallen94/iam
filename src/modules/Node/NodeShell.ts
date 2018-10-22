@@ -28,7 +28,7 @@ export class NodeShell {
     return this.sshExecute("sudo systemctl daemon-reload", user, host);
   }
 
-  public execute(command: string): Promise<string> {
+  public command(command: string): Promise<string> {
     return this.shellCommunicator.exec(command);
   }
 

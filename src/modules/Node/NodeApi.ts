@@ -1,6 +1,5 @@
-import * as Lodash from "lodash";
-import * as Multer from "multer";
-import * as Config from "../../config.json";
+import Lodash from "lodash";
+import Multer from "multer";
 
 import {
   ServerCommunicator, Node
@@ -23,38 +22,18 @@ export class NodeApi {
     /**
      * Health check.
      *
-     * path: /getStatus
+     * path: /status
      * method: POST
-     * body: { thread?: number }
+     * body: { id?: number }
      */
-    this.serverCommunicator.post("/getStatus", (req: any, res: any) => {
-      const thread: number = req.body.thread;
-      this.recurse(thread, () => {
+    this.serverCommunicator.post("/status", (req: any, res: any) => {
+      const id: number = req.body.id;
+      this.recurse(id, () => {
         res.status(200).send({ data: [] });
-      }, (thread: number) => {
-        this.node.getNext().getStatus(thread)
+      }, (id: number) => {
+        this.node.getNext().getStatus(id)
         .then((outList: any[]) => {
           const resultList = Lodash.concat(outList, this.getNode().getStatus());
-          res.status(200).send({ data: resultList });
-        });
-      });
-    });
-
-    /**
-     * Get name.
-     *
-     * path: /getAddress,
-     * method: POST
-     * body: { thread?: number }
-     */
-    this.serverCommunicator.post("/getAddress", (req: any, res: any) => {
-      const thread: number = req.body.thread;
-      this.recurse(thread, () => {
-        res.status(200).send({ data: [] });
-      }, (thread: number) => {
-        this.node.getNext().getAddress(thread)
-        .then((outList: any[]) => {
-          const resultList = Lodash.concat(outList, this.getNode().getAddress());
           res.status(200).send({ data: resultList });
         });
       });
@@ -120,17 +99,46 @@ export class NodeApi {
     /**
      * Execute a shell command concurrently over a number of threads.
      *
-     * path: /execute
+     * path: /command
      * method: POST
      * body: { command: string, threads: number }
      */
-    this.serverCommunicator.post("/execute", (req: any, resp: any) => {
+    this.serverCommunicator.post("/command", (req: any, resp: any) => {
       const command = req.body.command;
       const threads = req.body.threads;
 
-      const promises = [this.node.getShell().execute(command)];
+      const promises = [this.node.getShell().command(command)];
       if (req.body.threads > 1) {
-        promises.push(this.node.getNext().execute(command, threads - 1));
+        promises.push(this.node.getNext().runCommand(command, threads - 1));
+      }
+
+      const promise = Promise.all(promises)
+      .then((outList: any[]) => {
+        if (outList.length == 1) {
+          resp.status(200).send({ data: outList });
+        } else {
+          const nodeResult = outList[0];
+          const nextResult = outList[1];
+          const resultList = Lodash.concat(nextResult, nodeResult);
+          resp.status(200).send({ data: resultList });
+        }
+      });
+
+      this.node.addToStack(promise);
+    });
+
+    /**
+     * Execute an array of commands.
+     *
+     * path: /commands
+     * method: POST
+     * body: { list: string[] }
+     */
+    this.serverCommunicator.post("/commands", (req: any, resp: any) => {
+      const commandList: string[] = req.body.list;
+      const promises = [this.node.getShell().command(commandList.shift())];
+      if (commandList.length > 1) {
+        promises.push(this.node.getNext().runCommandList(commandList));
       }
 
       const promise = Promise.all(promises)
@@ -149,14 +157,14 @@ export class NodeApi {
     });
   }
 
-  private recurse(thread: number, terminal: () => void, next: (thread: number) => void) {
-    if (thread == this.getNode().getThread()) {
+  private recurse(id: number, terminal: () => void, next: (thread: number) => void) {
+    if (id == this.getNode().getId()) {
       terminal();
     } else {
-      if (thread == undefined) {
-        thread = this.getNode().getThread();
+      if (id == undefined) {
+        id = this.getNode().getId();
       }
-      next(thread);
+      next(id);
     }
   }
 

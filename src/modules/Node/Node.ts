@@ -1,33 +1,25 @@
-import * as Shell from "shelljs";
-
 import {
   NodeClient,
   NodeShell
 } from "../modules";
 
 export class Node {
-  private thread: number;
-  private address: string;
+  private id: number;
   private status: string;
   private shell: NodeShell;
   private next: NodeClient;
   private stack: Promise<any>;
 
-  constructor(thread: number, address: string, shell: NodeShell, next: NodeClient) {
-    this.thread = thread;
-    this.address = address;
+  constructor(id: number, shell: NodeShell, next: NodeClient) {
+    this.id = id;
     this.status = "OK";
     this.shell = shell;
     this.next = next;
     this.stack = Promise.resolve();
   }
 
-  public getThread(): number {
-    return this.thread;
-  }
-
-  public getAddress(): string {
-    return this.address;
+  public getId(): number {
+    return this.id;
   }
 
   public getStatus(): string {

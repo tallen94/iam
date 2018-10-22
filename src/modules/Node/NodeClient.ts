@@ -1,5 +1,3 @@
-import * as Lodash from "lodash";
-
 import {
   ClientCommunicator
 } from "../modules";
@@ -11,24 +9,27 @@ export class NodeClient {
     this.clientCommunicator = clientCommunicator;
   }
 
-  public getStatus(thread?: number): Promise<any> {
-    return this.clientCommunicator.post("getStatus", { thread: thread });
+  public getStatus(id?: number): Promise<any> {
+    return this.clientCommunicator.post("status", { id: id });
   }
 
-  public getAddress(thread?: number) {
-    return this.clientCommunicator.post("getAddress", { thread: thread });
+  public update(file: any, id?: number): Promise<any> {
+    return this.clientCommunicator.post("update", { file: file, thread: id });
   }
 
-  public update(file: any, thread?: number): Promise<any> {
-    return this.clientCommunicator.post("update", { file: file, thread: thread });
-  }
-
-  public execute(command: string, threads: number): Promise<any> {
+  public runCommand(command: string, threads: number): Promise<any> {
     const data = {
       command: command,
       threads: threads
     };
-    return this.clientCommunicator.post("execute", data);
+    return this.clientCommunicator.post("command", data);
+  }
+
+  public runCommandList(commandList: string[]): Promise<any> {
+    const data = {
+      list: commandList
+    };
+    return this.clientCommunicator.post("commands", data);
   }
 
   public static fromData(data: any): NodeClient {

@@ -6,3 +6,4 @@ export * from "./Node/NodeApi";
 export * from "./Node/NodeClient";
 export * from "./Node/NodeShell";
 export * from "./Cluster/Cluster";
+export * from "./Database/Database";

@@ -25,9 +25,3 @@ it("should obtain " + NUM_NODES + " statuses", () => {
     });
   });
 });
-
-it("should obtain " + NUM_NODES + " addresses", () => {
-  return headNode.getAddress().then((addresses: string[]) => {
-    expect(addresses.length).toBe(NUM_NODES);
-  });
-});

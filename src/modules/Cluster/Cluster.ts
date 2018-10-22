@@ -18,9 +18,9 @@ export class Cluster {
 
     for (let i = 0; i < size; i++) {
       const nextIndex = i == size - 1 ? 0 : i + 1;
-      const client: NodeClient = Cluster.createClient("localhost", 5000 + i);
+      const client: NodeClient = Cluster.createClient("localhost", 5000 + nextIndex);
       const shell: NodeShell = Cluster.createShell();
-      const server: NodeApi = Cluster.createServer(i, "localhost", 5000 + nextIndex, shell, client);
+      const server: NodeApi = Cluster.createServer(i, 5000 + i, shell, client);
       this.servers.push(server);
     }
   }
@@ -31,10 +31,9 @@ export class Cluster {
     }));
   }
 
-  public static createServer(index: number, domain: string, port: number, shell: NodeShell, next: NodeClient): NodeApi {
-    const address = "http://" + domain + ":" + port;
+  public static createServer(id: number, port: number, shell: NodeShell, next: NodeClient): NodeApi {
     const nodeServer = new ServerCommunicator(port);
-    const node = new Node(index, address, shell, next);
+    const node = new Node(id, shell, next);
     const nodeApi = new NodeApi(node, nodeServer);
     return nodeApi;
   }

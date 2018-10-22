@@ -1,6 +1,6 @@
-import * as Express from "express";
-import * as Http from "http";
-import * as BodyParser from "body-parser";
+import Express from "express";
+import Http from "http";
+import BodyParser from "body-parser";
 
 export class ServerCommunicator {
   private api: Express.Application;

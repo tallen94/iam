@@ -1,8 +1,4 @@
-import * as Shell from "shelljs";
-
-import {
-  Node
-} from "../modules";
+import Shell from "shelljs";
 
 export class ShellCommunicator {
 
