@@ -1,3 +1,4 @@
+import * as Lodash from "lodash";
 import { ShellCommunicator } from "../Communicator/ShellCommunicator";
 
 export class NodeShell {
@@ -28,8 +29,12 @@ export class NodeShell {
     return this.sshExecute("sudo systemctl daemon-reload", user, host);
   }
 
-  public command(command: string): Promise<string> {
-    return this.shellCommunicator.exec(command);
+  public command(command: string, args?: string[]): Promise<string> {
+    if (args == undefined) {
+      return this.shellCommunicator.exec(command);
+    }
+
+    return this.shellCommunicator.exec(this.replaceArgs(command, args));
   }
 
   public npmInstall(path: string): Promise<string> {
@@ -42,5 +47,12 @@ export class NodeShell {
 
   public restartProgram(name: string) {
     return this.shellCommunicator.exec("sudo systemctl restart " + name);
+  }
+
+  private replaceArgs(command: string, args: string[]) {
+    Lodash.each(args, (arg, index) => {
+      command = command.replace("{" + index + "}", arg);
+    });
+    return command;
   }
 }

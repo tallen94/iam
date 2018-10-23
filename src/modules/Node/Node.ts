@@ -8,6 +8,7 @@ export class Node {
   private status: string;
   private shell: NodeShell;
   private next: NodeClient;
+  private commands: any;
   private stack: Promise<any>;
 
   constructor(id: number, shell: NodeShell, next: NodeClient) {
@@ -15,6 +16,7 @@ export class Node {
     this.status = "OK";
     this.shell = shell;
     this.next = next;
+    this.commands = {};
     this.stack = Promise.resolve();
   }
 
@@ -32,6 +34,18 @@ export class Node {
 
   public getNext(): NodeClient {
     return this.next;
+  }
+
+  public addCommand(name: string, command: string) {
+    this.commands[name] = command;
+  }
+
+  public getCommand(name: string): string {
+    return this.commands[name];
+  }
+
+  public getCommands(): any {
+    return this.commands;
   }
 
   public getShell(): NodeShell {

@@ -97,19 +97,43 @@ export class NodeApi {
     });
 
     /**
-     * Execute a shell command concurrently over a number of threads.
+     * Adds a command to be executed on the node.
      *
      * path: /command
      * method: POST
-     * body: { command: string, threads: number }
+     * body: { command: string, name: string, id?: number }
+     */
+    this.serverCommunicator.post("/addCommand", (req: any, res: any) => {
+      const name = req.body.name;
+      const command = req.body.command;
+      const id: number = req.body.id;
+      this.recurse(id, () => {
+        res.status(200).send("Added command");
+      }, (id: number) => {
+        this.getNode().addCommand(name, command);
+        return this.node.getNext().addCommand(name, command, id)
+        .then(() => {
+          res.status(200).send("Added command");
+        });
+      });
+    });
+
+    /**
+     * Execute a command with a number of threads.
+     *
+     * path: /command
+     * method: POST
+     * body: { commandName: string, args?: string[], threads: number }
      */
     this.serverCommunicator.post("/command", (req: any, resp: any) => {
-      const command = req.body.command;
+      const commandName = req.body.commandName;
+      const command = this.getNode().getCommand(commandName);
+      const args = req.body.args;
       const threads = req.body.threads;
 
-      const promises = [this.node.getShell().command(command)];
+      const promises = [this.node.getShell().command(command, args)];
       if (req.body.threads > 1) {
-        promises.push(this.node.getNext().runCommand(command, threads - 1));
+        promises.push(this.node.getNext().runCommand(commandName, args, threads - 1));
       }
 
       const promise = Promise.all(promises)
@@ -128,17 +152,18 @@ export class NodeApi {
     });
 
     /**
-     * Execute an array of commands.
+     * Execute a command with a list of different args.
      *
      * path: /commands
      * method: POST
-     * body: { list: string[] }
+     * body: { commandName: string, argList: string[][] }
      */
     this.serverCommunicator.post("/commands", (req: any, resp: any) => {
-      const commandList: string[] = req.body.list;
-      const promises = [this.node.getShell().command(commandList.shift())];
-      if (commandList.length >= 1) {
-        promises.push(this.node.getNext().runCommandList(commandList));
+      const argList: string[][] = req.body.argList;
+      const commandName: string = req.body.commandName;
+      const promises = [this.node.getShell().command(commandName, argList.shift())];
+      if (argList.length >= 1) {
+        promises.push(this.node.getNext().runArglist(commandName, argList));
       }
 
       const promise = Promise.all(promises)
