@@ -137,7 +137,7 @@ export class NodeApi {
     this.serverCommunicator.post("/commands", (req: any, resp: any) => {
       const commandList: string[] = req.body.list;
       const promises = [this.node.getShell().command(commandList.shift())];
-      if (commandList.length > 1) {
+      if (commandList.length >= 1) {
         promises.push(this.node.getNext().runCommandList(commandList));
       }
 

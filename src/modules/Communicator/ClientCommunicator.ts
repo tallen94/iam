@@ -10,8 +10,13 @@ export class ClientCommunicator {
   public get(url: string) {
     const absUrl = this.getAbsoluteUrl(url);
     return new Promise((resolve, reject) => {
-      Request.get(absUrl, (err: any, response: Request.Response, body: any) => {
-        resolve(JSON.parse(body).data);
+      const options = {
+        method: "get",
+        json: true,
+        url: absUrl
+      };
+      Request(options, (err: any, response: Request.Response, body: any) => {
+        resolve(body.data);
       });
     });
   }
@@ -19,8 +24,14 @@ export class ClientCommunicator {
   public post(url: string, data?: any) {
     const absUrl = this.getAbsoluteUrl(url);
     return new Promise((resolve, reject) => {
-      Request.post(absUrl, { form: data }, (err: any, response: Request.Response, body: any) => {
-        resolve(JSON.parse(body).data);
+      const options = {
+        method: "post",
+        body: data,
+        json: true,
+        url: absUrl
+      };
+      Request(options, (err: any, response: Request.Response, body: any) => {
+        resolve(body.data);
       });
     });
   }
