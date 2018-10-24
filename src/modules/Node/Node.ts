@@ -2,6 +2,7 @@ import {
   NodeClient,
   NodeShell
 } from "../modules";
+import { throws } from "assert";
 
 export class Node {
   private id: number;
@@ -9,6 +10,7 @@ export class Node {
   private shell: NodeShell;
   private next: NodeClient;
   private commands: any;
+  private programs: any;
   private stack: Promise<any>;
 
   constructor(id: number, shell: NodeShell, next: NodeClient) {
@@ -17,6 +19,7 @@ export class Node {
     this.shell = shell;
     this.next = next;
     this.commands = {};
+    this.programs = {};
     this.stack = Promise.resolve();
   }
 
@@ -36,6 +39,11 @@ export class Node {
     return this.next;
   }
 
+  public runCommand(name: string, args: string[]): Promise<string> {
+    const command = this.getCommand(name);
+    return this.shell.command(command, args);
+  }
+
   public addCommand(name: string, command: string) {
     this.commands[name] = command;
   }
@@ -46,6 +54,25 @@ export class Node {
 
   public getCommands(): any {
     return this.commands;
+  }
+
+  public runProgram(name: string, args: string[]): Promise<string> {
+    const program = this.getProgram(name);
+    const path = "/Users/Trevor/iam/programs/" + program.filename;
+    const runString = program.command + " " + path + " " + args.join(" ");
+    return this.shell.command(runString);
+  }
+
+  public addProgram(name: string, command: string, filename: string): void {
+    this.programs[name] = {
+      programName: name,
+      command: command,
+      filename: filename
+    };
+  }
+
+  public getProgram(name: string): any {
+    return this.programs[name];
   }
 
   public getShell(): NodeShell {

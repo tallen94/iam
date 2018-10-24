@@ -9,11 +9,13 @@ export class NodeApi {
   private node: Node;
   private serverCommunicator: ServerCommunicator;
   private storage: Multer.StorageEngine;
+  private programStorage: Multer.StorageEngine;
 
   constructor(node: Node, serverCommunicator: ServerCommunicator) {
     this.node = node;
     this.serverCommunicator = serverCommunicator;
     this.storage = this.getStorageEngine();
+    this.programStorage = this.getProgramStorageEngine();
     this.initApi();
   }
 
@@ -97,21 +99,113 @@ export class NodeApi {
     });
 
     /**
+     * Adds a program to be executed on the node.
+     *
+     * path: /addProgram
+     * method: POST
+     * body: {
+     *  programName: string,
+     *  command: string,
+     *  filename: string,
+     *  program: file,
+     *  id?: number
+     * }
+     */
+    this.serverCommunicator.post("/addProgram", (req: any, res: any) => {
+      const programName = req.body.programName;
+      const command = req.body.command;
+      const filename = req.body.filename;
+      const id: number = req.body.id;
+      this.recurse(id, () => {
+        res.status(200).send("Added program");
+      }, (id: number) => {
+        this.node.addProgram(programName, command, filename);
+        return this.node.getNext().addProgram(programName, command, filename, req.body.program, id)
+        .then(() => {
+          res.status(200).send("Added program");
+        });
+      });
+    }, Multer({ storage: this.programStorage }).single("program"));
+
+
+    /**
+     * Execute a program with a number of threads.
+     *
+     * path: /runProgram
+     * method: POST
+     * body: { programName: string, args?: string[], threads: number }
+     */
+    this.serverCommunicator.post("/runProgram", (req: any, resp: any) => {
+      const programName = req.body.programName;
+      const args = req.body.args;
+      const threads = req.body.threads;
+
+      const promises = [this.node.runProgram(programName, args)];
+      if (req.body.threads > 1) {
+        promises.push(this.node.getNext().runProgram(programName, args, threads - 1));
+      }
+
+      const promise = Promise.all(promises)
+      .then((outList: any[]) => {
+        if (outList.length == 1) {
+          resp.status(200).send({ data: outList });
+        } else {
+          const nodeResult = outList[0];
+          const nextResult = outList[1];
+          const resultList = Lodash.concat(nextResult, nodeResult);
+          resp.status(200).send({ data: resultList });
+        }
+      });
+
+      this.node.addToStack(promise);
+    });
+
+    /**
+     * Execute a program with a list of different args.
+     *
+     * path: /runPrograms
+     * method: POST
+     * body: { programName: string, argsList: string[][] }
+     */
+    this.serverCommunicator.post("/runPrograms", (req: any, resp: any) => {
+      const argsList: string[][] = req.body.argsList;
+      const programName: string = req.body.programName;
+      const promises = [this.node.runProgram(programName, argsList.shift())];
+      if (argsList.length >= 1) {
+        promises.push(this.node.getNext().runPrograms(programName, argsList));
+      }
+
+      const promise = Promise.all(promises)
+      .then((outList: any[]) => {
+        if (outList.length == 1) {
+          resp.status(200).send({ data: outList });
+        } else {
+          const nodeResult = outList[0];
+          const nextResult = outList[1];
+          const resultList = Lodash.concat(nextResult, nodeResult);
+          resp.status(200).send({ data: resultList });
+        }
+      });
+
+      this.node.addToStack(promise);
+    });
+
+    /**
      * Adds a command to be executed on the node.
      *
-     * path: /command
+     * path: /addCommand
      * method: POST
-     * body: { command: string, name: string, id?: number }
+     * body: { commandName: string, command: string, id?: number }
      */
     this.serverCommunicator.post("/addCommand", (req: any, res: any) => {
-      const name = req.body.name;
+      const commandName = req.body.commandName;
       const command = req.body.command;
       const id: number = req.body.id;
       this.recurse(id, () => {
         res.status(200).send("Added command");
       }, (id: number) => {
-        this.getNode().addCommand(name, command);
-        return this.node.getNext().addCommand(name, command, id)
+        this.getNode().addCommand(commandName, command);
+        return this.node.getNext().addCommand(commandName, command, id)
         .then(() => {
           res.status(200).send("Added command");
         });
@@ -121,17 +215,16 @@ export class NodeApi {
     /**
      * Execute a command with a number of threads.
      *
-     * path: /command
+     * path: /runCommand
      * method: POST
      * body: { commandName: string, args?: string[], threads: number }
      */
-    this.serverCommunicator.post("/command", (req: any, resp: any) => {
+    this.serverCommunicator.post("/runCommand", (req: any, resp: any) => {
       const commandName = req.body.commandName;
-      const command = this.getNode().getCommand(commandName);
       const args = req.body.args;
       const threads = req.body.threads;
 
-      const promises = [this.node.getShell().command(command, args)];
+      const promises = [this.node.runCommand(commandName, args)];
       if (req.body.threads > 1) {
         promises.push(this.node.getNext().runCommand(commandName, args, threads - 1));
       }
@@ -154,16 +247,17 @@ export class NodeApi {
     /**
      * Execute a command with a list of different args.
      *
-     * path: /commands
+     * path: /runCommands
      * method: POST
-     * body: { commandName: string, argList: string[][] }
+     * body: { commandName: string, argsList: string[][] }
      */
-    this.serverCommunicator.post("/commands", (req: any, resp: any) => {
-      const argList: string[][] = req.body.argList;
+    this.serverCommunicator.post("/runCommands", (req: any, resp: any) => {
+      const argsList: string[][] = req.body.argsList;
       const commandName: string = req.body.commandName;
-      const promises = [this.node.getShell().command(commandName, argList.shift())];
-      if (argList.length >= 1) {
-        promises.push(this.node.getNext().runArglist(commandName, argList));
+      const command = this.node.getCommand(commandName);
+      const promises = [this.node.runCommand(command, argsList.shift())];
+      if (argsList.length >= 1) {
+        promises.push(this.node.getNext().runCommands(commandName, argsList));
       }
 
       const promise = Promise.all(promises)
@@ -200,6 +294,17 @@ export class NodeApi {
       },
       filename: (req, file, cb) => {
         cb(undefined, "deploy.tgz");
+      }
+    });
+  }
+
+  private getProgramStorageEngine(): Multer.StorageEngine {
+    return Multer.diskStorage({
+      destination: (req, file, cb) => {
+        cb(undefined, "/Users/Trevor/iam/programs");
+      },
+      filename: (req, file, cb) => {
+        cb(undefined, file.originalname);
       }
     });
   }

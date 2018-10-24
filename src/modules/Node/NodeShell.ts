@@ -33,8 +33,8 @@ export class NodeShell {
     if (args == undefined) {
       return this.shellCommunicator.exec(command);
     }
-
-    return this.shellCommunicator.exec(this.replaceArgs(command, args));
+    const commandReplaced = this.replaceArgs(command, args);
+    return this.shellCommunicator.exec(commandReplaced);
   }
 
   public npmInstall(path: string): Promise<string> {

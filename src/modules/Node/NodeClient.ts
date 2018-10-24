@@ -18,7 +18,8 @@ export class NodeClient {
   }
 
   public addCommand(name: string, command: string, id?: number) {
-    return this.clientCommunicator.post("addCommand", { name: name, command: command, id: id });
+    const data = { commandName: name, command: command, id: id };
+    return this.clientCommunicator.post("addCommand", data);
   }
 
   public runCommand(commandName: string, args: string[], threads: number): Promise<any> {
@@ -27,15 +28,43 @@ export class NodeClient {
       args: args,
       threads: threads
     };
-    return this.clientCommunicator.post("command", data);
+    return this.clientCommunicator.post("runCommand", data);
   }
 
-  public runArglist(commandName: string, argList: string[][]): Promise<any> {
+  public runCommands(commandName: string, argsList: string[][]): Promise<any> {
     const data = {
       commandName: commandName,
-      argList: argList
+      argsList: argsList
     };
-    return this.clientCommunicator.post("commands", data);
+    return this.clientCommunicator.post("runCommands", data);
+  }
+
+  public addProgram(name: string, command: string, filename: string, program: any, id?: number) {
+    const data = {
+      programName: name,
+      command: command,
+      filename: filename,
+      program: program,
+      id: id
+    };
+    return this.clientCommunicator.post("addProgram", data);
+  }
+
+  public runProgram(name: string, args: string[], threads: number): Promise<any> {
+    const data = {
+      programName: name,
+      args: args,
+      threads: threads
+    };
+    return this.clientCommunicator.post("runProgram", data);
+  }
+
+  public runPrograms(name: string, argsList: string[][]): Promise<any> {
+    const data = {
+      programName: name,
+      argsList: argsList
+    };
+    return this.clientCommunicator.post("runPrograms", data);
   }
 
   public static fromData(data: any): NodeClient {

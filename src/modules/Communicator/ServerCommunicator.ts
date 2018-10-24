@@ -10,8 +10,8 @@ export class ServerCommunicator {
   constructor(port: number) {
     this.port = port;
     this.api = Express();
-    this.api.use(BodyParser.json());
-    this.api.use(BodyParser.urlencoded({extended: false}));
+    this.api.use(BodyParser.json({limit: "100mb"}));
+    this.api.use(BodyParser.urlencoded({extended: false, limit: "100mb"}));
     this.server = Http.createServer(this.api);
   }
 
