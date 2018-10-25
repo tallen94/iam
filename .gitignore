@@ -6,4 +6,3 @@ dist
 **/coverage
 **/*.log
 programs
-src/config.json

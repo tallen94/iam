@@ -2,20 +2,16 @@ import Lodash from "lodash";
 import Multer from "multer";
 
 import {
-  ServerCommunicator, Node
+  ServerCommunicator, Node, FileSystem
 } from "../modules";
 
 export class NodeApi {
   private node: Node;
   private serverCommunicator: ServerCommunicator;
-  private storage: Multer.StorageEngine;
-  private programStorage: Multer.StorageEngine;
 
   constructor(node: Node, serverCommunicator: ServerCommunicator) {
     this.node = node;
     this.serverCommunicator = serverCommunicator;
-    this.storage = this.getStorageEngine();
-    this.programStorage = this.getProgramStorageEngine();
     this.initApi();
   }
 
@@ -62,7 +58,7 @@ export class NodeApi {
           return this.node.getShell().restartProgram("deploy");
         });
       });
-    }, Multer({ storage: this.storage }).single("package"));
+    }, Multer({ storage: this.node.getImageFileSystem() }).single("package"));
 
     /**
      * Clone thy self.
@@ -125,7 +121,7 @@ export class NodeApi {
           res.status(200).send("Added program");
         });
       });
-    }, Multer({ storage: this.programStorage }).single("program"));
+    }, Multer({ storage: this.node.getProgramFileSystem() }).single("program"));
 
 
     /**
@@ -285,28 +281,6 @@ export class NodeApi {
       }
       next(id);
     }
-  }
-
-  private getStorageEngine(): Multer.StorageEngine {
-    return Multer.diskStorage({
-      destination: (req, file, cb) => {
-        cb(undefined, "/home/pi/iam");
-      },
-      filename: (req, file, cb) => {
-        cb(undefined, "deploy.tgz");
-      }
-    });
-  }
-
-  private getProgramStorageEngine(): Multer.StorageEngine {
-    return Multer.diskStorage({
-      destination: (req, file, cb) => {
-        cb(undefined, "/Users/Trevor/iam/programs");
-      },
-      filename: (req, file, cb) => {
-        cb(undefined, file.originalname);
-      }
-    });
   }
 
   public serve(): Promise<Node> {

@@ -7,20 +7,23 @@ import {
   Node,
   ServerCommunicator,
   ClientCommunicator,
-  ShellCommunicator
+  ShellCommunicator,
+  FileSystem
 } from "../modules";
 
-export class Cluster {
+export class NodeFactory {
   private servers: NodeApi[];
 
-  public constructor(size: number) {
+  public constructor() {
     this.servers = [];
+  }
 
+  public createNodeCluster(size) {
     for (let i = 0; i < size; i++) {
       const nextIndex = i == size - 1 ? 0 : i + 1;
-      const client: NodeClient = Cluster.createClient("localhost", 5000 + nextIndex);
-      const shell: NodeShell = Cluster.createShell();
-      const server: NodeApi = Cluster.createServer(i, 5000 + i, shell, client);
+      const client: NodeClient = this.createNodeClient("localhost", 5000 + nextIndex);
+      const shell: NodeShell = this.createNodeShell();
+      const server: NodeApi = this.createNodeApi(i, 5000 + i, shell, client);
       this.servers.push(server);
     }
   }
@@ -31,21 +34,23 @@ export class Cluster {
     }));
   }
 
-  public static createServer(id: number, port: number, shell: NodeShell, next: NodeClient): NodeApi {
+  public createNodeApi(id: number, port: number, shell: NodeShell, next: NodeClient): NodeApi {
     const nodeServer = new ServerCommunicator(port);
-    const node = new Node(id, shell, next);
+    const imageFileSystem = new FileSystem("/home/pi/iam");
+    const programFileSystem = new FileSystem("/Users/Trevor/iam/programs");
+    const node = new Node(id, shell, next, imageFileSystem, programFileSystem);
     const nodeApi = new NodeApi(node, nodeServer);
     return nodeApi;
   }
 
-  public static createClient(domain: string, port: number): NodeClient {
+  public createNodeClient(domain: string, port: number): NodeClient {
     const address = "http://" + domain + ":" + port;
     const clientCommunicator: ClientCommunicator = new ClientCommunicator(address);
     const nodeClient: NodeClient = new NodeClient(clientCommunicator);
     return nodeClient;
   }
 
-  public static createShell(): NodeShell {
+  public createNodeShell(): NodeShell {
     const shellCommunicator: ShellCommunicator = new ShellCommunicator();
     const nodeShell: NodeShell = new NodeShell(shellCommunicator);
     return nodeShell;

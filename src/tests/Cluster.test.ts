@@ -1,18 +1,19 @@
 import * as Lodash from "lodash";
 import {
-  Cluster,
+  NodeFactory,
   Node,
   ClientCommunicator,
   NodeClient
 } from "../modules/modules";
 
 const NUM_NODES = 5;
-const cluster = new Cluster(NUM_NODES);
+const nodeFactory = new NodeFactory();
 const headClient = new ClientCommunicator("http://localhost:5000");
 const headNode = new NodeClient(headClient);
 
 it("should start " + NUM_NODES + " servers with status OK", () => {
-  return cluster.startCluster().then((nodes: Node[]) => {
+  nodeFactory.createNodeCluster(NUM_NODES);
+  return nodeFactory.startCluster().then((nodes: Node[]) => {
     expect(nodes.length).toBe(NUM_NODES);
   });
 });

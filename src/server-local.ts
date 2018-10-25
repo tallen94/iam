@@ -1,8 +1,9 @@
 import {
-  Cluster
+  NodeFactory
 } from "./modules/modules";
 
-const cluster = new Cluster(5);
-cluster.startCluster().then(() => {
+const nodeFactory = new NodeFactory();
+nodeFactory.createNodeCluster(5);
+nodeFactory.startCluster().then(() => {
   console.log("Started");
 });

@@ -1,8 +1,10 @@
 import {
   NodeClient,
-  NodeShell
+  NodeShell,
+  FileSystem
 } from "../modules";
 import { throws } from "assert";
+import Multer from "multer";
 
 export class Node {
   private id: number;
@@ -12,12 +14,22 @@ export class Node {
   private commands: any;
   private programs: any;
   private stack: Promise<any>;
+  private imageFileSystem: FileSystem;
+  private programFileSystem: FileSystem;
 
-  constructor(id: number, shell: NodeShell, next: NodeClient) {
+  constructor(
+    id: number,
+    shell: NodeShell,
+    next: NodeClient,
+    imageFileSystem: FileSystem,
+    programFileSystem: FileSystem
+  ) {
     this.id = id;
     this.status = "OK";
     this.shell = shell;
     this.next = next;
+    this.imageFileSystem = imageFileSystem;
+    this.programFileSystem = programFileSystem;
     this.commands = {};
     this.programs = {};
     this.stack = Promise.resolve();
@@ -87,5 +99,13 @@ export class Node {
     this.stack = this.stack.then((status) => {
       return promise;
     });
+  }
+
+  public getImageFileSystem(): Multer.StorageEngine {
+    return this.imageFileSystem.getStorage();
+  }
+
+  public getProgramFileSystem(): Multer.StorageEngine {
+    return this.programFileSystem.getStorage();
   }
 }
