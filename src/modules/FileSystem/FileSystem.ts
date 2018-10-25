@@ -17,6 +17,10 @@ export class FileSystem {
     });
   }
 
+  public getRoot() {
+    return this.root;
+  }
+
   public getStorage(): Multer.StorageEngine {
     return this.storage;
   }

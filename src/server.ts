@@ -1,6 +1,7 @@
 import IP from "ip";
 import FS from "fs";
 import Config from "./config.json";
+import DbConfig from "./db-config.json"; 
 import Path from "path";
 
 import {
@@ -8,12 +9,12 @@ import {
   NodeApi,
   NodeClient,
   NodeShell,
-  Database
+  Database,
 } from "./modules/modules";
 
 const db = new Database();
-const nodeFactory = new NodeFactory();
-db.connect("mysql", "a8VEZyQUTn5wZuuN", "192.168.0.24", "iam")
+const nodeFactory = new NodeFactory(Config["imagesRoot"], Config["programsRoot"]);
+db.connect(DbConfig["user"], DbConfig["password"], DbConfig["address"], DbConfig["database"])
 .then(() => {
   return Config["id"] === "" ?
     db.procedure("CALL addNode(?,?)", { "host": IP.address(), "port": 5000 }) :

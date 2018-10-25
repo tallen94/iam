@@ -6,3 +6,4 @@ dist
 **/coverage
 **/*.log
 programs
+**/db-config.json

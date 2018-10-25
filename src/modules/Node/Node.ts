@@ -3,6 +3,8 @@ import {
   NodeShell,
   FileSystem
 } from "../modules";
+
+import Path, { dirname } from "path";
 import Multer from "multer";
 
 export class Node {
@@ -32,7 +34,15 @@ export class Node {
     this.commands = {};
     this.programs = {};
     this.stack = Promise.resolve();
+    this.addDefaults();
   }
+
+  public addDefaults() {
+    this.addCommand("system-update", "sudo apt-get update");
+    this.addCommand("system-upgrade", "sudo apt-get upgrade -y");
+    this.addCommand("system-restart", "sudo restart now");
+    this.addProgram("node-update", "bash", "update");
+   }
 
   public getId(): number {
     return this.id;
@@ -69,7 +79,7 @@ export class Node {
 
   public runProgram(name: string, args: string[]): Promise<string> {
     const program = this.getProgram(name);
-    const path = "/Users/Trevor/iam/programs/" + program.filename;
+    const path = Path.join(this.programFileSystem.getRoot(), program.filename);
     const runString = program.command + " " + path + " " + args.join(" ");
     return this.shell.command(runString);
   }

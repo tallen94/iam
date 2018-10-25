@@ -13,9 +13,13 @@ import {
 
 export class NodeFactory {
   private servers: NodeApi[];
+  private imagesRoot: string;
+  private programsRoot: string;
 
-  public constructor() {
+  public constructor(imagesRoot: string, programsRoot: string) {
     this.servers = [];
+    this.imagesRoot = imagesRoot;
+    this.programsRoot = programsRoot;
   }
 
   public createNodeCluster(size) {
@@ -36,8 +40,8 @@ export class NodeFactory {
 
   public createNodeApi(id: number, port: number, shell: NodeShell, next: NodeClient): NodeApi {
     const nodeServer = new ServerCommunicator(port);
-    const imageFileSystem = new FileSystem("/home/pi/iam");
-    const programFileSystem = new FileSystem("/Users/Trevor/iam/programs");
+    const imageFileSystem = new FileSystem(this.imagesRoot);
+    const programFileSystem = new FileSystem(this.programsRoot);
     const node = new Node(id, shell, next, imageFileSystem, programFileSystem);
     const nodeApi = new NodeApi(node, nodeServer);
     return nodeApi;
