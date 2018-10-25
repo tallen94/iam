@@ -3,7 +3,6 @@ import {
   NodeShell,
   FileSystem
 } from "../modules";
-import { throws } from "assert";
 import Multer from "multer";
 
 export class Node {
