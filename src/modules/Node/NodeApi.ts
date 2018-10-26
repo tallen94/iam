@@ -2,7 +2,7 @@ import Lodash from "lodash";
 import Multer from "multer";
 
 import {
-  ServerCommunicator, Node, FileSystem
+  ServerCommunicator, Node
 } from "../modules";
 
 export class NodeApi {
@@ -31,7 +31,7 @@ export class NodeApi {
       }, (id: number) => {
         this.node.getNext().getStatus(id)
         .then((outList: any[]) => {
-          const resultList = Lodash.concat(outList, this.getNode().getStatus());
+          const resultList = Lodash.concat(outList, this.node.getStatus());
           res.status(200).send({ data: resultList });
         });
       });
@@ -55,7 +55,7 @@ export class NodeApi {
           return this.node.runCommand("node-restart", []);
         });
       });
-    }, Multer({ storage: this.node.getImageFileSystem() }).single("package"));
+    }, Multer({ storage: this.node.getFileSystem().getStorage() }).single("package"));
 
     /**
      * Clone thy self.
@@ -66,9 +66,7 @@ export class NodeApi {
      */
     this.serverCommunicator.post("/clone", (req: any, res: any) => {
       const address = req.body.address;
-      this.node.getShell().sshCp("/home/pi/iam", "", "pi", address, ["-r"]).then(() => {
-        return this.node.getShell().sshExecute("bash /home/pi/iam/install", "pi", address);
-      }).then(() => {
+      this.node.runCommand("node-clone", [this.node.getFileSystem().getRoot(), address]).then(() => {
         res.status(200).send("Cloned");
       });
     });
@@ -100,7 +98,7 @@ export class NodeApi {
           res.status(200).send("Added program");
         });
       });
-    }, Multer({ storage: this.node.getProgramFileSystem() }).single("program"));
+    }, Multer({ storage: this.node.getFileSystem().getStorage() }).single("program"));
 
 
     /**
@@ -120,7 +118,7 @@ export class NodeApi {
         promises.push(this.node.getNext().runProgram(programName, args, threads - 1));
       }
 
-      const promise = Promise.all(promises)
+      Promise.all(promises)
       .then((outList: any[]) => {
         if (outList.length == 1) {
           resp.status(200).send({ data: outList });
@@ -131,8 +129,6 @@ export class NodeApi {
           resp.status(200).send({ data: resultList });
         }
       });
-
-      this.node.addToStack(promise);
     });
 
     /**
@@ -150,7 +146,7 @@ export class NodeApi {
         promises.push(this.node.getNext().runPrograms(programName, argsList));
       }
 
-      const promise = Promise.all(promises)
+      Promise.all(promises)
       .then((outList: any[]) => {
         if (outList.length == 1) {
           resp.status(200).send({ data: outList });
@@ -161,8 +157,6 @@ export class NodeApi {
           resp.status(200).send({ data: resultList });
         }
       });
-
-      this.node.addToStack(promise);
     });
 
     /**
@@ -179,7 +173,7 @@ export class NodeApi {
       this.recurse(id, () => {
         res.status(200).send("Added command");
       }, (id: number) => {
-        this.getNode().addCommand(commandName, command);
+        this.node.addCommand(commandName, command);
         return this.node.getNext().addCommand(commandName, command, id)
         .then(() => {
           res.status(200).send("Added command");
@@ -204,7 +198,7 @@ export class NodeApi {
         promises.push(this.node.getNext().runCommand(commandName, args, threads - 1));
       }
 
-      const promise = Promise.all(promises)
+      Promise.all(promises)
       .then((outList: any[]) => {
         if (outList.length == 1) {
           resp.status(200).send({ data: outList });
@@ -215,8 +209,6 @@ export class NodeApi {
           resp.status(200).send({ data: resultList });
         }
       });
-
-      this.node.addToStack(promise);
     });
 
     /**
@@ -234,7 +226,7 @@ export class NodeApi {
         promises.push(this.node.getNext().runCommands(commandName, argsList));
       }
 
-      const promise = Promise.all(promises)
+      Promise.all(promises)
       .then((outList: any[]) => {
         if (outList.length == 1) {
           resp.status(200).send({ data: outList });
@@ -245,17 +237,15 @@ export class NodeApi {
           resp.status(200).send({ data: resultList });
         }
       });
-
-      this.node.addToStack(promise);
     });
   }
 
   private recurse(id: number, terminal: () => void, next: (thread: number) => void) {
-    if (id == this.getNode().getId()) {
+    if (id == this.node.getId()) {
       terminal();
     } else {
       if (id == undefined) {
-        id = this.getNode().getId();
+        id = this.node.getId();
       }
       next(id);
     }
@@ -265,9 +255,5 @@ export class NodeApi {
     return this.serverCommunicator.listen().then(() => {
       return this.node;
     });
-  }
-
-  public getNode(): Node {
-    return this.node;
   }
 }

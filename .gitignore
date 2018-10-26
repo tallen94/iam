@@ -1,10 +1,17 @@
 .DS_Store
 .vscode
+
+# DEPENDENCIES
 node_modules
+
+# OUT DIR
 dist
-*.tgz
+
+# TEST OUTPUT
 **/coverage
+
+# LOG FILES
 **/*.log
-programs
-db-config.json
-config.json
+
+# IAM
+iam

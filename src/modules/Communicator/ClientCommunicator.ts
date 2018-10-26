@@ -7,6 +7,10 @@ export class ClientCommunicator {
     this.host = host;
   }
 
+  public getHost() {
+    return this.host;
+  }
+
   public get(url: string) {
     const absUrl = this.getAbsoluteUrl(url);
     return new Promise((resolve, reject) => {
