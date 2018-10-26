@@ -1,0 +1,4 @@
+#!/bin/bash
+
+scp -r $1 pi@$2:
+ssh pi@$2 "bash $1/install"

@@ -14,4 +14,9 @@ dist
 **/*.log
 
 # IAM
-iam
+iam/*
+!iam/clone
+!iam/deploy.service
+!iam/install
+!iam/packandscp
+!iam/update
