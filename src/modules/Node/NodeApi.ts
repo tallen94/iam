@@ -47,15 +47,12 @@ export class NodeApi {
     this.serverCommunicator.post("/update", (req: any, res: any) => {
       const thread: number = req.body.thread;
       this.recurse(thread, () => {
-        res.status(200).send("Updated");
+        res.status(200).send("Updated. Restarting Now.");
       }, (thread: number) => {
-        this.node.getNext().update(req.body.package, thread)
-        .then(() => {
-          return this.node.getShell().npmInstall("~/iam/deploy.tgz");
-        })
-        .then(() => {
-          res.status(200).send("Updated");
-          return this.node.getShell().restartProgram("deploy");
+        const promises = [this.node.runCommand("node-install", []), this.node.getNext().update(req.body.package, thread)];
+        Promise.all(promises).then(() => {
+          res.status(200).send("Updated. Restarting Now.");
+          return this.node.runCommand("node-restart", []);
         });
       });
     }, Multer({ storage: this.node.getImageFileSystem() }).single("package"));
@@ -69,27 +66,9 @@ export class NodeApi {
      */
     this.serverCommunicator.post("/clone", (req: any, res: any) => {
       const address = req.body.address;
-
-      Promise.resolve()
-      .then(() => { // Upload the program
-        return Promise.all([
-          this.node.getShell().sshCp("~/iam/deploy.tgz", "iam/deploy.tgz", "pi", address, []),
-          this.node.getShell().sshCp("~/iam/deploy.service", "iam/deploy.service", "pi", address, [])
-        ]);
-      })
-      .then(() => { // Install the program
-        return this.node.getShell().sshNpmInstall("/home/pi/iam/deploy.tgz", "pi", address);
-      })
-      .then(() => { // move system file
-        return this.node.getShell().sshExecute("sudo cp ~/iam/deploy.service /etc/systemd/system/", "pi", address);
-      })
-      .then(() => { // reload system daemon
-        return this.node.getShell().sshRestartSystemDaemon("pi", address);
-      })
-      .then(() => { // start the program
-        return this.node.getShell().sshStartProgram("deploy", "pi", address);
-      })
-      .then(() => {
+      this.node.getShell().sshCp("/home/pi/iam", "", "pi", address, ["-r"]).then(() => {
+        return this.node.getShell().sshExecute("bash /home/pi/iam/install", "pi", address);
+      }).then(() => {
         res.status(200).send("Cloned");
       });
     });

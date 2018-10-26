@@ -6,6 +6,7 @@ import {
 
 import Path, { dirname } from "path";
 import Multer from "multer";
+import { pathMatch } from "tough-cookie";
 
 export class Node {
   private id: number;
@@ -17,13 +18,15 @@ export class Node {
   private stack: Promise<any>;
   private imageFileSystem: FileSystem;
   private programFileSystem: FileSystem;
+  private configFileSystem: FileSystem;
 
   constructor(
     id: number,
     shell: NodeShell,
     next: NodeClient,
     imageFileSystem: FileSystem,
-    programFileSystem: FileSystem
+    programFileSystem: FileSystem,
+    configFileSystem: FileSystem
   ) {
     this.id = id;
     this.status = "OK";
@@ -41,7 +44,8 @@ export class Node {
     this.addCommand("system-update", "sudo apt-get update");
     this.addCommand("system-upgrade", "sudo apt-get upgrade -y");
     this.addCommand("system-restart", "sudo restart now");
-    this.addProgram("node-update", "bash", "update");
+    this.addCommand("node-install", "sudo npm i -g " + Path.join(this.imageFileSystem.getRoot(), "deploy.tgz"));
+    this.addCommand("node-restart", "sudo systemctl restart deploy");
    }
 
   public getId(): number {

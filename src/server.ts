@@ -1,7 +1,7 @@
+import Config from "/home/pi/iam/config.json";
+import DbConfig from "/home/pi/iam/db-config.json";
 import IP from "ip";
 import FS from "fs";
-import Config from "./config.json";
-import DbConfig from "./db-config.json"; 
 import Path from "path";
 
 import {
@@ -13,7 +13,7 @@ import {
 } from "./modules/modules";
 
 const db = new Database();
-const nodeFactory = new NodeFactory(Config["imagesRoot"], Config["programsRoot"]);
+const nodeFactory = new NodeFactory(Config["imagesRoot"], Config["programsRoot"], Config["configRoot"]);
 db.connect(DbConfig["user"], DbConfig["password"], DbConfig["address"], DbConfig["database"])
 .then(() => {
   return Config["id"] === "" ?

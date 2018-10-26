@@ -13,6 +13,7 @@ export class ShellCommunicator {
   }
 
   public exec(command: string): Promise<string> {
+    console.log(command);
     return new Promise((resolve, reject) => {
       Shell.exec(command, { silent: false }, (code: number, out: string, err: any) => {
         resolve(out);

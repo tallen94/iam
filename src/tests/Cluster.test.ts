@@ -1,4 +1,6 @@
 import * as Lodash from "lodash";
+import Config from "../config.json";
+
 import {
   NodeFactory,
   Node,
@@ -7,7 +9,7 @@ import {
 } from "../modules/modules";
 
 const NUM_NODES = 5;
-const nodeFactory = new NodeFactory();
+const nodeFactory = new NodeFactory(Config["imagesRoot"], Config["programsRoot"]);
 const headClient = new ClientCommunicator("http://localhost:5000");
 const headNode = new NodeClient(headClient);
 
