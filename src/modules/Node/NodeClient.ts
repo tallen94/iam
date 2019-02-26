@@ -1,6 +1,7 @@
 import {
   ClientCommunicator
 } from "../modules";
+import { stringify } from "querystring";
 
 export class NodeClient {
   private clientCommunicator: ClientCommunicator;
@@ -15,6 +16,10 @@ export class NodeClient {
 
   public getStatus(id?: number): Promise<any> {
     return this.clientCommunicator.post("status", { id: id });
+  }
+
+  public getJob(jobId: string, id?: number): Promise<any> {
+    return this.clientCommunicator.post("job", {jobId: jobId, id: id });
   }
 
   public update(file: any, id?: number): Promise<any> {

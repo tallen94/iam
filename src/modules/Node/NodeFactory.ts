@@ -1,10 +1,9 @@
-import * as Path from "path";
-
 import {
   NodeShell,
   NodeClient,
   NodeApi,
   Node,
+  NodeManager,
   ServerCommunicator,
   ClientCommunicator,
   ShellCommunicator,
@@ -15,18 +14,17 @@ export class NodeFactory {
 
   public constructor() { }
 
-  public createNodeApi(nodeRoot: string) {
-    const config = require(Path.join(nodeRoot, "config.json"));
-    const client: NodeClient = this.createNodeClient(config["next"], config["port"]);
+  public createNodeApi(id: number, filesRoot: string, port: number, nextAddress: string) {
+    const client: NodeClient = this.createNodeClient(nextAddress);
     const shell: NodeShell = this.createNodeShell();
-    const nodeServer = new ServerCommunicator(config["port"]);
-    const nodeFileSystem = new FileSystem(nodeRoot);
-    const node = new Node(config["id"], shell, client, nodeFileSystem);
-    return new NodeApi(node, nodeServer);
+    const nodeServer = new ServerCommunicator(port);
+    const nodeFileSystem = new FileSystem(filesRoot);
+    const node = new Node(id, shell, client, nodeFileSystem);
+    const nodeManager = new NodeManager(node);
+    return new NodeApi(nodeManager, nodeServer);
   }
 
-  public createNodeClient(domain: string, port: number): NodeClient {
-    const address = "http://" + domain + ":" + port;
+  public createNodeClient(address: string): NodeClient {
     const clientCommunicator: ClientCommunicator = new ClientCommunicator(address);
     const nodeClient: NodeClient = new NodeClient(clientCommunicator);
     return nodeClient;

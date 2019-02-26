@@ -1,4 +1,8 @@
 #!/bin/bash
 
-scp -r $1 pi@$2:
+scp -r $1/deploy.service pi@$2:$1
+scp -r $1/deploy.tgz pi@$2:$1
+scp -r $1/install pi@$2:$1
+scp -r $1/update pi@$2:$1
+scp -r $1/clone pi@$2:$1
 ssh pi@$2 "bash $1/install"

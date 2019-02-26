@@ -1,16 +1,15 @@
-import Lodash from "lodash";
 import Multer from "multer";
 
 import {
-  ServerCommunicator, Node
+  ServerCommunicator, NodeManager, Job
 } from "../modules";
 
 export class NodeApi {
-  private node: Node;
   private serverCommunicator: ServerCommunicator;
+  private nodeManager: NodeManager;
 
-  constructor(node: Node, serverCommunicator: ServerCommunicator) {
-    this.node = node;
+  constructor(nodeManager: NodeManager, serverCommunicator: ServerCommunicator) {
+    this.nodeManager = nodeManager;
     this.serverCommunicator = serverCommunicator;
     this.initApi();
   }
@@ -26,14 +25,24 @@ export class NodeApi {
      */
     this.serverCommunicator.post("/status", (req: any, res: any) => {
       const id: number = req.body.id;
-      this.recurse(id, () => {
-        res.status(200).send({ data: [] });
-      }, (id: number) => {
-        this.node.getNext().getStatus(id)
-        .then((outList: any[]) => {
-          const resultList = Lodash.concat(outList, this.node.getStatus());
-          res.status(200).send({ data: resultList });
-        });
+      this.nodeManager.status(id)
+      .then((result: any) => {
+        res.status(200).send({ data: result });
+      });
+    });
+
+    /**
+     * List jobs.
+     *
+     * path: /job
+     * method: POST
+     * body: { jobId?: jobId, id?: number }
+     */
+    this.serverCommunicator.post("/job", (req: any, res: any) => {
+      const id: number = req.body.id;
+      this.nodeManager.jobs(id)
+      .then((result: any) => {
+        res.status(200).send({ data: result });
       });
     });
 
@@ -46,16 +55,11 @@ export class NodeApi {
      */
     this.serverCommunicator.post("/update", (req: any, res: any) => {
       const thread: number = req.body.thread;
-      this.recurse(thread, () => {
-        res.status(200).send("Updated. Restarting Now.");
-      }, (thread: number) => {
-        const promises = [this.node.runCommand("node-install", []), this.node.getNext().update(req.body.package, thread)];
-        Promise.all(promises).then(() => {
-          res.status(200).send("Updated. Restarting Now.");
-          return this.node.runCommand("node-restart", []);
-        });
+      this.nodeManager.update(req.body.package, thread)
+      .then((result: any) => {
+        res.status(200).send({ data: result });
       });
-    }, Multer({ storage: this.node.getFileSystem().getStorage() }).single("package"));
+    }, Multer({ storage: this.nodeManager.getNode().getFileSystem().getStorage() }).single("package"));
 
     /**
      * Clone thy self.
@@ -66,8 +70,8 @@ export class NodeApi {
      */
     this.serverCommunicator.post("/clone", (req: any, res: any) => {
       const address = req.body.address;
-      this.node.runCommand("node-clone", [this.node.getFileSystem().getRoot(), address]).then(() => {
-        res.status(200).send("Cloned");
+      this.nodeManager.clone(address).then((result: any) => {
+        res.status(200).send({ data: result });
       });
     });
 
@@ -88,17 +92,13 @@ export class NodeApi {
       const programName = req.body.programName;
       const command = req.body.command;
       const filename = req.body.filename;
+      const program = req.body.program;
       const id: number = req.body.id;
-      this.recurse(id, () => {
-        res.status(200).send("Added program");
-      }, (id: number) => {
-        this.node.addProgram(programName, command, filename);
-        return this.node.getNext().addProgram(programName, command, filename, req.body.program, id)
-        .then(() => {
-          res.status(200).send("Added program");
-        });
+      this.nodeManager.addProgram(programName, command, filename, program, id)
+      .then((result: any) => {
+        res.status(200).send({ data: result });
       });
-    }, Multer({ storage: this.node.getFileSystem().getStorage() }).single("program"));
+    }, Multer({ storage: this.nodeManager.getNode().getFileSystem().getStorage() }).single("program"));
 
 
     /**
@@ -109,25 +109,9 @@ export class NodeApi {
      * body: { programName: string, args?: string[], threads: number }
      */
     this.serverCommunicator.post("/runProgram", (req: any, resp: any) => {
-      const programName = req.body.programName;
-      const args = req.body.args;
-      const threads = req.body.threads;
-
-      const promises = [this.node.runProgram(programName, args)];
-      if (req.body.threads > 1) {
-        promises.push(this.node.getNext().runProgram(programName, args, threads - 1));
-      }
-
-      Promise.all(promises)
-      .then((outList: any[]) => {
-        if (outList.length == 1) {
-          resp.status(200).send({ data: outList });
-        } else {
-          const nodeResult = outList[0];
-          const nextResult = outList[1];
-          const resultList = Lodash.concat(nextResult, nodeResult);
-          resp.status(200).send({ data: resultList });
-        }
+      this.nodeManager.runProgram(req.body.programName, req.body.args, req.body.threads)
+      .then((result: any) => {
+        resp.status(200).send({ data: result });
       });
     });
 
@@ -139,23 +123,9 @@ export class NodeApi {
      * body: { programName: string, argsList: string[][] }
      */
     this.serverCommunicator.post("/runPrograms", (req: any, resp: any) => {
-      const argsList: string[][] = req.body.argsList;
-      const programName: string = req.body.programName;
-      const promises = [this.node.runProgram(programName, argsList.shift())];
-      if (argsList.length >= 1) {
-        promises.push(this.node.getNext().runPrograms(programName, argsList));
-      }
-
-      Promise.all(promises)
-      .then((outList: any[]) => {
-        if (outList.length == 1) {
-          resp.status(200).send({ data: outList });
-        } else {
-          const nodeResult = outList[0];
-          const nextResult = outList[1];
-          const resultList = Lodash.concat(nextResult, nodeResult);
-          resp.status(200).send({ data: resultList });
-        }
+      this.nodeManager.runPrograms(req.body.programName, req.body.argsList)
+      .then((result: any) => {
+        resp.status(200).send({ data: result });
       });
     });
 
@@ -167,17 +137,9 @@ export class NodeApi {
      * body: { commandName: string, command: string, id?: number }
      */
     this.serverCommunicator.post("/addCommand", (req: any, res: any) => {
-      const commandName = req.body.commandName;
-      const command = req.body.command;
-      const id: number = req.body.id;
-      this.recurse(id, () => {
-        res.status(200).send("Added command");
-      }, (id: number) => {
-        this.node.addCommand(commandName, command);
-        return this.node.getNext().addCommand(commandName, command, id)
-        .then(() => {
-          res.status(200).send("Added command");
-        });
+      this.nodeManager.addCommand(req.body.commandName, req.body.command, req.body.id)
+      .then((result: any) => {
+        res.status(200).send({ data: result });
       });
     });
 
@@ -189,25 +151,9 @@ export class NodeApi {
      * body: { commandName: string, args?: string[], threads: number }
      */
     this.serverCommunicator.post("/runCommand", (req: any, resp: any) => {
-      const commandName = req.body.commandName;
-      const args = req.body.args;
-      const threads = req.body.threads;
-
-      const promises = [this.node.runCommand(commandName, args)];
-      if (req.body.threads > 1) {
-        promises.push(this.node.getNext().runCommand(commandName, args, threads - 1));
-      }
-
-      Promise.all(promises)
-      .then((outList: any[]) => {
-        if (outList.length == 1) {
-          resp.status(200).send({ data: outList });
-        } else {
-          const nodeResult = outList[0];
-          const nextResult = outList[1];
-          const resultList = Lodash.concat(nextResult, nodeResult);
-          resp.status(200).send({ data: resultList });
-        }
+      this.nodeManager.runCommand(req.body.commandName, req.body.args, req.body.threads)
+      .then((result: any) => {
+        resp.status(200).send({ data: result });
       });
     });
 
@@ -219,41 +165,14 @@ export class NodeApi {
      * body: { commandName: string, argsList: string[][] }
      */
     this.serverCommunicator.post("/runCommands", (req: any, resp: any) => {
-      const argsList: string[][] = req.body.argsList;
-      const commandName: string = req.body.commandName;
-      const promises = [this.node.runCommand(commandName, argsList.shift())];
-      if (argsList.length >= 1) {
-        promises.push(this.node.getNext().runCommands(commandName, argsList));
-      }
-
-      Promise.all(promises)
-      .then((outList: any[]) => {
-        if (outList.length == 1) {
-          resp.status(200).send({ data: outList });
-        } else {
-          const nodeResult = outList[0];
-          const nextResult = outList[1];
-          const resultList = Lodash.concat(nextResult, nodeResult);
-          resp.status(200).send({ data: resultList });
-        }
+      this.nodeManager.runCommands(req.body.commandName, req.body.argsList)
+      .then((result: any) => {
+        resp.status(200).send({ data: result });
       });
     });
   }
 
-  private recurse(id: number, terminal: () => void, next: (thread: number) => void) {
-    if (id == this.node.getId()) {
-      terminal();
-    } else {
-      if (id == undefined) {
-        id = this.node.getId();
-      }
-      next(id);
-    }
-  }
-
-  public serve(): Promise<Node> {
-    return this.serverCommunicator.listen().then(() => {
-      return this.node;
-    });
+  public serve(): Promise<any> {
+    return this.serverCommunicator.listen();
   }
 }

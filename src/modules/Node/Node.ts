@@ -1,11 +1,13 @@
 import {
   NodeClient,
   NodeShell,
-  FileSystem
+  FileSystem,
+  Job,
+  CommandJob,
+  ProgramJob
 } from "../modules";
 
 import Path from "path";
-import Multer from "multer";
 
 export class Node {
   private id: number;
@@ -15,6 +17,7 @@ export class Node {
   private commands: any;
   private programs: any;
   private fileSystem: FileSystem;
+  private jobs: { [key: string]: Job };
 
   constructor(
     id: number,
@@ -29,6 +32,7 @@ export class Node {
     this.fileSystem = fileSystem;
     this.commands = {};
     this.programs = {};
+    this.jobs = {};
     this.addDefaults();
   }
 
@@ -41,6 +45,7 @@ export class Node {
     this.addCommand("node-update", "bash " + Path.join(this.fileSystem.getRoot(), "update"));
     this.addCommand("node-clone", "bash " + Path.join(this.fileSystem.getRoot(), "clone"));
     this.addCommand("node-restart", "sudo systemctl restart deploy");
+    this.addCommand("node-save-config", "echo '{0}' > " + Path.join(this.fileSystem.getRoot(), "config.json"));
    }
 
   public getId(): number {
@@ -55,13 +60,28 @@ export class Node {
     return this.next;
   }
 
+  public getJobs(): { [key: string]: Job } {
+    return this.jobs;
+  }
+
+  public getJob(id: string) {
+    return this.jobs[id];
+  }
+
   public addCommand(name: string, command: string) {
     this.commands[name] = command;
   }
 
-  public runCommand(name: string, args: string[]): Promise<string> {
+  public runCommand(name: string, args: string[]): Promise<Job> {
     const command = this.commands[name];
-    return this.shell.exec(command, args);
+    const job = new CommandJob(command);
+    this.jobs[job.getId()] = job;
+    this.jobs[job.getId()].start();
+    return this.shell.exec(command, args).then((result: string) => {
+      this.jobs[job.getId()].setResult(result);
+      this.jobs[job.getId()].complete();
+      return this.jobs[job.getId()];
+    });
   }
 
   public addProgram(name: string, command: string, filename: string): void {
@@ -72,11 +92,18 @@ export class Node {
     };
   }
 
-  public runProgram(name: string, args: string[]): Promise<string> {
+  public runProgram(name: string, args: string[]): Promise<Job> {
     const program = this.programs[name];
     const path = Path.join(this.fileSystem.getRoot(), program.filename);
     const runString = program.command + " " + path + " " + args.join(" ");
-    return this.shell.exec(runString);
+    const job = new ProgramJob(program);
+    this.jobs[job.getId()] = job;
+    this.jobs[job.getId()].start();
+    return this.shell.exec(runString).then((result: string) => {
+      this.jobs[job.getId()].setResult(result);
+      this.jobs[job.getId()].complete();
+      return this.jobs[job.getId()];
+    });
   }
 
   public getFileSystem(): FileSystem {
