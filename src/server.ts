@@ -1,11 +1,12 @@
-import * as Path from "path";
 import {
-  NodeFactory
+  NodeFactory, FileSystem, NodeManager, NodeApi, ServerCommunicator, Cache
 } from "./modules/modules";
 
 const HOME = "/home/pi/iam";
-const config = require(Path.join(HOME, "config.json"));
-const nodeFactory = new NodeFactory();
-nodeFactory.createNodeApi(config["id"], HOME, config["port"], config["nextAddress"])
-.serve()
-.then(() => { console.log("Started"); });
+const fileSystem: FileSystem = new FileSystem(HOME);
+const nodeFactory: NodeFactory = new NodeFactory();
+const cache: Cache = new Cache();
+const nodeManager: NodeManager = new NodeManager(fileSystem, nodeFactory.getNodeShell());
+const serverCommunicator: ServerCommunicator = new ServerCommunicator(5000);
+const nodeApi: NodeApi = new NodeApi(nodeManager, nodeFactory, serverCommunicator, cache);
+nodeApi.serve().then(() => { console.log("Started"); });

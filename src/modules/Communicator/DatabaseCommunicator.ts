@@ -6,12 +6,13 @@ export class Database {
   private errorLog: any;
   private outputLog: any;
 
-  constructor() {
+  constructor(user: string, password: string, host: string, database: string) {
     // this.errorLog = fs.createWriteStream("../../logs/database/error.txt");
     // this.outputLog = fs.createWriteStream("../../logs/database/out.txt");
+    this.connect(user, password, host, database);
   }
 
-  connect(user: string, password: string, host: string, database: string): Promise<MysqlError> {
+  private connect(user: string, password: string, host: string, database: string): Promise<MysqlError> {
     this.db = createConnection({
       host: host,
       user: user,
@@ -27,7 +28,7 @@ export class Database {
     });
   }
 
-  execute(query: string) {
+  public execute(query: string) {
     return new Promise((resolve, reject) => {
       this.db.query(query, (err: MysqlError, data: any) => {
         if (err) {
@@ -41,7 +42,7 @@ export class Database {
     });
   }
 
-  procedure(proc: string, params?: any): Promise<MysqlError> {
+  public procedure(proc: string, params?: any): Promise<MysqlError> {
     // this.output("Procedure Call - " + proc);
     // this.output("Parameters: " + params);
     return new Promise((resolve, reject) => {

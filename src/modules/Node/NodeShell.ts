@@ -1,19 +1,57 @@
 import * as Lodash from "lodash";
-import { ShellCommunicator } from "../Communicator/ShellCommunicator";
+import { Node, ShellCommunicator } from "../modules";
 
-export class NodeShell {
-  private shellCommunicator: ShellCommunicator;
+export class NodeShell implements Node {
+  private status: string;
+  private shell: ShellCommunicator;
+  private commands: any;
+  private programs: any;
 
-  constructor(shellCommunicator: ShellCommunicator) {
-    this.shellCommunicator = shellCommunicator;
+  constructor(
+    shellCommunicator: ShellCommunicator
+  ) {
+    this.status = "OK";
+    this.shell = shellCommunicator;
+    this.commands = {};
+    this.programs = {};
   }
 
-  public exec(command: string, args?: string[]): Promise<string> {
+  public getStatus(): Promise<string> {
+    return Promise.resolve(this.status);
+  }
+
+  public update(pkg: any): Promise<any> {
+    return this.runCommand("node-update", []);
+  }
+
+  public addProgram(name: string, command: string, path: string, program: any): Promise<any> {
+    this.programs[name] = {
+      programName: name,
+      command: command,
+      path: path,
+      program: program
+    };
+    return Promise.resolve(this.programs[name]);
+  }
+
+  public runProgram(name: string, args: string[]): Promise<any> {
+    const program = this.programs[name];
+    const runString = program.command + " " + program.path + " " + args.join(" ");
+    return this.shell.exec(runString);
+  }
+
+  public addCommand(name: string, command: string): Promise<any> {
+    this.commands[name] = command;
+    return Promise.resolve(this.commands[name]);
+  }
+
+  public runCommand(name: string, args: string[]): Promise<any> {
+    const command = this.commands[name];
     if (args == undefined) {
-      return this.shellCommunicator.exec(command);
+      return this.shell.exec(command);
     }
     const commandReplaced = this.replaceArgs(command, args);
-    return this.shellCommunicator.exec(commandReplaced);
+    return this.shell.exec(commandReplaced);
   }
 
   private replaceArgs(command: string, args: string[]) {

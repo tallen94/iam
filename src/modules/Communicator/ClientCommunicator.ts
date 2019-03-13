@@ -2,9 +2,11 @@ import Request from "request";
 
 export class ClientCommunicator {
   private host: string;
+  private port: number;
 
-  constructor(host: string) {
+  constructor(host: string, port: number) {
     this.host = host;
+    this.port = port;
   }
 
   public getHost() {
@@ -20,6 +22,9 @@ export class ClientCommunicator {
         url: absUrl
       };
       Request(options, (err: any, response: Request.Response, body: any) => {
+        if (err) {
+          console.log(err);
+        }
         resolve(body.data);
       });
     });
@@ -35,12 +40,15 @@ export class ClientCommunicator {
         url: absUrl
       };
       Request(options, (err: any, response: Request.Response, body: any) => {
+        if (err) {
+          console.log(err);
+        }
         resolve(body.data);
       });
     });
   }
 
   private getAbsoluteUrl(url: string) {
-    return this.host + "/" + url;
+    return "http://" + this.host + ":" + this.port + url;
   }
 }
