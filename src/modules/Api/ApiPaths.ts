@@ -7,4 +7,5 @@ export class ApiPaths {
   public static RUN_PROGRAM = "/runProgram";
   public static ADD_COMMAND = "/addCommand";
   public static RUN_COMMAND = "/runCommand";
+  public static CLEAR_CACHE = "/clearCache";
 }

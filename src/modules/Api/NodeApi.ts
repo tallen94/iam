@@ -165,6 +165,17 @@ export class NodeApi {
         });
       });
     });
+
+    /**
+     * Clears the cache.
+     *
+     * path: /clearCache
+     * method: GET
+     */
+    this.serverCommunicator.get(ApiPaths.CLEAR_CACHE, (req: any, resp: any) => {
+      this.cache.clearCache();
+      resp.status(200).send("Cleared Cache");
+    });
   }
 
   private cacheGet(key: string, hit: (value) => void, miss: () => void) {
