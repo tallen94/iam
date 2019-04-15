@@ -1,7 +1,7 @@
 import * as Lodash from "lodash";
-import { Node, ShellCommunicator } from "../modules";
+import { ShellCommunicator } from "../modules";
 
-export class NodeShell implements Node {
+export class Shell {
   private status: string;
   private shell: ShellCommunicator;
   private commands: any;
@@ -20,24 +20,27 @@ export class NodeShell implements Node {
     return Promise.resolve(this.status);
   }
 
-  public update(pkg: any): Promise<any> {
+  public update(): Promise<any> {
     return this.runCommand("node-update", []);
   }
 
-  public addProgram(name: string, command: string, path: string, program: any): Promise<any> {
+  public addProgram(name: string, exe: string, filename: string, root: string, run: string): Promise<any> {
     this.programs[name] = {
-      programName: name,
-      command: command,
-      path: path,
-      program: program
+      name: name,
+      exe: exe,
+      root: root,
+      filename: filename
     };
+    this.programs[name]["run"] = this.replace(run, this.programs[name]);
     return Promise.resolve(this.programs[name]);
   }
 
-  public runProgram(name: string, args: string[]): Promise<any> {
+  public runProgram(name: string, data: any): Promise<any> {
     const program = this.programs[name];
-    const runString = program.command + " " + program.path + " " + args.join(" ");
-    return this.shell.exec(runString);
+    return this.shell.exec(program.run, JSON.stringify(data))
+    .then((result: any) => {
+      return JSON.parse(result);
+    });
   }
 
   public addCommand(name: string, command: string): Promise<any> {
@@ -45,19 +48,19 @@ export class NodeShell implements Node {
     return Promise.resolve(this.commands[name]);
   }
 
-  public runCommand(name: string, args: string[]): Promise<any> {
+  public runCommand(name: string, data: any): Promise<any> {
     const command = this.commands[name];
-    if (args == undefined) {
+    if (data == undefined) {
       return this.shell.exec(command);
     }
-    const commandReplaced = this.replaceArgs(command, args);
+    const commandReplaced = this.replace(command, data);
     return this.shell.exec(commandReplaced);
   }
 
-  private replaceArgs(command: string, args: string[]) {
-    Lodash.each(args, (arg, index) => {
-      command = command.replace("{" + index + "}", arg);
+  private replace(s: string, data: any): string {
+    Lodash.each(data, (value, key) => {
+      s = s.replace("{" + key + "}", value);
     });
-    return command;
+    return s;
   }
 }

@@ -1,4 +1,5 @@
 import Request from "request";
+import Lodash from "lodash";
 
 export class ClientCommunicator {
   private host: string;
@@ -13,8 +14,8 @@ export class ClientCommunicator {
     return this.host;
   }
 
-  public get(url: string) {
-    const absUrl = this.getAbsoluteUrl(url);
+  public get(url: string, params?: any) {
+    const absUrl = this.getAbsoluteUrl(url, params);
     return new Promise((resolve, reject) => {
       const options = {
         method: "get",
@@ -25,16 +26,16 @@ export class ClientCommunicator {
         if (err) {
           console.log(err);
         }
-        resolve(body.data);
+        resolve(body);
       });
     });
   }
 
-  public post(url: string, data?: any) {
-    const absUrl = this.getAbsoluteUrl(url);
+  public post(url: string, data?: any, params?: any) {
+    const absUrl = this.getAbsoluteUrl(url, params);
     return new Promise((resolve, reject) => {
       const options = {
-        method: "post",
+        method: "POST",
         body: data,
         json: true,
         url: absUrl
@@ -43,12 +44,38 @@ export class ClientCommunicator {
         if (err) {
           console.log(err);
         }
-        resolve(body.data);
+        resolve(body);
       });
     });
   }
 
-  private getAbsoluteUrl(url: string) {
-    return "http://" + this.host + ":" + this.port + url;
+  public postFormData(url: string, formData: any, params?: any) {
+    const absUrl = this.getAbsoluteUrl(url, params);
+    return new Promise((resolve, reject) => {
+      const options = {
+        method: "POST",
+        json: true,
+        url: absUrl,
+        formData: formData
+      };
+      Request(options, (err: any, response: Request.Response, body: any) => {
+        if (err) {
+          console.log(err);
+        }
+        resolve(body);
+      });
+    });
+  }
+
+  private replace(s: string, data: any): string {
+    Lodash.each(data, (value, key) => {
+      s = s.replace(":" + key, value);
+    });
+    return s;
+  }
+
+  private getAbsoluteUrl(url: string, params?: any) {
+    const path = params == undefined ? url : this.replace(url, params);
+    return "http://" + this.host + ":" + this.port + path;
   }
 }

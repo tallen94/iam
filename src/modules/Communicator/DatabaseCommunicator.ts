@@ -1,7 +1,7 @@
 import { createConnection, Connection, MysqlError } from "mysql";
 import Lodash from "lodash";
 
-export class Database {
+export class DatabaseCommunicator {
   private db: Connection;
   private errorLog: any;
   private outputLog: any;

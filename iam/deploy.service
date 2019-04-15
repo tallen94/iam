@@ -8,7 +8,7 @@ Type=simple
 Restart=always
 RestartSec=1
 User=pi
-ExecStart=/usr/bin/deploy
+ExecStart=/usr/local/bin/deploy
 
 [Install]
 WantedBy=multi-user.target

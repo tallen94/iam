@@ -1,15 +1,27 @@
 import Multer from "multer";
+import Path from "path";
+import FS from "fs";
 
 export class FileSystem {
 
   private root: string;
-  private storage: Multer.StorageEngine;
+  private rootStorage: Multer.StorageEngine;
+  private programStorage: Multer.StorageEngine;
 
   constructor(root: string) {
     this.root = root;
-    this.storage = Multer.diskStorage({
+    this.rootStorage = Multer.diskStorage({
       destination: (req, file, cb) => {
-        cb(undefined, root);
+        cb(undefined, this.getRoot());
+      },
+      filename: (req, file, cb) => {
+        cb(undefined, file.originalname);
+      }
+    });
+    this.initProgramPath();
+    this.programStorage = Multer.diskStorage({
+      destination: (req, file, cb) => {
+        cb(undefined, this.path("programs"));
       },
       filename: (req, file, cb) => {
         cb(undefined, file.originalname);
@@ -17,11 +29,33 @@ export class FileSystem {
     });
   }
 
+  private initProgramPath() {
+    if (!FS.existsSync(this.getProgramRoot())) {
+      FS.mkdirSync(this.getProgramRoot());
+    }
+  }
+
   public getRoot() {
     return this.root;
   }
 
-  public getStorage(): Multer.StorageEngine {
-    return this.storage;
+  public getProgramRoot() {
+    return this.path("programs");
+  }
+
+  public path(path: string) {
+    return Path.join(this.root, path);
+  }
+
+  public programPath(fileName: string) {
+    return Path.join(this.root, "programs", fileName);
+  }
+
+  public getRootStorage(): Multer.StorageEngine {
+    return this.rootStorage;
+  }
+
+  public getProgramStorage(): Multer.StorageEngine {
+    return this.programStorage;
   }
 }

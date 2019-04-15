@@ -4,7 +4,6 @@ import BodyParser from "body-parser";
 
 export class ServerCommunicator {
   private api: Express.Application;
-  private server: any;
   private port: number;
 
   constructor(port: number) {
@@ -12,7 +11,7 @@ export class ServerCommunicator {
     this.api = Express();
     this.api.use(BodyParser.json({limit: "100mb"}));
     this.api.use(BodyParser.urlencoded({extended: false, limit: "100mb"}));
-    this.server = Http.createServer(this.api);
+    Http.createServer(this.api);
   }
 
   public getPort(): number {

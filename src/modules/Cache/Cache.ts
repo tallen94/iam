@@ -13,9 +13,13 @@ export class Cache {
     this.cache[md5_key] = value;
   }
 
-  public getValue(key: string) {
+  public getValue(key: string, hit: (value) => void, miss: () => void, shouldCache: boolean) {
     const md5_key = crypto.createHash("md5").update(key).digest("hex");
-    return this.cache[md5_key];
+    if (!shouldCache || this.cache[md5_key] == undefined) {
+      miss();
+    } else {
+      hit(this.cache[md5_key]);
+    }
   }
 
   public clearCache() {
