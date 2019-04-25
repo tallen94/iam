@@ -19,8 +19,9 @@ export class ProgramStep implements Step {
 
   public execute(data: any): Promise<any> {
     return this.clientPool.numClients() > 0 ?
-    this.clientPool.runProgram(this.name, data, 1).then((result) => {
-      return result[0];
+    this.clientPool.runExecutable("PROGRAM", this.name, data, 1)
+    .then((result) => {
+      return result[0].result;
     }) :
     this.shell.runProgram(this.name, data);
   }

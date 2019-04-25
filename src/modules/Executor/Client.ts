@@ -10,6 +10,10 @@ export class Client {
     this.clientCommunicator = clientCommunicator;
   }
 
+  public runExecutable(type: string, name: string, data: any) {
+    return this.clientCommunicator.post(ApiPaths.RUN_EXECUTABLE, data, { type: type, name: name });
+  }
+
   public getHost() {
     return this.clientCommunicator.getHost();
   }
@@ -54,14 +58,9 @@ export class Client {
     return this.clientCommunicator.post(ApiPaths.RUN_QUERY, data, { name: name });
   }
 
-  public addSyncStepList(name: string, steps: any[]) {
-    const body = { steps: steps };
-    return this.clientCommunicator.post(ApiPaths.ADD_SYNC_STEP_LIST, body, { name: name });
-  }
-
-  public addAsyncStepList(name: string, steps: any[]) {
-    const body = { steps: steps };
-    return this.clientCommunicator.post(ApiPaths.ADD_ASYNC_STEP_LIST, body, { name: name });
+  public addStepList(name: string, async: boolean, steps: any[]) {
+    const body = { steps: steps, async: async };
+    return this.clientCommunicator.post(ApiPaths.ADD_STEP_LIST, body, { name: name });
   }
 
   public runStepList(name: string, data: any) {

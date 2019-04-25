@@ -19,8 +19,9 @@ export class QueryStep implements Step {
 
   public execute(data: any): Promise<any> {
     return this.clientPool.numClients() > 0 ?
-    this.clientPool.runQuery(this.name, data, 1).then((result) => {
-      return result[0];
+    this.clientPool.runExecutable("QUERY", this.name, data, 1)
+    .then((result) => {
+      return result[0].result;
     }) :
     this.database.runQuery(this.name, data);
   }

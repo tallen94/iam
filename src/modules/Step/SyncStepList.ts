@@ -1,17 +1,12 @@
-import { StepList } from "./StepList";
 import { Step } from "./Step";
 import Lodash from "lodash";
 
-export class SyncStepList implements StepList {
+export class SyncStepList implements Step {
 
   private steps: Step[];
 
-  constructor() {
-    this.steps = [];
-  }
-
-  public addStep(step: Step) {
-    this.steps.push(step);
+  constructor(steps: Step[]) {
+    this.steps = steps;
   }
 
   public execute(data: any) {

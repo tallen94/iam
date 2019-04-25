@@ -5,12 +5,15 @@ import BodyParser from "body-parser";
 export class ServerCommunicator {
   private api: Express.Application;
   private port: number;
+  private host: string;
 
-  constructor(port: number) {
+  constructor(host: string, port: number, publicDir: string) {
+    this.host = host;
     this.port = port;
     this.api = Express();
     this.api.use(BodyParser.json({limit: "100mb"}));
     this.api.use(BodyParser.urlencoded({extended: false, limit: "100mb"}));
+    this.api.use(Express.static(publicDir));
     Http.createServer(this.api);
   }
 

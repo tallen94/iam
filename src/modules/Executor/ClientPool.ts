@@ -9,8 +9,16 @@ export class ClientPool {
     this.clients = [];
   }
 
+  public runExecutable(type: string, name: string, data: any, threads: number) {
+    return this.each(this.getNClients(threads), (thread: Client) => { return thread.runExecutable(type, name, data); });
+  }
+
   public addClient(client: Client): void {
     this.clients.push(client);
+  }
+
+  public setClients(clients: Client[]) {
+    this.clients = clients;
   }
 
   public numClients(): number {
@@ -51,12 +59,8 @@ export class ClientPool {
     return this.each(this.getNClients(threads), (thread: Client) => { return thread.runQuery(name, data); } );
   }
 
-  public addSyncStepList(name: string, steps: any[]) {
-    return this.each(this.clients, (thread: Client) => { return thread.addSyncStepList(name, steps); });
-  }
-
-  public addAsyncStepList(name: string, steps: any[]) {
-    return this.each(this.clients, (thread: Client) => { return thread.addAsyncStepList(name, steps); });
+  public addStepList(name: string, async: boolean, steps: any[]) {
+    return this.each(this.clients, (thread: Client) => { return thread.addStepList(name, async, steps); });
   }
 
   public runStepList(name: string, data: any, threads: number): Promise<any> {

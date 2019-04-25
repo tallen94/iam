@@ -6,12 +6,8 @@ export class AsyncStepList implements StepList {
 
   private steps: Step[];
 
-  constructor() {
-    this.steps = [];
-  }
-
-  public addStep(step: Step) {
-    this.steps.push(step);
+  constructor(steps: Step[]) {
+    this.steps = steps;
   }
 
   public execute(data: any[]) {

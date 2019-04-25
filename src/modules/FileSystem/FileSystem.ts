@@ -43,6 +43,10 @@ export class FileSystem {
     return this.path("programs");
   }
 
+  public getPublicRoot() {
+    return this.path("public/dist/iam");
+  }
+
   public path(path: string) {
     return Path.join(this.root, path);
   }

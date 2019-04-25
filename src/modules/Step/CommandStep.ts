@@ -19,8 +19,9 @@ export class CommandStep implements Step {
 
   public execute(data: any): Promise<any> {
     return this.clientPool.numClients() > 0 ?
-    this.clientPool.runCommand(this.name, data, 1).then((result) => {
-      return result[0];
+    this.clientPool.runExecutable("COMMAND", this.name, data, 1)
+    .then((result) => {
+      return result[0].result;
     }) :
     this.shell.runCommand(this.name, data);
   }
