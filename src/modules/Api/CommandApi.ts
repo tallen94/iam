@@ -23,12 +23,14 @@ export class CommandApi {
      *
      * path: /command/:name
      * method: POST
-     * body: { command: string }
+     * body: { command: string, dataType: string, dataModel: any }
      */
     this.serverCommunicator.post(ApiPaths.ADD_COMMAND, (req: any, res: any) => {
       const name = req.params.name;
       const command = req.body.command;
-      this.executor.addCommand(name, command)
+      const dataType = req.body.dataType;
+      const dataModel = req.body.dataModel;
+      this.executor.addCommand(name, command, dataType, dataModel)
       .then((result: any) => {
         res.status(200).send({ shell: result[0], clients: result[1] });
       });

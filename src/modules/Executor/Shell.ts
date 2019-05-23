@@ -3,6 +3,8 @@ import * as FS from "fs";
 import { ShellCommunicator } from "../modules";
 import { Database } from "./Database";
 import { FileSystem } from "../FileSystem/FileSystem";
+import { LocalProcess } from "../Process/LocalProcess";
+import { Process } from "../Process/Process";
 
 export class Shell {
   private status: string;
@@ -40,7 +42,7 @@ export class Shell {
     return this.runCommand("node-update", []);
   }
 
-  public addProgram(name: string, data: string): Promise<any> {
+  public addProgram(name: string, data: string, dataType: string, dataModel: string): Promise<any> {
     data = JSON.parse(data);
     return this.getProgram(name)
     .then((result) => {
@@ -48,13 +50,17 @@ export class Shell {
         return this.database.runQuery("add-exe", {
           name: name,
           type: "PROGRAM",
-          data: escape(JSON.stringify(data))
+          data: escape(JSON.stringify(data)),
+          dataType: dataType,
+          dataModel: escape(dataModel)
         });
       } else {
         return this.database.runQuery("update-exe", {
           name: name,
           type: "PROGRAM",
-          data: escape(JSON.stringify(data))
+          data: escape(JSON.stringify(data)),
+          dataType: dataType,
+          dataModel: escape(dataModel)
         });
       }
     }).then((result) => {
@@ -67,10 +73,16 @@ export class Shell {
     return this.database.runQuery("get-exe-by-type-name", {name: name, type: "PROGRAM"})
     .then((result) => {
       if (result.length > 0) {
-        const data = unescape(result[0].data);
-        this.programs[name] = JSON.parse(data);
-        const filePath = this.fileSystem.programPath(this.programs[name].filename);
-        return { program: FS.readFileSync(filePath).toString(), data: this.programs[name] };
+        const item = result[0];
+        const data = JSON.parse(unescape(item.data));
+        const filePath = this.fileSystem.programPath(data.filename);
+        this.programs[name] = data;
+        return {
+          data: data,
+          dataType: item.dataType,
+          dataModel: unescape(item.dataModel),
+          program: FS.readFileSync(filePath).toString()
+        };
       }
       return undefined;
     });
@@ -80,11 +92,24 @@ export class Shell {
     return this.database.runQuery("get-exe-by-type", {type: "PROGRAM"})
     .then((data) => {
       return Lodash.map(data, (item) => {
-        const data = unescape(item.data);
-        this.programs[item.name] = JSON.parse(data);
+        const data = JSON.parse(unescape(item.data));
+        this.programs[item.name] = data;
         return {name: item.name};
       });
     });
+  }
+
+  public getProcess(name: string) {
+    const program = this.programs[name];
+    program.root = this.fileSystem.getProgramRoot();
+    return this.replace(program.run, program);
+  }
+
+  public spawn(name: string): Process {
+    const p = this.getProcess(name);
+    const split = p.split(" ");
+    const process: Process = new LocalProcess(split[0], [split[1]]);
+    return process;
   }
 
   public runProgram(name: string, data: any): Promise<any> {
@@ -93,11 +118,15 @@ export class Shell {
     const run = this.replace(program.run, program);
     return this.shell.exec(run, JSON.stringify(data))
     .then((result: any) => {
-      return JSON.parse(result);
+      try {
+        return JSON.parse(result);
+      } catch {
+        return result;
+      }
     });
   }
 
-  public addCommand(name: string, command: string): Promise<any> {
+  public addCommand(name: string, command: string, dataType: string, dataModel: string): Promise<any> {
     this.commands[name] = command;
     return this.getCommand(name)
     .then((result) => {
@@ -105,13 +134,17 @@ export class Shell {
         return this.database.runQuery("add-exe", {
           name: name,
           type: "COMMAND",
-          data: escape(this.commands[name])
+          data: escape(this.commands[name]),
+          dataType: dataType,
+          dataModel: escape(dataModel)
         });
       } else {
         return this.database.runQuery("update-exe", {
           name: name,
           type: "COMMAND",
-          data: escape(this.commands[name])
+          data: escape(this.commands[name]),
+          dataType: dataType,
+          dataModel: escape(dataModel)
         });
       }
     }).then((result) => {
@@ -124,8 +157,13 @@ export class Shell {
     return this.database.runQuery("get-exe-by-type-name", {name: name, type: "COMMAND"})
     .then((result) => {
       if (result.length > 0) {
-        this.commands[name] = unescape(result[0]["data"]);
-        return { command: this.commands[name] };
+        const item = result[0];
+        this.commands[name] = {
+          command: unescape(item.data),
+          dataType: item.dataType,
+          dataModel: unescape(item.dataModel)
+        };
+        return this.commands[name];
       }
       return undefined;
     });
@@ -135,14 +173,18 @@ export class Shell {
     return this.database.runQuery("get-exe-by-type", {type: "COMMAND"})
     .then((data) => {
       return Lodash.map(data, (item) => {
-        this.commands[item.name] = unescape(item["data"]);
+        this.commands[item.name] = {
+          command: unescape(item.data),
+          dataType: item.dataType,
+          dataModel: unescape(item.dataModel)
+        };
         return {name: item.name};
       });
     });
   }
 
   public runCommand(name: string, data: any): Promise<any> {
-    const command = this.commands[name];
+    const command = this.commands[name].command;
     if (data == undefined) {
       return this.shell.exec(command);
     }

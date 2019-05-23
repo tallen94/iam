@@ -7,6 +7,10 @@ export class ApiPaths {
 
   // IamClient endpoints
 
+  // PROCESS
+  public static SPAWN_PROCESS = "/process/:type/:name/spawn";
+  public static WRITE_PROCESS = "/process/:name/write";
+
   // EXECUTABLE
   public static ADD_EXECUTABLE = "/:type/:name";
   public static GET_EXECUTABLE = "/:type/:name";

@@ -17,6 +17,12 @@ export class QueryStep implements Step {
       this.name = name;
   }
 
+  public spawn() {
+    return this.clientPool.numClients() > 0 ?
+    this.clientPool.spawn(this.name, 1)[0] :
+    this.database.spawn(this.name);
+  }
+
   public execute(data: any): Promise<any> {
     return this.clientPool.numClients() > 0 ?
     this.clientPool.runExecutable("QUERY", this.name, data, 1)

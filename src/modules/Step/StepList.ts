@@ -1,4 +1,5 @@
-import { Step } from "./Step";
+import { Duplex } from "stream";
 
-export interface StepList extends Step {
+export interface StepList {
+  // spawn(): Duplex;
 }

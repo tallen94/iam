@@ -2,6 +2,7 @@ import * as Lodash from "lodash";
 import {
   DatabaseCommunicator
 } from "../modules";
+import { QueryProcess } from "../Process/QueryProcess";
 
 export class Database {
   private status: string;
@@ -14,6 +15,10 @@ export class Database {
     this.queries = {};
   }
 
+  public getConnection() {
+    return this.databaseCommunicator.getConnection();
+  }
+
   public loadData() {
     return this.getQueries();
   }
@@ -22,24 +27,32 @@ export class Database {
     return Promise.resolve(this.status);
   }
 
-  public addQuery(name: string, query: string): Promise<any> {
+  public addQuery(name: string, query: string, dataType: string, dataModel: string): Promise<any> {
     return this.getQuery(name)
     .then((result) => {
       if (result == undefined) {
         return this.runQuery("add-exe", {
           name: name,
           type: "QUERY",
-          data: escape(query)
+          data: escape(query),
+          dataType: dataType,
+          dataModel: escape(dataModel)
         });
       } else {
         return this.runQuery("update-exe", {
           name: name,
           type: "QUERY",
-          data: escape(query)
+          data: escape(query),
+          dataType: dataType,
+          dataModel: escape(dataModel)
         });
       }
     }).then((result) => {
-      this.queries[name] = query;
+      this.queries[name] = {
+        query: query,
+        dataType: dataType,
+        dataModel: dataModel
+      };
       return this.queries[name];
     });
   }
@@ -48,8 +61,13 @@ export class Database {
     return this.runQuery("get-exe-by-type-name", {name: name, type: "QUERY"})
     .then((result) => {
       if (result.length > 0) {
-        this.queries[name] = unescape(result[0]["data"]);
-        return { query: this.queries[name] };
+        const item = result[0];
+        this.queries[name] = {
+          query: unescape(item.data),
+          dataType: item.dataType,
+          dataModel: unescape(item.dataModel)
+        };
+        return this.queries[name];
       }
       return undefined;
     });
@@ -60,14 +78,27 @@ export class Database {
     return this.execute(queryStr)
     .then((data) => {
       return Lodash.map(data, (item) => {
-        this.queries[item.name] = unescape(item.data);
+        this.queries[item.name] = {
+          query: unescape(item.data),
+          dataType: item.dataType,
+          dataModel: unescape(item.dataModel)
+        };
         return {name: item.name};
       });
     });
   }
 
+  public getQueryString(name: string) {
+    return this.queries[name].query;
+  }
+
+  public spawn(name: string): QueryProcess {
+    const query = this.getQueryString(name);
+    return new QueryProcess(query, this.databaseCommunicator.getConnection());
+  }
+
   public runQuery(name: string, data: any): Promise<any> {
-    const queryString = this.queries[name];
+    const queryString = this.queries[name].query;
     const queryReplaced = this.replace(queryString, data);
     return this.execute(queryReplaced);
   }

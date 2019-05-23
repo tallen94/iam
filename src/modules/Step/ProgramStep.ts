@@ -17,6 +17,12 @@ export class ProgramStep implements Step {
       this.name = name;
   }
 
+  // public spawn() {
+  //   return this.clientPool.numClients() > 0 ?
+  //   this.clientPool.spawn(this.name, 1) :
+  //   [this.shell.spawn(this.name)];
+  // }
+
   public execute(data: any): Promise<any> {
     return this.clientPool.numClients() > 0 ?
     this.clientPool.runExecutable("PROGRAM", this.name, data, 1)

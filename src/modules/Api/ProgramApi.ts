@@ -34,7 +34,9 @@ export class ProgramApi {
      *  exe: string,
      *  filename: string,
      *  run: string,
-     *  program: file
+     *  program: file,
+     *  dataType: string,
+     *  dataModel: any
      * }
      */
     this.serverCommunicator.post(ApiPaths.ADD_PROGRAM, (req: any, res: any) => {
@@ -44,7 +46,9 @@ export class ProgramApi {
       const run = req.body.run;
       const filePath = this.fileSystem.programPath(filename);
       const program = FS.createReadStream(filePath);
-      this.executor.addProgram(name, exe, filename, run, program)
+      const dataType = req.body.dataType;
+      const dataModel = req.body.dataModel;
+      this.executor.addProgram(name, exe, filename, run, program, dataType, dataModel)
       .then((result: any) => {
         res.status(200).send({ shell: result[0], clients: result[1] });
       });

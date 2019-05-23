@@ -1,3 +1,9 @@
+import { Process } from "../Process/Process";
+import { RemoteProcess } from "../Process/RemoteProcess";
+import { LocalProcess } from "../Process/LocalProcess";
+import { QueryProcess } from "../Process/QueryProcess";
+
 export interface Step {
-  execute(data: any): Promise<any>;
+  // spawn(): RemoteProcess | LocalProcess | QueryProcess;
+  execute(data: any);
 }

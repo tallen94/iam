@@ -45,16 +45,16 @@ export class Executor {
     ]);
   }
 
-  public addExecutable(type: string, name: string, data: any) {
+  public addExecutable(type: string, name: string, data: any, dataType: string, dataModel: string) {
     switch (type) {
       case "PROGRAM":
-        return this.shell.addProgram(name, data);
+        return this.shell.addProgram(name, data, dataType, dataModel);
       case "COMMAND":
-        return this.shell.addCommand(name, data);
+        return this.shell.addCommand(name, data, dataType, dataModel);
       case "QUERY":
-        return this.database.addQuery(name, data);
+        return this.database.addQuery(name, data, dataType, dataModel);
       case "STEPLIST":
-        return this.stepListManager.addStepList(name, data.async, data.steps);
+        return this.stepListManager.addStepList(name, data.async, data.steps, dataType, dataModel);
     }
   }
 
@@ -88,10 +88,10 @@ export class Executor {
     }
   }
 
-  public addProgram(name: string, exe: string, filename: string, run: string, program: any) {
+  public addProgram(name: string, exe: string, filename: string, run: string, program: any, dataType: string, dataModel: string) {
     return Promise.all([
       // this.shell.addProgram(name, exe, filename, run),
-      this.clientPool.addProgram(name, exe, filename, run, program)
+      this.clientPool.addProgram(name, exe, filename, run, program, dataType, dataModel)
     ]);
   }
 
@@ -103,10 +103,10 @@ export class Executor {
     return this.shell.getPrograms();
   }
 
-  public addCommand(name: string, command: string) {
+  public addCommand(name: string, command: string, dataType: string, dataModel: string) {
     return Promise.all([
-      this.shell.addCommand(name, command),
-      this.clientPool.addCommand(name, command)
+      this.shell.addCommand(name, command, dataType, dataModel),
+      this.clientPool.addCommand(name, command, dataType, dataModel)
     ]);
   }
 
@@ -118,10 +118,10 @@ export class Executor {
     return this.shell.getCommands();
   }
 
-  public addQuery(name: string, query: string) {
+  public addQuery(name: string, query: string, dataType: string, dataModel: string) {
     return Promise.all([
-      this.database.addQuery(name, query),
-      this.clientPool.addQuery(name, query)
+      this.database.addQuery(name, query, dataType, dataModel),
+      this.clientPool.addQuery(name, query, dataType, dataModel)
     ]);
   }
 
@@ -133,10 +133,10 @@ export class Executor {
     return this.database.getQueries();
   }
 
-  public addStepList(name: string, async: boolean, steps: any[]) {
+  public addStepList(name: string, async: boolean, steps: any[], dataType: string, dataModel: string) {
     return Promise.all([
-      this.stepListManager.addStepList(name, async, steps),
-      this.clientPool.addStepList(name, async, steps)
+      this.stepListManager.addStepList(name, async, steps, dataType, dataModel),
+      this.clientPool.addStepList(name, async, steps, dataType, dataModel)
     ]);
   }
 

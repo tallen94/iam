@@ -14,6 +14,10 @@ export class ClientCommunicator {
     return this.host;
   }
 
+  public getPort() {
+    return this.port;
+  }
+
   public get(url: string, params?: any) {
     const absUrl = this.getAbsoluteUrl(url, params);
     return new Promise((resolve, reject) => {

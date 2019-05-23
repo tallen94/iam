@@ -1,5 +1,5 @@
 import Shell from "shelljs";
-import { Data } from "../Data/Data";
+import { LocalProcess } from "../Process/LocalProcess";
 
 export class ShellCommunicator {
 

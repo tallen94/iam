@@ -12,6 +12,10 @@ export class DatabaseCommunicator {
     this.connect(user, password, host, database);
   }
 
+  public getConnection() {
+    return this.db;
+  }
+
   private connect(user: string, password: string, host: string, database: string): Promise<MysqlError> {
     this.db = createConnection({
       host: host,
@@ -55,7 +59,7 @@ export class DatabaseCommunicator {
           // this.output(proc + " | " + params);
           resolve(data);
         }
-      });
+      }).stream();
     });
   }
 

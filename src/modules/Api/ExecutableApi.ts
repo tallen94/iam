@@ -29,13 +29,15 @@ export class ExecutableApi {
      *
      * path: /:type/:name
      * method: POST
-     * body: { data: any }
+     * body: { data: any, dataType: string, dataModel: any }
      */
     this.serverCommunicator.post(ApiPaths.ADD_EXECUTABLE, (req: any, res: any) => {
       const name = req.params.name;
       const type = req.params.type;
       const data = req.body.data;
-      this.executor.addExecutable(type, name, data)
+      const dataType = req.body.dataType;
+      const dataModel = req.body.dataModel;
+      this.executor.addExecutable(type, name, data, dataType, dataModel)
       .then((result: any) => {
         res.status(200).send({ shell: result[0], clients: result[1] });
       });

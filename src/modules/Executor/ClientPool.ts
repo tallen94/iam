@@ -1,5 +1,7 @@
 import * as Lodash from "lodash";
 import { Client } from "../modules";
+import { RemoteProcess } from "../Process/RemoteProcess";
+import { Process } from "../Process/Process";
 
 export class ClientPool {
 
@@ -7,6 +9,13 @@ export class ClientPool {
 
   constructor() {
     this.clients = [];
+  }
+
+  public spawn(name: string, threads: number): Process[] {
+    return Lodash.map(this.getNClients(threads), (thread: Client) => {
+      const process: Process = new RemoteProcess(thread.getHost(), thread.getPort(), name);
+      return process;
+    });
   }
 
   public runExecutable(type: string, name: string, data: any, threads: number) {
@@ -33,9 +42,9 @@ export class ClientPool {
     return this.each(this.clients, (thread: Client) => { return thread.update(pkg); });
   }
 
-  public addProgram(name: string, exe: string, filename: string, run: string, program: any): any  {
+  public addProgram(name: string, exe: string, filename: string, run: string, program: any, dataType: string, dataModel: any): any  {
     return this.each(this.clients, (thread: Client) => {
-      return thread.addProgram(name, exe, filename, run, program);
+      return thread.addProgram(name, exe, filename, run, program, dataType, dataModel);
     });
   }
 
@@ -43,24 +52,24 @@ export class ClientPool {
     return this.each(this.getNClients(threads), (thread: Client) => { return thread.runProgram(name, data); } );
   }
 
-  public addCommand(name: string, command: string): any {
-    return this.each(this.clients, (thread: Client) => { return thread.addCommand(name, command); });
+  public addCommand(name: string, command: string, dataType: string, dataModel: any): any {
+    return this.each(this.clients, (thread: Client) => { return thread.addCommand(name, command, dataType, dataModel); });
   }
 
   public runCommand(name: string, data: any, threads: number): Promise<any> {
     return this.each(this.getNClients(threads), (thread: Client) => { return thread.runCommand(name, data); } );
   }
 
-  public addQuery(name: string, query: string): any {
-    return this.each(this.clients, (thread: Client) => { return thread.addQuery(name, query); });
+  public addQuery(name: string, query: string, dataType: string, dataModel: any): any {
+    return this.each(this.clients, (thread: Client) => { return thread.addQuery(name, query, dataType, dataModel); });
   }
 
   public runQuery(name: string, data: any, threads: number): Promise<any> {
     return this.each(this.getNClients(threads), (thread: Client) => { return thread.runQuery(name, data); } );
   }
 
-  public addStepList(name: string, async: boolean, steps: any[]) {
-    return this.each(this.clients, (thread: Client) => { return thread.addStepList(name, async, steps); });
+  public addStepList(name: string, async: boolean, steps: any[], dataType: string, dataModel: any) {
+    return this.each(this.clients, (thread: Client) => { return thread.addStepList(name, async, steps, dataType, dataModel); });
   }
 
   public runStepList(name: string, data: any, threads: number): Promise<any> {

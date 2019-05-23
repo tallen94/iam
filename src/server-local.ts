@@ -2,7 +2,8 @@ import {
   FileSystem, ClientPool, Api, ServerCommunicator, Executor
 } from "./modules/modules";
 import { ExecutableApi } from "./modules/Api/ExecutableApi";
-import * as OS from "os";
+import { ProcessManager } from "./modules/Process/ProcessManager";
+import { ProcessApi } from "./modules/Api/ProcessApi";
 
 const HOME = "/Users/Trevor/iam/iam";
 const fileSystem: FileSystem = new FileSystem(HOME);
@@ -13,6 +14,7 @@ for (let i = 0; i < NUM_NODES; i++) {
   const port = 5000 + i;
   const clientThreadPool: ClientPool = new ClientPool();
   const threadManager: Executor = new Executor();
+  const processManager: ProcessManager = new ProcessManager();
   threadManager.init(fileSystem, dbconfig, clientThreadPool)
   .then(() => {
     if (port == 5000) return threadManager.setClientPool(host, port);
@@ -20,6 +22,11 @@ for (let i = 0; i < NUM_NODES; i++) {
   })
   .then(() => {
     const serverCommunicator: ServerCommunicator = new ServerCommunicator(host, port, fileSystem.getPublicRoot());
+    const processApi: ProcessApi = new ProcessApi(
+      processManager,
+      serverCommunicator,
+      threadManager.getShell(),
+      threadManager.getDatabase());
     const api: Api = new Api(
       threadManager,
       serverCommunicator,
