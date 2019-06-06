@@ -30,7 +30,8 @@ export class QueryApi {
       const query = req.body.query;
       const dataType = req.body.dataType;
       const dataModel = req.body.dataModel;
-      this.executor.addQuery(name, query, dataType, dataModel)
+      const userId = 12;
+      this.executor.addQuery(name, query, dataType, dataModel, userId)
       .then((result: any) => {
         res.status(200).send({ database: result[0], clients: result[1] });
       });

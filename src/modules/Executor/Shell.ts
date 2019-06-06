@@ -9,8 +9,6 @@ import { Process } from "../Process/Process";
 export class Shell {
   private status: string;
   private shell: ShellCommunicator;
-  private commands: any;
-  private programs: any;
   private database: Database;
   private fileSystem: FileSystem;
 
@@ -22,16 +20,7 @@ export class Shell {
     this.status = "OK";
     this.shell = shellCommunicator;
     this.database = database;
-    this.commands = {};
-    this.programs = {};
     this.fileSystem = fileSystem;
-  }
-
-  public loadData() {
-    return Promise.all([
-      this.getCommands(),
-      this.getPrograms()
-    ]);
   }
 
   public getStatus(): Promise<string> {
@@ -42,30 +31,28 @@ export class Shell {
     return this.runCommand("node-update", []);
   }
 
-  public addProgram(name: string, data: string, dataType: string, dataModel: string): Promise<any> {
-    data = JSON.parse(data);
+  public addProgram(name: string, data: string, dataType: string, dataModel: string, userId: number): Promise<any> {
     return this.getProgram(name)
     .then((result) => {
       if (result == undefined) {
         return this.database.runQuery("add-exe", {
           name: name,
           type: "PROGRAM",
-          data: escape(JSON.stringify(data)),
+          data: data,
           dataType: dataType,
-          dataModel: escape(dataModel)
+          dataModel: dataModel,
+          userId: userId
         });
       } else {
         return this.database.runQuery("update-exe", {
           name: name,
           type: "PROGRAM",
-          data: escape(JSON.stringify(data)),
+          data: data,
           dataType: dataType,
-          dataModel: escape(dataModel)
+          dataModel: dataModel,
+          userId: userId
         });
       }
-    }).then((result) => {
-      this.programs[name] = data;
-      return this.programs[name];
     });
   }
 
@@ -76,8 +63,8 @@ export class Shell {
         const item = result[0];
         const data = JSON.parse(unescape(item.data));
         const filePath = this.fileSystem.programPath(data.filename);
-        this.programs[name] = data;
         return {
+          name: item.name,
           data: data,
           dataType: item.dataType,
           dataModel: unescape(item.dataModel),
@@ -92,17 +79,16 @@ export class Shell {
     return this.database.runQuery("get-exe-by-type", {type: "PROGRAM"})
     .then((data) => {
       return Lodash.map(data, (item) => {
-        const data = JSON.parse(unescape(item.data));
-        this.programs[item.name] = data;
         return {name: item.name};
       });
     });
   }
 
   public getProcess(name: string) {
-    const program = this.programs[name];
-    program.root = this.fileSystem.getProgramRoot();
-    return this.replace(program.run, program);
+    // const program = this.programs[name];
+    // program.root = this.fileSystem.getProgramRoot();
+    // return this.replace(program.run, program);
+    return null;
   }
 
   public spawn(name: string): Process {
@@ -113,43 +99,42 @@ export class Shell {
   }
 
   public runProgram(name: string, data: any): Promise<any> {
-    const program = this.programs[name];
-    program.root = this.fileSystem.getProgramRoot();
-    const run = this.replace(program.run, program);
-    return this.shell.exec(run, JSON.stringify(data))
-    .then((result: any) => {
-      try {
-        return JSON.parse(result);
-      } catch {
-        return result;
-      }
+    return this.getProgram(name).then((program) => {
+      program.data.root = this.fileSystem.getProgramRoot();
+      const run = this.replace(program.data.run, program.data);
+      return this.shell.exec(run, JSON.stringify(data))
+      .then((result: any) => {
+        try {
+          return JSON.parse(result);
+        } catch {
+          return result;
+        }
+      });
     });
   }
 
-  public addCommand(name: string, command: string, dataType: string, dataModel: string): Promise<any> {
-    this.commands[name] = command;
+  public addCommand(name: string, command: string, dataType: string, dataModel: string, userId: number): Promise<any> {
     return this.getCommand(name)
     .then((result) => {
       if (result == undefined) {
         return this.database.runQuery("add-exe", {
           name: name,
           type: "COMMAND",
-          data: escape(this.commands[name]),
+          data: command,
           dataType: dataType,
-          dataModel: escape(dataModel)
+          dataModel: dataModel,
+          userId: userId
         });
       } else {
         return this.database.runQuery("update-exe", {
           name: name,
           type: "COMMAND",
-          data: escape(this.commands[name]),
+          data: command,
           dataType: dataType,
-          dataModel: escape(dataModel)
+          dataModel: dataModel,
+          userId: userId
         });
       }
-    }).then((result) => {
-      this.commands[name] = command;
-      return this.commands[name];
     });
   }
 
@@ -158,12 +143,11 @@ export class Shell {
     .then((result) => {
       if (result.length > 0) {
         const item = result[0];
-        this.commands[name] = {
+        return {
           command: unescape(item.data),
           dataType: item.dataType,
           dataModel: unescape(item.dataModel)
         };
-        return this.commands[name];
       }
       return undefined;
     });
@@ -173,23 +157,19 @@ export class Shell {
     return this.database.runQuery("get-exe-by-type", {type: "COMMAND"})
     .then((data) => {
       return Lodash.map(data, (item) => {
-        this.commands[item.name] = {
-          command: unescape(item.data),
-          dataType: item.dataType,
-          dataModel: unescape(item.dataModel)
-        };
         return {name: item.name};
       });
     });
   }
 
   public runCommand(name: string, data: any): Promise<any> {
-    const command = this.commands[name].command;
-    if (data == undefined) {
-      return this.shell.exec(command);
-    }
-    const commandReplaced = this.replace(command, data);
-    return this.shell.exec(commandReplaced);
+    return this.getCommand(name).then((command) => {
+      if (data == undefined) {
+        return this.shell.exec(command.command);
+      }
+      const commandReplaced = this.replace(command.command, data);
+      return this.shell.exec(commandReplaced);
+    });
   }
 
   private replace(s: string, data: any): string {

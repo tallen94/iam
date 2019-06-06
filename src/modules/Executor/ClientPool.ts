@@ -60,16 +60,16 @@ export class ClientPool {
     return this.each(this.getNClients(threads), (thread: Client) => { return thread.runCommand(name, data); } );
   }
 
-  public addQuery(name: string, query: string, dataType: string, dataModel: any): any {
-    return this.each(this.clients, (thread: Client) => { return thread.addQuery(name, query, dataType, dataModel); });
+  public addQuery(name: string, query: string, dataType: string, dataModel: any, userId: number): any {
+    return this.each(this.clients, (thread: Client) => { return thread.addQuery(name, query, dataType, dataModel, userId); });
   }
 
   public runQuery(name: string, data: any, threads: number): Promise<any> {
     return this.each(this.getNClients(threads), (thread: Client) => { return thread.runQuery(name, data); } );
   }
 
-  public addStepList(name: string, async: boolean, steps: any[], dataType: string, dataModel: any) {
-    return this.each(this.clients, (thread: Client) => { return thread.addStepList(name, async, steps, dataType, dataModel); });
+  public addStepList(name: string, async: boolean, steps: any[], dataType: string, dataModel: any, userId: number) {
+    return this.each(this.clients, (thread: Client) => { return thread.addStepList(name, async, steps, dataType, dataModel, userId); });
   }
 
   public runStepList(name: string, data: any, threads: number): Promise<any> {

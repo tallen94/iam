@@ -30,7 +30,8 @@ export class CommandApi {
       const command = req.body.command;
       const dataType = req.body.dataType;
       const dataModel = req.body.dataModel;
-      this.executor.addCommand(name, command, dataType, dataModel)
+      const userId = 12;
+      this.executor.addCommand(name, command, dataType, dataModel, userId)
       .then((result: any) => {
         res.status(200).send({ shell: result[0], clients: result[1] });
       });

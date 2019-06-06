@@ -30,7 +30,8 @@ export class StepListApi {
       const async = req.body.async;
       const dataType = req.body.dataType;
       const dataModel = req.body.dataModel;
-      this.executor.addStepList(name, async, steps, dataType, dataModel);
+      const userId = 12;
+      this.executor.addStepList(name, async, steps, dataType, dataModel, userId);
       resp.status(200).send("Added StepList: " + name);
     });
 

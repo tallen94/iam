@@ -59,8 +59,8 @@ export class Client {
     return this.clientCommunicator.post(ApiPaths.RUN_COMMAND, data, { name: name });
   }
 
-  public addQuery(name: string, query: string, dataType: string, dataModel: any) {
-    const body = { query: query, dataType: dataType, dataModel: dataModel };
+  public addQuery(name: string, query: string, dataType: string, dataModel: any, userId: number) {
+    const body = { query: query, dataType: dataType, dataModel: dataModel, userId: userId };
     return this.clientCommunicator.post(ApiPaths.ADD_QUERY, body, { name: name });
   }
 
@@ -68,8 +68,8 @@ export class Client {
     return this.clientCommunicator.post(ApiPaths.RUN_QUERY, data, { name: name });
   }
 
-  public addStepList(name: string, async: boolean, steps: any[], dataType: string, dataModel: any) {
-    const body = { steps: steps, async: async, dataType: dataType, dataModel: dataModel };
+  public addStepList(name: string, async: boolean, steps: any[], dataType: string, dataModel: any, userId: number) {
+    const body = { steps: steps, async: async, dataType: dataType, dataModel: dataModel, userId: userId };
     return this.clientCommunicator.post(ApiPaths.ADD_STEP_LIST, body, { name: name });
   }
 

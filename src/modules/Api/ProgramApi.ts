@@ -48,7 +48,8 @@ export class ProgramApi {
       const program = FS.createReadStream(filePath);
       const dataType = req.body.dataType;
       const dataModel = req.body.dataModel;
-      this.executor.addProgram(name, exe, filename, run, program, dataType, dataModel)
+      const userId = req.body.userId;
+      this.executor.addProgram(name, exe, filename, run, program, dataType, dataModel, userId)
       .then((result: any) => {
         res.status(200).send({ shell: result[0], clients: result[1] });
       });

@@ -29,7 +29,7 @@ export class ExecutableApi {
      *
      * path: /:type/:name
      * method: POST
-     * body: { data: any, dataType: string, dataModel: any }
+     * body: { data: any, dataType: string, dataModel: any, userId: number }
      */
     this.serverCommunicator.post(ApiPaths.ADD_EXECUTABLE, (req: any, res: any) => {
       const name = req.params.name;
@@ -37,7 +37,8 @@ export class ExecutableApi {
       const data = req.body.data;
       const dataType = req.body.dataType;
       const dataModel = req.body.dataModel;
-      this.executor.addExecutable(type, name, data, dataType, dataModel)
+      const userId = req.body.userId;
+      this.executor.addExecutable(type, name, data, dataType, dataModel, userId)
       .then((result: any) => {
         res.status(200).send({ shell: result[0], clients: result[1] });
       });
@@ -56,13 +57,13 @@ export class ExecutableApi {
     });
 
     /**
-     * Get all commands
+     * Get all executables
      *
-     * path: /:type
+     * path: /:type?userId=number
      * method: GET
      */
     this.serverCommunicator.get(ApiPaths.GET_EXECUTABLES, (req: any, res: any) => {
-      this.executor.getExecutables(req.params.type).then((results) => {
+      this.executor.getExecutables(req.params.type, req.query.userId).then((results) => {
         res.status(200).send(results);
       });
     });

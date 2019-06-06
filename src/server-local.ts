@@ -4,6 +4,7 @@ import {
 import { ExecutableApi } from "./modules/Api/ExecutableApi";
 import { ProcessManager } from "./modules/Process/ProcessManager";
 import { ProcessApi } from "./modules/Api/ProcessApi";
+import { JobRunner } from "./modules/Job/JobRunner";
 
 const HOME = "/Users/Trevor/iam/iam";
 const fileSystem: FileSystem = new FileSystem(HOME);
@@ -13,11 +14,16 @@ for (let i = 0; i < NUM_NODES; i++) {
   const host = "localhost";
   const port = 5000 + i;
   const clientThreadPool: ClientPool = new ClientPool();
-  const threadManager: Executor = new Executor();
+  const executor: Executor = new Executor();
   const processManager: ProcessManager = new ProcessManager();
-  threadManager.init(fileSystem, dbconfig, clientThreadPool)
+  if (i == 0 ) {
+    const jobRunner: JobRunner = new JobRunner(executor);
+    jobRunner.start();
+    executor.setJobRunner(jobRunner);
+  }
+  executor.init(fileSystem, dbconfig, clientThreadPool)
   .then(() => {
-    if (port == 5000) return threadManager.setClientPool(host, port);
+    if (port == 5000) return executor.setClientPool(host, port);
     return Promise.resolve();
   })
   .then(() => {
@@ -25,14 +31,14 @@ for (let i = 0; i < NUM_NODES; i++) {
     const processApi: ProcessApi = new ProcessApi(
       processManager,
       serverCommunicator,
-      threadManager.getShell(),
-      threadManager.getDatabase());
+      executor.getShell(),
+      executor.getDatabase());
     const api: Api = new Api(
-      threadManager,
+      executor,
       serverCommunicator,
       fileSystem);
     const executableApi: ExecutableApi = new ExecutableApi(
-      threadManager,
+      executor,
       serverCommunicator,
       fileSystem);
     return serverCommunicator.listen();
