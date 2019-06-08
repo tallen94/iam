@@ -121,6 +121,9 @@ export class JobRunner {
         return result[0];
       }
       return undefined;
+    }).catch((reason) => {
+      console.log(reason);
+      process.exit();
     });
   }
 

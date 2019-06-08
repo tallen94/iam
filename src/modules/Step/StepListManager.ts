@@ -26,26 +26,25 @@ export class StepListManager {
   }
 
   // ADD
-  public addStepList(name: string, async: boolean, steps: any[], dataType: string, dataModel: string, userId: number) {
-    const data = { type: "STEPLIST", async: async, steps: steps };
+  public addStepList(name: string, data: string, dataType: string, dataModel: string, userId: number) {
     return this.getStepList(name)
     .then((result) => {
       if (result == undefined) {
         return this.database.runQuery("add-exe", {
           name: name,
           type: "STEPLIST",
-          data: escape(JSON.stringify(data)),
+          data: data,
           dataType: dataType,
-          dataModel: escape(dataModel),
+          dataModel: dataModel,
           userId: userId
         });
       } else {
         return this.database.runQuery("update-exe", {
           name: name,
           type: "STEPLIST",
-          data: escape(JSON.stringify(data)),
+          data: data,
           dataType: dataType,
-          dataModel: escape(dataModel),
+          dataModel: dataModel,
           userId: userId
         });
       }
@@ -80,6 +79,7 @@ export class StepListManager {
 
   public runStepList(name: string, data: any) {
     return this.getStepList(name).then((stepList) => {
+      stepList.data["type"] = "STEPLIST";
       return this.stepJsonToStep(stepList.data);
     }).then((step) => {
       return step.execute(data);

@@ -1,8 +1,8 @@
-import { createConnection, Connection, MysqlError } from "mysql";
+import { MysqlError, createPool, Pool } from "mysql";
 import Lodash from "lodash";
 
 export class DatabaseCommunicator {
-  private db: Connection;
+  private db: Pool;
   private errorLog: any;
   private outputLog: any;
 
@@ -16,19 +16,13 @@ export class DatabaseCommunicator {
     return this.db;
   }
 
-  private connect(user: string, password: string, host: string, database: string): Promise<MysqlError> {
-    this.db = createConnection({
+  private connect(user: string, password: string, host: string, database: string) {
+    this.db = createPool({
       host: host,
       user: user,
       password: password,
       database: database,
       multipleStatements: true
-    });
-
-    return new Promise((resolve, reject) => {
-      this.db.connect((err: MysqlError) => {
-        resolve(err);
-      });
     });
   }
 

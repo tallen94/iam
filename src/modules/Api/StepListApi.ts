@@ -22,16 +22,15 @@ export class StepListApi {
      *
      * path: /stepList/:name
      * method: POST
-     * body: { steps: any[], async: boolean, dataType: string, dataModel: any }
+     * body: { data: string, dataType: string, dataModel: any }
      */
     this.serverCommunicator.post(ApiPaths.ADD_STEP_LIST, (req: any, resp: any) => {
       const name = req.params.name;
-      const steps = req.body.steps;
-      const async = req.body.async;
+      const data = req.body.data;
       const dataType = req.body.dataType;
       const dataModel = req.body.dataModel;
       const userId = 12;
-      this.executor.addStepList(name, async, steps, dataType, dataModel, userId);
+      this.executor.addStepList(name, data, dataType, dataModel, userId);
       resp.status(200).send("Added StepList: " + name);
     });
 

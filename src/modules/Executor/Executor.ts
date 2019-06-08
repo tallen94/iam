@@ -57,7 +57,7 @@ export class Executor {
       case "QUERY":
         return this.database.addQuery(name, data, dataType, dataModel, userId);
       case "STEPLIST":
-        return this.stepListManager.addStepList(name, data.async, data.steps, dataType, dataModel, userId);
+        return this.stepListManager.addStepList(name, data, dataType, dataModel, userId);
       case "JOB":
         return this.jobRunner.addJob(name, data, dataType, dataModel, userId);
     }
@@ -140,10 +140,10 @@ export class Executor {
     return this.database.getQueries();
   }
 
-  public addStepList(name: string, async: boolean, steps: any[], dataType: string, dataModel: string, userId: number) {
+  public addStepList(name: string, data: string, dataType: string, dataModel: string, userId: number) {
     return Promise.all([
-      this.stepListManager.addStepList(name, async, steps, dataType, dataModel, userId),
-      this.clientPool.addStepList(name, async, steps, dataType, dataModel, userId)
+      this.stepListManager.addStepList(name, data, dataType, dataModel, userId),
+      this.clientPool.addStepList(name, data, dataType, dataModel, userId)
     ]);
   }
 

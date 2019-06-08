@@ -1,7 +1,7 @@
 import { Process } from "./Process";
 import Lodash from "lodash";
 import { Readable, Writable } from "stream";
-import { Connection } from "mysql";
+import { Pool } from "mysql";
 import { JSONTransform } from "../Stream/JSONTransform";
 import { WriteStream } from "../Stream/WriteStream";
 import { GenericDuplex } from "../Stream/GenericDuplex";
@@ -10,12 +10,12 @@ import { GenericDuplex } from "../Stream/GenericDuplex";
 export class QueryProcess implements Process {
 
   private query: string;
-  private db: Connection;
+  private db: Pool;
   private write: Writable;
   private read: Readable;
   private pipe: any;
 
-  constructor(query: string, db: Connection) {
+  constructor(query: string, db: Pool) {
     this.write = new WriteStream();
     this.query = query;
     this.db = db;

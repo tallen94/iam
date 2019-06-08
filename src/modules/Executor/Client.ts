@@ -68,8 +68,8 @@ export class Client {
     return this.clientCommunicator.post(ApiPaths.RUN_QUERY, data, { name: name });
   }
 
-  public addStepList(name: string, async: boolean, steps: any[], dataType: string, dataModel: any, userId: number) {
-    const body = { steps: steps, async: async, dataType: dataType, dataModel: dataModel, userId: userId };
+  public addStepList(name: string, data: string, dataType: string, dataModel: any, userId: number) {
+    const body = { data: data, dataType: dataType, dataModel: dataModel, userId: userId };
     return this.clientCommunicator.post(ApiPaths.ADD_STEP_LIST, body, { name: name });
   }
 
