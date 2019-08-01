@@ -69,7 +69,7 @@ export class DatabaseCommunicator {
 
   public replace(s: string, data: any): string {
     Lodash.each(data, (value, key) => {
-      s = s.replace(new RegExp("{" + key + "}", "g"), value);
+      s = s.replace(new RegExp("{" + key + "}", "g"), "?");
     });
     return s;
   }
@@ -99,7 +99,6 @@ export class DatabaseCommunicator {
           throw err;
         }
         dataArray.push(data[key]);
-        data[key] = "?";
       }
     }
     return {

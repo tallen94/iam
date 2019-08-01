@@ -38,9 +38,6 @@ export class ExecutableApi {
       const dataModel = req.body.dataModel;
       const userId = req.body.userId;
       const description = req.body.description;
-      if (user.userId) {
-        this.logger.logUserAction(user.userId, "ADD_EXECUTABLE", {type: type, name: name});
-      }
       this.executor.addExecutable(type, name, data, dataType, dataModel, userId, description)
       .then((result: any) => {
         res.status(200).send(result);
@@ -57,9 +54,6 @@ export class ExecutableApi {
       const user = this.parseUser(req.headers);
       const type = req.params.type;
       const name = req.params.name;
-      if (user.userId) {
-        this.logger.logUserAction(user.userId, "GET_EXECUTABLE", {type: type, name: name});
-      }
       this.executor.getExecutable(type, name).then((result) => {
         res.status(200).send(result);
       });
@@ -74,9 +68,6 @@ export class ExecutableApi {
     this.serverCommunicator.get(ApiPaths.GET_EXECUTABLES, (req: any, res: any) => {
       const user = this.parseUser(req.headers);
       const type = req.params.type;
-      if (user.userId) {
-        this.logger.logUserAction(user.userId, "GET_EXECUTABLES", {type: type});
-      }
       this.executor.getExecutables(type, user.userId)
       .then((results) => {
         res.status(200).send(results);
@@ -92,9 +83,6 @@ export class ExecutableApi {
     this.serverCommunicator.get(ApiPaths.SEARCH_EXECUTABLES, (req: any, res: any) => {
       const user = this.parseUser(req.headers);
       const searchText = req.query.searchText;
-      if (user.userId) {
-        this.logger.logUserAction(user.userId, "SEARCH_EXECUTABLES", {searchText: searchText});
-      }
       this.executor.searchExecutables(searchText)
       .then((results) => {
         res.status(200).send(results);
@@ -112,9 +100,6 @@ export class ExecutableApi {
       const name = req.params.name;
       const type = req.params.type;
       const data = req.body;
-      if (user.userId) {
-        this.logger.logUserAction(user.userId, "RUN_EXECUTABLE", {type: type, name: name});
-      }
       this.executor.runExecutable(type, name, data)
       .then((result: any) => {
         resp.status(200).send({result: result});
