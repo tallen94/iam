@@ -1,6 +1,7 @@
 import { Step } from "./Step";
 import { ClientPool } from "../Executor/ClientPool";
 import { Database } from "../Executor/Database";
+import { Client } from "../Executor/Client";
 
 export class QueryStep implements Step {
 
@@ -30,5 +31,14 @@ export class QueryStep implements Step {
       return result[0].result;
     }) :
     this.database.runQuery(this.name, data);
+  }
+
+  public executeEach(data: any) {
+    return Promise.all([
+      this.clientPool.eachClient((client: Client) => { return client.runExecutable("QUERY", this.name, data); }),
+      this.database.runQuery(this.name, data)
+    ]).then((results) => {
+      return results[0].concat([results[1]]);
+    });
   }
 }

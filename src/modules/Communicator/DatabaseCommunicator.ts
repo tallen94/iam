@@ -26,9 +26,10 @@ export class DatabaseCommunicator {
     });
   }
 
-  public execute(query: string) {
+  public execute(query: string, params: any) {
+    const preparedQuery = this.prepareQuery(query, params);
     return new Promise((resolve, reject) => {
-      this.db.query(query, (err: MysqlError, data: any) => {
+      this.db.query(preparedQuery.query, preparedQuery.data, (err: MysqlError, data: any) => {
         if (err) {
           // this.error(err);
           reject(err);
@@ -57,9 +58,54 @@ export class DatabaseCommunicator {
     });
   }
 
+  public escape(str: string) {
+    return this.db.escape(str);
+  }
+
   private sortValuesByKey(obj: any) {
     const sortedKeys = Lodash.sortBy(Object.keys(obj), (key) => { return key; });
     return Lodash.map(sortedKeys, (key) => { return obj[key]; });
+  }
+
+  public replace(s: string, data: any): string {
+    Lodash.each(data, (value, key) => {
+      s = s.replace(new RegExp("{" + key + "}", "g"), value);
+    });
+    return s;
+  }
+
+  public prepareQuery(query: string, data: any) {
+    const dataArray = [];
+    for (let i = 0; i < query.length; i++) {
+      let char = query.substring(i, i + 1);
+      if (char === "{") {
+        i++;
+        char = query.substring(i, i + 1);
+        let key = "";
+        while (char !== "}" && i < query.length) {
+          key = key + char;
+          i++;
+          char = query.substring(i, i + 1);
+        }
+        if (char !== "}") {
+          const err = "Unable to parse query. Error near '" + key + "' : " + i;
+          console.log(err);
+          throw err;
+        }
+
+        if (data[key] == undefined) {
+          const err = "Key not found in data: " + key;
+          console.log(err, query, data);
+          throw err;
+        }
+        dataArray.push(data[key]);
+        data[key] = "?";
+      }
+    }
+    return {
+      data: dataArray,
+      query: this.replace(query, data)
+    };
   }
 
   private error(str: any) {

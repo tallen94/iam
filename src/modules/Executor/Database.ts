@@ -21,7 +21,7 @@ export class Database {
     return Promise.resolve(this.status);
   }
 
-  public addQuery(name: string, query: string, dataType: string, dataModel: string, userId: number): Promise<any> {
+  public addQuery(name: string, query: string, dataType: string, dataModel: string, userId: number, description: string): Promise<any> {
     return this.getQuery(name)
     .then((result) => {
       if (result == undefined) {
@@ -31,7 +31,8 @@ export class Database {
           data: query,
           dataType: dataType,
           dataModel: dataModel,
-          userId: userId
+          userId: userId,
+          description: description
         });
       } else {
         return this.runQuery("update-exe", {
@@ -40,33 +41,39 @@ export class Database {
           data: query,
           dataType: dataType,
           dataModel: dataModel,
-          userId: userId
+          userId: userId,
+          description: description
         });
       }
     });
   }
 
   public getQuery(name: string) {
-    const queryStr = this.replace("SELECT * FROM executable WHERE name='{name}' AND type='QUERY';", {name: name});
-    return this.execute(queryStr)
-    .then((result) => {
+    const queryStr = "SELECT * FROM executable WHERE name={name} AND type='QUERY';";
+    return this.databaseCommunicator.execute(queryStr, {name: name})
+    .then((result: any) => {
       if (result.length > 0) {
         const item = result[0];
         return {
-          query: unescape(item.data),
+          query: item.data,
           dataType: item.dataType,
-          dataModel: unescape(item.dataModel)
+          dataModel: item.dataModel,
+          description: item.description
         };
       }
       return undefined;
     });
   }
 
-  public getQueries() {
-    return this.execute("SELECT * FROM executable WHERE type='QUERY';")
-    .then((data) => {
+  public getQueries(userId: number) {
+    const queryStr = "SELECT * FROM executable WHERE type='QUERY' AND userId={userId};";
+    return this.databaseCommunicator.execute(queryStr, {userId: userId})
+    .then((data: any) => {
       return Lodash.map(data, (item) => {
-        return {name: item.name};
+        return {
+          name: item.name,
+          description: item.description
+        };
       });
     });
   }
@@ -83,19 +90,10 @@ export class Database {
 
   public runQuery(name: string, data: any): Promise<any> {
     return this.getQuery(name).then((query) => {
-      const queryReplaced = this.replace(query.query, data);
-      return this.execute(queryReplaced);
+      return this.runQueryString(query.query, data);
     });
   }
-
-  public execute(query: string): Promise<any> {
-    return this.databaseCommunicator.execute(query);
-  }
-
-  private replace(s: string, data: any): string {
-    Lodash.each(data, (value, key) => {
-      s = s.replace(new RegExp("{" + key + "}", "g"), escape(value));
-    });
-    return s;
+  public runQueryString(queryString: string, data: any): Promise<any> {
+    return this.databaseCommunicator.execute(queryString, data);
   }
 }

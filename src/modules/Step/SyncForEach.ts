@@ -3,7 +3,7 @@ import { StepList } from "./StepList";
 import Lodash from "lodash";
 import { CollectDuplex } from "../Stream/CollectDuplex";
 
-export class ForEachStep implements Step {
+export class SyncForEachStep implements Step {
 
   private step: Step;
 
@@ -26,14 +26,30 @@ export class ForEachStep implements Step {
   }
 
   public execute(data: any[]) {
-    return Promise.all(Lodash.map(data, (item) => {
-      return this.step.execute(item);
-    }));
+    let promise = Promise.resolve([]);
+    Lodash.each(data, (item) => {
+      promise = promise.then((resultList) => {
+        return this.step.execute(item)
+        .then((result) => {
+          resultList.push(result);
+          return resultList;
+        });
+      });
+    });
+    return promise;
   }
 
   public executeEach(data: any[]) {
-    return Promise.all(Lodash.map(data, (item) => {
-      return this.step.executeEach(item);
-    }));
+    let promise = Promise.resolve([]);
+    Lodash.each(data, (item) => {
+      promise = promise.then((resultList) => {
+        return this.step.executeEach(item)
+        .then((result) => {
+          resultList.push(result);
+          return resultList;
+        });
+      });
+    });
+    return promise;
   }
 }

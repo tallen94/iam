@@ -1,0 +1,52 @@
+The basic components of cloud applications are data stores and programs
+
+Executables:
+  QUERIES
+  PROGRAMS
+  COMMANDS
+  STEPLISTS
+
+Use QERIES to interact with data stores
+  - Stores data in an relational MySQL table
+Use PROGRAMS to manipulate or analyze data
+  - PROGRAMS can also obtain data from sources like 3rd party Api's
+  - Supports any interpreted language
+Use STEPLISTS to combine these basic operations into data pipelines
+  - Automatically parallelize and distribute on a cluster
+Use JOBS to schedule any executable on some frequency
+
+Use Cases:
+
+Scraping websites
+  - Use a PROGRAM to scrape data from a website
+  - Combine with a QUERY to save data into the data store
+  - Schedule a JOB to run frequently
+
+Machine learning pipelines
+  - Create a program to train data using LinearRegression
+  - Train large sets of data in parallel using multiple models to compare results
+  - Cross validate in parallel distributed across the cluster
+
+Business application development
+  - Create simple user authentication flows
+  - Interact with 3rd party api's without creating infrastructure
+  - Generate credit card registration flows to create a simple payment Api
+
+
+StepLists:
+d = data
+e = executable
+
+Synchronous execution
+  En(...Ei+2(Ei+1(Ei(D))))
+
+Asynchronous execution
+  
+  [Ei(Di), Ei+1(Di+1), Ei+2(Di+2) ... En(Dn)]
+
+  [E(Di), E(Di+1), E(Di+2) ... E(Dn)] 
+
+
+
+
+

@@ -3,4 +3,4 @@
 npm run build
 npm pack
 mv deploy-1.0.0.tgz iam/deploy.tgz
-./$1/clone $1 $2
+./$1/clone $1 $2 $3

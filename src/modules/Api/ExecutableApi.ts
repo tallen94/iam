@@ -1,24 +1,22 @@
-import Multer from "multer";
-
 import {
   ServerCommunicator,
   ApiPaths,
   Executor
 } from "../modules";
-import { FileSystem } from "../FileSystem/FileSystem";
+import { Logger } from "../Logger/Logger";
 
 export class ExecutableApi {
   private serverCommunicator: ServerCommunicator;
   private executor: Executor;
-  private fileSystem: FileSystem;
+  private logger: Logger;
 
   constructor(
     threadManager: Executor,
     serverCommunicator: ServerCommunicator,
-    fileSystem: FileSystem) {
+    logger: Logger) {
     this.executor = threadManager;
     this.serverCommunicator = serverCommunicator;
-    this.fileSystem = fileSystem;
+    this.logger = logger;
     this.initApi();
   }
 
@@ -27,31 +25,42 @@ export class ExecutableApi {
     /**
      * Adds an executable to be executed on the node.
      *
-     * path: /:type/:name
+     * path: /executable/:token/:type/:name
      * method: POST
-     * body: { data: any, dataType: string, dataModel: any, userId: number }
+     * body: { data: any, dataType: string, dataModel: any }
      */
     this.serverCommunicator.post(ApiPaths.ADD_EXECUTABLE, (req: any, res: any) => {
+      const user = this.parseUser(req.headers);
       const name = req.params.name;
       const type = req.params.type;
       const data = req.body.data;
       const dataType = req.body.dataType;
       const dataModel = req.body.dataModel;
       const userId = req.body.userId;
-      this.executor.addExecutable(type, name, data, dataType, dataModel, userId)
+      const description = req.body.description;
+      if (user.userId) {
+        this.logger.logUserAction(user.userId, "ADD_EXECUTABLE", {type: type, name: name});
+      }
+      this.executor.addExecutable(type, name, data, dataType, dataModel, userId, description)
       .then((result: any) => {
-        res.status(200).send({ shell: result[0], clients: result[1] });
+        res.status(200).send(result);
       });
-    }, Multer({ storage: this.fileSystem.getProgramStorage() }).single("program"));
+    });
 
     /**
      * Get an executable
      *
-     * path: /:type/:name
+     * path: /executable/:token/:type/:name
      * method: GET
      */
     this.serverCommunicator.get(ApiPaths.GET_EXECUTABLE, (req: any, res: any) => {
-      this.executor.getExecutable(req.params.type, req.params.name).then((result) => {
+      const user = this.parseUser(req.headers);
+      const type = req.params.type;
+      const name = req.params.name;
+      if (user.userId) {
+        this.logger.logUserAction(user.userId, "GET_EXECUTABLE", {type: type, name: name});
+      }
+      this.executor.getExecutable(type, name).then((result) => {
         res.status(200).send(result);
       });
     });
@@ -59,11 +68,35 @@ export class ExecutableApi {
     /**
      * Get all executables
      *
-     * path: /:type?userId=number
+     * path: /executable/:token/:type
      * method: GET
      */
     this.serverCommunicator.get(ApiPaths.GET_EXECUTABLES, (req: any, res: any) => {
-      this.executor.getExecutables(req.params.type, req.query.userId).then((results) => {
+      const user = this.parseUser(req.headers);
+      const type = req.params.type;
+      if (user.userId) {
+        this.logger.logUserAction(user.userId, "GET_EXECUTABLES", {type: type});
+      }
+      this.executor.getExecutables(type, user.userId)
+      .then((results) => {
+        res.status(200).send(results);
+      });
+    });
+
+    /**
+     * Search all executables
+     *
+     * path: /executable/search?searchText=string
+     * method: GET
+     */
+    this.serverCommunicator.get(ApiPaths.SEARCH_EXECUTABLES, (req: any, res: any) => {
+      const user = this.parseUser(req.headers);
+      const searchText = req.query.searchText;
+      if (user.userId) {
+        this.logger.logUserAction(user.userId, "SEARCH_EXECUTABLES", {searchText: searchText});
+      }
+      this.executor.searchExecutables(searchText)
+      .then((results) => {
         res.status(200).send(results);
       });
     });
@@ -71,17 +104,28 @@ export class ExecutableApi {
     /**
      * Execute an executable.
      *
-     * path: /:type/:name/run
+     * path: /executable/:token/:type/:name/run
      * method: POST
      */
     this.serverCommunicator.post(ApiPaths.RUN_EXECUTABLE, (req: any, resp: any) => {
+      const user = this.parseUser(req.headers);
       const name = req.params.name;
       const type = req.params.type;
       const data = req.body;
+      if (user.userId) {
+        this.logger.logUserAction(user.userId, "RUN_EXECUTABLE", {type: type, name: name});
+      }
       this.executor.runExecutable(type, name, data)
       .then((result: any) => {
-        resp.status(200).send({ result: result});
+        resp.status(200).send({result: result});
       });
     });
+  }
+
+  private parseUser(headers: any) {
+    if (headers.user) {
+      return JSON.parse(headers.user);
+    }
+    return {};
   }
 }

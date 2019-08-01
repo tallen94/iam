@@ -3,7 +3,7 @@ import { StepList } from "./StepList";
 import Lodash from "lodash";
 import { CollectDuplex } from "../Stream/CollectDuplex";
 
-export class ForEachStep implements Step {
+export class EachNodeStep implements Step {
 
   private step: Step;
 
@@ -25,15 +25,11 @@ export class ForEachStep implements Step {
     return pipe;
   }
 
-  public execute(data: any[]) {
-    return Promise.all(Lodash.map(data, (item) => {
-      return this.step.execute(item);
-    }));
+  public execute(data: any) {
+    return this.step.executeEach(data);
   }
 
   public executeEach(data: any[]) {
-    return Promise.all(Lodash.map(data, (item) => {
-      return this.step.executeEach(item);
-    }));
+    return this.execute(data);
   }
 }

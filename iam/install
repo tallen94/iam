@@ -1,7 +1,7 @@
 #!/bin/sh
 
 sudo systemctl stop deploy
-sudo npm i -g /home/pi/iam/deploy.tgz
-sudo cp /home/pi/iam/deploy.service /etc/systemd/system/
+sudo npm i -g /home/$1/iam/deploy.tgz
+sudo cp /home/$1/iam/deploy.service /etc/systemd/system/
 sudo systemctl daemon-reload
 sudo systemctl start deploy

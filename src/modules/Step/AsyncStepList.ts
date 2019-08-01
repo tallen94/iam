@@ -3,7 +3,7 @@ import { StepList } from "./StepList";
 import Lodash from "lodash";
 import { CollectDuplex } from "../Stream/CollectDuplex";
 
-export class AsyncStepList implements StepList {
+export class AsyncStepList implements Step {
 
   private steps: Step[];
 
@@ -28,6 +28,12 @@ export class AsyncStepList implements StepList {
   public execute(data: any[]) {
     return Promise.all(Lodash.map(this.steps, (step, i) => {
       return step.execute(data[i]);
+    }));
+  }
+
+  public executeEach(data: any) {
+    return Promise.all(Lodash.map(this.steps, (step, i) => {
+      return step.executeEach(data[i]);
     }));
   }
 }

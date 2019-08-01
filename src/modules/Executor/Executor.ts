@@ -11,6 +11,7 @@ import { ClientPool } from "./ClientPool";
 import { StepListManager } from "../Step/StepListManager";
 import * as Lodash from "lodash";
 import { JobRunner } from "../Job/JobRunner";
+import { FileSystemCommunicator } from "../Communicator/FileSystemCommunicator";
 
 export class Executor {
 
@@ -26,11 +27,11 @@ export class Executor {
     this.jobRunner = jobRunner;
   }
 
-  public init(fileSystem: FileSystem, dbConfig: any, clientPool: ClientPool): Promise<any> {
+  public init(fileSystem: FileSystem, dbConfig: any, fsConfig: any, clientPool: ClientPool) {
     this.clientPool = clientPool;
     this.setDatabase(dbConfig);
-    this.setShell(fileSystem, this.database);
-    return this.setStepListManager(this.shell, this.database, clientPool);
+    this.setShell(fileSystem, this.database, fsConfig);
+    this.setStepListManager(this.shell, this.database, clientPool);
   }
 
   public status(): Promise<any> {
@@ -41,25 +42,18 @@ export class Executor {
     ]);
   }
 
-  public update(pkg: any) {
-    return Promise.all([
-      this.shell.update(),
-      this.clientPool.update(pkg)
-    ]);
-  }
-
-  public addExecutable(type: string, name: string, data: any, dataType: string, dataModel: string, userId: number) {
+  public addExecutable(type: string, name: string, data: any, dataType: string, dataModel: string, userId: number, description: string) {
     switch (type) {
       case "PROGRAM":
-        return this.shell.addProgram(name, data, dataType, dataModel, userId);
+        return this.shell.addProgram(name, data, dataType, dataModel, userId, description);
       case "COMMAND":
-        return this.shell.addCommand(name, data, dataType, dataModel, userId);
+        return this.shell.addCommand(name, data, dataType, dataModel, userId, description);
       case "QUERY":
-        return this.database.addQuery(name, data, dataType, dataModel, userId);
+        return this.database.addQuery(name, data, dataType, dataModel, userId, description);
       case "STEPLIST":
-        return this.stepListManager.addStepList(name, data, dataType, dataModel, userId);
+        return this.stepListManager.addStepList(name, data, dataType, dataModel, userId, description);
       case "JOB":
-        return this.jobRunner.addJob(name, data, dataType, dataModel, userId);
+        return this.jobRunner.addJob(name, data, dataType, dataModel, userId, description);
     }
   }
 
@@ -79,7 +73,18 @@ export class Executor {
   }
 
   public getExecutables(type: string, userId: number) {
-    return this.database.runQuery("get-exe-for-user", {type: type, userId: userId});
+    switch (type) {
+      case "PROGRAM":
+        return this.shell.getPrograms(userId);
+      case "COMMAND":
+        return this.shell.getCommands(userId);
+      case "QUERY":
+        return this.database.getQueries(userId);
+      case "STEPLIST":
+        return this.stepListManager.getStepLists(userId);
+      case "JOB":
+        return this.jobRunner.getJobs(userId);
+    }
   }
 
   public runExecutable(type: string, name: string, data: any) {
@@ -95,64 +100,19 @@ export class Executor {
     }
   }
 
-  public addProgram(name: string, exe: string, filename: string, run: string, program: any, dataType: string, dataModel: string, userId: number) {
-    return Promise.all([
-      this.shell.addProgram(name, exe, filename, run, userId),
-      this.clientPool.addProgram(name, exe, filename, run, program, dataType, dataModel)
-    ]);
-  }
+  public searchExecutables(searchText: string) {
+    return this.database.runQuery("search-executable", {searchText: searchText})
+    .then((results) => {
+      const groups = {};
+      Lodash.each(results, (item) => {
+        if (groups[item.type] == undefined) {
+          groups[item.type] = [];
+        }
 
-  public getProgram(name: string) {
-    return this.shell.getProgram(name);
-  }
-
-  public getPrograms() {
-    return this.shell.getPrograms();
-  }
-
-  public addCommand(name: string, command: string, dataType: string, dataModel: string, userId: number) {
-    return Promise.all([
-      this.shell.addCommand(name, command, dataType, dataModel, userId),
-      this.clientPool.addCommand(name, command, dataType, dataModel)
-    ]);
-  }
-
-  public getCommand(name: string) {
-    return this.shell.getCommand(name);
-  }
-
-  public getCommands() {
-    return this.shell.getCommands();
-  }
-
-  public addQuery(name: string, query: string, dataType: string, dataModel: string, userId: number) {
-    return Promise.all([
-      this.database.addQuery(name, query, dataType, dataModel, userId),
-      this.clientPool.addQuery(name, query, dataType, dataModel, userId)
-    ]);
-  }
-
-  public getQuery(name: string) {
-    return this.database.getQuery(name);
-  }
-
-  public getQueries() {
-    return this.database.getQueries();
-  }
-
-  public addStepList(name: string, data: string, dataType: string, dataModel: string, userId: number) {
-    return Promise.all([
-      this.stepListManager.addStepList(name, data, dataType, dataModel, userId),
-      this.clientPool.addStepList(name, data, dataType, dataModel, userId)
-    ]);
-  }
-
-  public getStepList(name: string) {
-    return this.stepListManager.getStepList(name);
-  }
-
-  public getStepLists() {
-    return this.stepListManager.getStepLists();
+        groups[item.type].push(item);
+      });
+      return groups;
+    });
   }
 
   public getShell(): Shell {
@@ -171,9 +131,11 @@ export class Executor {
     return this.stepListManager;
   }
 
-  private setShell(fileSystem: FileSystem, database: Database) {
+  private setShell(fileSystem: FileSystem, database: Database, fsConfig: any) {
+    const fsClient = new ClientCommunicator(fsConfig["host"], fsConfig["port"]);
     const shellCommunicator: ShellCommunicator = new ShellCommunicator();
-    const thread = new Shell(shellCommunicator, database, fileSystem);
+    const fileSystemCommunicator: FileSystemCommunicator = new FileSystemCommunicator(fsClient);
+    const thread = new Shell(shellCommunicator, fileSystemCommunicator, database, fileSystem);
     this.shell = thread;
     return this.shell;
   }
@@ -196,10 +158,8 @@ export class Executor {
 
   private setStepListManager(shell: Shell, database: Database, clientPool: ClientPool) {
     const thread = new StepListManager(shell, database, clientPool);
-    return thread.loadData().then((result) => {
-      this.stepListManager = thread;
-      return this.stepListManager;
-    });
+    this.stepListManager = thread;
+    return this.stepListManager;
   }
 
   public addClientThread(host: string, port: number) {

@@ -1,6 +1,7 @@
 import { Executor } from "../Executor/Executor";
 
 import * as Lodash from "lodash";
+import * as UUID from "uuid";
 
 export class JobRunner {
 
@@ -10,49 +11,57 @@ export class JobRunner {
   constructor(executor: Executor) {
     this.executor = executor;
     this.state = "STOPPED";
-    this.run();
-    this.queue();
+    // this.queue();
+    // this.run();
   }
 
+  /**
+   * Pull from the queue and run jobs.
+   */
   private run() {
     setTimeout(() => {
       if (this.state == "RUNNING") {
-        this.dequeue().then((job) => {
-          if (job != undefined) {
-            const data = JSON.parse(unescape(job.data)).data;
+        this.dequeue(5)
+        .then((jobs) => {
+          Lodash.each(jobs, (job) => {
+            const data = JSON.parse(job.data);
             this.executor.runExecutable(data.exeType, data.exeName, JSON.parse(data.data))
             .then((result) => {
               return this.ack(job.id);
-            }).catch((result) => {
-              return this.requeue(job.id);
+            }).then((result) => {
+              return this.executor.runExecutable("QUERY", "get-exe-by-id", {id: job.jobId})
+              .then((result) => {
+                if (result.length > 0) {
+                  const item = result[0];
+                  const jobData = JSON.parse(item.data);
+                  if (jobData.enabled == "1") {
+                    this.queueJob(job.jobId, data);
+                  }
+                }
+              });
             });
-          }
+          });
         });
       }
       this.run();
-    }, 500);
+    }, 5000);
   }
 
+  /**
+   * Pull all jobs from the database and attempt to queue them.
+   * Only performed once on startup.
+   */
   public queue() {
-    setTimeout(() => {
-      this.getJobs().then((jobs) => {
-        Lodash.each(jobs, (job) => {
-          if (job.data.enabled == "1") {
-            this.executor.runExecutable("PROGRAM", "next-date", { cronExpr: job.data.cronExpr })
-            .then((date) => {
-              const diff = Math.abs(Date.now() - date);
-              if (diff <= 2000) {
-                this.executor.getDatabase().runQuery("queue-job", { data: escape(JSON.stringify(job)) });
-              }
-            });
-          }
-        });
+    this.getAllJobs().then((jobs) => {
+      Lodash.each(jobs, (job) => {
+        if (job.data.enabled == "1") {
+          this.queueJob(job.id, job.data);
+        }
       });
-      this.queue();
-    }, 1000);
+    });
   }
 
-  public addJob(name: string, data: string, dataType: string, dataModel: string, userId: number) {
+  public addJob(name: string, data: string, dataType: string, dataModel: string, userId: number, description: string) {
     return this.getJob(name).then((result) => {
       if (result == undefined) {
         return this.executor.getDatabase().runQuery("add-exe", {
@@ -61,7 +70,8 @@ export class JobRunner {
           data: data,
           dataType: dataType,
           dataModel: dataModel,
-          userId: userId
+          userId: userId,
+          description: description
         });
       }
       return this.executor.getDatabase().runQuery("update-exe", {
@@ -70,8 +80,15 @@ export class JobRunner {
         data: data,
         dataType: dataType,
         dataModel: dataModel,
-        userId: userId
+        userId: userId,
+        description: description
       });
+    }).then((result) => {
+      return this.getJob(name);
+    }).then((job) => {
+      if (job.data.enabled == "1") {
+        this.queueJob(job.id, job.data);
+      }
     });
   }
 
@@ -81,25 +98,41 @@ export class JobRunner {
       if (result.length > 0) {
         const item = result[0];
         return {
+          id: item.id,
           name: item.name,
-          data: JSON.parse(unescape(item.data)),
+          data: JSON.parse(item.data),
           dataType: item.dataType,
-          dataModel: unescape(item.dataModel),
+          dataModel: item.dataModel,
+          description: item.description
         };
       }
       return undefined;
     });
   }
 
-  public getJobs() {
-    return this.executor.getDatabase().runQuery("get-exe-by-type", {type: "JOB"})
+  public getJobs(userId: number) {
+    return this.executor.getDatabase().runQuery("get-exe-for-user", {type: "JOB", userId: userId})
     .then((result) => {
       return Lodash.map(result, (item) => {
         return {
           name: item.name,
-          data: JSON.parse(unescape(item.data)),
+          description: item.description
+        };
+      });
+    });
+  }
+
+  public getAllJobs() {
+    return this.executor.getDatabase().runQuery("get-exe-by-type", {type: "JOB"})
+    .then((result) => {
+      return Lodash.map(result, (item) => {
+        return {
+          id: item.id,
+          name: item.name,
+          data: JSON.parse(item.data),
           dataType: item.dataType,
-          dataModel: unescape(item.dataModel),
+          dataModel: item.dataModel,
+          description: item.description
         };
       });
     });
@@ -109,20 +142,16 @@ export class JobRunner {
     return this.executor.getDatabase().runQuery("ack-job", {id: id});
   }
 
-  private requeue(id: number) {
-    return this.executor.getDatabase().runQuery("requeue-job", {id: id});
+  private queueJob(jobId: number, data: any) {
+    return this.executor.runExecutable("PROGRAM", "next-date", { cronExpr: data.cronExpr })
+    .then((date) => {
+      this.executor.getDatabase().runQuery("queue-job", { date: date , data: JSON.stringify(data), jobId: jobId });
+    });
   }
 
-  private dequeue() {
-    return this.executor.getDatabase().runQuery("get-n-jobs", {})
-    .then((result) => {
-      result = result[3];
-      if (result.length > 0) {
-        return result[0];
-      }
-      return undefined;
-    }).catch((reason) => {
-      console.log(reason);
+  private dequeue(size: number) {
+    return this.executor.runExecutable("STEPLIST", "dequeue-jobs", { table: UUID.v4(), size: size})
+    .catch((reason) => {
       process.exit();
     });
   }

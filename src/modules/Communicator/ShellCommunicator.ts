@@ -7,7 +7,8 @@ export class ShellCommunicator {
 
   public exec(command: string, data?: string): Promise<any> {
     return new Promise((resolve, reject) => {
-      const cp = Shell.exec(command, { silent: true }, (code: number, out: string, err: any) => {});
+      const cp = Shell.exec(command, { silent: true }, (code: number, out: string, err: any) => { });
+
       if (data != undefined) {
         cp.stdin.write(data + "\n");
       }
@@ -15,12 +16,14 @@ export class ShellCommunicator {
       let out = "";
       cp.stdout.on("data", (data: string) => {
         out = out + data;
-        if (data.length < 8192) {
-          resolve(out);
-        }
       });
+
       cp.stderr.on("data", (data: string) => {
-        resolve(data);
+        out = out + data;
+      });
+
+      cp.on("close", (code, signal) => {
+        resolve(out);
       });
     });
   }

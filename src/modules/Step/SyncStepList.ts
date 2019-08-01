@@ -7,7 +7,7 @@ import { LocalProcess } from "../Process/LocalProcess";
 import { RemoteProcess } from "../Process/RemoteProcess";
 import { QueryProcess } from "../Process/QueryProcess";
 
-export class SyncStepList implements StepList {
+export class SyncStepList implements Step {
 
   private steps: Step[];
 
@@ -49,6 +49,16 @@ export class SyncStepList implements StepList {
     Lodash.each(this.steps, (step) => {
       promise = promise.then((result) => {
         return step.execute(result);
+      });
+    });
+    return promise;
+  }
+
+  public executeEach(data: any) {
+    let promise = Promise.resolve(data);
+    Lodash.each(this.steps, (step) => {
+      promise = promise.then((result) => {
+        return step.executeEach(result);
       });
     });
     return promise;

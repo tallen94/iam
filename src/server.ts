@@ -4,32 +4,45 @@ import {
 import { ExecutableApi } from "./modules/Api/ExecutableApi";
 import { Api } from "./modules/Api/Api";
 import * as OS from "os";
+import { JobRunner } from "./modules/Job/JobRunner";
+import { Logger } from "./modules/Logger/Logger";
 
-const HOME = "/home/pi/iam";
+const HOME = "/home/ubuntu/iam";
 const fileSystem: FileSystem = new FileSystem(HOME);
 const dbconfig = require(fileSystem.path("db-config.json"));
+const fsconfig = require(fileSystem.path("fs-config.json"));
 const host = getHost();
 const port = 5000;
 const clientThreadPool: ClientPool = new ClientPool();
-const threadManager: Executor = new Executor();
-threadManager.init(fileSystem, dbconfig, clientThreadPool)
-.then(() => {
-  if (port == 5000) return threadManager.setClientPool(host, port);
+const executor: Executor = new Executor();
+executor.init(fileSystem, dbconfig, fsconfig, clientThreadPool);
+executor.getDatabase().runQuery("get-node", {host: host, port: port})
+.then((result) => {
+  const node = result[0];
+  if (node.parent == undefined) {
+    const jobRunner: JobRunner = new JobRunner(executor);
+    jobRunner.start();
+    executor.setJobRunner(jobRunner);
+    return executor.setClientPool(host, port);
+  }
   return Promise.resolve();
 }).then(() => {
-  const serverCommunicator: ServerCommunicator = new ServerCommunicator(host, port, fileSystem.getPublicRoot());
+  const serverCommunicator: ServerCommunicator = new ServerCommunicator(
+    host,
+    port,
+    fileSystem);
   const api: Api = new Api(
-    threadManager,
+    executor,
     serverCommunicator,
     fileSystem);
   const executableApi: ExecutableApi = new ExecutableApi(
-    threadManager,
+    executor,
     serverCommunicator,
-    fileSystem);
+    new Logger(executor));
   return serverCommunicator.listen();
 }).then(() => { console.log("Started"); });
 
 function getHost() {
   const ifaces = OS.networkInterfaces();
-  return ifaces["en0"][0]["address"];
+  return ifaces["eth0"][0]["address"];
 }

@@ -1,6 +1,7 @@
 import { Step } from "./Step";
 import { Shell } from "../Executor/Shell";
 import { ClientPool } from "../Executor/ClientPool";
+import { Client } from "../Executor/Client";
 
 export class CommandStep implements Step {
 
@@ -26,5 +27,19 @@ export class CommandStep implements Step {
       return result[0].result;
     }) :
     this.shell.runCommand(this.name, data);
+  }
+
+  public executeEach(data: any) {
+    return Promise.all([
+      this.clientPool.eachClient((client: Client) => {
+        return client.runExecutable("COMMAND", this.name, data)
+        .then((result) => {
+          return result["result"];
+        });
+      }),
+      this.shell.runCommand(this.name, data)
+    ]).then((results) => {
+      return results[0].concat([results[1]]);
+    });
   }
 }

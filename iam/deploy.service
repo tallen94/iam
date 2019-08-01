@@ -7,7 +7,7 @@ StartLimitIntervalSec=0
 Type=simple
 Restart=always
 RestartSec=1
-User=pi
+User=ubuntu
 ExecStart=/usr/local/bin/deploy
 
 [Install]

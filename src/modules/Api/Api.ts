@@ -55,21 +55,5 @@ export class Api {
         });
       });
     });
-
-    /**
-     * Update thy self.
-     *
-     * path: /update
-     * method: POST
-     * body: { filename: string, package: file }
-     */
-    this.serverCommunicator.post(ApiPaths.UPDATE, (req: any, res: any) => {
-      const filePath = this.fileSystem.path(req.body.filename);
-      const pkg = FS.createReadStream(filePath);
-      this.executor.update(pkg)
-      .then((result: any) => {
-        res.status(200).send({ shell: result[0], clients: result[1] });
-      });
-    }, Multer({ storage: this.fileSystem.getRootStorage() }).single("package"));
   }
 }

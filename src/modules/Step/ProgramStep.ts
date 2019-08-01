@@ -1,6 +1,7 @@
 import { Step } from "./Step";
 import { Shell } from "../Executor/Shell";
 import { ClientPool } from "../Executor/ClientPool";
+import { Client } from "../Executor/Client";
 
 export class ProgramStep implements Step {
 
@@ -30,5 +31,14 @@ export class ProgramStep implements Step {
       return result[0].result;
     }) :
     this.shell.runProgram(this.name, data);
+  }
+
+  public executeEach(data: any) {
+    return Promise.all([
+      this.clientPool.eachClient((client: Client) => { return client.runExecutable("PROGRAM", this.name, data); }),
+      this.shell.runProgram(this.name, data)
+    ]).then((results) => {
+      return results[0].concat([results[1]]);
+    });
   }
 }

@@ -9,6 +9,10 @@ import { Database } from "../Executor/Database";
 import { ClientPool } from "../Executor/ClientPool";
 import { Duplex } from "stream";
 import { ForEachStep } from "./ForEachStep";
+import { MeteredForEachStep } from "./MeteredStepList";
+import { GroupAsyncStepList } from "./GroupAsyncStepList";
+import { SyncForEachStep } from "./SyncForEach";
+import { EachNodeStep } from "./EachNodeStep";
 
 export class StepListManager {
   private shell: Shell;
@@ -21,12 +25,8 @@ export class StepListManager {
     this.clientPool = clientPool;
   }
 
-  public loadData() {
-    return this.getStepLists();
-  }
-
   // ADD
-  public addStepList(name: string, data: string, dataType: string, dataModel: string, userId: number) {
+  public addStepList(name: string, data: string, dataType: string, dataModel: string, userId: number, description: string) {
     return this.getStepList(name)
     .then((result) => {
       if (result == undefined) {
@@ -36,7 +36,8 @@ export class StepListManager {
           data: data,
           dataType: dataType,
           dataModel: dataModel,
-          userId: userId
+          userId: userId,
+          description: description
         });
       } else {
         return this.database.runQuery("update-exe", {
@@ -45,7 +46,8 @@ export class StepListManager {
           data: data,
           dataType: dataType,
           dataModel: dataModel,
-          userId: userId
+          userId: userId,
+          description: description
         });
       }
     });
@@ -58,9 +60,11 @@ export class StepListManager {
       if (result.length > 0) {
         const item = result[0];
         return {
-          data: JSON.parse(unescape(item.data)),
+          name: item.name,
+          data: JSON.parse(item.data),
           dataType: item.dataType,
-          dataModel: unescape(item.dataModel)
+          dataModel: item.dataModel,
+          description: item.description
         };
       }
       return undefined;
@@ -68,20 +72,18 @@ export class StepListManager {
   }
 
   // GET ALL SYNC
-  public getStepLists() {
-    return this.database.runQuery("get-exe-by-type", {type: "STEPLIST"})
+  public getStepLists(userId: number) {
+    return this.database.runQuery("get-exe-for-user", {type: "STEPLIST", userId: userId})
     .then((result) => {
       return Lodash.map(result, (item) => {
-        return {name: item.name};
+        return {name: item.name, description: item.description};
       });
     });
   }
 
   public runStepList(name: string, data: any) {
-    return this.getStepList(name).then((stepList) => {
-      stepList.data["type"] = "STEPLIST";
-      return this.stepJsonToStep(stepList.data);
-    }).then((step) => {
+    return this.stepJsonToStep({name: name, type: "STEPLIST"})
+    .then((step) => {
       return step.execute(data);
     });
   }
@@ -103,7 +105,7 @@ export class StepListManager {
       case "STEPLIST":
         return this.getStepList(stepJson.name).then((stepList) => {
           if (stepList != undefined) {
-            return this.stepJsonToStep(stepList.data);
+            stepJson = stepList.data;
           }
 
           if (stepJson.async == "true") {
@@ -114,6 +116,14 @@ export class StepListManager {
             });
           }
 
+          if (stepJson.async == "false") {
+            return Promise.all(Lodash.map(stepJson.steps, (item) => {
+              return this.stepJsonToStep(item);
+            })).then((steps) => {
+              return new SyncStepList(steps);
+            });
+          }
+
           if (stepJson.async == "foreach") {
             return this.stepJsonToStep(stepJson.step)
             .then((step) => {
@@ -121,11 +131,33 @@ export class StepListManager {
             });
           }
 
-          return Promise.all(Lodash.map(stepJson.steps, (item) => {
-            return this.stepJsonToStep(item);
-          })).then((steps) => {
-            return new SyncStepList(steps);
-          });
+          if (stepJson.async == "metered") {
+            return this.stepJsonToStep(stepJson.step)
+            .then((step) => {
+              return new MeteredForEachStep(step, stepJson.groupSize, this.shell);
+            });
+          }
+
+          if (stepJson.async == "syncforeach") {
+            return this.stepJsonToStep(stepJson.step)
+            .then((step) => {
+              return new SyncForEachStep(step);
+            });
+          }
+
+          if (stepJson.async == "eachnode") {
+            return this.stepJsonToStep(stepJson.step)
+            .then((step) => {
+              return new EachNodeStep(step);
+            });
+          }
+
+          if (stepJson.async == "groupasync") {
+            return this.stepJsonToStep(stepJson.step)
+            .then((step) => {
+              return new GroupAsyncStepList(step, stepJson.numGroups, this.shell);
+            });
+          }
         });
     }
   }
