@@ -69,12 +69,16 @@ export class Database {
     const queryStr = "SELECT * FROM executable WHERE type='QUERY' AND userId={userId};";
     return this.databaseCommunicator.execute(queryStr, {userId: userId})
     .then((data: any) => {
-      return Lodash.map(data, (item) => {
-        return {
-          name: item.name,
-          description: item.description
-        };
-      });
+      return Promise.all(Lodash.map(data, (item) => {
+        return this.runQuery("search-steplists", {query: "%name\":\"" + item.name + "\"%"})
+        .then((results) => {
+          return {
+            name: item.name,
+            description: item.description,
+            steplists: results
+          };
+        });
+      }));
     });
   }
 

@@ -94,11 +94,10 @@ export class DatabaseCommunicator {
         }
 
         if (data[key] == undefined) {
-          const err = "Key not found in data: " + key;
-          console.log(err, query, data);
-          throw err;
+          dataArray.push(undefined);
+        } else {
+          dataArray.push(data[key]);
         }
-        dataArray.push(data[key]);
       }
     }
     return {

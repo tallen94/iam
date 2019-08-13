@@ -112,13 +112,17 @@ export class JobRunner {
 
   public getJobs(userId: number) {
     return this.executor.getDatabase().runQuery("get-exe-for-user", {type: "JOB", userId: userId})
-    .then((result) => {
-      return Lodash.map(result, (item) => {
-        return {
-          name: item.name,
-          description: item.description
-        };
-      });
+    .then((data) => {
+      return Promise.all(Lodash.map(data, (item) => {
+        return this.executor.getDatabase().runQuery("search-steplists", {query: "%name\":\"" + item.name + "\"%"})
+        .then((results) => {
+          return {
+            name: item.name,
+            description: item.description,
+            steplists: results
+          };
+        });
+      }));
     });
   }
 

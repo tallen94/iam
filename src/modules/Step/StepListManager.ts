@@ -74,10 +74,17 @@ export class StepListManager {
   // GET ALL SYNC
   public getStepLists(userId: number) {
     return this.database.runQuery("get-exe-for-user", {type: "STEPLIST", userId: userId})
-    .then((result) => {
-      return Lodash.map(result, (item) => {
-        return {name: item.name, description: item.description};
-      });
+    .then((data) => {
+      return Promise.all(Lodash.map(data, (item) => {
+        return this.database.runQuery("search-steplists", {query: "%name\":\"" + item.name + "\"%"})
+        .then((results) => {
+          return {
+            name: item.name,
+            description: item.description,
+            steplists: results
+          };
+        });
+      }));
     });
   }
 

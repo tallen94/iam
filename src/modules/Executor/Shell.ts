@@ -98,12 +98,16 @@ export class Shell {
   public getPrograms(userId: number) {
     return this.database.runQuery("get-exe-for-user", {type: "PROGRAM", userId: userId})
     .then((data) => {
-      return Lodash.map(data, (item) => {
-        return {
-          name: item.name,
-          description: item.description
-        };
-      });
+      return Promise.all(Lodash.map(data, (item) => {
+        return this.database.runQuery("search-steplists", {query: "%name\":\"" + item.name + "\"%"})
+        .then((results) => {
+          return {
+            name: item.name,
+            description: item.description,
+            steplists: results
+          };
+        });
+      }));
     });
   }
 
@@ -195,12 +199,16 @@ export class Shell {
   public getCommands(userId: number) {
     return this.database.runQuery("get-exe-for-user", {type: "COMMAND", userId: userId})
     .then((data) => {
-      return Lodash.map(data, (item) => {
-        return {
-          name: item.name,
-          description: item.description
-        };
-      });
+      return Promise.all(Lodash.map(data, (item) => {
+        return this.database.runQuery("search-steplists", {query: "%name\":\"" + item.name + "\"%"})
+        .then((results) => {
+          return {
+            name: item.name,
+            description: item.description,
+            steplists: results
+          };
+        });
+      }));
     });
   }
 
