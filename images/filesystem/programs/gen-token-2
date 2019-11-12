@@ -1,0 +1,7 @@
+import json
+import uuid
+
+args = raw_input()
+data = json.loads(args)
+out={"token": str(uuid.uuid4()), "userId": data[1][0]["userId"] }
+print json.dumps(out)
