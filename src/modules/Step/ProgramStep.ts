@@ -8,14 +8,17 @@ export class ProgramStep implements Step {
   private shell: Shell;
   private clientPool: ClientPool;
   private name: string;
+  private username: string;
 
   constructor(
+    username: string,
     name: string,
-    shellExecutor: Shell,
+    shell: Shell,
     clientPool: ClientPool) {
-      this.shell = shellExecutor;
+      this.shell = shell;
       this.clientPool = clientPool;
       this.name = name;
+      this.username = username;
   }
 
   // public spawn() {
@@ -24,19 +27,17 @@ export class ProgramStep implements Step {
   //   [this.shell.spawn(this.name)];
   // }
 
-  public execute(data: any): Promise<any> {
-    return this.clientPool.numClients() > 0 ?
-    this.clientPool.runExecutable("PROGRAM", this.name, data, 1)
+  public execute(data: any, local: boolean): Promise<any> {
+    return this.clientPool.runExecutable(this.username, "function", this.name, data, 1)
     .then((result) => {
       return result[0].result;
-    }) :
-    this.shell.runProgram(this.name, data);
+    });
   }
 
   public executeEach(data: any) {
     return Promise.all([
-      this.clientPool.eachClient((client: Client) => { return client.runExecutable("PROGRAM", this.name, data); }),
-      this.shell.runProgram(this.name, data)
+      this.clientPool.eachClient((client: Client) => { return client.runExecutable(this.username, "function", this.name, data); }),
+      this.shell.runProgram(this.username, this.name, data)
     ]).then((results) => {
       return results[0].concat([results[1]]);
     });

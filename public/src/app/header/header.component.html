@@ -1,0 +1,51 @@
+<div class="inline-input name">
+  <input 
+    class="form-control"
+    size="{{inputSize('name')}}"
+    *ngIf="editing" 
+    type="text" 
+    [(ngModel)]="data.name"
+    [ngModelOptions]="{debounce: 500}"
+    placeholder="name">
+  <p *ngIf="!editing">{{data.name}}</p>
+</div>
+
+<div class="inline-input exe">
+  <div *ngIf="editing">
+    <select class="form-control" [(ngModel)]="data.exe" (change)="change('exe', $event)">
+      <option>function</option>
+      <option>query</option>
+      <option>pipe</option>
+      <option>async</option>
+      <option>foreach</option>
+      <option>job</option>
+      <option>graph</option>
+    </select>
+  </div>
+  <p *ngIf="!editing">.{{data.exe}}</p>
+</div>
+
+<div class="inline-input username">
+  <input 
+    class="form-control"
+    size="{{inputSize('username')}}"
+    *ngIf="editing" 
+    type="text" 
+    [(ngModel)]="data.username"
+    [ngModelOptions]="{debounce: 500}"
+    placeholder="name">
+  <p *ngIf="!editing">.{{data.username}}</p>
+</div>
+
+<div *ngIf="editing" class="text-editor" ace-editor
+  [(text)]="data.description"
+  [mode]="'markdown'" 
+  [theme]="'eclipse'"
+  [options]="options"
+  [readOnly]="false"
+  [autoUpdateContent]="true" 
+  [durationBeforeCallback]="500"></div>
+<p class="card-text">{{data.description}}</p>
+<!-- <div class="markdown" *ngIf="!editing">
+  <ngx-md [data]="data.description"></ngx-md>
+</div> -->

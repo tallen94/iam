@@ -1,4 +1,4 @@
-export * from "./Api/Api";
+export * from "./Api/StatusApi";
 export * from "./Communicator/ServerCommunicator";
 export * from "./Executor/Client";
 
@@ -19,6 +19,5 @@ export * from "./FileSystem/FileSystem";
 export * from "./Executor/Executor";
 
 export * from "./Step/Step";
-export * from "./Step/CommandStep";
 export * from "./Step/ProgramStep";
 export * from "./Step/QueryStep";

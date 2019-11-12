@@ -1,0 +1,21 @@
+<h4>Request Data</h4>
+<div class="editor" ace-editor
+  [(text)]="requestData"
+  [mode]="'python'" 
+  [theme]="'eclipse'"
+  [options]="options"
+  [readOnly]="false"
+  [autoUpdateContent]="true" 
+  [durationBeforeCallback]="500" ></div>
+
+<h4>Response Data</h4>
+<div class="editor" ace-editor
+  [(text)]="responseData"
+  [mode]="'python'" 
+  [theme]="'eclipse'"
+  [options]="options"
+  [readOnly]="false"
+  [autoUpdateContent]="true" 
+  [durationBeforeCallback]="500" ></div>
+  
+<button class="btn btn-success" (click)="run()">Run</button>

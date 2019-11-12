@@ -12,6 +12,7 @@ import { StepListManager } from "../Step/StepListManager";
 import * as Lodash from "lodash";
 import { JobRunner } from "../Job/JobRunner";
 import { FileSystemCommunicator } from "../Communicator/FileSystemCommunicator";
+import { GraphExecutor } from "./GraphExecutor";
 
 export class Executor {
 
@@ -19,19 +20,19 @@ export class Executor {
   private database: Database;
   private clientPool: ClientPool;
   private stepListManager: StepListManager;
+  private graphExecutor: GraphExecutor;
   private jobRunner: JobRunner;
 
-  constructor() {}
-
-  public setJobRunner(jobRunner: JobRunner) {
-    this.jobRunner = jobRunner;
-  }
-
-  public init(fileSystem: FileSystem, dbConfig: any, fsConfig: any, clientPool: ClientPool) {
+  constructor(fileSystem: FileSystem, dbConfig: any, fsConfig: any, clientPool: ClientPool) {
     this.clientPool = clientPool;
     this.setDatabase(dbConfig);
     this.setShell(fileSystem, this.database, fsConfig);
     this.setStepListManager(this.shell, this.database, clientPool);
+    this.setGraphExecutor();
+  }
+
+  public setJobRunner(jobRunner: JobRunner) {
+    this.jobRunner = jobRunner;
   }
 
   public status(): Promise<any> {
@@ -42,74 +43,160 @@ export class Executor {
     ]);
   }
 
-  public addExecutable(type: string, name: string, data: any, dataType: string, dataModel: string, userId: number, description: string) {
-    switch (type) {
-      case "PROGRAM":
-        return this.shell.addProgram(name, data, dataType, dataModel, userId, description);
-      case "COMMAND":
-        return this.shell.addCommand(name, data, dataType, dataModel, userId, description);
-      case "QUERY":
-        return this.database.addQuery(name, data, dataType, dataModel, userId, description);
-      case "STEPLIST":
-        return this.stepListManager.addStepList(name, data, dataType, dataModel, userId, description);
-      case "JOB":
-        return this.jobRunner.addJob(name, data, dataType, dataModel, userId, description);
+  public addExecutable(username: string, userId: number, data: any) {
+    switch (data.exe) {
+      case "function":
+        return this.shell.addProgram(username, userId, data);
+      case "query":
+        return this.database.addQuery(username, userId, data);
+      case "pipe":
+      case "async":
+      case "foreach":
+        return this.stepListManager.addStepList(username, userId, data);
+      case "job":
+        return this.jobRunner.addJob(username, userId, data);
     }
   }
 
-  public getExecutable(type: string, name: string): Promise<any> {
-    switch (type) {
-      case "PROGRAM":
-        return this.shell.getProgram(name);
-      case "COMMAND":
-        return this.shell.getCommand(name);
-      case "QUERY":
-        return this.database.getQuery(name);
-      case "STEPLIST":
-        return this.stepListManager.getStepList(name);
-      case "JOB":
-        return this.jobRunner.getJob(name);
-    }
+  public getExecutable(username: string, name: string, exe: string): Promise<any> {
+    return this.hydrateStepJson({name: name, exe: exe, username: username});
   }
 
-  public getExecutables(type: string, userId: number) {
-    switch (type) {
-      case "PROGRAM":
-        return this.shell.getPrograms(userId);
-      case "COMMAND":
-        return this.shell.getCommands(userId);
-      case "QUERY":
-        return this.database.getQueries(userId);
-      case "STEPLIST":
-        return this.stepListManager.getStepLists(userId);
-      case "JOB":
+  private hydrateStepJson(data: any) {
+    return this.database.runQuery("admin", "get-exe-by-type-name", {name: data.name, exe: data.exe, username: data.username})
+    .then((result) => {
+      let stepJson;
+      if (result.length == 0) {
+        stepJson = data;
+      } else {
+        stepJson = result[0];
+      }
+      switch (stepJson.exe) {
+        case "pipe":
+        case "async":
+          return Promise.all(Lodash.map(stepJson.steps || JSON.parse(stepJson.data), (step) => {
+            return this.hydrateStepJson(step);
+          })).then((result) => {
+            return {
+              username: stepJson.username,
+              name: stepJson.name,
+              exe: stepJson.exe,
+              description: stepJson.description,
+              input: stepJson.input,
+              output: stepJson.output,
+              steps: result
+            };
+          });
+        case "eachnode":
+        case "foreach":
+          return this.hydrateStepJson(stepJson.step || JSON.parse(stepJson.data))
+          .then((result) => {
+            return {
+              username: stepJson.username,
+              name: stepJson.name,
+              exe: stepJson.exe,
+              description: stepJson.description,
+              input: stepJson.input,
+              output: stepJson.output,
+              step: result
+            };
+          });
+        case "function":
+          return this.shell.getProgramFile(stepJson.name)
+          .then((file) => {
+            const data = JSON.parse(stepJson.data);
+            return {
+              username: stepJson.username,
+              name: stepJson.name,
+              exe: stepJson.exe,
+              description: stepJson.description,
+              input: stepJson.input,
+              output: stepJson.output,
+              text: file,
+              args: data.args,
+              command: data.command
+            };
+          });
+        case "graph":
+          const graph = JSON.parse(stepJson.data);
+          return this.hydrateExecutables(graph.nodes)
+          .then((nodes) => {
+            graph.nodes = nodes;
+            return Promise.resolve({
+              username: stepJson.username,
+              name: stepJson.name,
+              exe: stepJson.exe,
+              description: stepJson.description,
+              input: stepJson.input,
+              output: stepJson.output,
+              graph: graph,
+            });
+          });
+        case "query":
+          return Promise.resolve({
+            username: stepJson.username,
+            name: stepJson.name,
+            exe: stepJson.exe,
+            description: stepJson.description,
+            input: stepJson.input,
+            output: stepJson.output,
+            text: stepJson.data,
+          });
+      }
+    });
+  }
+
+  private hydrateExecutables(nodes: any[]) {
+    return Promise.all(Lodash.map(nodes, (node) => {
+      return this.getExecutable(node.username, node.name, node.exe)
+      .then((exe) => {
+        return Object.assign(node, exe);
+      });
+    }));
+  }
+
+  public getExecutables(username: string, userId: number, exe: string) {
+    switch (exe) {
+      case "function":
+        return this.shell.getPrograms(username, userId);
+      case "query":
+        return this.database.getQueries(username, userId);
+      case "pipe":
+      case "async":
+      case "foreach":
+        return this.stepListManager.getStepLists(username, userId, exe);
+      case "job":
         return this.jobRunner.getJobs(userId);
+      case "graph":
+        return this.graphExecutor.getGraphs(username, userId);
     }
   }
 
-  public runExecutable(type: string, name: string, data: any) {
-    switch (type) {
-      case "PROGRAM":
-        return this.shell.runProgram(name, data);
-      case "COMMAND":
-        return this.shell.runCommand(name, data);
-      case "QUERY":
-        return this.database.runQuery(name, data);
-      case "STEPLIST":
-        return this.stepListManager.runStepList(name, data);
+  public runExecutable(username: string, name: string, exe: string, data: any) {
+    switch (exe) {
+      case "function":
+        return this.shell.runProgram(username, name, data);
+      case "query":
+        return this.database.runQuery(username, name, data);
+      case "pipe":
+      case "async":
+      case "foreach":
+        return this.stepListManager.runStepList(username, name, exe, data);
+      case "graph":
+        return this.graphExecutor.runGraph(name, data);
     }
   }
 
   public searchExecutables(searchText: string) {
-    return this.database.runQuery("search-executable", {searchText: searchText})
+    return this.database.runQuery("admin", "search-executable", {searchText: searchText})
     .then((results) => {
       const groups = {};
       Lodash.each(results, (item) => {
-        if (groups[item.type] == undefined) {
-          groups[item.type] = [];
+        if (groups[item.exe] == undefined) {
+          groups[item.exe] = [];
         }
 
-        groups[item.type].push(item);
+        groups[item.exe].push(item);
       });
       return groups;
     });
@@ -147,19 +234,14 @@ export class Executor {
     return this.database;
   }
 
-  public setClientPool(host: string, port: number) {
-    return this.database.runQuery("getNodesNotWithHostPort", {host: host, port: port})
-    .then((results) => {
-      Lodash.each(results, (node) => {
-        this.addClientThread(node.host, node.port);
-      });
-    });
-  }
-
   private setStepListManager(shell: Shell, database: Database, clientPool: ClientPool) {
-    const thread = new StepListManager(shell, database, clientPool);
+    const thread = new StepListManager(shell, database, clientPool, this);
     this.stepListManager = thread;
     return this.stepListManager;
+  }
+
+  private setGraphExecutor() {
+    this.graphExecutor = new GraphExecutor(this.database, this, this.stepListManager);
   }
 
   public addClientThread(host: string, port: number) {

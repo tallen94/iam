@@ -1,0 +1,31 @@
+.searchbar {
+  width: 100%;
+  text-align: center;
+  margin-top: 16px;
+}
+
+.searchbar input {
+  width: 100%;
+  height: 40px;
+}
+
+.searchbar button {
+  width: 100%;
+  margin-top: 8px;
+}
+
+.search-result-group {
+  margin-top: 8px;
+}
+
+.search-result {
+  padding: 8px;
+  border: 1px solid #D8D8D8;
+  border-radius: 8px;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.search-result .description {
+  color: rgb(160, 160, 160);
+}

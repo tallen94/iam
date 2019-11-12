@@ -14,8 +14,8 @@ export class Client {
     return this.clientCommunicator.post(ApiPaths.SPAWN_PROCESS, data, { name: name });
   }
 
-  public runExecutable(type: string, name: string, data: any) {
-    return this.clientCommunicator.post(ApiPaths.RUN_EXECUTABLE, data, { type: type, name: name });
+  public runExecutable(username: string, exe: string, name: string, data: any) {
+    return this.clientCommunicator.post(ApiPaths.RUN_EXECUTABLE, data, { username: username, exe: exe, name: name });
   }
 
   public getHost() {

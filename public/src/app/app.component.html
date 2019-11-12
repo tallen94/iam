@@ -1,0 +1,14 @@
+<!--The content below is only a placeholder and can be replaced.-->
+<div class="header">
+  <div *ngIf="router.url != '/login'" class="group-left btn-group">
+      <button routerLink="/home" type="button" class="btn btn-primary button-bottom">Home</button>
+      <button routerLink="/admin" type="button" class="btn btn-primary button-bottom">Admin</button>
+      <button routerLink="/marketplace" type="button" class="btn btn-primary button-bottom">Marketplace</button>
+      <button routerLink="/graph" type="button" class="btn btn-primary button-bottom">Graph</button>
+      <button (click)="logout()" type="button" class="btn btn-primary button-bottom">Logout</button>
+  </div>
+  <div class="group-right">
+    <h2>iam {{getUser()}}</h2>
+  </div>
+</div>
+<router-outlet></router-outlet>

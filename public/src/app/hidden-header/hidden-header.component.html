@@ -1,0 +1,25 @@
+<div class="inline-input">
+  <label *ngIf="editing || (!editing && !isEmpty(data.input))">Input</label>
+  <input 
+    class="form-control"
+    size="{{inputSize('input')}}"
+    *ngIf="editing" 
+    type="text" 
+    [(ngModel)]="data.input"
+    [ngModelOptions]="{debounce: 500}"
+    placeholder="input">
+  <p *ngIf="!editing">{{data.input}}</p>
+</div>
+
+<div class="inline-input">
+  <label *ngIf="editing || (!editing && !isEmpty(data.output))">Output</label>
+  <input 
+    class="form-control"
+    size="{{inputSize('output')}}"
+    *ngIf="editing" 
+    type="text" 
+    [(ngModel)]="data.output"
+    [ngModelOptions]="{debounce: 500}"
+    placeholder="output">
+  <p *ngIf="!editing">{{data.output}}</p>
+</div>

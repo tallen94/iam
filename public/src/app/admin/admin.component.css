@@ -1,0 +1,44 @@
+.sidebar {
+  background-color: rgb(165, 165, 165);
+  padding: 8px;
+}
+
+.full {
+  position: absolute;
+  top: 64px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: 0;
+  padding: 0 !important;
+}
+
+.sidebar-row {
+  width: 100%;
+  height: 40px;
+  margin-top: 8px;
+}
+
+.sidebar-row button {
+  width: 100%;
+}
+
+.node {
+  margin-left: 32px;
+  margin-right: 32px;
+  margin-top: 8px;
+  border-color: #007bff;
+  border-radius: 8px;
+  border-width: 2px;
+  border-style: solid;
+  color: #007bff;
+}
+
+.node h2 {
+  font-size: 24px;
+}
+
+.node h3 {
+  font-size: 16px;
+}
+

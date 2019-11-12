@@ -1,0 +1,50 @@
+
+{
+  "exe": "pipe",
+  "steps": [
+    {
+      "name": "authenticate-user",
+      "exe": "pipe",
+      "username": "admin",
+      "steps": [
+        {
+          "name": "get-user-hash-password",
+          "steps": [
+            {
+              "name": "get-user",
+              "exe": "query",
+              "username": "admin"
+            },
+            {
+              "name": "hash_password",
+              "exe": "function",
+              "username": "admin"
+            }
+          ],
+          "exe": "async",
+          "username": "admin"
+        },
+        {
+          "name": "authenticate_password",
+          "exe": "function",
+          "username": "admin"
+        }
+      ]
+    },
+    {
+      "name": "gen-token",
+      "exe": "function",
+      "username": "admin"
+    },
+    {
+      "name": "store-token",
+      "exe": "query",
+      "username": "admin"
+    },
+    {
+      "name": "map-store-token",
+      "exe": "function",
+      "username": "admin"
+    }
+  ]
+}

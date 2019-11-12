@@ -1,0 +1,23 @@
+<div class="full row">
+  <div class="sidebar col-sm-3">
+    <div class="sidebar-row">
+      <input class="form-control" placeholder="Host" type="text" [(ngModel)]="host"/>
+    </div>
+    <div class="sidebar-row">
+      <input class="form-control" placeholder="Port" type="text" [(ngModel)]="port"/>
+    </div>
+    <div class="sidebar-row"><button (click)="addClient()" class="btn btn-primary">Add Client</button></div>
+  </div>
+  <div class="col-sm-9">
+    <div class="node row">
+      <h2 class="col-sm-12">RootNode</h2>
+      <h3 class="col-sm-12">Shell : {{rootNode.shell}}</h3>
+      <h3 class="col-sm-12">Database : {{rootNode.database}}</h3>
+    </div>
+    <div class="node row" *ngFor="let client of rootNode.clients">
+      <h2 class="col-sm-12">Client</h2>
+      <h3 class="col-sm-12">Shell : {{rootNode.shell}}</h3>
+      <h3 class="col-sm-12">Database : {{rootNode.database}}</h3>
+    </div>
+  </div>
+</div>

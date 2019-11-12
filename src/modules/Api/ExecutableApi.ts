@@ -3,42 +3,28 @@ import {
   ApiPaths,
   Executor
 } from "../modules";
-import { Logger } from "../Logger/Logger";
 
 export class ExecutableApi {
-  private serverCommunicator: ServerCommunicator;
-  private executor: Executor;
-  private logger: Logger;
 
   constructor(
-    threadManager: Executor,
-    serverCommunicator: ServerCommunicator,
-    logger: Logger) {
-    this.executor = threadManager;
-    this.serverCommunicator = serverCommunicator;
-    this.logger = logger;
-    this.initApi();
+    private executor: Executor,
+    private serverCommunicator: ServerCommunicator) {
+    this.init();
   }
 
-  private initApi(): void {
+  private init(): void {
 
     /**
      * Adds an executable to be executed on the node.
      *
-     * path: /executable/:token/:type/:name
+     * path: /executable
      * method: POST
-     * body: { data: any, dataType: string, dataModel: any }
+     * body: any
      */
     this.serverCommunicator.post(ApiPaths.ADD_EXECUTABLE, (req: any, res: any) => {
       const user = this.parseUser(req.headers);
-      const name = req.params.name;
-      const type = req.params.type;
-      const data = req.body.data;
-      const dataType = req.body.dataType;
-      const dataModel = req.body.dataModel;
-      const userId = req.body.userId;
-      const description = req.body.description;
-      this.executor.addExecutable(type, name, data, dataType, dataModel, userId, description)
+      const data = req.body;
+      this.executor.addExecutable(user.username, user.userId, data)
       .then((result: any) => {
         res.status(200).send(result);
       });
@@ -47,14 +33,15 @@ export class ExecutableApi {
     /**
      * Get an executable
      *
-     * path: /executable/:token/:type/:name
+     * path: /executable/:username/:exe/:name
      * method: GET
      */
     this.serverCommunicator.get(ApiPaths.GET_EXECUTABLE, (req: any, res: any) => {
       const user = this.parseUser(req.headers);
-      const type = req.params.type;
+      const username = req.params.username;
+      const exe = req.params.exe;
       const name = req.params.name;
-      this.executor.getExecutable(type, name).then((result) => {
+      this.executor.getExecutable(username, name, exe).then((result) => {
         res.status(200).send(result);
       });
     });
@@ -62,13 +49,14 @@ export class ExecutableApi {
     /**
      * Get all executables
      *
-     * path: /executable/:token/:type
+     * path: /executable/:username/:exe
      * method: GET
      */
     this.serverCommunicator.get(ApiPaths.GET_EXECUTABLES, (req: any, res: any) => {
       const user = this.parseUser(req.headers);
-      const type = req.params.type;
-      this.executor.getExecutables(type, user.userId)
+      const exe = req.params.exe;
+      const username = req.params.username;
+      this.executor.getExecutables(username, user.userId, exe)
       .then((results) => {
         res.status(200).send(results);
       });
@@ -92,15 +80,16 @@ export class ExecutableApi {
     /**
      * Execute an executable.
      *
-     * path: /executable/:token/:type/:name/run
+     * path: /executable/:username/:exe/:name/run
      * method: POST
      */
     this.serverCommunicator.post(ApiPaths.RUN_EXECUTABLE, (req: any, resp: any) => {
       const user = this.parseUser(req.headers);
+      const username = req.params.username;
       const name = req.params.name;
-      const type = req.params.type;
+      const exe = req.params.exe;
       const data = req.body;
-      this.executor.runExecutable(type, name, data)
+      this.executor.runExecutable(username, name, exe, data)
       .then((result: any) => {
         resp.status(200).send({result: result});
       });

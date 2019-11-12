@@ -1,0 +1,23 @@
+<div class="full">
+  <div class="upper">
+    <button class="btn btn-outline-danger" (click)="delete()">delete</button>
+  </div>
+  <div class="lower">
+    <nested-input 
+      *ngIf="data" 
+      class="left" 
+      [(data)]="data" 
+      (select)="receiveSelect($event)"
+      [editing]="editing"
+      (emitEditing)="receiveEmitEditing($event)"
+      [(hidden)]="hidden"
+      [selected]="selected"></nested-input>
+    <!-- <run class="right" *ngIf="data" [selected]="selected"></run> -->
+    <graph 
+      class="right" 
+      *ngIf="data && data.exe == 'graph'" 
+      [data]="data.graph"
+      [editing]="editing"
+      (emitEditing)="receiveEmitEditing($event)"></graph>
+  </div>
+</div>

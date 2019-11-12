@@ -1,4 +1,5 @@
 import * as Lodash from "lodash";
+import * as UUID from "uuid";
 import {
   DatabaseCommunicator
 } from "../modules";
@@ -21,58 +22,64 @@ export class Database {
     return Promise.resolve(this.status);
   }
 
-  public addQuery(name: string, query: string, dataType: string, dataModel: string, userId: number, description: string): Promise<any> {
-    return this.getQuery(name)
+  public addQuery(username: string, userId: number, data: any): Promise<any> {
+    return this.getQuery(username, data.name)
     .then((result) => {
       if (result == undefined) {
-        return this.runQuery("add-exe", {
-          name: name,
-          type: "QUERY",
-          data: query,
-          dataType: dataType,
-          dataModel: dataModel,
+        return this.runQuery("admin", "add-exe", {
+          username: username,
+          name: data.name,
+          uuid: UUID.v4(),
+          exe: data.exe,
+          data: data.text,
+          input: data.input,
+          output: data.output,
           userId: userId,
-          description: description
+          description: data.description
         });
       } else {
-        return this.runQuery("update-exe", {
-          name: name,
-          type: "QUERY",
-          data: query,
-          dataType: dataType,
-          dataModel: dataModel,
+        return this.runQuery("admin", "update-exe", {
+          name: data.name,
+          exe: data.exe,
+          data: data.text,
+          input: data.input,
+          output: data.output,
           userId: userId,
-          description: description
+          description: data.description
         });
       }
     });
   }
 
-  public getQuery(name: string) {
-    const queryStr = "SELECT * FROM executable WHERE name={name} AND type='QUERY';";
-    return this.databaseCommunicator.execute(queryStr, {name: name})
+  public getQuery(username: string, name: string) {
+    const queryStr = "SELECT * FROM executable WHERE name={name} AND exe='query' AND username={username};";
+    return this.databaseCommunicator.execute(queryStr, {name: name, username: username})
     .then((result: any) => {
       if (result.length > 0) {
         const item = result[0];
         return {
-          query: item.data,
-          dataType: item.dataType,
-          dataModel: item.dataModel,
+          username: item.username,
+          name: item.name,
+          exe: item.exe,
+          text: item.data,
+          input: item.input,
+          output: item.output,
           description: item.description
         };
       }
-      return undefined;
+      return Promise.resolve(undefined);
     });
   }
 
-  public getQueries(userId: number) {
-    const queryStr = "SELECT * FROM executable WHERE type='QUERY' AND userId={userId};";
-    return this.databaseCommunicator.execute(queryStr, {userId: userId})
+  public getQueries(username: string, userId: number) {
+    const queryStr = "SELECT * FROM executable WHERE exe='query' AND userId={userId} AND username={username};";
+    return this.databaseCommunicator.execute(queryStr, {userId: userId, username: username})
     .then((data: any) => {
       return Promise.all(Lodash.map(data, (item) => {
-        return this.runQuery("search-steplists", {query: "%name\":\"" + item.name + "\"%"})
+        return this.runQuery("admin", "search-steplists", {query: "%name\":\"" + item.name + "\"%"})
         .then((results) => {
           return {
+            username: item.username,
             name: item.name,
             description: item.description,
             steplists: results
@@ -92,9 +99,9 @@ export class Database {
     return new QueryProcess(query, this.databaseCommunicator.getConnection());
   }
 
-  public runQuery(name: string, data: any): Promise<any> {
-    return this.getQuery(name).then((query) => {
-      return this.runQueryString(query.query, data);
+  public runQuery(username: string, name: string, data: any): Promise<any> {
+    return this.getQuery(username, name).then((query) => {
+      return this.runQueryString(query.text, data);
     });
   }
   public runQueryString(queryString: string, data: any): Promise<any> {

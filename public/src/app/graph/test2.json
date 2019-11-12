@@ -1,0 +1,68 @@
+{
+  "nodes": [
+    {
+      "id": "1",
+      "label": "get-user",
+      "name": "get-user",
+      "exe": "query",
+      "username": "admin"
+    },
+    {
+      "id": "2",
+      "label": "hash_password",
+      "name": "hash_password",
+      "exe": "function",
+      "username": "admin"
+    },
+    {
+      "id": "3",
+      "label": "authenticate_password",
+      "name": "authenticate_password",
+      "exe": "function",
+      "username": "admin"
+    },
+    {
+      "id": "4",
+      "label": "gen-token",
+      "name": "gen-token",
+      "exe": "function",
+      "username": "admin"
+    },
+    {
+      "id": "5",
+      "label": "store-token",
+      "name": "store-token",
+      "exe": "query",
+      "username": "admin"
+    },
+    {
+      "id": "6",
+      "label": "map-store-token",
+      "name": "map-store-token",
+      "exe": "function",
+      "username": "admin"
+    }
+  ],
+  "edges": [
+    {
+      "source": "1",
+      "target": "3"
+    },
+    {
+      "source": "2",
+      "target": "3"
+    },
+    {
+      "source": "3",
+      "target": "4"
+    },
+    {
+      "source": "4",
+      "target": "5"
+    },
+    {
+      "source": "5",
+      "target": "6"
+    }
+  ]
+}

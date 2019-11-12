@@ -1,36 +1,36 @@
 #! /usr/bin/env node
-var prompt = require('prompt')
-var path = require('path')
-var package = require('../package.json')
-var fs = require('fs')
+const prompt = require("prompt");
+const path = require("path");
+const package = require("../package.json");
+const fs = require("fs");
 
 function header() {
-  console.log('\n\n' + package.name + ': ' + package.version + '\t\n\n')
-  console.log('Bump version (1|2|3)')
+  console.log("\n\n" + package.name + ": " + package.version + "\t\n\n");
+  console.log("Bump version (1|2|3)");
 }
 
 function footer() {
-  console.log('\n\nVersion is now: ' + package.version + '\t\n\n')
+  console.log("\n\nVersion is now: " + package.version + "\t\n\n");
 }
 
 function init() {
-  header()
-  prompt.get(['bump'], (err, res) => {
-    var split = package.version.split('.')
-    var bump = res.bump
-    split[bump - 1]++
+  header();
+  prompt.get(["bump"], (err, res) => {
+    const split = package.version.split(".");
+    const bump = res.bump;
+    split[bump - 1]++;
     while (bump < split.length) {
-      split[bump] = 0
-      bump++
+      split[bump] = 0;
+      bump++;
     }
-    package.version = split.join('.')
-    footer()
-    fs.writeFile(path.join(__dirname, '..', 'package.json'), JSON.stringify(package, null, 2), (err) => {
-      if (err) throw err
-    })
-  })
+    package.version = split.join(".");
+    footer();
+    fs.writeFile(path.join(__dirname, "..", "package.json"), JSON.stringify(package, null, 2), (err) => {
+      if (err) throw err;
+    });
+  });
 
 }
 
-prompt.start()
-init()
+prompt.start();
+init();

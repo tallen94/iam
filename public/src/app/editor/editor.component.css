@@ -1,0 +1,69 @@
+.full {
+  position: absolute;
+  top: 64px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: 0;
+  padding: 0 !important;
+  background-color: rgb(199, 199, 199);
+}
+
+.upper {
+  width: 100%;
+  padding: 8px;
+  box-shadow: 1px 0px 6px 1px;
+  background-color: white;
+}
+
+.upper button {
+  height: 40px;
+  margin-right: 8px;
+}
+
+.lower {
+  position: absolute;
+  top: 64px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: 0;
+  padding: 0 !important;
+  background-color: rgb(199, 199, 199);
+}
+
+.left {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 30%;
+  overflow-y: scroll;
+  padding: 8px;
+  box-shadow: 0px 5px 6px 1px;
+  background-color: white;
+}
+
+.right {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 70%;
+  right: 0;
+  overflow-y: scroll;
+  padding: 8px;
+  box-shadow: 0px 5px 6px 1px;
+  background-color: white;
+}
+
+.center {
+  position: absolute;
+  top: 0;
+  bottom: 2%;
+  left: 5%;
+  right: 5%;
+  display: inline-block;
+  overflow-y: scroll;
+  box-shadow: 0px 5px 6px 1px;
+  background-color: white;
+}

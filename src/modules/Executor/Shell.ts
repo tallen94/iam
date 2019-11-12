@@ -32,76 +32,80 @@ export class Shell {
     return Promise.resolve(this.status);
   }
 
-  public update(): Promise<any> {
-    return this.runCommand("node-update", []);
-  }
-
-  public addProgram(name: string, data: string, dataType: string, dataModel: string, userId: number, description: string): Promise<any> {
-    const parsedData = JSON.parse(data);
-    const filteredData = JSON.stringify({
-      exe: parsedData.exe,
-      args: parsedData.args
-    });
-    return this.getProgram(name)
+  public addProgram(username: string, userId: number, data: any): Promise<any> {
+    const programData = JSON.stringify({ command: data.command, args: data.args });
+    return this.getProgram(data.username, data.name)
     .then((result) => {
       if (result == undefined) {
-        return this.database.runQuery("add-exe", {
-          name: name,
-          type: "PROGRAM",
-          data: filteredData,
-          dataType: dataType,
-          dataModel: dataModel,
+        return this.database.runQuery("admin", "add-exe", {
+          username: username,
+          name: data.name,
+          uuid: UUID.v4(),
+          exe: data.exe,
+          data: programData,
+          input: data.input,
+          output: data.output,
           userId: userId,
-          description: description
+          description: data.description
         });
       } else {
-        return this.database.runQuery("update-exe", {
-          name: name,
-          type: "PROGRAM",
-          data: filteredData,
-          dataType: dataType,
-          dataModel: dataModel,
+        return this.database.runQuery("admin", "update-exe", {
+          name: data.name,
+          exe: data.exe,
+          data: programData,
+          input: data.input,
+          output: data.output,
           userId: userId,
-          description: description
+          description: data.description
         });
       }
     }).then(() => {
       return this.fileSystemCommunicator.putProgram({
-        name: name,
-        program: parsedData.program
+        username: username,
+        name: data.name,
+        program: data.text
       });
     });
   }
 
-  public getProgram(name: string) {
-    return this.database.runQuery("get-exe-by-type-name", {name: name, type: "PROGRAM"})
+  public getProgram(username: string, name: string) {
+    return this.database.runQuery("admin", "get-exe-by-type-name", {username: username, name: name, exe: "function"})
     .then((result) => {
       if (result.length > 0) {
         const item = result[0];
         const data = JSON.parse(item.data);
+        const ret = {
+          username: item.username,
+          name: item.name,
+          exe: item.exe,
+          args: data.args,
+          command: data.command,
+          input: item.input,
+          output: item.output,
+          description: item.description
+        };
         return this.fileSystemCommunicator.getProgram(data.filename == undefined ? name : data.filename)
         .then((result) => {
-          return {
-            name: item.name,
-            data: data,
-            dataType: item.dataType,
-            dataModel: item.dataModel,
-            program: result,
-            description: item.description
-          };
+          ret["text"] = result;
+          return ret;
         });
       }
-      return undefined;
+      return Promise.resolve(undefined);
     });
   }
 
-  public getPrograms(userId: number) {
-    return this.database.runQuery("get-exe-for-user", {type: "PROGRAM", userId: userId})
+  public getProgramFile(name: string) {
+    return this.fileSystemCommunicator.getProgram(name);
+  }
+
+  public getPrograms(username: string, userId: number) {
+    return this.database.runQuery("admin", "get-exe-for-user", {exe: "function", userId: userId, username: username})
     .then((data) => {
       return Promise.all(Lodash.map(data, (item) => {
-        return this.database.runQuery("search-steplists", {query: "%name\":\"" + item.name + "\"%"})
+        return this.database.runQuery("admin", "search-steplists", {query: "%name\":\"" + item.name + "\"%"})
         .then((results) => {
           return {
+            username: item.username,
             name: item.name,
             description: item.description,
             steplists: results
@@ -125,20 +129,20 @@ export class Shell {
     return process;
   }
 
-  public runProgram(name: string, data: any): Promise<any> {
-    return this.getProgram(name)
+  public runProgram(username: string, name: string, data: any): Promise<any> {
+    return this.getProgram(username, name)
     .then((program) => {
       let run = "";
       const path = this.fileSystem.getProgramRoot() + "/" + UUID.v4();
       if (!FS.existsSync(path)) {
         const write = FS.createWriteStream(path);
-        write.write(program.program);
+        write.write(program.text);
         write.close();
       }
 
-      run = program.data.exe + " " + path;
-      if (program.data.args != "") {
-        const args = this.replace(program.data.args, data);
+      run = program.command + " " + path;
+      if (program.args != "") {
+        const args = this.replace(program.args, data);
         run = run + " " + args;
       }
       return this.shell.exec(run, JSON.stringify(data))
@@ -150,75 +154,6 @@ export class Shell {
           return result;
         }
       });
-    });
-  }
-
-  public addCommand(name: string, command: string, dataType: string, dataModel: string, userId: number, description: string): Promise<any> {
-    return this.getCommand(name)
-    .then((result) => {
-      if (result == undefined) {
-        return this.database.runQuery("add-exe", {
-          name: name,
-          type: "COMMAND",
-          data: command,
-          dataType: dataType,
-          dataModel: dataModel,
-          userId: userId,
-          description: description
-        });
-      } else {
-        return this.database.runQuery("update-exe", {
-          name: name,
-          type: "COMMAND",
-          data: command,
-          dataType: dataType,
-          dataModel: dataModel,
-          userId: userId,
-          description: description
-        });
-      }
-    });
-  }
-
-  public getCommand(name: string) {
-    return this.database.runQuery("get-exe-by-type-name", {name: name, type: "COMMAND"})
-    .then((result) => {
-      if (result.length > 0) {
-        const item = result[0];
-        return {
-          command: item.data,
-          dataType: item.dataType,
-          dataModel: item.dataModel,
-          description: item.description
-        };
-      }
-      return undefined;
-    });
-  }
-
-  public getCommands(userId: number) {
-    return this.database.runQuery("get-exe-for-user", {type: "COMMAND", userId: userId})
-    .then((data) => {
-      return Promise.all(Lodash.map(data, (item) => {
-        return this.database.runQuery("search-steplists", {query: "%name\":\"" + item.name + "\"%"})
-        .then((results) => {
-          return {
-            name: item.name,
-            description: item.description,
-            steplists: results
-          };
-        });
-      }));
-    });
-  }
-
-  public runCommand(name: string, data: any): Promise<any> {
-    return this.getCommand(name).then((command) => {
-      if (data == undefined) {
-        return this.shell.exec(command.command);
-      }
-      const commandReplaced = this.replace(command.command, data);
-      return this.shell.exec(commandReplaced);
     });
   }
 
