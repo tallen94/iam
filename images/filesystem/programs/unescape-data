@@ -1,0 +1,6 @@
+process.stdin.on("data", (objStr) => {
+    const obj = JSON.parse(objStr)[0]
+    obj["data"] = JSON.parse(unescape(obj["data"]))
+    process.stdout.write(JSON.stringify(obj))
+    process.exit()
+})

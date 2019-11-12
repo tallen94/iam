@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: iam-filesystem
-        image: icanplayguitar94/iam:base-0.0.1
+        image: icanplayguitar94/iam:filesystem-0.0.1
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
@@ -31,14 +31,6 @@ spec:
           value: "filesystem"
         - name: SERVER_PORT
           value: "5000"
-
-        # FS CONFIG
-        - name: FS_HOST
-          value: "ec2-35-163-67-120.us-west-2.compute.amazonaws.com"
-        - name: FS_PORT
-          value: "5000"
-        - name: FS_FORWARD
-          value: "true"
 
 ---
 apiVersion: v1

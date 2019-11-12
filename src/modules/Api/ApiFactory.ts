@@ -68,17 +68,7 @@ export class ApiFactory {
   }
 
   filesystem(fileSystem: FileSystem, serverCommunicator: ServerCommunicator) {
-    const fsconfig = {
-      host: process.env.FS_HOST,
-      port: process.env.FS_PORT,
-      forward: process.env.FS_FORWARD
-    };
     new StatusApi(serverCommunicator);
-    if (fsconfig.forward == "true") {
-      const fileSystemCommunicator: FileSystemCommunicator = new FileSystemCommunicator(new ClientCommunicator(fsconfig.host, parseInt(fsconfig.port)));
-      new FileSystemApi(fileSystem, serverCommunicator, fileSystemCommunicator);
-    } else {
-      new FileSystemApi(fileSystem, serverCommunicator);
-    }
+    new FileSystemApi(fileSystem, serverCommunicator);
   }
 }

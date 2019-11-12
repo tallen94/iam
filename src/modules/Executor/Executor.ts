@@ -155,7 +155,7 @@ export class Executor {
     }));
   }
 
-  public getExecutables(username: string, userId: number, exe: string) {
+  public getExecutables(username: string, userId: number, exe: string): Promise<any> {
     switch (exe) {
       case "function":
         return this.shell.getPrograms(username, userId);
