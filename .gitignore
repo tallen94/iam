@@ -14,9 +14,16 @@ dist
 **/*.log
 
 # IAM
-iam/*
-!iam/clone
-!iam/deploy.service
-!iam/install
-!iam/packandscp
-!iam/update
+iam
+
+public/node_modules
+public/dist
+
+notes
+designs
+
+kubernetes/secrets
+images/base/deploy.tgz
+images/dashboard/src
+
+

@@ -6,13 +6,13 @@ export class ApiPaths {
   // IamClient endpoints
 
   // PROCESS
-  public static SPAWN_PROCESS = "/process/:type/:name/spawn";
+  public static SPAWN_PROCESS = "/process/:exe/:name/spawn";
   public static WRITE_PROCESS = "/process/:name/write";
 
   // EXECUTABLE
-  public static ADD_EXECUTABLE = "/executable/:type/:name";
-  public static GET_EXECUTABLE = "/executable/:type/:name";
-  public static GET_EXECUTABLES = "/executable/:type";
+  public static ADD_EXECUTABLE = "/executable";
+  public static GET_EXECUTABLE = "/executable/:username/:exe/:name";
+  public static GET_EXECUTABLES = "/executable/:username/:exe";
+  public static RUN_EXECUTABLE = "/executable/:username/:exe/:name/run";
   public static SEARCH_EXECUTABLES = "/search";
-  public static RUN_EXECUTABLE = "/executable/:type/:name/run";
 }

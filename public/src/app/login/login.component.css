@@ -1,0 +1,11 @@
+.login-form {
+  width: 40%;
+  margin-top: 64px;
+}
+
+.login-form button {
+  width: 40%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 8px;
+}

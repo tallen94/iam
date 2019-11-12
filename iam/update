@@ -1,4 +1,0 @@
-#!/bin/sh
-
-sudo npm i -g /home/ubuntu/iam/deploy.tgz
-sudo systemctl restart deploy

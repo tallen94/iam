@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "start": "npm run serve",
-    "local": "npm run serve-local",
+    "reload-local": "npm run build && npm run serve-local",
     "build": "npm run build-ts && npm run tslint",
     "serve": "node dist/server.js",
     "serve-local": "node dist/server-local.js",
@@ -57,6 +57,7 @@
     "jest": "^22.0.4",
     "node-sass": "^4.7.2",
     "nodemon": "^1.13.0",
+    "prompt": "^1.0.0",
     "shelljs": "^0.8.1",
     "supertest": "^3.0.0",
     "ts-jest": "^22.0.4",

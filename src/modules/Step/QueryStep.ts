@@ -8,14 +8,17 @@ export class QueryStep implements Step {
   private database: Database;
   private clientPool: ClientPool;
   private name: string;
+  private username: string;
 
   constructor(
+    username: string,
     name: string,
     databaseExecutor: Database,
     clientPool: ClientPool) {
       this.database = databaseExecutor;
       this.clientPool = clientPool;
       this.name = name;
+      this.username = username;
   }
 
   public spawn() {
@@ -24,19 +27,19 @@ export class QueryStep implements Step {
     this.database.spawn(this.name);
   }
 
-  public execute(data: any): Promise<any> {
-    return this.clientPool.numClients() > 0 ?
-    this.clientPool.runExecutable("QUERY", this.name, data, 1)
+  public execute(data: any, local: boolean): Promise<any> {
+    return local ?
+    this.database.runQuery(this.username, this.name, data) :
+    this.clientPool.runExecutable(this.username, "query", this.name, data, 1)
     .then((result) => {
       return result[0].result;
-    }) :
-    this.database.runQuery(this.name, data);
+    });
   }
 
   public executeEach(data: any) {
     return Promise.all([
-      this.clientPool.eachClient((client: Client) => { return client.runExecutable("QUERY", this.name, data); }),
-      this.database.runQuery(this.name, data)
+      this.clientPool.eachClient((client: Client) => { return client.runExecutable(this.username, "query", this.name, data); }),
+      this.database.runQuery(this.username, this.name, data)
     ]).then((results) => {
       return results[0].concat([results[1]]);
     });

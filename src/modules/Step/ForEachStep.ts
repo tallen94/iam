@@ -1,39 +1,59 @@
 import { Step } from "./Step";
-import { StepList } from "./StepList";
 import Lodash from "lodash";
-import { CollectDuplex } from "../Stream/CollectDuplex";
+import { Shell } from "../Executor/Shell";
+import { StepList } from "./StepList";
 
 export class ForEachStep implements Step {
 
   private step: Step;
+  private groupSize: number;
+  private shell: Shell;
 
-  constructor(step: Step) {
+  constructor(step: Step, groupSize: number, shell: Shell) {
     this.step = step;
-  }
-
-  // public spawn() {
-  //   const processes = Lodash.map(this.steps, (step) => step.spawn());
-  //   return this.buildPipe(processes);
-  // }
-
-  private buildPipe(processes) {
-    let pipe = processes[0].stdout()
-      .pipe(new CollectDuplex({objectMode: true}));
-    for (let i = 1; i < processes.length; i++) {
-      pipe = pipe.pipe(processes[i].stdout().pipe(new CollectDuplex({objectMode: true})));
-    }
-    return pipe;
+    this.groupSize = groupSize;
+    this.shell = shell;
   }
 
   public execute(data: any[]) {
-    return Promise.all(Lodash.map(data, (item) => {
-      return this.step.execute(item);
-    }));
+    return this.shell.runProgram("admin", "group-data", {n: this.groupSize, data: data})
+    .then((groups) => {
+      let promise = Promise.resolve([]);
+      Lodash.each(groups, (dataList) => {
+        promise = promise.then((results) => {
+          return Promise.all(Lodash.map(dataList, (item) => {
+            return this.step.execute(item, false);
+          })).then((results2) => {
+            return results.concat(results2);
+          });
+        });
+      });
+      return promise;
+    });
   }
 
   public executeEach(data: any[]) {
-    return Promise.all(Lodash.map(data, (item) => {
-      return this.step.executeEach(item);
-    }));
+    return this.shell.runProgram("admin", "group-data", {n: this.groupSize, data: data})
+    .then((groups) => {
+      let promise = Promise.resolve([]);
+      Lodash.each(groups, (dataList) => {
+        promise = promise.then((results) => {
+          return Promise.all(Lodash.map(dataList, (item) => {
+            return this.step.execute(item, false);
+          })).then((results2) => {
+            return results.concat(results2);
+          });
+        });
+      });
+      return promise;
+    });
+  }
+
+  private wait(seconds: number) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve();
+      }, seconds * 1000);
+    });
   }
 }

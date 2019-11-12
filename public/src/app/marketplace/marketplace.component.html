@@ -1,0 +1,16 @@
+<div class="container">
+  <div class="searchbar">
+    <label for="search">Search</label>
+    <input class="form-control" id="search" type="text" [(ngModel)]="searchText">
+    <button class="btn btn-primary" (click)="search()">Search</button>
+  </div>
+  <div class="results">
+    <div class="search-result-group" *ngFor="let key of resultKeys()">
+      <h3>{{key}}</h3>
+      <div class="search-result"  *ngFor="let item of results[key]" [routerLink]="['/editor', item.username, item.exe, item.name]">
+        <h4>{{item.name}}</h4>
+        <p class="description">{{item.description}}</p>
+      </div>
+    </div>
+  </div>
+</div>

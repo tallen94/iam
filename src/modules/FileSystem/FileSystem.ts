@@ -62,4 +62,18 @@ export class FileSystem {
   public getProgramStorage(): Multer.StorageEngine {
     return this.programStorage;
   }
+
+  public writeProgram(name: string, text: string) {
+    const path = this.getProgramRoot() + "/" + name;
+    if (!FS.existsSync(path)) {
+      const write = FS.createWriteStream(path);
+      write.write(text);
+      write.close();
+    }
+    return path;
+  }
+
+  public deletePath(path: string) {
+    FS.unlinkSync(path);
+  }
 }

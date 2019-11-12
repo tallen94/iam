@@ -1,0 +1,28 @@
+async
+   *
+ /   \
+*     *
+
+pipe
+*
+|
+*
+
+foreach
+ *
+[|]
+ *
+
+
+splits are async steplists as the last item in a pipe
+
+fork
+sync[
+  s1, 
+  async[s2, s3]
+]
+
+nodes[s1, s2, s3]
+links[{s1:s2}, {s1:s3}]
+
+
