@@ -14,7 +14,7 @@ dist
 **/*.log
 
 # IAM
-iam
+tmp
 
 public/node_modules
 public/dist
