@@ -7,7 +7,7 @@ metadata:
 spec:
   containers:
   - name: mysqldatabase
-    image: icanplayguitar94/iam:mysqldatabase-0.0.1
+    image: icanplayguitar94/iam:database-0.0.1
     imagePullPolicy: IfNotPresent
     ports:
     - containerPort: 3306
