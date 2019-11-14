@@ -11,6 +11,7 @@ import * as Lodash from "lodash";
 export class GraphComponent implements OnInit {
   @Input() data: any;
   @Input() editing: any[];
+  @Input() edgesEditing: any[];
   @Output() emitEditing: EventEmitter<any> = new EventEmitter();
 
   zoomToFit$: Subject<boolean> = new Subject();
@@ -30,6 +31,19 @@ export class GraphComponent implements OnInit {
   
   receiveEmitEditing(data: any) {
     this.editing = data;
+  }
+
+  isEdgeSelected(edge: any) {
+    return Lodash.some(this.edgesEditing, {source: edge.source, target: edge.target});
+  }
+
+  selectEdge(edge: any) {
+    if (this.isEdgeSelected(edge)) {
+      Lodash.remove(this.edgesEditing, (item) => edge.source == item.source && edge.target == item.target)
+    } else {
+      this.edgesEditing.push({source: edge.source, target: edge.target})
+    }
+    this.edgesEditing = [...this.edgesEditing];
   }
 
   isSelected(node) {
@@ -61,7 +75,7 @@ export class GraphComponent implements OnInit {
 
   getNodes(nodes: any[]) {
     return Lodash.map(nodes, (node) => {
-      return { id: node.id, label: node.name}
+      return { id: node.id, label: node.name, exe: node.exe }
     })
   }
 
@@ -84,27 +98,39 @@ export class GraphComponent implements OnInit {
     }
   }
 
-  addNode() {
-    // if (this.selected !== undefined) {
-    //   const newNode = {id: "" + (this.graph.nodes.length + 1), label: "NewNode", exe: "function"};
-    //   this.graph.nodes.push(newNode)
-    //   this.graph.nodes = [...this.graph.nodes]
-    //   this.graph.links.push({ source: this.selected.id, target: newNode.id })
-    //   this.graph.links = [...this.graph.links]
-    // }
+  linkEditing() {
+    if (this.editing.length == 1) {
+      const newNode = {id: "" + (this.graph.nodes.length + 1), label: "NewNode", exe: "function"};
+      this.graph.nodes.push(newNode)
+      this.graph.nodes = [...this.graph.nodes]
+      this.graph.links.push({ source: this.editing[0], target: newNode.id })
+      this.graph.links = [...this.graph.links]
+    } else {
+      for (let i = 0; i < this.editing.length - 1; i++) {
+        this.graph.links.push({ source: this.editing[i], target: this.editing[i+1] })
+      }
+      this.graph.links = [...this.graph.links]
+    }
   }
 
-  deleteNode() {
-    // if (this.selected !== undefined) {
-    //   Lodash.remove(this.graph.nodes, (node: any) => {
-    //     return node.id === this.selected.id
-    //   });
-    //   this.graph.nodes = [...this.graph.nodes]
-    //   Lodash.remove(this.graph.links, (link: any) => {
-    //     return link.source == this.selected.id || link.target == this.selected.id
-    //   })
-    //   this.graph.links = [...this.graph.links]
-    //   this.selected = this.graph.nodes[0]
-    // }
+  deleteEditing() {
+    Lodash.each(this.edgesEditing, (edge) => {
+      Lodash.remove(this.graph.links, (link: any) => {
+        return edge.source == link.source && edge.target == link.target;
+      });
+      this.graph.links = [...this.graph.links]
+    });
+
+    Lodash.each(this.editing, (id) => {
+      Lodash.remove(this.graph.nodes, (node: any) => {
+        return node.id === id
+      });
+      this.graph.nodes = [...this.graph.nodes]
+      Lodash.remove(this.graph.links, (link: any) => {
+        return link.source == id || link.target == id
+      })
+      this.graph.links = [...this.graph.links]
+    })
+    this.editing = []
   }
 }

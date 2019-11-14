@@ -18,6 +18,7 @@
       *ngIf="data && data.exe == 'graph'" 
       [data]="data.graph"
       [editing]="editing"
+      [edgesEditing]="[]"
       (emitEditing)="receiveEmitEditing($event)"></graph>
   </div>
 </div>
