@@ -16,7 +16,7 @@ Each container requires a `$HOME` directory, which is set to `/user/home/iam` an
 Request access to docker hub
 
 ### Kubernetes
-Iam runs on a Kubernetes cluster. Follow the `minikube` tutorial for local development setup.
+Iam runs on a Kubernetes cluster. Follow the [minikube](https://kubernetes.io/docs/tutorials/hello-minikube/) tutorial for local development setup.
 
 #### Secrets
 Iam requires a few secrets to be added in order to work. Add this file to `kubernetes/secrets/dbconfig.yaml`
