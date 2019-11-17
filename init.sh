@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 
 readPassword() {
    stty -echo
@@ -34,7 +34,7 @@ setupPassword() {
       INCR=$((INCR+1))
       readPassword
    done
-   PASSWORD=`echo $PASSWORD | base64`
+   PASSWORD=$(echo -ne "$PASSWORD" | base64)
 }
 applyConfig() {
    echo [...Initializing config...]
@@ -88,7 +88,7 @@ type: Opaque
 data:
   user: aWFt
   db_name: aWFt
-  password: "$PASSWORD"
+  password: $PASSWORD
 EOF
 
 applyConfig
