@@ -9,7 +9,7 @@
       <button class="btn-sm btn-outline-secondary"  *ngIf="isEditing()" (click)="save()">save</button>
       <button class="btn-sm btn-outline-danger"  *ngIf="isEditing()" (click)="triggerEdit()">cancel</button>
       <button class="btn-sm btn-outline-secondary" *ngIf="!isEditing()" (click)="triggerEdit()">edit</button>
-      <button class="btn-sm btn-outline-success" (click)="triggerSelect()">run</button>
+      <button class="btn-sm btn-outline-success" (click)="triggerRunning()">run</button>
     </div>
     <header [data]="data" [editing]="isEditing()"></header>
     <div *ngIf="data.exe == 'function'">
@@ -86,11 +86,10 @@
           [data]="node"
           (update)="updateStep($event, i)" 
           (delete)="removeIndex(i)" 
-          (select)="receiveSelect($event)" 
           [editing]="editing"
           (emitEditing)="receiveEmitEditing($event)"
+          (emitRunning)="receiveEmitRunning($event)"
           [(hidden)]="hidden"
-          [selected]="selected"
           [canTriggerRemove]="true"></nested-input>
       </div>
     </div>

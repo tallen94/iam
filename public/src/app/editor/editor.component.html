@@ -5,17 +5,20 @@
   <div class="lower">
     <nested-input 
       *ngIf="data" 
-      class="left" 
+      [ngClass]="{'left': data.exe == 'graph' || running != undefined, 'lower-full': data.exe != 'graph' || running == undefined}" 
       [(data)]="data" 
-      (select)="receiveSelect($event)"
       [editing]="editing"
-      (emitEditing)="receiveEmitEditing($event)"
       [(hidden)]="hidden"
-      [selected]="selected"></nested-input>
-    <!-- <run class="right" *ngIf="data" [selected]="selected"></run> -->
+      (emitEditing)="receiveEmitEditing($event)"
+      (emitRunning)="receiveEmitRunning($event)"></nested-input>
+    <run 
+      class="right" 
+      *ngIf="running != undefined" 
+      [(running)]="running"
+      (emitRunning)="receiveEmitRunning($event)"></run>
     <graph 
       class="right" 
-      *ngIf="data && data.exe == 'graph'" 
+      *ngIf="data && data.exe == 'graph' && running == undefined" 
       [data]="data.graph"
       [editing]="editing"
       [edgesEditing]="[]"

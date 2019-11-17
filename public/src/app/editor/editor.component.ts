@@ -13,6 +13,7 @@ export class EditorComponent implements OnInit {
   selected: any;
   editing: any[] = [];
   hidden: any[] = [];
+  running: any;
 
   constructor(
     private iam: Iam,
@@ -46,8 +47,8 @@ export class EditorComponent implements OnInit {
     })
   }
 
-  public receiveSelect(data: any) {
-    this.selected = data;
+  public receiveEmitRunning(data: any) {
+    this.running = data;
   }
 
   receiveEmitEditing(data: any) {

@@ -1,7 +1,5 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Iam } from "../iam/iam";
-import { Location } from '@angular/common';
 
 @Component({
   selector: 'run',
@@ -9,10 +7,11 @@ import { Location } from '@angular/common';
   styleUrls: ['./run.component.css']
 })
 export class RunComponent implements OnInit {
+  @Output() emitRunning: EventEmitter<any> = new EventEmitter();
 
   requestData: string = "";
   responseData: string = "";
-  _selected: any = {};
+  _running: any = {};
 
   constructor(
     private iam: Iam
@@ -20,35 +19,36 @@ export class RunComponent implements OnInit {
 
   ngOnInit() { }
 
-  get selected() {
-    return this._selected;
+  get running() {
+    return this._running;
   }
 
   @Input()
-  set selected(data: any) {
+  set running(data: any) {
     this.requestData = data.input;
-    this._selected = data;
+    this.responseData = data.output;
+    this._running = data;
+  }
+
+  close() {
+    this.emitRunning.emit(undefined);
   }
 
   run() {
-    if (this.selected == undefined) {
+    if (this.running == undefined) {
       return;
     }
 
     this.responseData = "";
-    let data;
     if (this.requestData == "") {
-      data = undefined;
+      this.requestData = undefined;
     } else {
       try {
-        data = JSON.parse(this.requestData);
-        this.requestData = JSON.stringify(data, null, 2);
-      } catch {
-        data = this.requestData;
-      }
+        this.requestData = JSON.parse(this.requestData);
+      } catch { }
     } 
 
-    this.iam.runExecutable(this._selected.username, this._selected.exe, this._selected.name, data)
+    this.iam.runExecutable(this._running.username, this._running.exe, this._running.name, this.requestData)
     .subscribe((response: any) => {
       try {
         this.responseData = JSON.stringify(response.result, null, 2);
@@ -56,5 +56,6 @@ export class RunComponent implements OnInit {
         this.responseData = response.result;
       }
     });
+    this.requestData = JSON.stringify(this.requestData, null, 2);
   }
 }
