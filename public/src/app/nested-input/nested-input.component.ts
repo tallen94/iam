@@ -267,13 +267,10 @@ export class NestedInputComponent implements OnInit {
 
   public save() {
     if (this.data.name !== "" && this.data.exe !== "") {
-      console.log(this.data);
-      // this.iam.addExecutable(this.data)
-      // .subscribe((response) => {
-      //   console.log(response);
-      //   this.triggerEdit();
-      //   this.triggerSelect();
-      // })
+      this.iam.addExecutable(this.data)
+      .subscribe((response) => {
+        this.triggerEdit();
+      })
     }
   }
 
