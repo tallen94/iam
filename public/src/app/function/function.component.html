@@ -1,3 +1,62 @@
-<p>
-  function works!
-</p>
+<div 
+  class="step card" 
+  [ngClass]="{'editing' : isEditing(), 'inset-border': border}">
+  <div class="card-body">
+    <div class="action-buttons">
+      <button class="btn-sm btn-outline-primary" *ngIf="isHidden()" (click)="triggerShow()">show</button>
+      <button class="btn-sm btn-outline-primary" *ngIf="!isHidden()" (click)="triggerShow()">hide</button>
+      <button class="btn-sm btn-outline-danger" *ngIf="isEditing() && canTriggerRemove" (click)="triggerRemove()">delete</button>
+      <button class="btn-sm btn-outline-secondary"  *ngIf="isEditing()" (click)="save()">save</button>
+      <button class="btn-sm btn-outline-danger"  *ngIf="isEditing()" (click)="triggerEdit()">cancel</button>
+      <button class="btn-sm btn-outline-secondary" *ngIf="!isEditing()" (click)="triggerEdit()">edit</button>
+      <button class="btn-sm btn-outline-success" (click)="triggerSelect()">run</button>
+    </div>
+    <header [data]="data" [editing]="isEditing()"></header>
+    <div *ngIf="!isHidden() || isEditing()">
+      <hidden-header [data]="data" [editing]="isEditing()"></hidden-header>
+
+      <div class="inline-input"> 
+        <label *ngIf="isEditing() || (!isEditing() && !isEmpty(data.command))">Command</label>
+        <input 
+          class="form-control"
+          size="{{inputSize('command')}}"
+          *ngIf="isEditing()" 
+          type="text" 
+          [(ngModel)]="data.command"
+          (ngModelChange)="change('command', $event)"
+          [ngModelOptions]="{debounce: 500}"
+          placeholder="command">
+        <p *ngIf="!isEditing()">{{data.command}}</p>
+      </div>
+
+      <div class="inline-input">
+        <label *ngIf="isEditing() || (!isEditing() && !isEmpty(data.args))">Args</label>
+        <input 
+          class="form-control"
+          size="{{inputSize('args')}}"
+          *ngIf="isEditing()" 
+          type="text" 
+          [(ngModel)]="data.args"
+          (ngModelChange)="change('args', $event)"
+          [ngModelOptions]="{debounce: 500}"
+          placeholder="args">
+        <p *ngIf="!isEditing()">{{data.args}}</p>
+      </div>
+
+      <div *ngIf="isEditing()" class="text-editor" ace-editor
+        [(text)]="data.text"
+        [mode]="data.command || 'mysql'" 
+        [theme]="'eclipse'"
+        [options]="options"
+        [readOnly]="false"
+        [autoUpdateContent]="true" 
+        [durationBeforeCallback]="500"></div>
+      <div class="markdown" *ngIf="!isEditing()">
+        <ngx-md [data]="getCodeMarkdown(data.command, data.text)" ></ngx-md>
+      </div>
+    </div>
+  </div>
+</div>
+
+  
+

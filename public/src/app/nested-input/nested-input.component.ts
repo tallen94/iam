@@ -33,6 +33,9 @@ export class NestedInputComponent implements OnInit {
     if (this.data) {
       this.exeOnChange(this.data.exe);
     }
+    if (this.data.id == undefined) {
+      this.data.id = 1;
+    }
     // this.nameOnChange(this.data.name);
   }
 
@@ -77,10 +80,6 @@ export class NestedInputComponent implements OnInit {
   }
 
   triggerEdit() {
-    if (this.data.id === undefined) {
-      return;
-    }
-
     if (this.isEditing()) {
       this.editing = Lodash.filter(this.editing, (item) => item !== this.data.id)
     } else {
