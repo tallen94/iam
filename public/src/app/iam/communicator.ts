@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import * as Lodash from 'lodash';
+import { environment } from "../../environments/environment"
 
 @Injectable()
 export class ClientCommunicator {
@@ -9,7 +10,7 @@ export class ClientCommunicator {
   private http: HttpClient;
 
   constructor(http: HttpClient) {
-    this.host = "iam-local"; //window.location.hostname;
+    this.host = environment.url || window.location.hostname;
     this.port = 30001;
     this.http = http;
   }
