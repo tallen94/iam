@@ -10,16 +10,16 @@ import * as Lodash from "lodash";
 export class NestedInputComponent implements OnInit {
   @Output() delete: EventEmitter<any> = new EventEmitter();
   @Output() run: EventEmitter<any> = new EventEmitter();
-  @Output() select: EventEmitter<any> = new EventEmitter();
   @Output() update: EventEmitter<any> = new EventEmitter();
   @Output() emitEditing: EventEmitter<any> = new EventEmitter();
+  @Output() emitRunning: EventEmitter<any> = new EventEmitter();
 
   @Input() data: any;
   @Input() canTriggerRemove: boolean;
-  @Input() selected: any;
   @Input() border: boolean;
   @Input() hidden: any[] = [];
   @Input() editing: any[] = [];
+  @Input() running: any;
   private prevExe: string = "";
   private options = {
     maxLines: 32,
@@ -32,6 +32,9 @@ export class NestedInputComponent implements OnInit {
   ngOnInit() {
     if (this.data) {
       this.exeOnChange(this.data.exe);
+    }
+    if (this.data.id == undefined) {
+      this.data.id = 1;
     }
     // this.nameOnChange(this.data.name);
   }
@@ -63,10 +66,6 @@ export class NestedInputComponent implements OnInit {
     this.delete.emit();
   }
 
-  triggerSelect() {
-    this.select.emit(this.data);
-  }
-
   triggerShow() {
     if (!this.isHidden()) {
       this.hidden = Lodash.filter(this.hidden, (item) => !this.match(item))
@@ -77,10 +76,6 @@ export class NestedInputComponent implements OnInit {
   }
 
   triggerEdit() {
-    if (this.data.id === undefined) {
-      return;
-    }
-
     if (this.isEditing()) {
       this.editing = Lodash.filter(this.editing, (item) => item !== this.data.id)
     } else {
@@ -90,16 +85,17 @@ export class NestedInputComponent implements OnInit {
     this.emitEditing.emit(this.editing);
   }
 
-  receiveSelect(data: any) {
-    this.selected = data;
-    if (this.data.name !== data.name && this.data.exe !== data.exe) {
-      this.select.emit(data);
-    }
+  triggerRunning() {
+    this.emitRunning.emit(this.data);
   }
   
   receiveEmitEditing(data: any) {
     this.editing = data;
     this.emitEditing.emit(data)
+  }
+
+  receiveEmitRunning(data: any) {
+    this.emitRunning.emit(data);
   }
 
   removeIndex(index: number) {
@@ -275,7 +271,7 @@ export class NestedInputComponent implements OnInit {
       // this.iam.addExecutable(this.data)
       // .subscribe((response) => {
       //   console.log(response);
-      //   this.editing = false;
+      //   this.triggerEdit();
       //   this.triggerSelect();
       // })
     }

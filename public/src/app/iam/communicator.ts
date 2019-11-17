@@ -9,7 +9,7 @@ export class ClientCommunicator {
   private http: HttpClient;
 
   constructor(http: HttpClient) {
-    this.host = window.location.hostname;
+    this.host = "iam-local"; //window.location.hostname;
     this.port = 30001;
     this.http = http;
   }

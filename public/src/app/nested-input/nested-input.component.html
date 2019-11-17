@@ -9,7 +9,7 @@
       <button class="btn-sm btn-outline-secondary"  *ngIf="isEditing()" (click)="save()">save</button>
       <button class="btn-sm btn-outline-danger"  *ngIf="isEditing()" (click)="triggerEdit()">cancel</button>
       <button class="btn-sm btn-outline-secondary" *ngIf="!isEditing()" (click)="triggerEdit()">edit</button>
-      <button class="btn-sm btn-outline-success" (click)="triggerSelect()">run</button>
+      <button class="btn-sm btn-outline-success" (click)="triggerRunning()">run</button>
     </div>
     <header [data]="data" [editing]="isEditing()"></header>
     <div *ngIf="data.exe == 'function'">
@@ -74,43 +74,7 @@
         </div>
       </div>
     </div>
-  
-    <div *ngIf="data.exe == 'pipe'">
-      <div *ngIf="!isHidden() || isEditing()">
-        <hidden-header [data]="data" [editing]="isEditing()"></hidden-header>
-  
-        <div *ngIf="data.step">
-          <label class="nested-title">Step</label>
-          <nested-input 
-            [(data)]="data.step" 
-            [canTriggerRemove]="false" 
-            (select)="receiveSelect($event)"
-            [editing]="editing"
-            (emitEditing)="receiveEmitEditing($event)"
-            [(hidden)]="hidden"
-            [selected]="selected"
-            [border]="true"></nested-input>
-        </div>
-    
-        <div *ngIf="data.steps">
-          <label class="nested-title">Steps</label>
-          <div *ngFor="let step of data.steps; let i = index;">
-            <nested-input 
-              [data]="data.steps[i]"
-              (update)="updateStep($event, i)" 
-              (delete)="removeIndex(i)" 
-              (select)="receiveSelect($event)" 
-              [editing]="editing"
-              (emitEditing)="receiveEmitEditing($event)"
-              [(hidden)]="hidden"
-              [selected]="selected"
-              [canTriggerRemove]="true"></nested-input>
-              <div class="add-bar" (click)="addIndex(i)"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  
+
     <div *ngIf="data.exe == 'graph'">
       <div *ngIf="!isHidden() || isEditing()">
         <hidden-header [data]="data" [editing]="isEditing()"></hidden-header>
@@ -122,11 +86,10 @@
           [data]="node"
           (update)="updateStep($event, i)" 
           (delete)="removeIndex(i)" 
-          (select)="receiveSelect($event)" 
           [editing]="editing"
           (emitEditing)="receiveEmitEditing($event)"
+          (emitRunning)="receiveEmitRunning($event)"
           [(hidden)]="hidden"
-          [selected]="selected"
           [canTriggerRemove]="true"></nested-input>
       </div>
     </div>
