@@ -56,7 +56,7 @@ export class ExecutableApi {
       const user = this.parseUser(req.headers);
       const exe = req.params.exe;
       const username = req.params.username;
-      this.executor.getExecutables(username, user.userId, exe)
+      this.executor.getExecutables(username, exe)
       .then((results) => {
         res.status(200).send(results);
       });

@@ -118,8 +118,8 @@ export class JobRunner {
     });
   }
 
-  public getJobs(userId: number) {
-    return this.executor.getDatabase().runQuery("admin", "get-exe-for-user", {exe: "job", userId: userId})
+  public getJobs(username: string) {
+    return this.executor.getDatabase().runQuery("admin", "get-exe-for-user", {exe: "job", username: username})
     .then((data) => {
       return Promise.all(Lodash.map(data, (item) => {
         return this.executor.getDatabase().runQuery("admin", "search-steplists", {query: "%name\":\"" + item.name + "\"%"})

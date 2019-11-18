@@ -68,8 +68,8 @@ export class GraphExecutor {
     });
   }
 
-  public getGraphs(username: string, userId: number) {
-    return this.database.runQuery("admin", "get-exe-for-user", {exe: "graph", userId: userId, username: username})
+  public getGraphs(username: string) {
+    return this.database.runQuery("admin", "get-exe-for-user", {exe: "graph", username: username})
     .then((data) => {
       return Promise.all(Lodash.map(data, (item) => {
         return {
@@ -99,11 +99,13 @@ export class GraphExecutor {
       });
 
       Lodash.each(edges, (edge) => {
-        if (nodeList[edge.target] != undefined) {
-          nodeList[edge.target].addParent(nodeList[edge.source]);
+        const source = edge.source - 1;
+        const target = edge.target - 1;
+        if (nodeList[target] != undefined) {
+          nodeList[target].addParent(nodeList[source]);
         }
-        if (nodeList[edge.source] != undefined) {
-          nodeList[edge.source].addChild(nodeList[edge.target]);
+        if (nodeList[source] != undefined) {
+          nodeList[source].addChild(nodeList[target]);
         }
       });
       return new DirectedGraph(nodeList);

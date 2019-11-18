@@ -40,11 +40,12 @@ export class LoginComponent implements OnInit {
   }
 
   signup() {
-    this.iam.runExecutable("admin", "pipe", "add-user", {email: this.email, password: this.password})
+    this.iam.runExecutable("admin", "graph", "add-user", [{email: this.email, username: this.username, password: this.password}])
     .subscribe((result: any) => {
-      if (result.result.error === undefined) {
-        this.iam.setUser(result.result.username, result.result.userId, result.result.token);
-        localStorage.setItem("token", result.result.token);
+      if (result.result.length > 0) {
+        const user = result.result[0];
+        this.iam.setUser(user.username, user.userId, user.token);
+        localStorage.setItem("token", user.token);
         this.router.navigate(["/home"])
       }
     });

@@ -69,8 +69,8 @@ export class StepListManager {
   }
 
   // GET ALL SYNC
-  public getStepLists(username: string, userId: number, exe: string) {
-    return this.database.runQuery("admin", "get-exe-for-user", {exe: exe, userId: userId, username: username})
+  public getStepLists(username: string, exe: string) {
+    return this.database.runQuery("admin", "get-exe-for-user", {exe: exe, username: username})
     .then((data) => {
       return Promise.all(Lodash.map(data, (item) => {
         return this.database.runQuery("admin", "search-steplists", {query: "%name\":\"" + item.name + "\"%"})
