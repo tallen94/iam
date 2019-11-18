@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: iam-dashboard
-        image: icanplayguitar94/iam:dashboard-0.0.2
+        image: icanplayguitar94/iam:dashboard-0.0.3
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
