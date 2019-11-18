@@ -6,7 +6,7 @@ The values here are base64 encoded. Their default values are
 - db_name: iam
 
 # Database
-The first app to deploy is the database.
+The default database is a mysql database
 
 ## Env
 `MYSQL_ROOT_PASSWORD`: root password for database
@@ -16,8 +16,6 @@ The first app to deploy is the database.
 `MYSQL_PASSWORD`: database password
 
 `MYSQL_DATABASE`: database name
-
-Verify you can connect to the database with a mysql client using the credentials above and the host is `<kubeclusterip>:30002`
 
 # Filesystem
 The filesystem stores all the files for the functions
