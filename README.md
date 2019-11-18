@@ -11,15 +11,17 @@ Each container requires a `$HOME` directory, which is set to `/user/home/iam` an
 
 
 ## Development Setup
-Setup your environment by executing the init.sh bash script.
-
-`>$ ./init.sh`
 
 ### Docker Hub
 Request access to docker hub
 
 ### Kubernetes
 Iam runs on a Kubernetes cluster. Follow the [minikube](https://kubernetes.io/docs/tutorials/hello-minikube/) tutorial for local development setup.
+
+### INIT
+Setup your environment by executing the init.sh bash script.
+
+`>$ ./init.sh`
 
 #### Secrets
 Iam requires a few secrets to be added in order to work. Add this file to `kubernetes/secrets/dbconfig.yaml`
