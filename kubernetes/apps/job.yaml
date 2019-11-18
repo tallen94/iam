@@ -12,6 +12,8 @@ spec:
       labels:
         app: iam-job
     spec:
+      imagePullSecrets:
+      - name: regcred
       containers:
       - name: iam-job
         image: icanplayguitar94/iam:base-0.0.2

@@ -12,6 +12,8 @@ spec:
       labels:
         app: iam-filesystem
     spec:
+      imagePullSecrets:
+      - name: regcred
       containers:
       - name: iam-filesystem
         image: icanplayguitar94/iam:filesystem-0.0.2
