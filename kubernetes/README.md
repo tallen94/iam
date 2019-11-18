@@ -16,8 +16,6 @@ data:
   password: <base64_password>
 ```
 
-Run `kubectl apply -f kubernetes/secrets/dbconfig.yaml`
-
 This will be used to setup the database and initialize a user.
 
 The values here are base64 encoded. Their decoded values are
@@ -26,8 +24,6 @@ The values here are base64 encoded. Their decoded values are
 
 # Database
 The first app to deploy is the database.
-
-Run `kubectl apply -f kubernetes/apps/database.yaml`
 
 ## Env
 `MYSQL_ROOT_PASSWORD`: root password for database
@@ -43,8 +39,6 @@ Verify you can connect to the database with a mysql client using the credentials
 # Filesystem
 The filesystem stores all the files for the functions
 
-Run `kubectl apply -f kubernetes/apps/filesystem.yaml`
-
 ## Env
 `HOME`: `/usr/home/iam`
 
@@ -54,8 +48,6 @@ Run `kubectl apply -f kubernetes/apps/filesystem.yaml`
 
 # Executor
 The executor is used to run the functions and queries
-
-Run `kubectl apply -f kubernetes/apps/executor.yaml`
 
 ## Env
 `HOME`: `/usr/home/iam`
@@ -79,8 +71,6 @@ Run `kubectl apply -f kubernetes/apps/executor.yaml`
 # Master
 Master takes requrests and distributes to the executors.
 
-Run `kubectl apply -f kubernetes/apps/master.yaml`
-
 ## Env
 `HOME`: `/usr/home/iam`
 
@@ -103,16 +93,9 @@ Run `kubectl apply -f kubernetes/apps/master.yaml`
 # Dashboard
 This is the UI for Iam.
 
-Run `kubectl apply -f kubernetes/apps/dashboard.yaml`
-
 ## Env
 `HOME`: `/usr/home/iam`
 
 `TYPE`: dashboard
 
 `PORT`: 5000
-
-### Using the Dasbhoard
-The first thing to do is create an `admin` user.
-
-Create a user with username `admin`, email `admin` and generate a secure password.

@@ -25,4 +25,10 @@ Setup your environment by executing the init.sh bash script.
 
 Check status of cluster through `minikube dashboard`
 
+
+### Using the Dasbhoard
 Navigate to dashboard at `iam-local:30000`
+
+The first thing to do is create an `admin` user.
+
+Create a user with username `admin`, email `admin` and generate a secure password.
