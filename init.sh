@@ -34,7 +34,7 @@ setupPassword() {
       INCR=$((INCR+1))
       readPassword
    done
-   PASSWORD=$(echo -ne "$PASSWORD" | base64)
+
 }
 applyConfig() {
    echo [...Initializing config...]
@@ -72,9 +72,14 @@ loginDocker() {
    --docker-username="$DOCKER_USERNAME" \
    --docker-password="$DOCKER_PASSWORD" \
    --docker-email="$DOCKER_EMAIL"
+   echo "$DOCKER_PASSWORD" | docker login -u $DOCKER_USERNAME --password-stdin
+   if [ "$?" = "1" ]; then exit 1 
+   fi
+
 }
 
 # Main
+loginDocker
 echo Configure your IAM by creating a password for the database
 setupPassword
 mkdir -p kubernetes/secrets/
@@ -90,6 +95,4 @@ data:
   db_name: aWFt
   password: $PASSWORD
 EOF
-
 applyConfig
-loginDocker
