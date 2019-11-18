@@ -22,3 +22,7 @@ Iam runs on a Kubernetes cluster. Follow the [minikube](https://kubernetes.io/do
 Setup your environment by executing the init.sh bash script.
 
 `>$ ./init.sh`
+
+Check status of cluster through `minikube dashboard`
+
+Navigate to dashboard at `iam-local:30000`
