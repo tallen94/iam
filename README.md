@@ -11,6 +11,9 @@ Each container requires a `$HOME` directory, which is set to `/user/home/iam` an
 
 
 ## Development Setup
+Setup your environment by executing the init.sh bash script.
+
+`>$ ./init.sh`
 
 ### Docker Hub
 Request access to docker hub
