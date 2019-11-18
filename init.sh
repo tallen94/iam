@@ -34,8 +34,9 @@ setupPassword() {
       INCR=$((INCR+1))
       readPassword
    done
-
+   PASSWORD=$(echo -ne "$PASSWORD" | base64)
 }
+
 applyConfig() {
    echo [...Initializing config...]
    kubectl apply -f kubernetes/secrets/dbconfig.yaml
