@@ -78,6 +78,15 @@ loginDocker() {
    fi
 
 }
+addHosts() {
+echo Sudo adding iam host to /etc/hosts...
+sudo tee -a /etc/hosts > /dev/null <<EOF
+# Added by IAM setup
+# To access the cluster
+192.168.64.2 iam-local
+# End of section
+EOF
+}
 
 # Main
 loginDocker
@@ -96,4 +105,12 @@ data:
   db_name: aWFt
   password: $PASSWORD
 EOF
+
 applyConfig
+
+if grep -Fxq "# Added by IAM setup" /etc/hosts
+then
+   exit 0
+else
+   addHosts
+fi
