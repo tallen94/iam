@@ -44,7 +44,6 @@ export class Database {
           data: data.text,
           input: data.input,
           output: data.output,
-          userId: userId,
           description: data.description
         });
       }

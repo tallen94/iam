@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: iam-job
-        image: icanplayguitar94/iam:base-0.0.1
+        image: icanplayguitar94/iam:base-0.0.2
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000

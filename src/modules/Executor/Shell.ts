@@ -55,7 +55,6 @@ export class Shell {
           data: programData,
           input: data.input,
           output: data.output,
-          userId: userId,
           description: data.description
         });
       }

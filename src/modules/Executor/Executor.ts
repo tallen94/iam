@@ -55,6 +55,8 @@ export class Executor {
         return this.stepListManager.addStepList(username, userId, data);
       case "job":
         return this.jobRunner.addJob(username, userId, data);
+      case "graph":
+        return this.graphExecutor.addGraph(username, userId, data);
     }
   }
 
