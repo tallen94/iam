@@ -1,24 +1,7 @@
 # Secrets
-Iam requires a few secrets to be added in order to work. Add this file to `kubernetes/secrets/dbconfig.yaml`
+Iam requires a few secrets to be added in order to work.
 
-Generate a password and base64 encode it `cat '<secure_password>' | base64`
-
-```
-## Database Creds
-apiVersion: v1
-kind: Secret
-metadata:
-  name: dbconfig
-type: Opaque
-data:
-  user: aWFt
-  db_name: aWFt
-  password: <base64_password>
-```
-
-This will be used to setup the database and initialize a user.
-
-The values here are base64 encoded. Their decoded values are
+The values here are base64 encoded. Their default values are
 - user: iam
 - db_name: iam
 
