@@ -18,7 +18,7 @@ Request access to docker hub
 ### Kubernetes
 Iam runs on a Kubernetes cluster. Follow the [minikube](https://kubernetes.io/docs/tutorials/hello-minikube/) tutorial for local development setup.
 
-### INIT
+### Start from scratch
 Setup your environment by executing the init.sh bash script.
 
 `>$ ./init.sh`
