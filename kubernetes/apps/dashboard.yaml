@@ -12,6 +12,8 @@ spec:
       labels:
         app: iam-dashboard
     spec:
+      imagePullSecrets:
+      - name: regcred
       containers:
       - name: iam-dashboard
         image: icanplayguitar94/iam:dashboard-0.0.3

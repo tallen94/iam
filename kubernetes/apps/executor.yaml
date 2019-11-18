@@ -12,6 +12,8 @@ spec:
       labels:
         app: iam-executor
     spec:
+      imagePullSecrets:
+      - name: regcred
       containers:
       - name: iam-executor
         image: icanplayguitar94/iam:base-0.0.2
