@@ -26,4 +26,6 @@ kubernetes/secrets
 images/base/deploy.tgz
 images/dashboard/src
 
+yarn.lock
+
 
