@@ -20,8 +20,9 @@ export class LoginComponent implements OnInit {
     if (token !== null) {
     this.iam.runExecutable("admin", "graph", "validate-token", [{token: token}])
     .subscribe((result: any) => {
-      if (result.result.error === undefined) {
-        this.iam.setUser(result.result.username, result.result.userId, token);
+      if (result.result.length > 0) {
+        const user = result.result[0];
+        this.iam.setUser(user.username, user.userId, token);
         this.router.navigate(["/home"]);
       }
     });
@@ -31,9 +32,10 @@ export class LoginComponent implements OnInit {
   login() {
     this.iam.runExecutable("admin", "graph", "gen-token", [{email: this.email}, {password: this.password}])
     .subscribe((result: any) => {
-      if (result.result.error === undefined) {
-        this.iam.setUser(result.result.username, result.result.userId, result.result.token);
-        localStorage.setItem("token", result.result.token);
+      if (result.result.length > 0) {
+        const user = result.result[0];
+        this.iam.setUser(user.username, user.userId, user.token);
+        localStorage.setItem("token", user.token);
         this.router.navigate(["/home"])
       }
     });
