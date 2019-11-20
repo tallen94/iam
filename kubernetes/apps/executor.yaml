@@ -6,7 +6,7 @@ spec:
   selector:
     matchLabels:
       app: iam-executor
-  replicas: 3 # tells deployment to run 2 pods matching the template
+  replicas: 1 # tells deployment to run 2 pods matching the template
   template:
     metadata:
       labels:
@@ -16,7 +16,7 @@ spec:
       - name: regcred
       containers:
       - name: iam-executor
-        image: icanplayguitar94/iam:base-0.0.2
+        image: icanplayguitar94/iam:base-0.0.3
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000

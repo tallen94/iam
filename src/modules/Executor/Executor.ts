@@ -157,20 +157,20 @@ export class Executor {
     }));
   }
 
-  public getExecutables(username: string, userId: number, exe: string): Promise<any> {
+  public getExecutables(username: string, exe: string): Promise<any> {
     switch (exe) {
       case "function":
-        return this.shell.getPrograms(username, userId);
+        return this.shell.getPrograms(username);
       case "query":
-        return this.database.getQueries(username, userId);
+        return this.database.getQueries(username);
       case "pipe":
       case "async":
       case "foreach":
-        return this.stepListManager.getStepLists(username, userId, exe);
+        return this.stepListManager.getStepLists(username, exe);
       case "job":
-        return this.jobRunner.getJobs(userId);
+        return this.jobRunner.getJobs(username);
       case "graph":
-        return this.graphExecutor.getGraphs(username, userId);
+        return this.graphExecutor.getGraphs(username);
     }
   }
 

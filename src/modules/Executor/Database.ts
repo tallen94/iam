@@ -70,9 +70,9 @@ export class Database {
     });
   }
 
-  public getQueries(username: string, userId: number) {
-    const queryStr = "SELECT * FROM executable WHERE exe='query' AND userId={userId} AND username={username};";
-    return this.databaseCommunicator.execute(queryStr, {userId: userId, username: username})
+  public getQueries(username: string) {
+    const queryStr = "SELECT * FROM executable WHERE exe='query' AND username={username};";
+    return this.databaseCommunicator.execute(queryStr, {username: username})
     .then((data: any) => {
       return Promise.all(Lodash.map(data, (item) => {
         return this.runQuery("admin", "search-steplists", {query: "%name\":\"" + item.name + "\"%"})

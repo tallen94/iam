@@ -97,8 +97,8 @@ export class Shell {
     return this.fileSystemCommunicator.getProgram(name);
   }
 
-  public getPrograms(username: string, userId: number) {
-    return this.database.runQuery("admin", "get-exe-for-user", {exe: "function", userId: userId, username: username})
+  public getPrograms(username: string) {
+    return this.database.runQuery("admin", "get-exe-for-user", {exe: "function", username: username})
     .then((data) => {
       return Promise.all(Lodash.map(data, (item) => {
         return this.database.runQuery("admin", "search-steplists", {query: "%name\":\"" + item.name + "\"%"})

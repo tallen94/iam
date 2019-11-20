@@ -1,5 +1,6 @@
 import { Step } from "../Step/Step";
 import * as Lodash from "lodash";
+import e = require("express");
 
 export class Node {
 
@@ -12,7 +13,11 @@ export class Node {
   ) {}
 
   public execute(data?: any) {
-    if (this.parents.length > 0) {
+    if (this.parents.length == 1) {
+      this.promise = this.parents[0].getPromise().then((result) => {
+        return this.step.execute(result, false);
+      });
+    } else if (this.parents.length > 1) {
       this.promise = Promise.all(Lodash.map(this.parents, (parent) => parent.getPromise()))
       .then((results) => {
         return this.step.execute(results, false);
