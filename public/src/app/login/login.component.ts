@@ -18,7 +18,7 @@ export class LoginComponent implements OnInit {
   ngOnInit() {
     const token = localStorage.getItem("token");
     if (token !== null) {
-    this.iam.runExecutable("admin", "pipe", "validate-token", {token: token})
+    this.iam.runExecutable("admin", "graph", "validate-token", [{token: token}])
     .subscribe((result: any) => {
       if (result.result.error === undefined) {
         this.iam.setUser(result.result.username, result.result.userId, token);
@@ -29,7 +29,7 @@ export class LoginComponent implements OnInit {
   }
 
   login() {
-    this.iam.runExecutable("admin", "pipe", "gen-token", [{email: this.email}, {password: this.password}])
+    this.iam.runExecutable("admin", "graph", "gen-token", [{email: this.email}, {password: this.password}])
     .subscribe((result: any) => {
       if (result.result.error === undefined) {
         this.iam.setUser(result.result.username, result.result.userId, result.result.token);
