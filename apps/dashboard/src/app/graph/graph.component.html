@@ -39,10 +39,9 @@
 
     <ng-template #linkTemplate let-link>
       <svg:g (click)="selectEdge(link)" [ngClass]="{'selected': isEdgeSelected(link)}" class="edge clickable">
-        <svg:path id="{{link.id}}" width="100" class="line">
-        </svg:path>
-        <use attr.xlink:href="#{{link.id}}" stroke-width="3" marker-end="url(#arrow)"/>
-        <use attr.xlink:href="#{{link.id}}" stroke-width="18" fill="none" stroke-opacity="0" />
+        <svg:path id="{{link.id}}" width="100" class="line"></svg:path>
+        <use attr.href="#{{link.id}}" stroke-width="3" marker-end="url(#arrow)"/>
+        <use attr.href="#{{link.id}}" stroke-width="18" fill="none" stroke-opacity="0"/>
       </svg:g>
     </ng-template>
   </ngx-graph>
