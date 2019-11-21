@@ -19,3 +19,7 @@
 .controls button {
   width: 50px;
 }
+
+.clickable:hover {
+  cursor: pointer;
+}

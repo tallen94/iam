@@ -17,7 +17,7 @@
     </ng-template>
     
     <ng-template #nodeTemplate let-node>
-      <svg:g (click)="select(node)" *ngIf="!isSelected(node)" class="node" ngx-tooltip [tooltipPlacement]="'top'" [tooltipType]="'tooltip'" [tooltipTitle]="node.exe">
+      <svg:g (click)="select(node)" *ngIf="!isSelected(node)" class="node clickable" ngx-tooltip [tooltipPlacement]="'top'" [tooltipType]="'tooltip'" [tooltipTitle]="node.exe">
         <svg:rect
           [attr.width]="node.dimension.width"
           [attr.height]="node.dimension.height"
@@ -26,7 +26,7 @@
           {{node.label}}
         </svg:text>
       </svg:g>
-      <svg:g (click)="select(node)" *ngIf="isSelected(node)" class="node selected" ngx-tooltip [tooltipPlacement]="'top'" [tooltipType]="'tooltip'" [tooltipTitle]="node.exe">
+      <svg:g (click)="select(node)" *ngIf="isSelected(node)" class="node selected clickable" ngx-tooltip [tooltipPlacement]="'top'" [tooltipType]="'tooltip'" [tooltipTitle]="node.exe">
         <svg:rect
           [attr.width]="node.dimension.width"
           [attr.height]="node.dimension.height"
@@ -38,9 +38,11 @@
     </ng-template>
 
     <ng-template #linkTemplate let-link>
-      <svg:g (click)="selectEdge(link)" [ngClass]="{'selected': isEdgeSelected(link)}" class="edge">
-        <svg:path width="100" class="line" stroke-width="3" marker-end="url(#arrow)">
+      <svg:g (click)="selectEdge(link)" [ngClass]="{'selected': isEdgeSelected(link)}" class="edge clickable">
+        <svg:path id="{{link.id}}" width="100" class="line">
         </svg:path>
+        <use attr.xlink:href="#{{link.id}}" stroke-width="3" marker-end="url(#arrow)"/>
+        <use attr.xlink:href="#{{link.id}}" stroke-width="18" fill="none" stroke-opacity="0" />
       </svg:g>
     </ng-template>
   </ngx-graph>
