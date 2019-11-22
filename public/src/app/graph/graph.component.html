@@ -1,32 +1,30 @@
 <div class="graph">
-    <ngx-graph
-      layout="dagre"
-      [layoutSettings]="layoutSettings"
-      [draggingEnabled]="false"
-      [links]="graph.links"
-      [nodes]="graph.nodes"
-      [zoomToFit$]="zoomToFit$"
-      [center$]="center$"
-      [zoomSpeed]=".05"
-    >
-
+  <ngx-graph
+    layout="dagre"
+    [layoutSettings]="layoutSettings"
+    [draggingEnabled]="false"
+    [links]="graph.links"
+    [nodes]="graph.nodes"
+    [zoomToFit$]="zoomToFit$"
+    [center$]="center$"
+    [zoomSpeed]=".05"
+  >
     <ng-template #defsTemplate>
       <svg:marker id="arrow" viewBox="0 -5 10 10" refX="8" refY="0" markerWidth="4" markerHeight="4" orient="auto">
-        <svg:path d="M0,-5L10,0L0,5" class="arrow-head" />
+        <svg:path d="M0,-5L10,0L0,5" class="arrow-head"/>
       </svg:marker>
     </ng-template>
     
     <ng-template #nodeTemplate let-node>
-      <svg:g (click)="select(node)" *ngIf="!isSelected(node)" class="node clickable" ngx-tooltip [tooltipPlacement]="'top'" [tooltipType]="'tooltip'" [tooltipTitle]="node.exe">
-        <svg:rect
-          [attr.width]="node.dimension.width"
-          [attr.height]="node.dimension.height"
-          [attr.fill]="white"/>
-        <svg:text alignment-baseline="central" [attr.x]="10" [attr.y]="node.dimension.height / 2">
-          {{node.label}}
-        </svg:text>
-      </svg:g>
-      <svg:g (click)="select(node)" *ngIf="isSelected(node)" class="node selected clickable" ngx-tooltip [tooltipPlacement]="'top'" [tooltipType]="'tooltip'" [tooltipTitle]="node.exe">
+      <svg:g 
+        (click)="select(node)" 
+        [ngClass]="{'selected': isSelected(node)}" 
+        class="node clickable" 
+        ngx-tooltip 
+        [tooltipPlacement]="'top'" 
+        [tooltipType]="'tooltip'" 
+        [tooltipTitle]="node.exe"
+      >
         <svg:rect
           [attr.width]="node.dimension.width"
           [attr.height]="node.dimension.height"
