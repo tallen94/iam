@@ -16,19 +16,20 @@
     </ng-template>
     
     <ng-template #nodeTemplate let-node>
-      <svg:g 
-        (click)="select(node)" 
-        [ngClass]="{'selected': isSelected(node)}" 
-        class="node clickable" 
-        ngx-tooltip 
-        [tooltipPlacement]="'top'" 
-        [tooltipType]="'tooltip'" 
+      <svg:g
+        (click)="select(node)"
+        [ngClass]="{'selected': isSelected(node)}"
+        class="node clickable"
+        ngx-tooltip
+        [tooltipPlacement]="'top'"
+        [tooltipType]="'tooltip'"
         [tooltipTitle]="node.exe"
       >
         <svg:rect
           [attr.width]="node.dimension.width"
           [attr.height]="node.dimension.height"
-          [attr.fill]="white"/>
+          [attr.fill]="white"
+        />
         <svg:text alignment-baseline="central" [attr.x]="10" [attr.y]="node.dimension.height / 2">
           {{node.label}}
         </svg:text>
@@ -37,7 +38,7 @@
 
     <ng-template #linkTemplate let-link>
       <svg:g (click)="selectEdge(link)" [ngClass]="{'selected': isEdgeSelected(link)}" class="edge clickable">
-        <svg:path width="100" class="line"></svg:path>
+        <svg:path class="line"></svg:path>
         <use [attr.href]="'#'+link.id" stroke-width="3" marker-end="url(#arrow)"/>
         <use [attr.href]="'#'+link.id" stroke-width="18" fill="none" stroke-opacity="0"/>
       </svg:g>
