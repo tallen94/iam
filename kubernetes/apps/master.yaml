@@ -16,7 +16,7 @@ spec:
       - name: regcred
       containers:
       - name: iam-master
-        image: icanplayguitar94/iam:base-asdf
+        image: icanplayguitar94/iam:base-fc09979ef296a426a96764d5091a408bb7505570
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
