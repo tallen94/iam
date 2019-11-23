@@ -1,6 +1,6 @@
 name: Build Filesystem Docker
 
-on: [push]
+on: []
 
 jobs:
 
