@@ -12,9 +12,7 @@ jobs:
     - uses: actions/checkout@v1
     - name: Docker login
       run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
-    - name: Set Tag
-      run: export TAG=$(date +%s)
-    - name: Build the Docker image
-      run: docker build -t icanplayguitar94/iam:dependencies-$(echo $TAG) images/dependencies
-    - name: Push the Docker image 
-      run: docker push icanplayguitar94/iam:dependencies-$(echo $TAG)
+    - name: Build Docker
+      run: export TAG=$(date +%s) \
+          && docker build -t icanplayguitar94/iam:dependencies-$TAG images/dependencies \
+          && docker push icanplayguitar94/iam:dependencies-$TAG 
