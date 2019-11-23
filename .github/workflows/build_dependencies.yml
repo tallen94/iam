@@ -15,6 +15,6 @@ jobs:
     - name: Set Tag
       run: export TAG=$(date +%s)
     - name: Build the Docker image
-      run: docker build -t icanplayguitar94/iam:dependencies-$TAG images/dependencies
+      run: docker build -t icanplayguitar94/iam:dependencies-$(echo $TAG) images/dependencies
     - name: Push the Docker image 
-      run: docker push icanplayguitar94/iam:dependencies-$TAG
+      run: docker push icanplayguitar94/iam:dependencies-$(echo $TAG)
