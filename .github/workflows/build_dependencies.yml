@@ -10,5 +10,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
+    - name: Docker login
+      run: docker login -u ${{secrets.DOCKER_USERNAME}} -p {{secrets.DOCKER_PASSWORD}}
+    - name: Set Tag
+      run: export TAG=$(date +%s)
     - name: Build the Docker image
-      run: docker build -t icanplayguitar94/iam:dependencies-$(date +%s) images/dependencies
+      run: docker build -t icanplayguitar94/iam:dependencies-$TAG images/dependencies
+    - name: Push the Docker image 
+      run: docker push icanplayguitar94/iam:dependencies-$TAG
