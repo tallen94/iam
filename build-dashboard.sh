@@ -5,10 +5,6 @@ ENV=$2
 
 npm install --prefix public && npm run --prefix public build$ENV && cp -r public/dist images/dashboard/src
 
-cat > images/dashboard/Dockerfile <<EOF
-FROM icanplayguitar94/iam:base-$1
-COPY ./src public/dist
-EOF
 docker build --no-cache -t $TAG images/dashboard
 docker push $TAG
 
