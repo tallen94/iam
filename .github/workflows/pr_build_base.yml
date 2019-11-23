@@ -4,8 +4,6 @@ on:
   pull_request:
     paths:
       - 'src/**'
-    branches:
-      - 'release/base'
 
 jobs:
 
