@@ -4,6 +4,8 @@ on:
   pull_request:
     paths:
       - 'public/**'
+    branches-ignore:
+      - 'release/*'
 
 jobs:
 
