@@ -8,7 +8,7 @@ import { Iam } from '../iam/iam';
 })
 export class AdminComponent implements OnInit {
 
-  private rootNode: any;
+  rootNode: any;
   host: string;
   port: number;
 

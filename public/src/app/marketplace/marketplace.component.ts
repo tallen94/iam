@@ -8,7 +8,7 @@ import { Iam } from '../iam/iam';
 })
 export class MarketplaceComponent implements OnInit {
 
-  private searchText: string = "";
+  public searchText: string = "";
   private results: any = [];
   private iam: Iam;
 

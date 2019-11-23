@@ -11,7 +11,7 @@ export class AppComponent {
 
   constructor(
     private iam: Iam,
-    private router: Router
+    public router: Router
   ) {
 
   }

@@ -8,9 +8,9 @@ import * as Lodash from "lodash";
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
-  private columns: any;
-  private iam: Iam;
-  private selected: string;
+  public columns: any;
+  public iam: Iam;
+  public selected: string;
 
   constructor(iam: Iam) {
     this.iam = iam;

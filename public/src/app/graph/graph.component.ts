@@ -17,11 +17,11 @@ export class GraphComponent implements OnInit {
   zoomToFit$: Subject<boolean> = new Subject();
   center$: Subject<boolean> = new Subject();
   white = "#FFFFFF";
-  private layoutSettings = {
+  public layoutSettings = {
     orientation: "TB"
   }
 
-  private graph: any;
+  public graph: any;
 
   constructor() { }
 

@@ -23,8 +23,6 @@ import { LoginComponent } from './login/login.component';
 import { MarketplaceComponent } from './marketplace/marketplace.component';
 import { NestedInputComponent } from './nested-input/nested-input.component';
 import { GraphComponent } from './graph/graph.component';
-import { FunctionComponent } from './function/function.component';
-import { QueryComponent } from './query/query.component';
 import { HeaderComponent } from './header/header.component';
 import { HiddenHeaderComponent } from './hidden-header/hidden-header.component';
 
@@ -49,8 +47,6 @@ const appRoutes: Routes = [
     MarketplaceComponent,
     NestedInputComponent,
     GraphComponent,
-    FunctionComponent,
-    QueryComponent,
     HeaderComponent,
     HiddenHeaderComponent
   ],
