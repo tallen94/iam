@@ -13,13 +13,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
+    - name: Docker login
+      run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
     - uses: actions/setup-node@v1
       with:
         node-version: '11.14.0'
-    - run: npm install --prefix src && npm run --prefix src build && npm run --prefix src pkg && mv src/deploy-1.0.0.tgz images/base/deploy.tgz
-    - name: Docker login
-      run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
-    - name: Build Docker
-      run: docker build -t icanplayguitar94/iam:base-$GITHUB_SHA images/base 
+    - run: bash build-base.sh $GITHUB_SHA
     - name: Push Docker 
       run: docker push icanplayguitar94/iam:base-$GITHUB_SHA 
