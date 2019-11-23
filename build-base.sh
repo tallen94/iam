@@ -13,6 +13,7 @@ EXPOSE 5000
 CMD deploy
 EOF
 docker build --no-cache -t $TAG images/base
+docker push $TAG
 
 cat > kubernetes/apps/executor.yaml <<EOF
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2

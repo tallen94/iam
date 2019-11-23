@@ -8,6 +8,7 @@ ADD programs /usr/home/iam/programs
 EOF
 
 docker build --no-cache -t $TAG images/filesystem
+docker push $TAG
 
 cat > kubernetes/apps/filesystem.yaml <<EOF
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2

@@ -20,8 +20,6 @@ jobs:
         node-version: '11.14.0'
     - name: Build Dependencies
       run: bash build-dependencies.sh $GITHUB_SHA
-    - name: Push Docker 
-      run: docker push icanplayguitar94/iam:dependencies-$GITHUB_SHA 
     - name: Build Base
       run: bash build-base.sh $GITHUB_SHA
     - name: Build Dashboard

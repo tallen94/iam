@@ -10,6 +10,7 @@ FROM icanplayguitar94/iam:base-$1
 COPY ./src public/dist
 EOF
 docker build --no-cache -t $TAG images/dashboard
+docker push $TAG
 
 cat > kubernetes/apps/dashboard.yaml <<EOF
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
