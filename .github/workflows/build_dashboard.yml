@@ -18,7 +18,8 @@ jobs:
     - uses: actions/setup-node@v1
       with:
         node-version: '11.14.0'
-    - run: bash build-dashboard.sh $GITHUB_SHA -prod
+    - name: Build Dashboard
+      run: bash build-dashboard.sh $GITHUB_SHA -prod
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v1
       with:
