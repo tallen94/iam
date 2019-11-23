@@ -1,5 +1,7 @@
 name: Build Base Docker
 
+on: [push]
+
 jobs:
 
   build:

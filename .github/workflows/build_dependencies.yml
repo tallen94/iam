@@ -1,5 +1,7 @@
 name: Build Dependencies Docker
 
+on: [push]
+
 jobs:
 
   build:

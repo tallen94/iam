@@ -1,5 +1,7 @@
 name: Build Filesystem Docker
 
+on: [push]
+
 jobs:
 
   build:
