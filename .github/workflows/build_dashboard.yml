@@ -16,10 +16,9 @@ jobs:
     - uses: actions/setup-node@v1
       with:
         node-version: '11.14.0'
-    - run: npm install --prefix public && npm run --prefix public build-prod && cp -r public/dist images/dashboard/src
     - name: Docker login
       run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
     - name: Build Docker
-      run: docker build -t icanplayguitar94/iam:dashboard-$GITHUB_SHA images/dashboard 
+      run: bash build-dashboard.sh $GITHUB_SHA
     - name: Push Docker 
       run: docker push icanplayguitar94/iam:dashboard-$GITHUB_SHA 

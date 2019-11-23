@@ -13,11 +13,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-    - name: Docker login
-      run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
     - uses: actions/setup-node@v1
       with:
         node-version: '11.14.0'
+    - name: Docker login
+      run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
+    - name: Build Base
     - run: bash build-base.sh $GITHUB_SHA
     - name: Push Docker 
       run: docker push icanplayguitar94/iam:base-$GITHUB_SHA 

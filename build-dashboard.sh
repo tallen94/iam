@@ -1,10 +1,5 @@
-#!/bin/sh
+#!/bin/bash
 
-cd public 
-npm run build
-cd ..
-rm -r images/dashboard/src
-cp -r public/dist images/dashboard/src
+npm install --prefix public && npm run --prefix public build-prod && cp -r public/dist images/dashboard/src
 
-cd images
-./bake.sh dashboard $1
+cd images && ./bake.sh dashboard $1
