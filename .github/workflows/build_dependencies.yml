@@ -13,4 +13,6 @@ jobs:
     - name: Docker login
       run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
     - name: Build Docker
-      run: export TAG=$(date +%s) && docker build -t icanplayguitar94/iam:dependencies-$TAG images/dependencies && docker push icanplayguitar94/iam:dependencies-$TAG 
+      run: docker build -t icanplayguitar94/iam:dependencies-$GITHUB_SHA images/dependencies 
+    - name: Push Docker 
+      run: docker push icanplayguitar94/iam:dependencies-$GITHUB_SHA 
