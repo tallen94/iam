@@ -238,10 +238,10 @@ cat > images/dashboard/Dockerfile <<EOF
 FROM $TAG
 COPY ./src public/dist
 EOF
-./build-dashboard $1
+./build-dashboard.sh $1
 
 cat > images/filesystem/Dockerfile <<EOF
 FROM $TAG
 ADD programs /usr/home/iam/programs
 EOF
-./build-filesystem $1
+./build-filesystem.sh $1

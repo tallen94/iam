@@ -1,3 +1,2 @@
-FROM icanplayguitar94/iam:base-0.0.4
-
+FROM icanplayguitar94/iam:base-asdf
 COPY ./src public/dist

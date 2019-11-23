@@ -1,4 +1,4 @@
-FROM icanplayguitar94/iam:dependencies-c79fafeedd687664fe027b94b4ae14f8e0dddd15
+FROM icanplayguitar94/iam:dependencies-asdf
 
 WORKDIR /usr/home/iam
 
