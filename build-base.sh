@@ -4,7 +4,7 @@
 TAG="icanplayguitar94/iam:base-$1"
 
 # Build base app
-npm install --prefix src && npm run --prefix src build && npm run --prefix src pkg && mv src/deploy-1.0.0.tgz images/base/deploy.tgz
+bash src/build.sh
 
 # Build docker container and push
 docker build --no-cache -t $TAG images/base

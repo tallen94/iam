@@ -5,7 +5,7 @@ TAG="icanplayguitar94/iam:dashboard-$1"
 
 # Build dashboard project
 ENV=$2
-npm install --prefix public && npm run --prefix public build$ENV && cp -r public/dist images/dashboard/src
+bash public/build.sh $ENV
 
 # Build and push docker container
 docker build --no-cache -t $TAG images/dashboard
