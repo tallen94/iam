@@ -1,4 +1,4 @@
-FROM icanplayguitar94/iam:dependencies-fc09979ef296a426a96764d5091a408bb7505570
+FROM icanplayguitar94/iam:dependencies-a4322d7af3949279829a57cccd75e78e5c3ce738
 WORKDIR /usr/home/iam
 COPY deploy.tgz deploy.tgz
 RUN npm i -g deploy.tgz
