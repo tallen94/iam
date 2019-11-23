@@ -16,7 +16,7 @@ jobs:
     - uses: actions/setup-node@v1
       with:
         node-version: '11.14.0'
-    - run: npm install && npm run build && npm pack 
+    - run: npm install && npm run build && npm pack && mv deploy-1.0.0.tgz images/base/deploy.tgz
     - name: Docker login
       run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
     - name: Build Docker
