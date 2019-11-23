@@ -15,10 +15,19 @@ jobs:
     - uses: actions/checkout@v1
     - name: Docker login
       run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
+    - uses: actions/setup-node@v1
+      with:
+        node-version: '11.14.0'
     - name: Build Dependencies
       run: bash build-dependencies.sh $GITHUB_SHA
     - name: Push Docker 
       run: docker push icanplayguitar94/iam:dependencies-$GITHUB_SHA 
+    - name: Build Base
+      run: bash build-base.sh $GITHUB_SHA
+    - name: Build Dashboard
+      run: bash build-dashboard.sh $GITHUB_SHA
+    - name: Build Filesystem
+      run: bash build-filesystem.sh $GITHUB_SHA
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v1
       with:

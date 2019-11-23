@@ -2,6 +2,11 @@
 
 TAG="icanplayguitar94/iam:filesystem-$1"
 
+cat > images/filesystem/Dockerfile <<EOF
+FROM icanplayguitar94/iam:base-$1
+ADD programs /usr/home/iam/programs
+EOF
+
 docker build --no-cache -t $TAG images/filesystem
 
 cat > kubernetes/apps/filesystem.yaml <<EOF

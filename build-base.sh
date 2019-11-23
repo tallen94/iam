@@ -4,6 +4,14 @@ TAG="icanplayguitar94/iam:base-$1"
 
 npm install --prefix src && npm run --prefix src build && npm run --prefix src pkg && mv src/deploy-1.0.0.tgz images/base/deploy.tgz
 
+cat > images/base/Dockerfile <<EOF
+FROM icanplayguitar94/iam:dependencies-$1
+WORKDIR /usr/home/iam
+COPY deploy.tgz deploy.tgz
+RUN npm i -g deploy.tgz
+EXPOSE 5000
+CMD deploy
+EOF
 docker build --no-cache -t $TAG images/base
 
 cat > kubernetes/apps/executor.yaml <<EOF
@@ -232,16 +240,3 @@ spec:
       port: 80
       targetPort: 5000
 EOF
-
-
-cat > images/dashboard/Dockerfile <<EOF
-FROM $TAG
-COPY ./src public/dist
-EOF
-./build-dashboard.sh $1
-
-cat > images/filesystem/Dockerfile <<EOF
-FROM $TAG
-ADD programs /usr/home/iam/programs
-EOF
-./build-filesystem.sh $1
