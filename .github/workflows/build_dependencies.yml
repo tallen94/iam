@@ -1,6 +1,9 @@
 name: Build Dependencies Docker
 
-on: []
+on: 
+  push:
+    branches:
+      - 'release/dependencies'
 
 jobs:
 

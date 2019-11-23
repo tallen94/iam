@@ -1,6 +1,9 @@
 name: Build Dashboard Docker
 
-on: []
+on: 
+  push:
+    branches:
+      - 'release/dashboard'
 
 jobs:
 

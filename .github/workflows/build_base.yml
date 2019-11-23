@@ -1,6 +1,9 @@
 name: Build Base Docker
 
-on: []
+on: 
+  push:
+    branches:
+      - 'release/base'
 
 jobs:
 

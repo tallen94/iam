@@ -1,6 +1,9 @@
 name: Build Filesystem Docker
 
-on: []
+on: 
+  push:
+    branches:
+      - 'release/filesystem'
 
 jobs:
 
