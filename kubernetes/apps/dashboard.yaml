@@ -16,7 +16,7 @@ spec:
       - name: regcred
       containers:
       - name: iam-dashboard
-        image: icanplayguitar94/iam:dashboard-bc5090feb276bb0d498e5620b682e35b542ddc95
+        image: icanplayguitar94/iam:dashboard-6cd736f0609e2dc2c9b088020308c406b8d0a4f6
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
