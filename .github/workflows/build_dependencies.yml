@@ -19,3 +19,11 @@ jobs:
       run: bash build-dependencies.sh $GITHUB_SHA
     - name: Push Docker 
       run: docker push icanplayguitar94/iam:dependencies-$GITHUB_SHA 
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v1
+      with:
+        branch: deploy/dependencies
+        commit-message: "Deploy Request for dependencies-${{ github.sha }}"
+        base: master
+        title: Deploy Request for dependencies-${{ github.sha }}
+        token: ${{ secrets.GITHUB_TOKEN }}
