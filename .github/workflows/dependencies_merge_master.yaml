@@ -12,14 +12,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
-    - uses: actions/setup-node@v1
-      with:
-        node-version: '11.14.0'
-    
     - name: Create Pull Request
-      uses: vsoch/pull-request-action@master
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        BRANCH_PREFIX: "master"
-        PULL_REQUEST_BRANCH: "release/dependencies"
-        PULL_REQUEST_TITLE: "Release Request for dependencies"
+      uses: repo-sync/pull-request@v2
+      with:
+        source_branch: "master"
+        destination_branch: "release/dependencies"          # If blank, default: master
+        pr_title: "Pulling ${{ github.ref }} into master"
+        pr_body: ":crown: *An automated PR*"  # Full markdown support, requires pr_title to be set
+        github_token: ${{ secrets.GITHUB_TOKEN }}
