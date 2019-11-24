@@ -3,7 +3,7 @@ name: Build Base Release PR
 on: 
   pull_request:
     branches:
-    - release/base
+    - 'release/base'
 
 jobs:
   build:

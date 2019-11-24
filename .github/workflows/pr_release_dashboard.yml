@@ -3,7 +3,7 @@ name: Build Dashboard Release PR
 on: 
   pull_request:
     branches:
-    - release/dashboard
+    - 'release/dashboard'
 
 jobs:
   build:
