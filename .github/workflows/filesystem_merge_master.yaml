@@ -1,9 +1,9 @@
-name: Release Request PR Base
+name: Release Request PR Filesystem
 
 on: 
   push:
     paths:
-    - 'src/**'
+    - 'images/filesystem/**'
     branches:
     - 'master'
 
@@ -21,5 +21,5 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         BRANCH_PREFIX: "master"
-        PULL_REQUEST_BRANCH: "release/base"
-        PULL_REQUEST_TITLE: "Release Request for base"
+        PULL_REQUEST_BRANCH: "release/filesystem"
+        PULL_REQUEST_TITLE: "Release Request for filesystem"
