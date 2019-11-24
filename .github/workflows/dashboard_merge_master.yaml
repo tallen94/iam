@@ -4,6 +4,7 @@ on:
   push:
     paths:
     - 'public/**'
+    - 'images/dashboard/**'
     branches:
     - 'master'
 

@@ -3,7 +3,7 @@ name: Release Request PR Dependencies
 on: 
   push:
     paths:
-    - 'images/dependencies/Dockerfile'
+    - 'images/dependencies/**'
     branches:
     - 'master'
 
