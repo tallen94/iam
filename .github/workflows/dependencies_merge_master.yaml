@@ -1,0 +1,25 @@
+name: Release Request PR Dependencies
+
+on: 
+  push:
+    paths:
+    - 'images/dependencies/**'
+    branches:
+    - 'master'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-node@v1
+      with:
+        node-version: '11.14.0'
+    
+    - name: Create Pull Request
+      uses: vsoch/pull-request-action@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        BRANCH_PREFIX: "master"
+        PULL_REQUEST_BRANCH: "release/dependencies"
+        PULL_REQUEST_TITLE: "Release Request for dependencies"

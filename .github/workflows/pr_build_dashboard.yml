@@ -2,8 +2,10 @@ name: Build Dashboard PR
 
 on: 
   pull_request:
-    branch:
-      - 'dashboard/**'
+    paths:
+    - 'public/**'
+    branches:
+    - 'master'
 
 jobs:
   build:

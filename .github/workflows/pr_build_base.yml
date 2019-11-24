@@ -2,8 +2,10 @@ name: Build Base PR
 
 on: 
   pull_request:
-    branch:
-      - 'base/**'
+    paths:
+    - 'src/**'
+    branches:
+    - 'master'
 
 jobs:
   build:
