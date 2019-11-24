@@ -4,7 +4,6 @@ on:
   pull_request:
     branches:
     - 'release/base'
-    - 'master'
 
 jobs:
   build:

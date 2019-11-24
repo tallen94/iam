@@ -19,4 +19,4 @@ jobs:
         destination_branch: "release/dependencies"          # If blank, default: master
         pr_title: "Pulling ${{ github.ref }} into release/dependencies"
         pr_body: ":crown: *An automated PR*"  # Full markdown support, requires pr_title to be set
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+        github_token: ${{ secrets.ACTIONS_TOKEN }}
