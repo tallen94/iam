@@ -1,0 +1,25 @@
+name: Release Request PR Base
+
+on: 
+  push:
+    branches:
+    - 'master'
+    - 'base**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-node@v1
+      with:
+        node-version: '11.14.0'
+    
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v1
+      with:
+        branch: request/base
+        commit-message: "Release Request for base-${{ github.sha }}"
+        base: release/base
+        title: Release Request for base-${{ github.sha }}
+        token: ${{ secrets.GITHUB_TOKEN }}
