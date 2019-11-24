@@ -2,15 +2,12 @@ name: Build Base PR
 
 on: 
   pull_request:
-    paths:
-      - 'src/**'
+    branch:
+      - 'base/**'
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v1
     - uses: actions/setup-node@v1
