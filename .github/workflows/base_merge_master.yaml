@@ -2,9 +2,10 @@ name: Release Request PR Base
 
 on: 
   push:
+    paths:
+    - 'src/**'
     branches:
     - 'master'
-    - 'base**'
 
 jobs:
   build:
