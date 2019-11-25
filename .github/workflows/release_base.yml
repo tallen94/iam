@@ -23,6 +23,7 @@ jobs:
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
+        git checkout -b deploy/base-${{ github.sha }}
         git commit -m "Deploy updates for base" -a
     
     - name: Push changes
