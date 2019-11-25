@@ -4,12 +4,13 @@ on:
   pull_request:
     branches:
     - 'master'
-    - '!deploy/**'
 
 jobs:
   build:
+  
     runs-on: ubuntu-latest
     steps:
+    - if: "!contains(github.head_ref, 'deploy')"
     - uses: actions/checkout@v1
     - uses: actions/setup-node@v1
       with:
