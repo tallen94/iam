@@ -19,14 +19,17 @@ jobs:
     - name: Build Base
       run: bash build.sh base $GITHUB_SHA push
     
-    - name: Merge Changes
+    - name: Commit Changes
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git checkout -b deploy/base-${{ github.sha }}
-        git add -A
         git commit -m "Deploy Request for base ${{ github.sha }}"
-        git push origin deploy/base-${{ github.sha }}
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        branch: deploy/base-${{ github.sha }}
+        github_token: ${{ secrets.ACTIONS_TOKEN }}
     
     - name: Push changes
       uses: ad-m/github-push-action@master
