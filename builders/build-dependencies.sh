@@ -14,3 +14,4 @@ fi
 
 # Update downstreams
 bash images/templates/bash.sh $TAG
+bash build-base.sh $1
