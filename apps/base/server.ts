@@ -1,7 +1,7 @@
 import { ServerCommunicator, FileSystem } from "./modules/modules";
 import { ApiFactory } from "./modules/Api/ApiFactory";
 
-// COMMENTS 8
+// COMMENTS 9
 const TYPE = process.env.TYPE;
 const HOME = process.env.HOME;
 const SERVER_PORT = process.env.SERVER_PORT;
