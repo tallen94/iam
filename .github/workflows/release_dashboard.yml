@@ -19,11 +19,14 @@ jobs:
     - name: Build Dashboard
       run: bash build.sh dashboard $GITHUB_SHA push -prod
     
-    - name: Create Pull Request
-      uses: peter-evans/create-pull-request@v1
+    - name: Commit Changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git checkout -b deploy/dashboard-${{ github.sha }}
+        git commit -m "Deploy Request for dashboard ${{ github.sha }}" -a
+    - name: Push changes
+      uses: ad-m/github-push-action@master
       with:
-        branch: deploy/dashboard
-        commit-message: "Deploy Request for dashboard-${{ github.sha }}"
-        base: master
-        title: Deploy Request for dashboard-${{ github.sha }}
-        token: ${{ secrets.GITHUB_TOKEN }}
+        branch: deploy/dashboard-${{ github.sha }}
+        github_token: ${{ secrets.ACTIONS_TOKEN }}
