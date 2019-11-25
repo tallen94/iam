@@ -3,7 +3,7 @@ name: Release Filesystem
 on: 
   push:
     branches:
-      - 'release/filesystem'
+    - 'release/filesystem'
 
 jobs:
   build:

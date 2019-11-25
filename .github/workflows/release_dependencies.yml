@@ -3,7 +3,7 @@ name: Release Dependencies
 on: 
   push:
     branches:
-      - 'release/dependencies'
+    - 'release/dependencies'
 
 jobs:
   build:
