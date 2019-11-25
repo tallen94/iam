@@ -13,8 +13,8 @@ jobs:
 
     - name: Build Base
       if: "!contains(github.head_ref, 'deploy') && (contains(github.head_ref, 'base') || github.base_ref == 'release/base')"
-      run: bash src/build.sh
+      run: bash apps/base/build.sh
 
     - name: Build Dashboard
       if: "!contains(github.head_ref, 'deploy') && (contains(github.head_ref, 'dashboard') || github.base_ref == 'release/dashboard')"
-      run: bash public/build.sh -prod
+      run: bash apps/dashboard/build.sh -prod
