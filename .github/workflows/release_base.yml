@@ -25,12 +25,12 @@ jobs:
         git config --local user.name "GitHub Action"
         git checkout -b deploy/base-${{ github.sha }}
         git commit -m "Deploy updates for base" -a
-    
+        
     - name: Push changes
       uses: ad-m/github-push-action@master
       with:
         branch: deploy/base-${{ github.sha }}
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+        github_token: ${{ secrets.ACTIONS_TOKEN }}
 
     - name: Create Pull Request
       uses: repo-sync/pull-request@v2
