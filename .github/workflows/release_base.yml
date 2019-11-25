@@ -24,7 +24,7 @@ jobs:
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git checkout -b deploy/base-${{ github.sha }}
-        git commit -m "Deploy Request for base ${{ github.sha }}"
+        git commit -m "Deploy Request for base ${{ github.sha }}" -a
     - name: Push changes
       uses: ad-m/github-push-action@master
       with:
