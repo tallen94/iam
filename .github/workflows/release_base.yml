@@ -18,28 +18,17 @@ jobs:
     
     - name: Build Base
       run: bash build.sh base $GITHUB_SHA push
-
-    - name: Commit files
+    
+    - name: Merge Changes
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git checkout -b deploy/base-${{ github.sha }}
-        git commit -m "Deploy updates for base" -a
-
+        git add -A
+        git commit -m "Deploy Request for base ${{ github.sha }}"
+        git push
+    
     - name: Push changes
       uses: ad-m/github-push-action@master
       with:
-        branch: deploy/base-${{ github.sha }}
-        github_token: ${{ secrets.ACTIONS_TOKEN }}
-    
-    - name: Checkout release/base
-      run: git checkout release/base
-
-    - name: Create Pull Request
-      uses: repo-sync/pull-request@v2
-      with:
-        source_branch: "deploy/base-${{ github.sha }}"
-        destination_branch: "master"          # If blank, default: master
-        pr_title: "Pulling ${{ github.ref }} into master"
-        pr_body: ":crown: *An automated PR*"  # Full markdown support, requires pr_title to be set
         github_token: ${{ secrets.ACTIONS_TOKEN }}

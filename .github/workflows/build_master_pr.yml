@@ -1,0 +1,23 @@
+name: Build Master PR
+
+on: 
+  pull_request:
+    branches:
+    - 'master'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/setup-node@v1
+      with:
+        node-version: '11.14.0'
+
+    - name: Build Base
+      if: "contains(github.head_ref, 'base')"
+      run: bash src/build.sh
+
+    - name: Build Dashboard
+      if: "contains(github.head_ref, 'dashboard')"
+      run: bash public/build.sh -prod
