@@ -1,16 +1,13 @@
-name: Build Base Docker
+name: Release Dependencies
 
 on: 
   push:
     branches:
-      - 'release/base'
+      - 'release/dependencies'
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v1
     - name: Docker login
@@ -18,13 +15,15 @@ jobs:
     - uses: actions/setup-node@v1
       with:
         node-version: '11.14.0'
-    - name: Build Base
-      run: bash build-base.sh $GITHUB_SHA
+    
+    - name: Build Dependencies
+      run: bash build.sh dependencies $GITHUB_SHA push
+    
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v1
       with:
-        branch: deploy/base
-        commit-message: "Deploy Request for base-${{ github.sha }}"
+        branch: deploy/dependencies
+        commit-message: "Deploy Request for dependencies-${{ github.sha }}"
         base: master
-        title: Deploy Request for base-${{ github.sha }}
+        title: Deploy Request for dependencies-${{ github.sha }}
         token: ${{ secrets.GITHUB_TOKEN }}

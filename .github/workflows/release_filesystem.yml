@@ -1,4 +1,4 @@
-name: Build Filesystem Docker
+name: Release Filesystem
 
 on: 
   push:
@@ -6,17 +6,16 @@ on:
       - 'release/filesystem'
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v1
     - name: Docker login
       run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
+    
     - name: Build Filesystem
-      run: bash build-filesystem.sh $GITHUB_SHA
+      run: bash build.sh filesystem $GITHUB_SHA push
+    
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v1
       with:

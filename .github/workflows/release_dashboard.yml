@@ -1,16 +1,13 @@
-name: Build Dependencies Docker
+name: Release Dashboard
 
 on: 
   push:
     branches:
-      - 'release/dependencies'
+      - 'release/dashboard'
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v1
     - name: Docker login
@@ -18,13 +15,15 @@ jobs:
     - uses: actions/setup-node@v1
       with:
         node-version: '11.14.0'
-    - name: Build Dependencies
-      run: bash build-dependencies.sh $GITHUB_SHA
+    
+    - name: Build Dashboard
+      run: bash build.sh dashboard $GITHUB_SHA push -prod
+    
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v1
       with:
-        branch: deploy/dependencies
-        commit-message: "Deploy Request for dependencies-${{ github.sha }}"
+        branch: deploy/dashboard
+        commit-message: "Deploy Request for dashboard-${{ github.sha }}"
         base: master
-        title: Deploy Request for dependencies-${{ github.sha }}
+        title: Deploy Request for dashboard-${{ github.sha }}
         token: ${{ secrets.GITHUB_TOKEN }}
