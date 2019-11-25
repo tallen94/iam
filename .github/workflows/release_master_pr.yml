@@ -1,19 +1,19 @@
-name: Create Dependencies PR
+name: Release Master PR
 
 on: 
   push:
     branches:
-    - dependencies*
+    - master
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
+    - uses: repo-sync/pull-request@v2
     - name: pull-request
-      uses: repo-sync/pull-request@v2
       with:
-        destination_branch: "release/dependencies"          # If blank, default: master
-        pr_title: "Pulling ${{ github.ref }} into release/dependencies"
+        destination_branch: "master"          # If blank, default: master
+        pr_title: "Pulling ${{ github.ref }} into master"
         pr_body: ":crown: *An automated PR*"  # Full markdown support, requires pr_title to be set
         github_token: ${{ secrets.ACTIONS_TOKEN }}
