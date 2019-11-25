@@ -3,7 +3,7 @@ name: Release Dashboard
 on: 
   push:
     branches:
-      - 'release/dashboard'
+    - 'release/dashboard'
 
 jobs:
   build:
