@@ -26,7 +26,7 @@ jobs:
         git checkout -b deploy/base-${{ github.sha }}
         git add -A
         git commit -m "Deploy Request for base ${{ github.sha }}"
-        git push
+        git push origin deploy/base-${{ github.sha }}
     
     - name: Push changes
       uses: ad-m/github-push-action@master
