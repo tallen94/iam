@@ -1,3 +1,7 @@
+#!/bin/bash
+TAG=$1
+
+cat > kubernetes/apps/master.yaml <<EOF
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
@@ -16,7 +20,7 @@ spec:
       - name: regcred
       containers:
       - name: iam-master
-        image: icanplayguitar94/iam:base-7c9a47254e06a66dc0eb183913d0ac540b377bef
+        image: $TAG
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
@@ -72,3 +76,4 @@ spec:
       port: 80
       targetPort: 5000
       nodePort: 30001
+EOF

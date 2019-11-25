@@ -1,29 +1,25 @@
 #!/bin/bash
+TAG=$1
 
-TAG="icanplayguitar94/iam:filesystem-$1"
-
-docker build --no-cache -t $TAG images/filesystem
-docker push $TAG
-
-cat > kubernetes/apps/filesystem.yaml <<EOF
+cat > kubernetes/apps/dashboard.yaml <<EOF
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
-  name: iam-filesystem
+  name: iam-dashboard
 spec:
   selector:
     matchLabels:
-      app: iam-filesystem
+      app: iam-dashboard
   replicas: 1 # tells deployment to run 2 pods matching the template
   template:
     metadata:
       labels:
-        app: iam-filesystem
+        app: iam-dashboard
     spec:
       imagePullSecrets:
       - name: regcred
       containers:
-      - name: iam-filesystem
+      - name: iam-dashboard
         image: $TAG
         imagePullPolicy: IfNotPresent
         ports:
@@ -38,7 +34,7 @@ spec:
         - name: HOME
           value: "/usr/home/iam"
         - name: TYPE 
-          value: "filesystem"
+          value: "dashboard"
         - name: SERVER_PORT
           value: "5000"
 
@@ -46,12 +42,14 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: iam-filesystem
+  name: iam-dashboard
 spec:
   selector:
-    app: iam-filesystem
+    app: iam-dashboard
+  type: NodePort
   ports:
     - protocol: TCP
       port: 80
       targetPort: 5000
+      nodePort: 30000
 EOF

@@ -1,9 +1,5 @@
 #!/bin/bash
-
-TAG="icanplayguitar94/iam:database-$1"
-
-docker build --no-cache -t $TAG images/database
-docker push $TAG
+TAG=$1
 
 cat > kubernetes/apps/database.yaml <<EOF
 apiVersion: v1 # for versions before 1.9.0 use apps/v1beta2

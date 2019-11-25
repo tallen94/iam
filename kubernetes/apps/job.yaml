@@ -16,7 +16,7 @@ spec:
       - name: regcred
       containers:
       - name: iam-job
-        image: icanplayguitar94/iam:base-42702e601df8146c979bceb02ba07f0351e0042b
+        image: icanplayguitar94/iam:base-7c9a47254e06a66dc0eb183913d0ac540b377bef
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
