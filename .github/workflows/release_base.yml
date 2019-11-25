@@ -30,8 +30,3 @@ jobs:
       with:
         branch: deploy/base-${{ github.sha }}
         github_token: ${{ secrets.ACTIONS_TOKEN }}
-    
-    - name: Push changes
-      uses: ad-m/github-push-action@master
-      with:
-        github_token: ${{ secrets.ACTIONS_TOKEN }}
