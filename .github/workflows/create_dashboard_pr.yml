@@ -10,13 +10,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
-    
-    - uses: actions/setup-node@v1
-      with:
-        node-version: '11.14.0'
-    - name: Build Base
-      run: bash public/build.sh -prod
-    
     - name: pull-request
       uses: repo-sync/pull-request@v2
       with:
