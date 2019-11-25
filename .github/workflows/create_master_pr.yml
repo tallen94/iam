@@ -2,9 +2,8 @@ name: Create Master PR
 
 on: 
   push:
-    branches:
-    - '!master'
-    - '!release/**'
+    branches-ignore:
+    - 'master'
 
 jobs:
   build:
