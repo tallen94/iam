@@ -1,10 +1,6 @@
-name: Build Master PR
+name: Pull Request
 
-on: 
-  pull_request:
-    branches:
-    - 'master'
-    - '!deploy/**'
+on: pull_request
 
 jobs:
   build:
@@ -16,9 +12,9 @@ jobs:
         node-version: '11.14.0'
 
     - name: Build Base
-      if: "contains(github.head_ref, 'base')"
+      if: "contains(github.head_ref, 'base') && !contains(github.head_ref, 'deploy')"
       run: bash src/build.sh
 
     - name: Build Dashboard
-      if: "contains(github.head_ref, 'dashboard')"
+      if: "contains(github.head_ref, 'dashboard') && !contains(github.head_ref, 'deploy')"
       run: bash public/build.sh -prod
