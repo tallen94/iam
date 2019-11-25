@@ -20,10 +20,9 @@ jobs:
       run: bash build.sh base $GITHUB_SHA push
 
     - name: Create Pull Request
-      uses: peter-evans/create-pull-request@v1
+      uses: repo-sync/pull-request@v2
       with:
-        branch: deploy/base
-        commit-message: "Deploy Request for base-${{ github.sha }}"
-        base: master
-        title: Deploy Request for base-${{ github.sha }}
-        token: ${{ secrets.GITHUB_TOKEN }}
+        destination_branch: "master"          # If blank, default: master
+        pr_title: "Pulling ${{ github.ref }} into master"
+        pr_body: ":crown: *An automated PR*"  # Full markdown support, requires pr_title to be set
+        github_token: ${{ secrets.ACTIONS_TOKEN }}
