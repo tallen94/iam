@@ -1,9 +1,10 @@
-name: Create Dependencies PR
+name: Create Master PR
 
 on: 
   push:
-    branches:
-    - dependencies*
+    branches-ignore:
+    - 'master'
+    - 'release/**'
 
 jobs:
   build:

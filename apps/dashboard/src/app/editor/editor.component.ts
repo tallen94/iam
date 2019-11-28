@@ -28,7 +28,6 @@ export class EditorComponent implements OnInit {
     if (name !== undefined && name !== "" && exe !== undefined && exe !== "") {
       this.iam.getExecutable(username, exe, name)
       .subscribe((result) => {
-        console.log(result);
         this.data = result;
         this.selected = this.data;
       })
@@ -51,8 +50,40 @@ export class EditorComponent implements OnInit {
     this.running = data;
   }
 
-  receiveEmitEditing(data: any) {
+  public receiveEmitEditing(data: any) {
     this.editing = [...data]
+  }
+
+  public receiveEmitNewNode(id: number) {
+    const newNode = {id: id, name: "NewNode", exe: "function", username: this.iam.getUser().username };
+    this.data.graph.nodes.push(newNode)
+    this.data.graph.nodes = [...this.data.graph.nodes]
+  }
+
+  public receiveEmitNewEdge(edge: any) {
+    this.data.graph.edges.push(edge);
+    this.data.graph.edges = [...this.data.graph.edges]  
+  }
+
+  public receiveDeleteEditing(linksEditing: any) {
+    // Remove all editing links
+    Lodash.each(linksEditing, (link: any) => {
+      Lodash.remove(this.data.graph.edges, (edge: any) => {
+        return edge.source == link.source && edge.target == link.target;
+      })
+    })
+
+    // Remove all editing nodes
+    Lodash.each(this.editing, (id) => {
+      Lodash.remove(this.data.graph.nodes, (node: any) => {
+        return node.id == id;
+      })
+      Lodash.remove(this.data.graph.edges, (edge: any) => {
+        return edge.source == id || edge.target == id
+      })
+    })
+    this.data.graph.nodes = [...this.data.graph.nodes];
+    this.data.graph.edges = [...this.data.graph.edges];
   }
 
   public delete() {

@@ -3,7 +3,7 @@ name: Release Dependencies
 on: 
   push:
     branches:
-      - 'release/dependencies'
+    - 'release/dependencies'
 
 jobs:
   build:
@@ -19,11 +19,14 @@ jobs:
     - name: Build Dependencies
       run: bash build.sh dependencies $GITHUB_SHA push
     
-    - name: Create Pull Request
-      uses: peter-evans/create-pull-request@v1
+    - name: Commit Changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git checkout -b deploy/dependencies-${{ github.sha }}
+        git commit -m "Deploy Request for dependencies ${{ github.sha }}" -a
+    - name: Push changes
+      uses: ad-m/github-push-action@master
       with:
-        branch: deploy/dependencies
-        commit-message: "Deploy Request for dependencies-${{ github.sha }}"
-        base: master
-        title: Deploy Request for dependencies-${{ github.sha }}
-        token: ${{ secrets.GITHUB_TOKEN }}
+        branch: deploy/dependencies-${{ github.sha }}
+        github_token: ${{ secrets.ACTIONS_TOKEN }}

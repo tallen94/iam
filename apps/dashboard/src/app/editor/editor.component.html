@@ -19,9 +19,13 @@
     <graph 
       class="right" 
       *ngIf="data && data.exe == 'graph' && running == undefined" 
-      [data]="data.graph"
+      [nodes]="data.graph.nodes"
+      [links]="data.graph.edges"
       [editing]="editing"
       [edgesEditing]="[]"
-      (emitEditing)="receiveEmitEditing($event)"></graph>
+      (emitEditing)="receiveEmitEditing($event)"
+      (emitNewNode)="receiveEmitNewNode($event)"
+      (emitNewEdge)="receiveEmitNewEdge($event)"
+      (emitDeleteEditing)="receiveDeleteEditing($event)"></graph>
   </div>
 </div>

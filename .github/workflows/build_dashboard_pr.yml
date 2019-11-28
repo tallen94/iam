@@ -1,9 +1,9 @@
-name: Build Base PR
+name: Build Dashboard Pull Request
 
 on: 
   pull_request:
-    branches: 
-    - 'release/base'
+    paths:
+    - 'apps/dashboard/**'
 
 jobs:
   build:
@@ -13,5 +13,6 @@ jobs:
     - uses: actions/setup-node@v1
       with:
         node-version: '11.14.0'
-    - name: Build Base
-      run: bash src/build.sh
+
+    - name: Build Dashboard
+      run: bash apps/dashboard/build.sh -prod

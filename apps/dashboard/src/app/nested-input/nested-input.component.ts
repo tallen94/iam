@@ -8,14 +8,12 @@ import * as Lodash from "lodash";
   styleUrls: ['./nested-input.component.css']
 })
 export class NestedInputComponent implements OnInit {
-  @Output() delete: EventEmitter<any> = new EventEmitter();
   @Output() run: EventEmitter<any> = new EventEmitter();
   @Output() update: EventEmitter<any> = new EventEmitter();
   @Output() emitEditing: EventEmitter<any> = new EventEmitter();
   @Output() emitRunning: EventEmitter<any> = new EventEmitter();
 
   @Input() data: any;
-  @Input() canTriggerRemove: boolean;
   @Input() border: boolean;
   @Input() hidden: any[] = [];
   @Input() editing: any[] = [];
@@ -62,10 +60,6 @@ export class NestedInputComponent implements OnInit {
     return this.data.id !== undefined && Lodash.indexOf(this.editing, this.data.id) != -1;
   }
 
-  triggerRemove() {
-    this.delete.emit();
-  }
-
   triggerShow() {
     if (!this.isHidden()) {
       this.hidden = Lodash.filter(this.hidden, (item) => !this.match(item))
@@ -96,19 +90,6 @@ export class NestedInputComponent implements OnInit {
 
   receiveEmitRunning(data: any) {
     this.emitRunning.emit(data);
-  }
-
-  removeIndex(index: number) {
-    this.data.splice(index,1)
-  }
-
-  addIndex(index: number) {
-    const newData = []
-    Lodash.each(this.data, (step) => {
-      newData.push(step);
-    })
-    newData.splice(index+1, 0, {name: "", exe: "function"});
-    this.data = newData;
   }
 
   change(key, value) {
