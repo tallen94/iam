@@ -1,22 +1,26 @@
+#!/bin/bash
+TAG=$1
+
+cat > kubernetes/apps/master.yaml <<EOF
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
-  name: iam-executor
+  name: iam-master
 spec:
   selector:
     matchLabels:
-      app: iam-executor
+      app: iam-master
   replicas: 1 # tells deployment to run 2 pods matching the template
   template:
     metadata:
       labels:
-        app: iam-executor
+        app: iam-master
     spec:
       imagePullSecrets:
       - name: regcred
       containers:
-      - name: iam-executor
-        image: icanplayguitar94/iam:base-d98c8a78b0128d32560a3b209731dc1714c9ab4a
+      - name: iam-master
+        image: $TAG
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
@@ -30,7 +34,7 @@ spec:
         - name: HOME
           value: "/usr/home/iam"
         - name: TYPE 
-          value: "executor"
+          value: "master"
         - name: SERVER_PORT
           value: "5000"
 
@@ -62,11 +66,14 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: iam-executor
+  name: iam-master
 spec:
   selector:
-    app: iam-executor
+    app: iam-master
+  type: NodePort
   ports:
     - protocol: TCP
       port: 80
       targetPort: 5000
+      nodePort: 30001
+EOF

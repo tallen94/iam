@@ -1,6 +1,11 @@
-FROM icanplayguitar94/iam:dependencies-fc09979ef296a426a96764d5091a408bb7505570
+#!/bin/bash
+TAG=$1
+
+cat > images/base/Dockerfile <<EOF
+FROM $TAG
 WORKDIR /usr/home/iam
 COPY deploy.tgz deploy.tgz
 RUN npm i -g deploy.tgz
 EXPOSE 5000
 CMD deploy
+EOF

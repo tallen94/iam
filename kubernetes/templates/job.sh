@@ -1,22 +1,26 @@
+#!/bin/bash
+TAG=$1
+
+cat > kubernetes/apps/job.yaml <<EOF
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
-  name: iam-dashboard
+  name: iam-job
 spec:
   selector:
     matchLabels:
-      app: iam-dashboard
+      app: iam-job
   replicas: 1 # tells deployment to run 2 pods matching the template
   template:
     metadata:
       labels:
-        app: iam-dashboard
+        app: iam-job
     spec:
       imagePullSecrets:
       - name: regcred
       containers:
-      - name: iam-dashboard
-        image: icanplayguitar94/iam:dashboard-7afa681e402a74d1991ec9dbb1887a0511ff3d7a
+      - name: iam-job
+        image: $TAG
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
@@ -30,21 +34,44 @@ spec:
         - name: HOME
           value: "/usr/home/iam"
         - name: TYPE 
-          value: "dashboard"
+          value: "job"
         - name: SERVER_PORT
           value: "5000"
 
+        # FS CONFIG
+        - name: FS_HOST
+          value: "iam-filesystem"
+        - name: FS_PORT
+          value: "80"
+
+        ## DB CONFIG
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: dbconfig
+              key: user
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: dbconfig
+              key: password
+        - name: DB_HOST
+          value: "mysqldatabase.default"
+        - name: DB_NAME
+          valueFrom:
+            secretKeyRef:
+              name: dbconfig
+              key: db_name
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: iam-dashboard
+  name: iam-job
 spec:
   selector:
-    app: iam-dashboard
-  type: NodePort
+    app: iam-job
   ports:
     - protocol: TCP
       port: 80
       targetPort: 5000
-      nodePort: 30000
+EOF

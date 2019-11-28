@@ -1,3 +1,7 @@
+#!/bin/bash
+TAG=$1
+
+cat > kubernetes/apps/executor.yaml <<EOF
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
@@ -16,7 +20,7 @@ spec:
       - name: regcred
       containers:
       - name: iam-executor
-        image: icanplayguitar94/iam:base-d98c8a78b0128d32560a3b209731dc1714c9ab4a
+        image: $TAG
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
@@ -70,3 +74,4 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 5000
+EOF

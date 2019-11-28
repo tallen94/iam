@@ -1,0 +1,32 @@
+name: Release Dashboard
+
+on: 
+  push:
+    branches:
+    - 'release/dashboard'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Docker login
+      run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
+    - uses: actions/setup-node@v1
+      with:
+        node-version: '11.14.0'
+    
+    - name: Build Dashboard
+      run: bash build.sh dashboard $GITHUB_SHA push -prod
+    
+    - name: Commit Changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git checkout -b deploy/dashboard-${{ github.sha }}
+        git commit -m "Deploy Request for dashboard ${{ github.sha }}" -a
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        branch: deploy/dashboard-${{ github.sha }}
+        github_token: ${{ secrets.ACTIONS_TOKEN }}

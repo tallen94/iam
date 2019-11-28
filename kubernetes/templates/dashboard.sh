@@ -1,3 +1,7 @@
+#!/bin/bash
+TAG=$1
+
+cat > kubernetes/apps/dashboard.yaml <<EOF
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
@@ -16,7 +20,7 @@ spec:
       - name: regcred
       containers:
       - name: iam-dashboard
-        image: icanplayguitar94/iam:dashboard-7afa681e402a74d1991ec9dbb1887a0511ff3d7a
+        image: $TAG
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
@@ -48,3 +52,4 @@ spec:
       port: 80
       targetPort: 5000
       nodePort: 30000
+EOF
