@@ -84,6 +84,7 @@ export class EditorComponent implements OnInit {
     })
     this.data.graph.nodes = [...this.data.graph.nodes];
     this.data.graph.edges = [...this.data.graph.edges];
+    this.editing = []
   }
 
   public delete() {

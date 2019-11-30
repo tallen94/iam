@@ -106,5 +106,6 @@ export class GraphComponent implements OnInit {
 
   deleteEditing() {
     this.emitDeleteEditing.emit(this.edgesEditing);
+    this.edgesEditing = []
   }
 }
