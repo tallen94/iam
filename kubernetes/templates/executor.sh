@@ -70,8 +70,10 @@ metadata:
 spec:
   selector:
     app: iam-executor
+  type: NodePort
   ports:
     - protocol: TCP
       port: 80
       targetPort: 5000
+      nodePort: 30004
 EOF
