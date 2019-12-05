@@ -49,9 +49,9 @@ export class EditorComponent implements OnInit {
     this.editing = [...data]
   }
 
-  public receiveEmitNewNode(id: number) {
-    const newNode = this.initData('function');
-    newNode["id"] = id
+  public receiveEmitNewNode(data: any) {
+    const newNode = this.initData(data.exe);
+    newNode["id"] = data.id
     this.data.graph.nodes.push(newNode)
     this.data.graph.nodes = [...this.data.graph.nodes]
   }

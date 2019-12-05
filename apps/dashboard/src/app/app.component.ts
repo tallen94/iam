@@ -20,7 +20,6 @@ export class AppComponent {
     const token = localStorage.getItem("token");
     this.iam.runExecutable("admin", "query", "delete-token", {token: token})
     .subscribe((result) => {
-      console.log(result);
       localStorage.removeItem("token");
       localStorage.removeItem("userId");
       this.router.navigate(["/login"])

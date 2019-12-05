@@ -4,8 +4,9 @@ export class InitData {
 
   constructor(private iam: Iam) { }
 
-  query() {
+  query(id: string) {
     return {
+      id: id,
       username: this.iam.getUser().username,
       exe: "query",
       name: "NewQuery",
@@ -16,8 +17,9 @@ export class InitData {
     }
   }
 
-  function() {
+  function(id: string) {
     return {
+      id: id,
       username: this.iam.getUser().username,
       exe: "function",
       name: "NewFunction",
@@ -32,6 +34,7 @@ export class InitData {
 
   graph() {
     return {
+      id: "0",
       username: this.iam.getUser().username,
       exe: "graph",
       name: "NewGraph",
@@ -39,7 +42,7 @@ export class InitData {
       input: '',
       output: '',
       graph: {
-        nodes: [new InitData(this.iam)["function"]()],
+        nodes: [new InitData(this.iam)["function"]("1")],
         edges: []
       }
     }
