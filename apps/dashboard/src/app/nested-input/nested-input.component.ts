@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Iam } from '../iam/iam';
 import * as Lodash from "lodash";
+import { InitData } from '../iam/init-data';
 
 @Component({
   selector: 'nested-input',
@@ -9,7 +10,6 @@ import * as Lodash from "lodash";
 })
 export class NestedInputComponent implements OnInit {
   @Output() run: EventEmitter<any> = new EventEmitter();
-  @Output() update: EventEmitter<any> = new EventEmitter();
   @Output() emitEditing: EventEmitter<any> = new EventEmitter();
   @Output() emitRunning: EventEmitter<any> = new EventEmitter();
 
@@ -28,13 +28,11 @@ export class NestedInputComponent implements OnInit {
   constructor(private iam: Iam) { }
 
   ngOnInit() {
-    if (this.data) {
-      this.exeOnChange(this.data.exe);
+    if (this.data.exe == "graph") {
+      this.data.id = "0";
+    } else if (this.data.id == undefined) {
+      this.data.id = "1";
     }
-    if (this.data.id == undefined) {
-      this.data.id = 1;
-    }
-    // this.nameOnChange(this.data.name);
   }
 
   addStep() {
@@ -104,10 +102,6 @@ export class NestedInputComponent implements OnInit {
     return "```" + command + "\n" + text + "\n```";
   }
 
-  updateStep(data, i) {
-    this.data.steps[i] = data;
-  }
-
   // public nameOnChange(value) {
   //   if (value && value !== "") {
   //     const newData = {
@@ -151,103 +145,30 @@ export class NestedInputComponent implements OnInit {
 
   public exeOnChange(value) {
     switch (value) {
-      case "pipe":
-        if (this.data.name === "" && value !== this.prevExe) {
-          this.data =  {
-            username: this.iam.getUser().username,
-            exe: "pipe",
-            name: "",
-            description: "This is an pipe steplist",
-            input: "",
-            output: "",
-            steps: [{exe: "function", name:""}],
-          }
-          this.prevExe = value;
-          this.update.emit(this.data)
-        }
-        break;
-      case "async":
-        if (this.data.name === "" && value !== this.prevExe) {
-          this.data =  {
-            username: this.iam.getUser().username,
-            exe: "async",
-            name: "",
-            description: "This is an async steplist",
-            input: "",
-            output: "",
-            steps: [{exe: "function", name:""}],
-          }
-          this.prevExe = value;
-          this.update.emit(this.data)
-        }
-        break;
-      case "foreach":
-        if (this.data.name === "" && value !== this.prevExe) {
-          this.data =  {
-            username: this.iam.getUser().username,
-            exe: "foreach",
-            name: "",
-            description: "This is an async steplist",
-            input: "",
-            output: "",
-            step: {exe: "function", name:""},
-          }
-          this.prevExe = value;
-          this.update.emit(this.data)
-        }
-        break;
       case "query":
-          if (this.data.name === "" && value !== this.prevExe)  {
-            this.data = {
-              username: this.iam.getUser().username,
-              exe: "query",
-              name: "",
-              description: "This is a mysql query. These are used to get data or save data.",
-              input: "",
-              output: "",
-              text: ""
-            }
-            this.prevExe = value;
-            this.update.emit(this.data)
-          }
-          break
-      case "job":
         if (this.data.name === "" && value !== this.prevExe)  {
-          this.data = {
-            username: this.iam.getUser().username,
-            exe: "job",
-            name: "",
-            description: "This is a scheduled job",
-            input: "",
-            output: "",
-            text: "{}"
-          }
+          this.data = new InitData(this.iam).query()
           this.prevExe = value;
-          this.update.emit(this.data)
+        }
+        break
+      case "function":
+        if (this.data.name === "" && value !== this.prevExe)  {
+          this.data = new InitData(this.iam).function();
+          this.prevExe = value;
         }
         break;
-      default:
-          if (this.data.name === "" && value !== this.prevExe)  {
-            this.data = {
-              username: this.iam.getUser().username,
-              exe: "function",
-              name: "",
-              description: "This is a python program. I require input from stdin and I write my output to stdout.",
-              input: '{"value":"example"}',
-              output: '{"value":"example"}',
-              args: "",
-              command: "python",
-              text: "import json\n\nargs = raw_input()\ndata = json.loads(args)\nout={}\nprint json.dumps(out)"
-            }
-            this.prevExe = value;
-            this.update.emit(this.data)
-          }
-          break
+      case "graph": 
+        if (this.data.name === "" && value !== this.prevExe)  {
+          this.data = new InitData(this.iam).graph();
+          this.prevExe = value;
+        }
+        break;
     }
   }
 
   public save() {
     if (this.data.name !== "" && this.data.exe !== "") {
+
       this.iam.addExecutable(this.data)
       .subscribe((response) => {
         this.triggerEdit();

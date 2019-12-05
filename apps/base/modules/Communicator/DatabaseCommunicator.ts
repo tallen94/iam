@@ -6,20 +6,21 @@ export class DatabaseCommunicator {
   private errorLog: any;
   private outputLog: any;
 
-  constructor(user: string, password: string, host: string, database: string) {
+  constructor(user: string, password: string, host: string, port: number, database: string) {
     // this.errorLog = fs.createWriteStream("../../logs/database/error.txt");
     // this.outputLog = fs.createWriteStream("../../logs/database/out.txt");
-    this.connect(user, password, host, database);
+    this.connect(user, password, host, port, database);
   }
 
   public getConnection() {
     return this.db;
   }
 
-  private connect(user: string, password: string, host: string, database: string) {
+  private connect(user: string, password: string, host: string, port: number, database: string) {
     this.db = createPool({
       host: host,
       user: user,
+      port: port,
       password: password,
       database: database,
       multipleStatements: true

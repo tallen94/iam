@@ -1,10 +1,9 @@
 import { ServerCommunicator, FileSystem } from "./modules/modules";
 import { ApiFactory } from "./modules/Api/ApiFactory";
 
-// COMMENTS 9
-const TYPE = process.env.TYPE;
-const HOME = process.env.HOME;
-const SERVER_PORT = process.env.SERVER_PORT;
+const TYPE = process.env.TYPE || process.argv[2];
+const HOME = process.env.HOME || process.argv[3];
+const SERVER_PORT = process.env.SERVER_PORT || process.argv[4];
 
 const fileSystem: FileSystem = new FileSystem(HOME);
 const serverCommunicator: ServerCommunicator = new ServerCommunicator(parseInt(SERVER_PORT));
