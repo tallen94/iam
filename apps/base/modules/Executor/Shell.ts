@@ -138,7 +138,6 @@ export class Shell {
         write.write(program.text);
         write.close();
       }
-
       run = program.command + " " + path;
       if (program.args != "") {
         const args = this.replace(program.args, data);

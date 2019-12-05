@@ -23,7 +23,6 @@
             *ngIf="isEditing()" 
             type="text" 
             [(ngModel)]="data.command"
-            (ngModelChange)="change('command', $event)"
             [ngModelOptions]="{debounce: 500}"
             placeholder="command">
           <p *ngIf="!isEditing()">{{data.command}}</p>
@@ -37,7 +36,6 @@
             *ngIf="isEditing()" 
             type="text" 
             [(ngModel)]="data.args"
-            (ngModelChange)="change('args', $event)"
             [ngModelOptions]="{debounce: 500}"
             placeholder="args">
           <p *ngIf="!isEditing()">{{data.args}}</p>
@@ -82,8 +80,7 @@
       <label class="nested-title">Nodes</label>
       <div *ngFor="let node of data.graph.nodes; let i = index;">
         <nested-input 
-          [data]="node"
-          (update)="updateStep($event, i)" 
+          [data]="node" 
           [editing]="editing"
           (emitEditing)="receiveEmitEditing($event)"
           (emitRunning)="receiveEmitRunning($event)"
