@@ -18,6 +18,7 @@ export class NestedInputComponent implements OnInit {
   @Input() hidden: any[] = [];
   @Input() editing: any[] = [];
   @Input() running: any;
+  private prevData: any;
   private prevExe: string = "";
   private options = {
     maxLines: 32,
@@ -68,13 +69,23 @@ export class NestedInputComponent implements OnInit {
   }
 
   triggerEdit() {
+    if (!this.isEditing()) {
+      this.prevData = JSON.parse(JSON.stringify(this.data));
+      this.data.id = "" + this.data.id;
+      this.editing.push(this.data.id)
+      this.editing = [...this.editing];
+      this.emitEditing.emit(this.editing);
+    }
+  }
+
+  cancelEdit() {
     if (this.isEditing()) {
       this.editing = Lodash.filter(this.editing, (item) => item !== this.data.id)
-    } else {
-      this.editing.push(this.data.id)
-    }
-    this.editing = [...this.editing];
-    this.emitEditing.emit(this.editing);
+      this.data = JSON.parse(JSON.stringify(this.prevData));
+      this.data.id = "" + this.data.id;
+      this.editing = [...this.editing];
+      this.emitEditing.emit(this.editing);
+    } 
   }
 
   triggerRunning() {
@@ -90,85 +101,16 @@ export class NestedInputComponent implements OnInit {
     this.emitRunning.emit(data);
   }
 
-  change(key, value) {
-    const changeFn = key + "OnChange"
-    if (this[changeFn] == undefined) {
-      return
-    }
-    this[changeFn](value)
+  receiveUpdateData(data: any) {
+    this.data = data;
   }
 
   getCodeMarkdown(command, text) {
     return "```" + command + "\n" + text + "\n```";
   }
 
-  // public nameOnChange(value) {
-  //   if (value && value !== "") {
-  //     const newData = {
-  //       name: this.data.name,
-  //       exe: this.data.exe || 'function',
-  //       input: this.data.input || "{}",
-  //       output: this.data.output || "{}",
-  //       description: this.data.description || "This is a python function"
-  //     }
-  //     switch (this.data.exe) {
-  //       case 'query':
-  //         newData["text"] = this.data.text;
-  //         break;
-  //       case 'function':
-  //         newData["text"] = this.data.text;
-  //         newData["args"] = this.data.data ? this.data.data.args || "" : "";
-  //         newData["command"] = this.data.data ? this.data.data.command || "python" : "python";
-  //         break
-  //       case 'pipe':
-  //       case 'async':
-  //         newData["steps"] = this.data.data || this.data.steps;
-  //         break;
-  //       case 'foreach':
-  //         newData["step"] = this.data.data || this.data.step;
-  //         break
-  //       case 'JOB':
-  //         try {
-  //           newData["text"] = JSON.stringify(JSON.parse(this.data.data.data), null, 2);
-  //         } catch {
-  //           newData["text"] = this.data.data.data;
-  //         }
-  //         newData["cronExpr"] = this.data.data.cronExpr;
-  //         newData["exeName"] = this.data.data.exeName;
-  //         newData["exeType"] = this.data.data.exeType;
-  //         newData["enabled"] = this.data.data.enabled;
-  //         break;
-  //     }
-  //     this.data = newData;
-  //   }
-  // }
-
-  public exeOnChange(value) {
-    switch (value) {
-      case "query":
-        if (this.data.name === "" && value !== this.prevExe)  {
-          this.data = new InitData(this.iam).query()
-          this.prevExe = value;
-        }
-        break
-      case "function":
-        if (this.data.name === "" && value !== this.prevExe)  {
-          this.data = new InitData(this.iam).function();
-          this.prevExe = value;
-        }
-        break;
-      case "graph": 
-        if (this.data.name === "" && value !== this.prevExe)  {
-          this.data = new InitData(this.iam).graph();
-          this.prevExe = value;
-        }
-        break;
-    }
-  }
-
   public save() {
     if (this.data.name !== "" && this.data.exe !== "") {
-
       this.iam.addExecutable(this.data)
       .subscribe((response) => {
         this.triggerEdit();

@@ -5,32 +5,33 @@
     *ngIf="editing" 
     type="text" 
     [(ngModel)]="data.name"
+    (ngModelChange)="nameOnChange($event)"
     [ngModelOptions]="{debounce: 500}"
     placeholder="name">
   <p *ngIf="!editing">{{data.name}}</p>
 </div>
 
 <div class="inline-input exe">
-  <div *ngIf="editing">
-    <select class="form-control" [(ngModel)]="data.exe" (change)="change('exe', $event)">
+  <!-- <div *ngIf="editing">
+    <select class="form-control" [(ngModel)]="data.exe">
       <option>function</option>
       <option>query</option>
       <option>graph</option>
     </select>
-  </div>
-  <p *ngIf="!editing">.{{data.exe}}</p>
+  </div> -->
+  <p >.{{data.exe}}</p>
 </div>
 
 <div class="inline-input username">
-  <input 
+  <!-- <input 
     class="form-control"
     size="{{inputSize('username')}}"
     *ngIf="editing" 
     type="text" 
     [(ngModel)]="data.username"
     [ngModelOptions]="{debounce: 500}"
-    placeholder="name">
-  <p *ngIf="!editing">.{{data.username}}</p>
+    placeholder="name"> -->
+  <p>.{{data.username}}</p>
 </div>
 
 <div *ngIf="editing" class="text-editor" ace-editor
