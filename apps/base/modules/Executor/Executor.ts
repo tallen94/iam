@@ -69,10 +69,10 @@ export class Executor {
     .then((result) => {
       let stepJson;
       if (result.length == 0) {
-        stepJson = data;
-      } else {
-        stepJson = result[0];
-      }
+        return;
+      } 
+
+      stepJson = result[0];
       switch (stepJson.exe) {
         case "pipe":
         case "async":

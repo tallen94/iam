@@ -30,7 +30,6 @@ export class AdminComponent implements OnInit {
   addClient() {
     this.iam.addClient(this.host, this.port)
     .subscribe((response) => {
-      console.log(response);
       return this.getStatus();
     })
   }

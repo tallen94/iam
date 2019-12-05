@@ -98,17 +98,19 @@ export class GraphComponent implements OnInit {
   }
 
   linkEditing() {
+    for (let i = 0; i < this.editing.length - 1; i++) {
+      const newEdge = { source: this.editing[i], target: this.editing[i+1] }
+      this.emitNewEdge.emit(newEdge);
+    }
+  }
+
+  newNode(exe: string) {
     if (this.editing.length == 1) {
       const newNodeId = "" + (this._nodes.length + 1);
       const newEdge = { source: this.editing[0], target: newNodeId }
  
-      this.emitNewNode.emit(newNodeId);
+      this.emitNewNode.emit({ id: newNodeId, exe: exe });
       this.emitNewEdge.emit(newEdge);
-    } else {
-      for (let i = 0; i < this.editing.length - 1; i++) {
-        const newEdge = { source: this.editing[i], target: this.editing[i+1] }
-        this.emitNewEdge.emit(newEdge);
-      }
     }
   }
 
