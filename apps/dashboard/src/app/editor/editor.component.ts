@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { Iam } from "../iam/iam";
 import * as Lodash from "lodash";
+import { InitData } from '../iam/init-data';
 
 @Component({
   selector: 'app-editor',
@@ -10,7 +11,6 @@ import * as Lodash from "lodash";
 })
 export class EditorComponent implements OnInit {
   data: any;
-  selected: any;
   editing: any[] = [];
   hidden: any[] = [];
   running: any;
@@ -29,14 +29,9 @@ export class EditorComponent implements OnInit {
       this.iam.getExecutable(username, exe, name)
       .subscribe((result) => {
         this.data = result;
-        this.selected = this.data;
       })
     } else {
-      this.data = {
-        name: "",
-        exe: "function"
-      }
-      this.selected = this.data;
+      this.data = this.initData(exe)
     }
   }
   
@@ -55,7 +50,8 @@ export class EditorComponent implements OnInit {
   }
 
   public receiveEmitNewNode(id: number) {
-    const newNode = {id: id, name: "NewNode", exe: "function", username: this.iam.getUser().username };
+    const newNode = this.initData('function');
+    newNode["id"] = id
     this.data.graph.nodes.push(newNode)
     this.data.graph.nodes = [...this.data.graph.nodes]
   }
@@ -90,8 +86,11 @@ export class EditorComponent implements OnInit {
   public delete() {
     this.iam.runExecutable("admin", "QUERY", "delete-exe", this.data)
     .subscribe((response) => {
-      console.log(response);
       this.router.navigate(["/home"]);
     });
+  }
+
+  private initData(exe) {
+    return new InitData(this.iam)[exe]();
   }
 }

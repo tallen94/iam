@@ -121,6 +121,13 @@ export class GraphExecutor {
         username: node.username
       };
     });
+
+    data.edges = Lodash.map(data.edges, (edge) => {
+      return {
+        source: edge.source,
+        target: edge.target
+      };
+    });
     return data;
   }
 }

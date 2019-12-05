@@ -25,15 +25,6 @@
           "always",
           "ignore-bound-class-methods"
       ],
-      "whitespace": [
-          true,
-          "check-branch",
-          "check-decl",
-          "check-operator",
-          "check-module",
-          "check-separator",
-          "check-type"
-      ],
       "typedef-whitespace": [
           true,
           {
@@ -52,7 +43,6 @@
           }
       ],
       "no-internal-module": true,
-      "no-trailing-whitespace": true,
       "prefer-const": true,
       "jsdoc-format": true
   }
