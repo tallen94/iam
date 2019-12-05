@@ -34,9 +34,17 @@ export class GraphComponent implements OnInit {
     this._nodes = this.getNodes(data)
   }
 
+  get nodes() {
+    return this._nodes;
+  }
+
   @Input()
   set links(data: any) {
     this._links = data;
+  }
+
+  get links() {
+    return this._links;
   }
   
   receiveEmitEditing(data: any) {
@@ -85,7 +93,7 @@ export class GraphComponent implements OnInit {
 
   getNodes(nodes: any[]) {
     return Lodash.map(nodes, (node) => {
-      return { id: node.id, label: node.name, exe: node.exe }
+      return { id: "" + node.id, label: node.name, exe: node.exe }
     })
   }
 
