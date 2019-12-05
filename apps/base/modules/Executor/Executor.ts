@@ -230,7 +230,7 @@ export class Executor {
   }
 
   private setDatabase(config: any) {
-    const databaseCommunicator: DatabaseCommunicator = new DatabaseCommunicator(config.user, config.password, config.host, config.database);
+    const databaseCommunicator: DatabaseCommunicator = new DatabaseCommunicator(config.user, config.password, config.host, config.port, config.database);
     const thread = new Database(databaseCommunicator);
     this.database = thread;
     return this.database;

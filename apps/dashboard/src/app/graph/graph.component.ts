@@ -9,10 +9,14 @@ import * as Lodash from "lodash";
   styleUrls: ['./graph.component.css']
 })
 export class GraphComponent implements OnInit {
-  @Input() data: any;
+  public _nodes: any;
+  public _links: any;
   @Input() editing: any[];
   @Input() edgesEditing: any[];
   @Output() emitEditing: EventEmitter<any> = new EventEmitter();
+  @Output() emitNewNode: EventEmitter<any> = new EventEmitter();
+  @Output() emitNewEdge: EventEmitter<any> = new EventEmitter();
+  @Output() emitDeleteEditing: EventEmitter<any> = new EventEmitter();
 
   zoomToFit$: Subject<boolean> = new Subject();
   center$: Subject<boolean> = new Subject();
@@ -21,12 +25,26 @@ export class GraphComponent implements OnInit {
     orientation: "TB"
   }
 
-  public graph: any;
-
   constructor() { }
 
-  ngOnInit() {
-    this.graph = this.dataToGraph(this.data)
+  ngOnInit() { }
+
+  @Input()
+  set nodes(data: any) {
+    this._nodes = this.getNodes(data)
+  }
+
+  get nodes() {
+    return this._nodes;
+  }
+
+  @Input()
+  set links(data: any) {
+    this._links = data;
+  }
+
+  get links() {
+    return this._links;
   }
   
   receiveEmitEditing(data: any) {
@@ -75,62 +93,27 @@ export class GraphComponent implements OnInit {
 
   getNodes(nodes: any[]) {
     return Lodash.map(nodes, (node) => {
-      return { id: node.id, label: node.name, exe: node.exe }
+      return { id: "" + node.id, label: node.name, exe: node.exe }
     })
-  }
-
-  getGraph(stepJson: any, graph: any) {
-    switch (stepJson.exe) {
-      case "foreach":
-        return graph.nodes.concat(this.getGraph(stepJson.step, graph))
-      case "pipe":
-        Lodash.each(stepJson.steps, (step) => {
-          graph.nodes = graph.nodes.concat(this.getGraph(step, graph));
-        });
-      case "async": 
-        Lodash.each(stepJson.steps, (step) => {
-          graph.nodes = graph.nodes.concat(this.getGraph(step, graph));
-        });
-        return graph;
-      default:
-        graph.nodes = [{id: graph.nodes.length, label: stepJson.name, exe: stepJson.exe}]
-        return graph
-    }
   }
 
   linkEditing() {
     if (this.editing.length == 1) {
-      const newNode = {id: "" + (this.graph.nodes.length + 1), label: "NewNode", exe: "function"};
-      this.graph.nodes.push(newNode)
-      this.graph.nodes = [...this.graph.nodes]
-      this.graph.links.push({ source: this.editing[0], target: newNode.id })
-      this.graph.links = [...this.graph.links]
+      const newNodeId = "" + (this._nodes.length + 1);
+      const newEdge = { source: this.editing[0], target: newNodeId }
+ 
+      this.emitNewNode.emit(newNodeId);
+      this.emitNewEdge.emit(newEdge);
     } else {
       for (let i = 0; i < this.editing.length - 1; i++) {
-        this.graph.links.push({ source: this.editing[i], target: this.editing[i+1] })
+        const newEdge = { source: this.editing[i], target: this.editing[i+1] }
+        this.emitNewEdge.emit(newEdge);
       }
-      this.graph.links = [...this.graph.links]
     }
   }
 
   deleteEditing() {
-    Lodash.each(this.edgesEditing, (edge) => {
-      Lodash.remove(this.graph.links, (link: any) => {
-        return edge.source == link.source && edge.target == link.target;
-      });
-      this.graph.links = [...this.graph.links]
-    });
-
-    Lodash.each(this.editing, (id) => {
-      Lodash.remove(this.graph.nodes, (node: any) => {
-        return node.id === id
-      });
-      this.graph.nodes = [...this.graph.nodes]
-      Lodash.remove(this.graph.links, (link: any) => {
-        return link.source == id || link.target == id
-      })
-      this.graph.links = [...this.graph.links]
-    })
-    this.editing = []
+    this.emitDeleteEditing.emit(this.edgesEditing);
+    this.edgesEditing = []
   }
 }

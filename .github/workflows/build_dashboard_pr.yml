@@ -1,4 +1,4 @@
-name: Build Base Pull Request
+name: Build Dashboard Pull Request
 
 on: 
   pull_request:

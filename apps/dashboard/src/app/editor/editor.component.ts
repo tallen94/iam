@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { Iam } from "../iam/iam";
 import * as Lodash from "lodash";
+import { InitData } from '../iam/init-data';
 
 @Component({
   selector: 'app-editor',
@@ -10,7 +11,6 @@ import * as Lodash from "lodash";
 })
 export class EditorComponent implements OnInit {
   data: any;
-  selected: any;
   editing: any[] = [];
   hidden: any[] = [];
   running: any;
@@ -28,16 +28,10 @@ export class EditorComponent implements OnInit {
     if (name !== undefined && name !== "" && exe !== undefined && exe !== "") {
       this.iam.getExecutable(username, exe, name)
       .subscribe((result) => {
-        console.log(result);
         this.data = result;
-        this.selected = this.data;
       })
     } else {
-      this.data = {
-        name: "",
-        exe: "function"
-      }
-      this.selected = this.data;
+      this.data = this.initData(exe)
     }
   }
   
@@ -51,15 +45,52 @@ export class EditorComponent implements OnInit {
     this.running = data;
   }
 
-  receiveEmitEditing(data: any) {
+  public receiveEmitEditing(data: any) {
     this.editing = [...data]
+  }
+
+  public receiveEmitNewNode(id: number) {
+    const newNode = this.initData('function');
+    newNode["id"] = id
+    this.data.graph.nodes.push(newNode)
+    this.data.graph.nodes = [...this.data.graph.nodes]
+  }
+
+  public receiveEmitNewEdge(edge: any) {
+    this.data.graph.edges.push(edge);
+    this.data.graph.edges = [...this.data.graph.edges]  
+  }
+
+  public receiveDeleteEditing(linksEditing: any) {
+    // Remove all editing links
+    Lodash.each(linksEditing, (link: any) => {
+      Lodash.remove(this.data.graph.edges, (edge: any) => {
+        return edge.source == link.source && edge.target == link.target;
+      })
+    })
+
+    // Remove all editing nodes
+    Lodash.each(this.editing, (id) => {
+      Lodash.remove(this.data.graph.nodes, (node: any) => {
+        return node.id == id;
+      })
+      Lodash.remove(this.data.graph.edges, (edge: any) => {
+        return edge.source == id || edge.target == id
+      })
+    })
+    this.data.graph.nodes = [...this.data.graph.nodes];
+    this.data.graph.edges = [...this.data.graph.edges];
+    this.editing = []
   }
 
   public delete() {
     this.iam.runExecutable("admin", "QUERY", "delete-exe", this.data)
     .subscribe((response) => {
-      console.log(response);
       this.router.navigate(["/home"]);
     });
+  }
+
+  private initData(exe) {
+    return new InitData(this.iam)[exe]();
   }
 }
