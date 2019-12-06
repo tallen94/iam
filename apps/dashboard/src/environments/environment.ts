@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  url: "iam-local"
+  url: "localhost",
+  port: 5000
 };
 
 /*

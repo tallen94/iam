@@ -9,14 +9,11 @@
 }
 
 .editing {
-  border-left: 6px solid #007bff !important;
-  border-top: 2px solid #007bff !important;
-  border-right: 2px solid #007bff !important;
-  border-bottom: 2px solid #007bff !important;
+  border: 2px solid rgb(190, 190, 190) !important;
 }
 
 .inset-border {
-  border-left: 1px solid rgb(199, 199, 199);
+  border-left: 1px solid rgb(200, 200, 200);
 }
 
 .nested-title {
