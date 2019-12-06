@@ -23,12 +23,14 @@ export class NestedInputComponent implements OnInit {
   private options = {
     maxLines: 32,
     wrap: true,
-    autoScrollEditorIntoView: true
+    autoScrollEditorIntoView: true,
+    fontSize: "18px"
   }
 
   constructor(private iam: Iam) { }
 
   ngOnInit() {
+    this.prevData = this.data;
     if (this.data.exe == "graph") {
       this.data.id = "0";
     } else if (this.data.id == undefined) {
@@ -69,23 +71,22 @@ export class NestedInputComponent implements OnInit {
   }
 
   triggerEdit() {
-    if (!this.isEditing()) {
-      this.prevData = JSON.parse(JSON.stringify(this.data));
-      this.data.id = "" + this.data.id;
-      this.editing.push(this.data.id)
-      this.editing = [...this.editing];
-      this.emitEditing.emit(this.editing);
+    if (this.isHidden()) {
+      this.triggerShow();
     }
+    this.prevData = JSON.parse(JSON.stringify(this.data));
+    this.data.id = "" + this.data.id;
+    this.editing.push(this.data.id)
+    this.editing = [...this.editing];
+    this.emitEditing.emit(this.editing);
   }
 
   cancelEdit() {
-    if (this.isEditing()) {
-      this.editing = Lodash.filter(this.editing, (item) => item !== this.data.id)
-      this.data = JSON.parse(JSON.stringify(this.prevData));
-      this.data.id = "" + this.data.id;
-      this.editing = [...this.editing];
-      this.emitEditing.emit(this.editing);
-    } 
+    this.editing = Lodash.filter(this.editing, (item) => item !== this.data.id)
+    this.data = JSON.parse(JSON.stringify(this.prevData));
+    this.data.id = "" + this.data.id;
+    this.editing = [...this.editing];
+    this.emitEditing.emit(this.editing); 
   }
 
   triggerRunning() {
@@ -113,7 +114,8 @@ export class NestedInputComponent implements OnInit {
     if (this.data.name !== "" && this.data.exe !== "") {
       this.iam.addExecutable(this.data)
       .subscribe((response) => {
-        this.triggerEdit();
+        this.prevData = this.data;
+        this.cancelEdit();
       })
     }
   }

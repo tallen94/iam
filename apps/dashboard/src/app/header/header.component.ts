@@ -15,7 +15,8 @@ export class HeaderComponent implements OnInit {
   private options = {
     maxLines: 32,
     wrap: true,
-    autoScrollEditorIntoView: true
+    autoScrollEditorIntoView: true,
+    fontSize: "18px"
   }
 
   constructor(private iam: Iam) { }
