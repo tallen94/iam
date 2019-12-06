@@ -105,11 +105,11 @@ export class GraphComponent implements OnInit {
   }
 
   newNode(exe: string) {
+    const newNodeId = "" + (this._nodes.length + 1);
+    this.emitNewNode.emit({ id: newNodeId, exe: exe });
+    
     if (this.editing.length == 1) {
-      const newNodeId = "" + (this._nodes.length + 1);
       const newEdge = { source: this.editing[0], target: newNodeId }
- 
-      this.emitNewNode.emit({ id: newNodeId, exe: exe });
       this.emitNewEdge.emit(newEdge);
     }
   }

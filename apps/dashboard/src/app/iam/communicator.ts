@@ -11,7 +11,7 @@ export class ClientCommunicator {
 
   constructor(http: HttpClient) {
     this.host = environment.url || window.location.hostname;
-    this.port = 30001;
+    this.port = environment.port || 30001;
     this.http = http;
   }
 
