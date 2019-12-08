@@ -104,6 +104,9 @@ export class NestedInputComponent implements OnInit {
 
   receiveUpdateData(data: any) {
     this.data = data;
+    if (this.isHidden()) {
+      this.triggerShow();
+    }
   }
 
   getCodeMarkdown(command, text) {

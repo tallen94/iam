@@ -6,10 +6,16 @@
     type="text" 
     [(ngModel)]="data.name"
     (ngModelChange)="nameOnChange($event)"
-    [ngModelOptions]="{debounce: 500}"
     placeholder="name">
   <p *ngIf="!editing">{{data.name}}</p>
+  <div *ngIf="searchResults && keys(searchResults).length > 0" class="searchResults">
+    <ul *ngFor="let key of keys(searchResults)">
+      <li class="list-section-header">{{key}}</li>
+      <li class="list-section-item" *ngFor="let result of searchResults[key]" (click)="clickSearchResult(result)">{{result.name}}</li>
+    </ul>
+  </div>
 </div>
+
 
 <div class="inline-input exe">
   <!-- <div *ngIf="editing">
