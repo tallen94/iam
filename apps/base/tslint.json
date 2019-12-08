@@ -20,11 +20,6 @@
           "double",
           "avoid-escape"
       ],
-      "semicolon": [
-          true,
-          "always",
-          "ignore-bound-class-methods"
-      ],
       "typedef-whitespace": [
           true,
           {

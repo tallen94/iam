@@ -18,20 +18,31 @@ export class HeaderComponent implements OnInit {
     autoScrollEditorIntoView: true,
     fontSize: "18px"
   }
+  searchResults: any = {}
 
   constructor(private iam: Iam) { }
 
-  ngOnInit() { }
+  ngOnInit() {
+  }
+
 
   public nameOnChange(value) {
     if (value !== "") {
-      this.iam.getExecutable(this.iam.getUser().username, this.data.exe, value)
+      this.iam.searchExecutables(value + "%")
       .subscribe((result) => {
-        if (result != null) {
-          this.emitUpdateData.emit(result)
-        }
+        this.searchResults = result;
       })
+    } else {
+      this.searchResults = []
     }
+  }
+
+  public clickSearchResult(result) {
+    this.iam.getExecutable(result.username, result.exe, result.name)
+    .subscribe((data) => {
+      this.searchResults = []
+      this.emitUpdateData.emit(data);
+    })
   }
   
   public exeOnChange(value) {
@@ -70,6 +81,10 @@ export class HeaderComponent implements OnInit {
 
   isEmpty(str: string) {
     return str == undefined || str == '';
+  }
+
+  keys(obj: any) {
+    return Object.keys(obj)
   }
 
 }

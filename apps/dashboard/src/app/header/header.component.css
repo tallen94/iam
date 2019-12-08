@@ -1,5 +1,6 @@
 .inline-input {
   display: inline-block;
+  position: relative;
 }
 
 label {
@@ -32,4 +33,41 @@ label {
   max-height: 500px;
   overflow-y: scroll;
   margin-left: 4px;
+}
+
+.searchResults {
+  position: absolute;
+  top: 30;
+  z-index: 100 !important;
+  background-color: white;
+  width: 100%;
+  min-width: 300px;
+  border-left: 1px solid rgb(200, 200, 200);
+  border-right: 1px solid rgb(200, 200, 200);
+  border-bottom: 1px solid rgb(200, 200, 200);
+  border-radius: 5px;
+}
+
+.searchResults ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.searchResults ul .list-section-header {
+  font-size: 15px;
+  background-color: rgb(200, 200, 200);
+  padding-left: 5px;
+}
+
+.searchResults ul .list-section-item {
+  font-size: 20px;
+  padding: 5px;
+}
+
+.searchResults ul .list-section-item:hover {
+  font-size: 20px;
+  padding: 5px;
+  background-color: rgb(220, 220, 220);
+  cursor: pointer;
 }
