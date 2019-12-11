@@ -12,10 +12,9 @@ export class Iam {
     this.user = {};
   }
 
-  public setUser(username: string, userId: number, token: string) {
+  public setUser(username: string, token: string) {
     this.user = {
       username: username,
-      userId: userId,
       token: token
     }
   }
