@@ -32,20 +32,20 @@ export class Shell {
     return Promise.resolve(this.status);
   }
 
-  public addProgram(username: string, userId: number, data: any): Promise<any> {
+  public addProgram(data: any): Promise<any> {
     const programData = JSON.stringify({ command: data.command, args: data.args });
     return this.getProgram(data.username, data.name)
     .then((result) => {
       if (result == undefined) {
         return this.database.runQuery("admin", "add-exe", {
-          username: username,
+          username: data.username,
           name: data.name,
           uuid: UUID.v4(),
           exe: data.exe,
           data: programData,
           input: data.input,
           output: data.output,
-          userId: userId,
+          userId: data.userId,
           description: data.description
         });
       } else {
@@ -60,7 +60,7 @@ export class Shell {
       }
     }).then(() => {
       return this.fileSystemCommunicator.putProgram({
-        username: username,
+        username: data.username,
         name: data.name,
         program: data.text
       });

@@ -13,19 +13,19 @@ export class GraphExecutor {
     private executor: Executor,
     private stepListManager: StepListManager) { }
 
-  public addGraph(username: string, userId: number, data: any) {
+  public addGraph(data: any) {
     const trimmedData = this.trimData(data.graph);
     return this.getGraph(data.username, data.name).then((result) => {
       if (result == undefined) {
         return this.database.runQuery("admin", "add-exe", {
-          username: username,
+          username: data.username,
           name: data.name,
           uuid: UUID.v4(),
           exe: data.exe,
           data: JSON.stringify(trimmedData),
           input: data.input,
           output: data.output,
-          userId: userId,
+          userId: data.userId,
           description: data.description
         });
       } else {

@@ -22,19 +22,19 @@ export class Database {
     return Promise.resolve(this.status);
   }
 
-  public addQuery(username: string, userId: number, data: any): Promise<any> {
-    return this.getQuery(username, data.name)
+  public addQuery(data: any): Promise<any> {
+    return this.getQuery(data.username, data.name)
     .then((result) => {
       if (result == undefined) {
         return this.runQuery("admin", "add-exe", {
-          username: username,
+          username: data.username,
           name: data.name,
           uuid: UUID.v4(),
           exe: data.exe,
           data: data.text,
           input: data.input,
           output: data.output,
-          userId: userId,
+          userId: data.userId,
           description: data.description
         });
       } else {

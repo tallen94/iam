@@ -43,20 +43,20 @@ export class Executor {
     ]);
   }
 
-  public addExecutable(username: string, userId: number, data: any) {
+  public addExecutable(data: any) {
     switch (data.exe) {
       case "function":
-        return this.shell.addProgram(username, userId, data);
+        return this.shell.addProgram(data);
       case "query":
-        return this.database.addQuery(username, userId, data);
+        return this.database.addQuery(data);
       case "pipe":
       case "async":
       case "foreach":
-        return this.stepListManager.addStepList(username, userId, data);
+        return this.stepListManager.addStepList(data);
       case "job":
-        return this.jobRunner.addJob(username, userId, data);
+        return this.jobRunner.addJob(data);
       case "graph":
-        return this.graphExecutor.addGraph(username, userId, data);
+        return this.graphExecutor.addGraph(data);
     }
   }
 

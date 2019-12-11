@@ -35,23 +35,23 @@ export class Iam {
   }
 
   public addExecutable(data: any) {
-    return this.clientCommunicator.post(ApiPaths.ADD_EXECUTABLE, data, {}, { user: JSON.stringify(this.user) })
+    return this.clientCommunicator.post(ApiPaths.ADD_EXECUTABLE, data)
   }
 
   public getExecutable(username: string, exe: string, name: string) {
-    return this.clientCommunicator.get(ApiPaths.GET_EXECUTABLE, {username: username, name: name, exe: exe}, {}, { user: JSON.stringify(this.user) });
+    return this.clientCommunicator.get(ApiPaths.GET_EXECUTABLE, {username: username, name: name, exe: exe});
   }
 
   public getExecutables(username: string, exe: string) {
-    return this.clientCommunicator.get(ApiPaths.GET_EXECUTABLES, {username: username, exe: exe}, {}, { user: JSON.stringify(this.user) });
+    return this.clientCommunicator.get(ApiPaths.GET_EXECUTABLES, {username: username, exe: exe});
   }
 
   public runExecutable(username: string, exe: string, name: string, data: any) {
-    return this.clientCommunicator.post(ApiPaths.RUN_EXECUTABLE, data, {username: username, exe: exe, name: name}, { user: JSON.stringify(this.user) });
+    return this.clientCommunicator.post(ApiPaths.RUN_EXECUTABLE, data, {username: username, exe: exe, name: name});
   }
 
   public searchExecutables(searchText: string) {
-    return this.clientCommunicator.get(ApiPaths.SEARCH_EXECUTABLES, {}, {searchText: searchText}, { user: JSON.stringify(this.user) });
+    return this.clientCommunicator.get(ApiPaths.SEARCH_EXECUTABLES, {}, {searchText: searchText});
   }
 
   public getHost() {
@@ -59,10 +59,10 @@ export class Iam {
   }
 
   public getStatus() {
-    return this.clientCommunicator.get(ApiPaths.GET_STATUS, {}, {}, { user: JSON.stringify(this.user) });
+    return this.clientCommunicator.get(ApiPaths.GET_STATUS, {}, {});
   }
 
   public addClient(host: string, port: number) {
-    return this.clientCommunicator.post(ApiPaths.ADD_CLIENT, {host: host, port: port}, {}, { user: JSON.stringify(this.user) });
+    return this.clientCommunicator.post(ApiPaths.ADD_CLIENT, {host: host, port: port}, {});
   }
 }

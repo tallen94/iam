@@ -17,20 +17,20 @@ export class StepListManager {
   }
 
   // ADD
-  public addStepList(username: string, userId: number, data: any) {
+  public addStepList(data: any) {
     const trimmedData = this.trimStepJson(data);
-    return this.getStepList(username, data.name, data.exe)
+    return this.getStepList(data.username, data.name, data.exe)
     .then((result) => {
       if (result == undefined) {
         return this.database.runQuery("admin", "add-exe", {
-          username: username,
+          username: data.username,
           name: data.name,
           uuid: UUID.v4(),
           exe: data.exe,
           data: JSON.stringify(trimmedData.steps || trimmedData.step),
           input: data.input,
           output: data.output,
-          userId: userId,
+          userId: data.userId,
           description: data.description
         });
       } else {
@@ -40,7 +40,7 @@ export class StepListManager {
           data: JSON.stringify(trimmedData.steps || trimmedData.step),
           input: data.input,
           output: data.output,
-          userId: userId,
+          userId: data.userId,
           description: data.description
         });
       }
