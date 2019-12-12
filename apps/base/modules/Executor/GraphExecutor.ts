@@ -5,6 +5,8 @@ import { DirectedGraph } from "../Graph/DirectedGraph";
 import { Executor } from "./Executor";
 import { StepListManager } from "../Step/StepListManager";
 import * as UUID from "uuid";
+import { ClientCommunicator } from "../Communicator/ClientCommunicator";
+import { Client } from "./Client";
 
 export class GraphExecutor {
 
@@ -86,7 +88,15 @@ export class GraphExecutor {
       (node) => this.executor.getExecutable(node.username, node.name, node.exe))
       .map((nodePromise) => {
         return nodePromise.then((node) => {
-          return this.stepListManager.stepJsonToStep(node);
+          return this.database.runQuery("admin", "get-exe-env", {username: node.username, exe: node.exe, name: node.name})
+          .then((results) => {
+            if (results.length > 0) {
+              const env = results[0]
+              const clientCommunicator = new ClientCommunicator(env.host, env.port)
+              const client = new Client(clientCommunicator);
+              return this.stepListManager.stepJsonToStep(node, client);
+            }
+          })
         });
       }));
   }

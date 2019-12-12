@@ -14,7 +14,6 @@ import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
 
 import { Iam } from "./iam/iam";
-import { ClientCommunicator } from "./iam/communicator";
 import { EditorComponent } from "./editor/editor.component";
 import { HomeComponent } from './home/home.component';
 import { RunComponent } from './run/run.component';
@@ -62,7 +61,7 @@ const appRoutes: Routes = [
     FormsModule,
     AppRoutingModule
   ],
-  providers: [ClientCommunicator, Iam],
+  providers: [Iam],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

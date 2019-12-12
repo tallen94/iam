@@ -34,9 +34,9 @@ export class AsyncStep implements Step {
     }));
   }
 
-  public executeEach(data: any) {
-    return Promise.all(Lodash.map(this.steps, (step, i) => {
-      return step.executeEach(data[i]);
-    }));
-  }
+  // public executeEach(data: any) {
+  //   return Promise.all(Lodash.map(this.steps, (step, i) => {
+  //     return step.executeEach(data[i]);
+  //   }));
+  // }
 }

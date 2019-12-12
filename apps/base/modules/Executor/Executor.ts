@@ -116,7 +116,8 @@ export class Executor {
               output: stepJson.output,
               text: file,
               args: data.args,
-              command: data.command
+              command: data.command,
+              environment: stepJson.environment
             };
           });
         case "graph":
@@ -132,6 +133,7 @@ export class Executor {
               input: stepJson.input,
               output: stepJson.output,
               graph: graph,
+              environment: stepJson.environment
             });
           });
         case "query":
@@ -143,6 +145,7 @@ export class Executor {
             input: stepJson.input,
             output: stepJson.output,
             text: stepJson.data,
+            environment: stepJson.environment
           });
       }
     });

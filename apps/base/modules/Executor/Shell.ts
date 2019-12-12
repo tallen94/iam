@@ -81,7 +81,8 @@ export class Shell {
           command: data.command,
           input: item.input,
           output: item.output,
-          description: item.description
+          description: item.description,
+          environment: item.environment
         };
         return this.fileSystemCommunicator.getProgram(data.filename == undefined ? name : data.filename)
         .then((result) => {

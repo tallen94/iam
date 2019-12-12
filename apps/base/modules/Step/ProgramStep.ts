@@ -1,12 +1,10 @@
 import { Step } from "./Step";
 import { Shell } from "../Executor/Shell";
-import { ClientPool } from "../Executor/ClientPool";
 import { Client } from "../Executor/Client";
 
 export class ProgramStep implements Step {
 
   private shell: Shell;
-  private clientPool: ClientPool;
   private name: string;
   private username: string;
 
@@ -14,9 +12,8 @@ export class ProgramStep implements Step {
     username: string,
     name: string,
     shell: Shell,
-    clientPool: ClientPool) {
+    private client: Client) {
       this.shell = shell;
-      this.clientPool = clientPool;
       this.name = name;
       this.username = username;
   }
@@ -27,19 +24,19 @@ export class ProgramStep implements Step {
   //   [this.shell.spawn(this.name)];
   // }
 
-  public execute(data: any, local: boolean): Promise<any> {
-    return this.clientPool.runExecutable(this.username, "function", this.name, data, 1)
-    .then((result) => {
-      return result[0].result;
+  public execute(data: any): Promise<any> {
+    return this.client.runExecutable(this.username, "function", this.name, data)
+    .then((result: any) => {
+      return result.result;
     });
   }
 
-  public executeEach(data: any) {
-    return Promise.all([
-      this.clientPool.eachClient((client: Client) => { return client.runExecutable(this.username, "function", this.name, data); }),
-      this.shell.runProgram(this.username, this.name, data)
-    ]).then((results) => {
-      return results[0].concat([results[1]]);
-    });
-  }
+  // public executeEach(data: any) {
+  //   return Promise.all([
+  //     this.clientPool.eachClient((client: Client) => { return client.runExecutable(this.username, "function", this.name, data); }),
+  //     this.shell.runProgram(this.username, this.name, data)
+  //   ]).then((results) => {
+  //     return results[0].concat([results[1]]);
+  //   });
+  // }
 }

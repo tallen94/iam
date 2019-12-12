@@ -40,6 +40,17 @@
   <p>.{{data.username}}</p>
 </div>
 
+<div class="inline-input environment">
+  <input 
+    class="form-control"
+    size="{{inputSize('environment')}}"
+    *ngIf="editing" 
+    type="text" 
+    [(ngModel)]="data.environment"
+    placeholder="name">
+  <p *ngIf="!editing">.{{data.environment}}</p>
+</div>
+
 <div *ngIf="editing" class="text-editor" ace-editor
   [(text)]="data.description"
   [mode]="'markdown'" 

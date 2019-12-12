@@ -19,6 +19,11 @@ label {
   font-weight: 600;
 }
 
+.environment {
+  color: #dc3545;
+  font-weight: 600;
+}
+
 .name {
   font-weight: 300;
   font-size: 22px;
