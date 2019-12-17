@@ -46,7 +46,8 @@ export class Shell {
           input: data.input,
           output: data.output,
           userId: data.userId,
-          description: data.description
+          description: data.description,
+          environment: data.environment
         });
       } else {
         return this.database.runQuery("admin", "update-exe", {
@@ -55,7 +56,8 @@ export class Shell {
           data: programData,
           input: data.input,
           output: data.output,
-          description: data.description
+          description: data.description,
+          environment: data.environment
         });
       }
     }).then(() => {

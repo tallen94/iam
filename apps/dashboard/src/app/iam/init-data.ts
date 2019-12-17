@@ -13,7 +13,8 @@ export class InitData {
       description: "This is a mysql query. These are used to get data or save data.",
       input: "",
       output: "",
-      text: ""
+      text: "",
+      environment: "base"
     }
   }
 
@@ -28,7 +29,8 @@ export class InitData {
       output: '{"value":"example"}',
       args: "",
       command: "python",
-      text: "import json\n\nargs = raw_input()\ndata = json.loads(args)\nout={}\nprint json.dumps(out)"
+      text: "import json\n\nargs = raw_input()\ndata = json.loads(args)\nout={}\nprint json.dumps(out)",
+      environment: "base"
     }
   }
 
@@ -41,6 +43,7 @@ export class InitData {
       description: "",
       input: '',
       output: '',
+      environment: "base",
       graph: {
         nodes: [new InitData(this.iam)["function"]("1")],
         edges: []

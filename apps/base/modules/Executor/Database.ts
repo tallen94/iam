@@ -35,7 +35,8 @@ export class Database {
           input: data.input,
           output: data.output,
           userId: data.userId,
-          description: data.description
+          description: data.description,
+          environment: data.environment
         });
       } else {
         return this.runQuery("admin", "update-exe", {
@@ -44,7 +45,8 @@ export class Database {
           data: data.text,
           input: data.input,
           output: data.output,
-          description: data.description
+          description: data.description,
+          environment: data.environment
         });
       }
     });
@@ -63,7 +65,8 @@ export class Database {
           text: item.data,
           input: item.input,
           output: item.output,
-          description: item.description
+          description: item.description,
+          environment: item.environment
         };
       }
       return Promise.resolve(undefined);
