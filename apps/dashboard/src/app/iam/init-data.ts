@@ -4,12 +4,12 @@ export class InitData {
 
   constructor(private iam: Iam) { }
 
-  query(id: string) {
+  query(id: string, name: string) {
     return {
       id: id,
       username: this.iam.getUser().username,
       exe: "query",
-      name: "NewQuery",
+      name: name,
       description: "This is a mysql query. These are used to get data or save data.",
       input: "",
       output: "",
@@ -18,12 +18,12 @@ export class InitData {
     }
   }
 
-  function(id: string) {
+  function(id: string, name: string) {
     return {
       id: id,
       username: this.iam.getUser().username,
       exe: "function",
-      name: "NewFunction",
+      name: name,
       description: "This is a python program. I require input from stdin and I write my output to stdout.",
       input: '{"value":"example"}',
       output: '{"value":"example"}',
@@ -34,18 +34,18 @@ export class InitData {
     }
   }
 
-  graph() {
+  graph(id: string, name: string) {
     return {
-      id: "0",
+      id: id,
       username: this.iam.getUser().username,
       exe: "graph",
-      name: "NewGraph",
+      name: name,
       description: "",
       input: '',
       output: '',
       environment: "base",
       graph: {
-        nodes: [new InitData(this.iam)["function"]("1")],
+        nodes: [new InitData(this.iam)["function"]("1", "NewFunction")],
         edges: []
       }
     }

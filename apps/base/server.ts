@@ -2,10 +2,10 @@ import { ServerCommunicator, FileSystem } from "./modules/modules";
 import { ApiFactory } from "./modules/Api/ApiFactory";
 
 const TYPE = process.env.TYPE || process.argv[2];
-const HOME = process.env.HOME || process.argv[3];
+const HOME = process.argv[3] || process.env.HOME;
 const SERVER_PORT = process.env.SERVER_PORT || process.argv[4];
 
-const fileSystem: FileSystem = new FileSystem(HOME);
+const fileSystem: FileSystem = new FileSystem(HOME, ["programs", "images"]);
 const serverCommunicator: ServerCommunicator = new ServerCommunicator(parseInt(SERVER_PORT));
 const apiFactory: ApiFactory = new ApiFactory();
 apiFactory[TYPE](fileSystem, serverCommunicator);

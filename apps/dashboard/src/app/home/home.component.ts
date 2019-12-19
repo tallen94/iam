@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Iam } from '../iam/iam';
 import * as Lodash from "lodash";
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -11,8 +12,9 @@ export class HomeComponent implements OnInit {
   public columns: any;
   public iam: Iam;
   public selected: string;
+  public showNewDialog: boolean = false;
 
-  constructor(iam: Iam) {
+  constructor(iam: Iam, private router: Router) {
     this.iam = iam;
     this.columns = this.initColumns();
     this.selected = "function";
@@ -55,5 +57,19 @@ export class HomeComponent implements OnInit {
     return Lodash.map(obj, (value, key) => {
       return value;
     })
+  }
+
+  public newExecutable() {
+    this.showNewDialog = true;
+
+  }
+
+  public receiveCreateExecutable(data: any) {
+    this.showNewDialog = false;
+    this.router.navigateByUrl("editor/" + this.iam.getUser().username + "/" + data.exe + "/" + data.name)
+  }
+
+  public receiveCancelCreateExecutable() {
+    this.showNewDialog = false;
   }
 }

@@ -28,10 +28,14 @@ export class EditorComponent implements OnInit {
     if (name !== undefined && name !== "" && exe !== undefined && exe !== "") {
       this.iam.getExecutable(username, exe, name)
       .subscribe((result) => {
-        this.data = result;
+        if (result) {
+          this.data = result;
+        } else {
+          this.data = this.initData(exe, name)
+        }
       })
     } else {
-      this.data = this.initData(exe)
+      this.data = this.initData(exe, name)
     }
   }
   
@@ -50,7 +54,7 @@ export class EditorComponent implements OnInit {
   }
 
   public receiveEmitNewNode(data: any) {
-    const newNode = this.initData(data.exe);
+    const newNode = this.initData(data.exe, "NewNode");
     newNode["id"] = data.id
     this.data.graph.nodes.push(newNode)
     this.data.graph.nodes = [...this.data.graph.nodes]
@@ -90,7 +94,7 @@ export class EditorComponent implements OnInit {
     });
   }
 
-  private initData(exe) {
-    return new InitData(this.iam)[exe]();
+  private initData(exe, name) {
+    return new InitData(this.iam)[exe](1, name);
   }
 }

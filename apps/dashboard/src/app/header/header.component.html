@@ -1,43 +1,23 @@
-<div class="inline-input name">
-  <input 
-    class="form-control"
-    size="{{inputSize('name')}}"
-    *ngIf="editing" 
-    type="text" 
-    [(ngModel)]="data.name"
-    (ngModelChange)="nameOnChange($event)"
-    placeholder="name">
-  <p *ngIf="!editing">{{data.name}}</p>
-  <div *ngIf="searchResults && keys(searchResults).length > 0" class="searchResults">
-    <ul *ngFor="let key of keys(searchResults)">
-      <li class="list-section-header">{{key}}</li>
-      <li class="list-section-item" *ngFor="let result of searchResults[key]" (click)="clickSearchResult(result)">{{result.name}}</li>
-    </ul>
-  </div>
-</div>
-
-
-<div class="inline-input exe">
-  <!-- <div *ngIf="editing">
-    <select class="form-control" [(ngModel)]="data.exe">
-      <option>function</option>
-      <option>query</option>
-      <option>graph</option>
-    </select>
-  </div> -->
-  <p >.{{data.exe}}</p>
-</div>
-
 <div class="inline-input username">
-  <!-- <input 
+  <input 
     class="form-control"
     size="{{inputSize('username')}}"
     *ngIf="editing" 
     type="text" 
     [(ngModel)]="data.username"
-    [ngModelOptions]="{debounce: 500}"
-    placeholder="name"> -->
-  <p>.{{data.username}}</p>
+    placeholder="name">
+  <p *ngIf="!editing" >{{data.username}}</p>
+</div>
+
+<div class="inline-input exe">
+  <div *ngIf="editing">
+    <select class="form-control" [(ngModel)]="data.exe">
+      <option>function</option>
+      <option>query</option>
+      <option>graph</option>
+    </select>
+  </div>
+  <p *ngIf="!editing">.{{data.exe}}</p>
 </div>
 
 <div class="inline-input environment">
@@ -49,6 +29,24 @@
     [(ngModel)]="data.environment"
     placeholder="name">
   <p *ngIf="!editing">.{{data.environment}}</p>
+</div>
+
+<div class="inline-input name">
+  <input 
+    class="form-control"
+    size="{{inputSize('name')}}"
+    *ngIf="editing" 
+    type="text" 
+    [(ngModel)]="data.name"
+    (ngModelChange)="nameOnChange($event)"
+    placeholder="name">
+  <p *ngIf="!editing">.{{data.name}}</p>
+  <div *ngIf="searchResults && keys(searchResults).length > 0" class="searchResults">
+    <ul *ngFor="let key of keys(searchResults)">
+      <li class="list-section-header">{{key}}</li>
+      <li class="list-section-item" *ngFor="let result of searchResults[key]" (click)="clickSearchResult(result)">{{result.name}}</li>
+    </ul>
+  </div>
 </div>
 
 <div *ngIf="editing" class="text-editor" ace-editor

@@ -10,8 +10,38 @@ import { EnvironmentRouter } from "../Executor/EnvironmentRouter";
 import { Database } from "../Executor/Database";
 import { DatabaseCommunicator } from "../Communicator/DatabaseCommunicator";
 import { EnvironmentRouterApi } from "./EnvironmentRouterApi";
+import { EnvironmentApi } from "./EnvironmentApi";
+import { ClientCommunicator } from "../Communicator/ClientCommunicator";
+import { FileSystemCommunicator } from "../Communicator/FileSystemCommunicator";
+import { EnvironmentManager } from "../Environment/EnvironmentManager";
 
 export class ApiFactory {
+
+  environment(filesystem: FileSystem, serverCommunicator: ServerCommunicator) {
+    const dbconfig = {
+      user: process.env.DB_USER || process.argv[5],
+      password: process.env.DB_PASSWORD || process.argv[6], 
+      host: process.env.DB_HOST || process.argv[7],
+      port: process.env.DB_PORT || process.argv[8],
+      database: process.env.DB_NAME || process.argv[9]
+    };
+    const fsconfig = {
+      host: process.env.FS_HOST || process.argv[10],
+      port: process.env.FS_PORT || process.argv[11]
+    };
+    const databaseCommunicator: DatabaseCommunicator = new DatabaseCommunicator(
+      dbconfig.user,
+      dbconfig.password,
+      dbconfig.host,
+      parseInt(dbconfig.port),
+      dbconfig.database
+    )
+    const database = new Database(databaseCommunicator);
+    const fsClient = new ClientCommunicator(fsconfig["host"], parseInt(fsconfig["port"]));
+    const fileSystemCommunicator = new FileSystemCommunicator(fsClient)
+    const environmentManager: EnvironmentManager = new EnvironmentManager(database, fileSystemCommunicator)
+    new EnvironmentApi(environmentManager, serverCommunicator)
+  }
 
   router(fileSystem: FileSystem, serverCommunicator: ServerCommunicator) {
     const dbconfig = {

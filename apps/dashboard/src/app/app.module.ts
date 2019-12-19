@@ -24,6 +24,7 @@ import { NestedInputComponent } from './nested-input/nested-input.component';
 import { GraphComponent } from './graph/graph.component';
 import { HeaderComponent } from './header/header.component';
 import { HiddenHeaderComponent } from './hidden-header/hidden-header.component';
+import { NewExecutableComponent } from './new-executable/new-executable.component';
 
 const appRoutes: Routes = [
   { path: "login", component: LoginComponent },
@@ -47,7 +48,8 @@ const appRoutes: Routes = [
     NestedInputComponent,
     GraphComponent,
     HeaderComponent,
-    HiddenHeaderComponent
+    HiddenHeaderComponent,
+    NewExecutableComponent
   ],
   imports: [
     RouterModule.forRoot(appRoutes,{ enableTracing: true }),

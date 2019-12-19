@@ -1,70 +1,79 @@
-import Multer from "multer";
 import Path from "path";
 import FS from "fs";
+import Lodash from "lodash";
 
 export class FileSystem {
 
   private root: string;
-  private rootStorage: Multer.StorageEngine;
-  private programStorage: Multer.StorageEngine;
+  private folders: any;
 
-  constructor(root: string) {
+  constructor(root: string, folders: string[]) {
     this.root = root;
-    this.rootStorage = Multer.diskStorage({
-      destination: (req, file, cb) => {
-        cb(undefined, this.getRoot());
-      },
-      filename: (req, file, cb) => {
-        cb(undefined, file.originalname);
-      }
-    });
-    this.initProgramPath();
-    this.programStorage = Multer.diskStorage({
-      destination: (req, file, cb) => {
-        cb(undefined, this.path("programs"));
-      },
-      filename: (req, file, cb) => {
-        cb(undefined, file.originalname);
-      }
-    });
+    this.folders = this.getFolders(folders);
   }
 
-  private initProgramPath() {
-    if (!FS.existsSync(this.getProgramRoot())) {
-      FS.mkdirSync(this.getProgramRoot());
-    }
+  private getFolders(folders: string[]) {
+    const folderMap = {};
+    Lodash.each(folders, (folder) => {
+      folderMap[folder] = {
+        root: this.path(folder),
+        path: (filename: string) => {
+          return Path.join(this.root, folder, filename);
+        }
+      }
+    })
+    return folderMap;
   }
 
   public getRoot() {
     return this.root;
   }
 
-  public getProgramRoot() {
-    return this.path("programs");
+  public path(path: string) {
+    return Path.join(this.root, path);
   }
 
   public getPublicRoot() {
     return this.path("public/dist/iam");
   }
 
-  public path(path: string) {
-    return Path.join(this.root, path);
+  public getFolderRoot(folder: string) {
+    return this.folders[folder].root;
+  }
+
+  public folderPath(folder: string, filename: string) {
+    return Path.join(this.folders[folder].root, filename);
+  }
+
+
+  public getProgramRoot() {
+    return this.getFolderRoot("programs");
+  }
+
+  public getImagesRoot() {
+    return this.getFolderRoot("images")
   }
 
   public programPath(fileName: string) {
-    return Path.join(this.root, "programs", fileName);
+    return this.folderPath("programs", fileName);
   }
 
-  public getRootStorage(): Multer.StorageEngine {
-    return this.rootStorage;
-  }
-
-  public getProgramStorage(): Multer.StorageEngine {
-    return this.programStorage;
+  public imagesPath(fileName: string) {
+    return this.folderPath("images", fileName);
   }
 
   public writeProgram(name: string, text: string) {
-    const path = this.getProgramRoot() + "/" + name;
+    const path = this.folderPath("programs", name);
+    if (!FS.existsSync(path)) {
+      const write = FS.createWriteStream(path);
+      write.write(text);
+      write.close();
+    }
+    return path;
+  }
+
+  public writeImage(name: string, text: string) {
+    const path = this.folderPath("images", name);
     if (!FS.existsSync(path)) {
       const write = FS.createWriteStream(path);
       write.write(text);

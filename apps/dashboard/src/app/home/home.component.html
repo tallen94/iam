@@ -4,7 +4,7 @@
         <div class="selected selection" *ngIf="selected == col.title">{{col.title}} ({{col.list.length}})</div>
         <div class="selection" *ngIf="selected != col.title">{{col.title}} ({{col.list.length}})</div>
     </div>
-    <div class="sidebar-row"><button class="sidebar-row btn btn-primary" [routerLink]="['/editor', iam.getUser().username, selected, '']">New</button></div>
+    <div class="sidebar-row"><button class="sidebar-row btn btn-primary" (click)="newExecutable()">New</button></div>
   </div>
   <div class="list-section col-sm-10" *ngIf="columns[selected].list.length > 0">
     <div class="list-item" *ngFor="let item of columns[selected].list" [routerLink]="['/editor', item.username, selected, item.name]">
@@ -21,5 +21,12 @@
       <p class="description">Click "New" on the left bar to create one!</p>
     </div>
   </div>
+</div>
+
+<div *ngIf="showNewDialog">
+  <app-new-executable 
+    (emitCreateExecutable)="receiveCreateExecutable($event)"
+    (emitCancelCreateExecutable)="receiveCancelCreateExecutable()"
+  ></app-new-executable>
 </div>
 

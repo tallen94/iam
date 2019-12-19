@@ -1,0 +1,11 @@
+import json
+
+args = raw_input()
+data = json.loads(args)
+
+if len(data) > 0:
+    out = data[0]
+else:
+    out = { "error": "token not valid" }
+
+print json.dumps(out)

@@ -1,0 +1,10 @@
+process.stdin.on("data", (jobString) => {
+    var job = JSON.parse(jobString)
+    
+    job["data"]["enabled"] = 1;
+    job["data"] = JSON.stringify(job["data"])
+    
+    process.stdout.write(JSON.stringify(job));
+    
+    process.exit();
+});

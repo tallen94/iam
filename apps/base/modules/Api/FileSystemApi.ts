@@ -19,5 +19,13 @@ export class FileSystemApi {
       FS.createWriteStream(path).write(req.body.program);
       res.status(200).json({});
     });
+
+    // Storage for images
+    this.serverCommunicator.static(this.fileSystem.getImagesRoot(), "/images");
+    this.serverCommunicator.post("/images", (req, res) => {
+      const path = this.fileSystem.getImagesRoot() + "/" + req.body.name;
+      FS.createWriteStream(path).write(req.body.image);
+      res.status(200).json({});
+    });
   }
 }
