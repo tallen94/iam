@@ -36,7 +36,6 @@
             *ngIf="isEditing()" 
             type="text" 
             [(ngModel)]="data.args"
-            [ngModelOptions]="{debounce: 500}"
             placeholder="args">
           <p *ngIf="!isEditing()">{{data.args}}</p>
         </div>
@@ -85,6 +84,44 @@
           (emitEditing)="receiveEmitEditing($event)"
           (emitRunning)="receiveEmitRunning($event)"
           [(hidden)]="hidden"></nested-input>
+      </div>
+    </div>
+
+    <div *ngIf="data.exe == 'environment'">
+      <div class="inline-input"> 
+        <label *ngIf="isEditing() || (!isEditing() && !isEmpty(data.host))">Host</label>
+        <input 
+          class="form-control"
+          size="{{inputSize('host')}}"
+          *ngIf="isEditing()" 
+          type="text" 
+          [(ngModel)]="data.host"
+          placeholder="host">
+        <p *ngIf="!isEditing()">{{data.host}}</p>
+      </div>
+
+      <div class="inline-input">
+        <label *ngIf="isEditing() || (!isEditing() && !isEmpty(data.port))">Port</label>
+        <input 
+          class="form-control"
+          size="{{inputSize('port')}}"
+          *ngIf="isEditing()" 
+          type="text" 
+          [(ngModel)]="data.port"
+          placeholder="port">
+        <p *ngIf="!isEditing()">{{data.port}}</p>
+      </div>
+
+      <div *ngIf="isEditing()" class="text-editor" ace-editor
+        [(text)]="data.image"
+        [mode]="data.command || 'mysql'" 
+        [theme]="'eclipse'"
+        [options]="options"
+        [readOnly]="false"
+        [autoUpdateContent]="true" 
+        [durationBeforeCallback]="500"></div>
+      <div class="markdown" *ngIf="!isEditing()">
+        <ngx-md [data]="getCodeMarkdown('docker', data.image)" ></ngx-md>
       </div>
     </div>
   </div>

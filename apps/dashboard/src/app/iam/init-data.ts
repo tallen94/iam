@@ -50,4 +50,20 @@ export class InitData {
       }
     }
   }
+
+  environment(id: number, name: string) {
+    return {
+      id: id,
+      username: this.iam.getUser().username,
+      exe: "environment",
+      name: name,
+      description: "This is an environment.",
+      input: "",
+      output: "",
+      host: "localhost",
+      port: "5000",
+      image: "FROM icanplayguitar94/iam:base-latest",
+      environment: "base"
+    }
+  }
 }

@@ -30,6 +30,9 @@ export class HomeComponent implements OnInit {
     this.iam.getExecutables(this.iam.getUser().username, "graph").subscribe((data) => {
       this.columns["graph"]["list"] = data;
     })
+    this.iam.getExecutables(this.iam.getUser().username, "environment").subscribe((data) => {
+      this.columns["environment"]["list"] = data
+    })
   }
 
   private initColumns() {
@@ -44,6 +47,10 @@ export class HomeComponent implements OnInit {
       },
       graph: {
         title: 'graph',
+        list: []
+      },
+      environment: {
+        title: 'environment',
         list: []
       }
     };
@@ -61,7 +68,6 @@ export class HomeComponent implements OnInit {
 
   public newExecutable() {
     this.showNewDialog = true;
-
   }
 
   public receiveCreateExecutable(data: any) {

@@ -1,7 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Iam } from '../iam/iam';
 import * as Lodash from "lodash";
-import { InitData } from '../iam/init-data';
 
 @Component({
   selector: 'nested-input',

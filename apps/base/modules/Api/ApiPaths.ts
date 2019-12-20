@@ -15,8 +15,4 @@ export class ApiPaths {
   public static GET_EXECUTABLES = "/executable/:username/:exe";
   public static RUN_EXECUTABLE = "/executable/:username/:exe/:name/run";
   public static SEARCH_EXECUTABLES = "/search";
-
-  public static ADD_ENVIRONMENT = "/environment";
-  public static GET_ENVIRONMENT = "/environment/:username/:name";
-  public static GET_ENVIRONMENTS = "/environment/:username";
 }

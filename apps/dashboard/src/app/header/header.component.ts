@@ -25,7 +25,6 @@ export class HeaderComponent implements OnInit {
   ngOnInit() {
   }
 
-
   public nameOnChange(value) {
     if (value !== "") {
       this.iam.searchExecutables(value + "%")

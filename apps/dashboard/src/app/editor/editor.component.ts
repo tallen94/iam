@@ -25,7 +25,7 @@ export class EditorComponent implements OnInit {
     const name = this.route.snapshot.params["name"]
     const exe = this.route.snapshot.params["exe"]
     const username = this.route.snapshot.params["username"]
-    if (name !== undefined && name !== "" && exe !== undefined && exe !== "") {
+    if (name !== undefined && name !== "" && exe !== undefined && exe !== "") {  
       this.iam.getExecutable(username, exe, name)
       .subscribe((result) => {
         if (result) {

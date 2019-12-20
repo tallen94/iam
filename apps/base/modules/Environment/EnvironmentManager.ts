@@ -1,6 +1,7 @@
 import { Database } from "../modules";
 import { FileSystemCommunicator } from "../Communicator/FileSystemCommunicator";
 import Lodash from "lodash";
+import uuid from "uuid";
 
 export class EnvironmentManager {
 
@@ -10,21 +11,30 @@ export class EnvironmentManager {
   ) { }
 
   public addEnvironment(data: any) {
+    const envData = JSON.stringify({host: data.host, port: data.port})
     return this.getEnvironment(data.username, data.name)
     .then((result) => {
       if (result == undefined) {
-        return this.database.runQuery("admin", "add-environment", {
+        return this.database.runQuery("admin", "add-exe", {
           username: data.username, 
           name: data.name,
-          host: data.host,
-          port: data.port
+          uuid: uuid.v4(),
+          exe: data.exe,
+          data: envData,
+          input: data.input,
+          output: data.output,
+          description: data.description,
+          environment: "base"
         })
       }
-      return this.database.runQuery("admin", "update-environment", {
-        username: data.username, 
+      return this.database.runQuery("admin", "update-exe", { 
         name: data.name,
-        host: data.host,
-        port: data.port
+        exe: data.exe,
+        data: envData,
+        input: data.input,
+        output: data.output,
+        description: data.description,
+        environment: "base"
       })
     }).then(() => {
       return this.fileSystemCommunicator.putImage({
@@ -36,15 +46,21 @@ export class EnvironmentManager {
   }
 
   public getEnvironment(username: string, name: string) {
-    return this.database.runQuery("admin", "get-environment", { username: username, name: name })
+    return this.database.runQuery("admin", "get-exe-by-type-name", { username: username, name: name, exe: "environment" })
     .then((result) => {
       if (result.length > 0) {
         const item = result[0];
+        const data = JSON.parse(item.data);
         const ret = {
           username: item.username,
           name: item.name,
-          host: item.host,
-          port: item.port
+          exe: item.exe,
+          host: data.host,
+          port: data.port,
+          input: item.input,
+          output: item.output,
+          description: item.description,
+          environment: item.environment
         }
         return this.fileSystemCommunicator.getImage(item.name)
         .then((result) => {
@@ -57,16 +73,19 @@ export class EnvironmentManager {
   }
 
   public getEnvironments(username: string) {
-    return this.database.runQuery("admin", "get-environments-for-user", { username: username })
+    return this.database.runQuery("admin", "get-exe-for-user", { exe: "environment", username: username })
     .then((results) => {
       return Lodash.map(results, (result) => {
         return {
           username: result.username,
           name: result.name,
-          host: result.host,
-          port: result.port
+          description: result.description
         }
       })
     })
+  }
+
+  public getImageFile(filename: string) {
+    return this.fileSystemCommunicator.getImage(filename);
   }
 }
