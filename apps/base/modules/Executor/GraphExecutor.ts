@@ -90,10 +90,10 @@ export class GraphExecutor {
       (node) => this.executor.getExecutable(node.username, node.name, node.exe))
       .map((nodePromise) => {
         return nodePromise.then((node) => {
-          return this.database.runQuery("admin", "get-exe-env", {username: node.username, exe: node.exe, name: node.name})
+          return this.database.runQuery("admin", "get-exe-environment", {username: node.username, exe: node.exe, name: node.name})
           .then((results) => {
             if (results.length > 0) {
-              const env = results[0]
+              const env = JSON.parse(results[0].data)
               const clientCommunicator = new ClientCommunicator(env.host, env.port)
               const client = new Client(clientCommunicator);
               return this.stepListManager.stepJsonToStep(node, client);

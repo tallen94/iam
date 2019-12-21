@@ -1,22 +1,22 @@
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
-  name: iam-master
+  name: iam-executor
 spec:
   selector:
     matchLabels:
-      app: iam-master
+      app: iam-executor
   replicas: 1 # tells deployment to run 2 pods matching the template
   template:
     metadata:
       labels:
-        app: iam-master
+        app: iam-executor
     spec:
       imagePullSecrets:
       - name: regcred
       containers:
-      - name: iam-master
-        image: icanplayguitar94/iam:base-environments
+      - name: iam-executor
+        image: icanplayguitar94/iam:base-b3f5958a97522c4885906b7b39427697220a36eb
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
@@ -30,7 +30,7 @@ spec:
         - name: HOME
           value: "/usr/home/iam"
         - name: TYPE 
-          value: "master"
+          value: "executor"
         - name: SERVER_PORT
           value: "5000"
 
@@ -62,13 +62,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: iam-master
+  name: iam-executor
 spec:
   selector:
-    app: iam-master
+    app: iam-executor
   type: NodePort
   ports:
     - protocol: TCP
       port: 80
       targetPort: 5000
-      nodePort: 30001
+      nodePort: 30004

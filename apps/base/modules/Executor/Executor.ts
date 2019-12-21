@@ -30,7 +30,7 @@ export class Executor {
     this.setDatabase(dbConfig);
     this.setShell(fileSystem, this.database, fsConfig);
     this.setStepListManager(this.shell, this.database, clientPool);
-    this.setEnvironmentManager(this.database, fsConfig);
+    this.setEnvironmentManager(this.shell, this.database, fsConfig, fileSystem);
     this.setGraphExecutor();
   }
 
@@ -153,8 +153,11 @@ export class Executor {
             environment: stepJson.environment
           });
         case "environment":
-          return this.environmentManager.getImageFile(stepJson.name)
-          .then((image) => {
+          return Promise.all([
+            this.environmentManager.getImageFile(stepJson.name),
+            this.environmentManager.getKubernetesFile(stepJson.name)
+          ]) 
+          .then((files) => {
             const data = JSON.parse(stepJson.data);
             return {
               username: stepJson.username,
@@ -163,7 +166,8 @@ export class Executor {
               description: stepJson.description,
               input: stepJson.input,
               output: stepJson.output,
-              image: image,
+              image: files[0],
+              kubernetes: files[1],
               host: data.host,
               port: data.port,
               environment: stepJson.environment
@@ -213,6 +217,8 @@ export class Executor {
         return this.stepListManager.runStepList(username, name, exe, data);
       case "graph":
         return this.graphExecutor.runGraph(name, data);
+      case "environment":
+        return this.environmentManager.runEnvironment(username, name , data);
     }
   }
 
@@ -273,10 +279,10 @@ export class Executor {
     this.graphExecutor = new GraphExecutor(this.database, this, this.stepListManager);
   }
 
-  private setEnvironmentManager(database: Database, fsConfig: any) {
+  private setEnvironmentManager(shell: Shell, database: Database, fsConfig: any, fileSystem: FileSystem) {
     const fsClient = new ClientCommunicator(fsConfig["host"], fsConfig["port"])
     const fileSystemCommunicator: FileSystemCommunicator = new FileSystemCommunicator(fsClient);
-    this.environmentManager = new EnvironmentManager(database, fileSystemCommunicator);
+    this.environmentManager = new EnvironmentManager(fileSystem, shell, database, fileSystemCommunicator);
     return this.environmentManager;
   }
 

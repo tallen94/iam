@@ -1,6 +1,7 @@
 import { ServerCommunicator } from "../Communicator/ServerCommunicator";
 import { FileSystem } from "../FileSystem/FileSystem";
 import * as FS from "fs";
+import * as Lodash from "lodash";
 
 export class FileSystemApi {
 
@@ -12,20 +13,15 @@ export class FileSystemApi {
   }
 
   private init() {
-    // User local filesystem
-    this.serverCommunicator.static(this.fileSystem.getProgramRoot(), "/programs");
-    this.serverCommunicator.post("/programs", (req, res) => {
-      const path = this.fileSystem.getProgramRoot() + "/" + req.body.name;
-      FS.createWriteStream(path).write(req.body.program);
-      res.status(200).json({});
-    });
 
-    // Storage for images
-    this.serverCommunicator.static(this.fileSystem.getImagesRoot(), "/images");
-    this.serverCommunicator.post("/images", (req, res) => {
-      const path = this.fileSystem.getImagesRoot() + "/" + req.body.name;
-      FS.createWriteStream(path).write(req.body.image);
-      res.status(200).json({});
-    });
+    Lodash.each(this.fileSystem.getFolderNames(), (folderName) => {
+      // User local filesystem
+      this.serverCommunicator.static(this.fileSystem.getFolderRoot(folderName), "/" + folderName);
+      this.serverCommunicator.post("/" + folderName, (req, res) => {
+        const path = this.fileSystem.getFolderRoot(folderName) + "/" + req.body.name;
+        FS.createWriteStream(path).write(req.body.file);
+        res.status(200).json({});
+      });
+    })
   }
 }

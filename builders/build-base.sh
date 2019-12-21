@@ -26,4 +26,4 @@ bash images/templates/filesystem.sh $TAG
 bash builders/build-filesystem.sh $VERSION $PUSH
 
 bash images/templates/dashboard.sh $TAG
-bash builders/build-dashboard.sh $VERSION $PUSH
+bash builders/build-dashboard.sh $VERSION $PUSH -prod

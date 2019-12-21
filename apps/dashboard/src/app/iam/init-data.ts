@@ -63,6 +63,7 @@ export class InitData {
       host: "localhost",
       port: "5000",
       image: "FROM icanplayguitar94/iam:base-latest",
+      kubernetes: "",
       environment: "base"
     }
   }

@@ -5,24 +5,30 @@ import Lodash from "lodash";
 export class FileSystem {
 
   private root: string;
+  private folderNames: string[];
   private folders: any;
 
-  constructor(root: string, folders: string[]) {
+  constructor(root: string, folderNames: string[]) {
     this.root = root;
-    this.folders = this.getFolders(folders);
+    this.folderNames = folderNames;
+    this.folders = {};
+    this.setFolders(folderNames);
   }
 
-  private getFolders(folders: string[]) {
-    const folderMap = {};
+  private setFolders(folders: string[]) {
     Lodash.each(folders, (folder) => {
-      folderMap[folder] = {
+      this.folders[folder] = {
         root: this.path(folder),
         path: (filename: string) => {
           return Path.join(this.root, folder, filename);
         }
       }
+      this.writeDirectory(folder, "")
     })
-    return folderMap;
+  }
+
+  public getFolderNames() {
+    return this.folderNames;
   }
 
   public getRoot() {
@@ -45,25 +51,8 @@ export class FileSystem {
     return Path.join(this.folders[folder].root, filename);
   }
 
-
-  public getProgramRoot() {
-    return this.getFolderRoot("programs");
-  }
-
-  public getImagesRoot() {
-    return this.getFolderRoot("images")
-  }
-
-  public programPath(fileName: string) {
-    return this.folderPath("programs", fileName);
-  }
-
-  public imagesPath(fileName: string) {
-    return this.folderPath("images", fileName);
-  }
-
-  public writeProgram(name: string, text: string) {
-    const path = this.folderPath("programs", name);
+  public writeFolder(folder: string, filename: string, text: string) {
+    const path = this.folderPath(folder, filename).toString();
     if (!FS.existsSync(path)) {
       const write = FS.createWriteStream(path);
       write.write(text);
@@ -72,12 +61,10 @@ export class FileSystem {
     return path;
   }
 
-  public writeImage(name: string, text: string) {
-    const path = this.folderPath("images", name);
+  public writeDirectory(folder: string, dirName: string) {
+    const path = this.folderPath(folder, dirName).toString();
     if (!FS.existsSync(path)) {
-      const write = FS.createWriteStream(path);
-      write.write(text);
-      write.close();
+      FS.mkdirSync(path)
     }
     return path;
   }

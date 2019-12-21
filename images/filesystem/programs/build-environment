@@ -1,0 +1,5 @@
+#!/bin/bash
+
+eval $(minikube docker-env)
+curl -s http://iam-filesystem.default:5003/images/$2 | docker build -t $1 -
+kubectl apply -f http://iam-filesystem.default:5003/kubernetes/$2 

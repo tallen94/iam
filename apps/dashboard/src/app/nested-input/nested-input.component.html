@@ -88,6 +88,7 @@
     </div>
 
     <div *ngIf="data.exe == 'environment'">
+      <hidden-header [data]="data" [editing]="isEditing()"></hidden-header>
       <div class="inline-input"> 
         <label *ngIf="isEditing() || (!isEditing() && !isEmpty(data.host))">Host</label>
         <input 
@@ -112,16 +113,34 @@
         <p *ngIf="!isEditing()">{{data.port}}</p>
       </div>
 
-      <div *ngIf="isEditing()" class="text-editor" ace-editor
-        [(text)]="data.image"
-        [mode]="data.command || 'mysql'" 
-        [theme]="'eclipse'"
-        [options]="options"
-        [readOnly]="false"
-        [autoUpdateContent]="true" 
-        [durationBeforeCallback]="500"></div>
-      <div class="markdown" *ngIf="!isEditing()">
-        <ngx-md [data]="getCodeMarkdown('docker', data.image)" ></ngx-md>
+      <div>
+        <label class="nested-title" *ngIf="isEditing() || (!isEditing() && !isEmpty(data.image))">Image</label>
+        <div *ngIf="isEditing()" class="text-editor" ace-editor
+          [(text)]="data.image"
+          [mode]="data.command || 'mysql'" 
+          [theme]="'eclipse'"
+          [options]="options"
+          [readOnly]="false"
+          [autoUpdateContent]="true" 
+          [durationBeforeCallback]="500"></div>
+        <div class="markdown" *ngIf="!isEditing()">
+          <ngx-md [data]="getCodeMarkdown('docker', data.image)" ></ngx-md>
+        </div>
+      </div>
+
+      <div>
+        <label class="nested-title" *ngIf="isEditing() || (!isEditing() && !isEmpty(data.kubernetes))">Kubernetes</label>
+        <div *ngIf="isEditing()" class="text-editor" ace-editor
+          [(text)]="data.kubernetes"
+          [mode]="'yaml'" 
+          [theme]="'eclipse'"
+          [options]="options"
+          [readOnly]="false"
+          [autoUpdateContent]="true" 
+          [durationBeforeCallback]="500"></div>
+        <div class="markdown" *ngIf="!isEditing()">
+          <ngx-md [data]="getCodeMarkdown('yaml', data.kubernetes)" ></ngx-md>
+        </div>
       </div>
     </div>
   </div>

@@ -2,10 +2,15 @@ import { Database } from "../modules";
 import { FileSystemCommunicator } from "../Communicator/FileSystemCommunicator";
 import Lodash from "lodash";
 import uuid from "uuid";
+import * as FS from "fs";
+import { FileSystem } from "../FileSystem/FileSystem";
+import { Shell } from "../Executor/Shell";
 
 export class EnvironmentManager {
 
   constructor(
+    private fileSystem: FileSystem,
+    private shell: Shell,
     private database: Database,
     private fileSystemCommunicator: FileSystemCommunicator
   ) { }
@@ -37,11 +42,16 @@ export class EnvironmentManager {
         environment: "base"
       })
     }).then(() => {
-      return this.fileSystemCommunicator.putImage({
-        username: data.username,
-        name: data.name,
-        image: data.image
-      })
+      return Promise.all([
+        this.fileSystemCommunicator.putFile("images", {
+          name: data.name,
+          file: data.image
+        }), 
+        this.fileSystemCommunicator.putFile("kubernetes", {
+          name: data.name,
+          file: data.kubernetes
+        })
+      ])
     })
   }
 
@@ -62,9 +72,12 @@ export class EnvironmentManager {
           description: item.description,
           environment: item.environment
         }
-        return this.fileSystemCommunicator.getImage(item.name)
-        .then((result) => {
-          ret["image"] = result;
+        return Promise.all([
+          this.fileSystemCommunicator.getFile("images", item.name),
+          this.fileSystemCommunicator.getFile("kubernetes", item.name)
+        ]).then((result) => {
+          ret["image"] = result[0];
+          ret["kubernetes"] = result[1]
           return ret;
         })
       }
@@ -85,7 +98,21 @@ export class EnvironmentManager {
     })
   }
 
+  public runEnvironment(username: string, name: string, data: any) {
+    return this.getEnvironment(username, name)
+    .then((environment) => {
+      return this.shell.runProgram("admin", "build-environment", {tag: data.tag, image: name})
+      .then((result) => {
+        return result;
+      })
+    })
+  }
+
   public getImageFile(filename: string) {
-    return this.fileSystemCommunicator.getImage(filename);
+    return this.fileSystemCommunicator.getFile("images", filename);
+  }
+
+  public getKubernetesFile(filename: string) {
+    return this.fileSystemCommunicator.getFile("kubernetes", filename);
   }
 }
