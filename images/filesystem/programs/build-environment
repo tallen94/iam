@@ -1,5 +1,10 @@
 #!/bin/bash
 
-eval $(minikube docker-env)
-curl -s http://iam-filesystem.default:5003/images/$2 | docker build -t $1 -
-kubectl apply -f http://iam-filesystem.default:5003/kubernetes/$2 
+TAG=$1
+IMAGE=$2
+
+curl -s http://iam-filesystem.default/images/$IMAGE | docker build --no-cache -t $TAG -
+echo "$DOCKER_PASSWORD" | docker login -u $DOCKER_USERNAME --password-stdin 
+docker push $TAG
+
+kubectl apply -f http://iam-filesystem.default/kubernetes/$IMAGE

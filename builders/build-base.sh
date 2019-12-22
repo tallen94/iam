@@ -17,8 +17,7 @@ if [ "$PUSH" = "push" ]; then
 fi
 
 # Create kubernetes apps
-bash kubernetes/templates/executor.sh $TAG
-bash kubernetes/templates/master.sh $TAG
+bash kubernetes/templates/base.sh $TAG
 bash kubernetes/templates/job.sh $TAG
 
 # Update downstreams

@@ -1,3 +1,7 @@
+#!/bin/bash
+TAG=$1
+
+cat > kubernetes/apps/base.yaml <<EOF
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
@@ -16,7 +20,7 @@ spec:
       - name: regcred
       containers:
       - name: base
-        image: icanplayguitar94/iam:base-environments
+        image: $TAG
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
@@ -72,3 +76,4 @@ spec:
       port: 80
       targetPort: 5000
       nodePort: 30004
+EOF

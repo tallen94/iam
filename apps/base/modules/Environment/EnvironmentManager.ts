@@ -29,7 +29,7 @@ export class EnvironmentManager {
           input: data.input,
           output: data.output,
           description: data.description,
-          environment: "base"
+          environment: data.environment
         })
       }
       return this.database.runQuery("admin", "update-exe", { 
@@ -39,7 +39,7 @@ export class EnvironmentManager {
         input: data.input,
         output: data.output,
         description: data.description,
-        environment: "base"
+        environment: data.environment
       })
     }).then(() => {
       return Promise.all([

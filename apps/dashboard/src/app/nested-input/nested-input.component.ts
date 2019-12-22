@@ -29,11 +29,9 @@ export class NestedInputComponent implements OnInit {
   constructor(private iam: Iam) { }
 
   ngOnInit() {
-    this.prevData = this.data;
-    if (this.data.exe == "graph") {
-      this.data.id = "0";
-    } else if (this.data.id == undefined) {
-      this.data.id = "1";
+    this.prevData = {};
+    if (this.data.id == undefined) {
+      this.data.id = (this.data.exe == "graph" ? "0" : "1")
     }
   }
 
@@ -46,14 +44,8 @@ export class NestedInputComponent implements OnInit {
     this.data = newData;
   }
 
-  match(item: any) {
-    return item.name == this.data.name
-    && item.exe === this.data.exe
-    && item.username === this.data.username;
-  }
-
   isHidden() {
-    return !Lodash.some(this.hidden, this.data);
+    return !(this.data.id !== undefined && Lodash.indexOf(this.hidden, this.data.id) != -1);
   }
 
   isEditing() {
@@ -62,9 +54,9 @@ export class NestedInputComponent implements OnInit {
 
   triggerShow() {
     if (!this.isHidden()) {
-      this.hidden = Lodash.filter(this.hidden, (item) => !this.match(item))
+      this.hidden = Lodash.filter(this.hidden, (item) => item !== this.data.id)
     } else {
-      this.hidden.push(this.data)
+      this.hidden.push(this.data.id)
     }
     this.hidden = [...this.hidden];
   }
@@ -102,7 +94,8 @@ export class NestedInputComponent implements OnInit {
   }
 
   receiveUpdateData(data: any) {
-    this.data = data;
+    data.id = this.data.id;
+    this.data = JSON.parse(JSON.stringify(data));
     if (this.isHidden()) {
       this.triggerShow();
     }

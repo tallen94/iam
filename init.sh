@@ -44,10 +44,10 @@ applyConfig() {
    kubectl apply -f kubernetes/apps/database.yaml
    echo [...Setting up filesystem...]
    kubectl apply -f kubernetes/apps/filesystem.yaml
-   echo [...Setting up executor...]
-   kubectl apply -f kubernetes/apps/executor.yaml
-   echo [...Initializing master...]
-   kubectl apply -f kubernetes/apps/master.yaml
+   echo [...Setting up base...]
+   kubectl apply -f kubernetes/apps/base.yaml
+   echo [...Initializing environment-builder...]
+   kubectl apply -f kubernetes/apps/environment-builder.yaml
    echo [...Configuring dashboard...]
    kubectl apply -f kubernetes/apps/dashboard.yaml
    echo IAM is ready to use.

@@ -12,6 +12,8 @@ export class RunComponent implements OnInit {
   requestData: string = "";
   responseData: string = "";
   _running: any = {};
+  private options = {
+  }
 
   constructor(
     private iam: Iam
@@ -50,12 +52,21 @@ export class RunComponent implements OnInit {
 
     this.iam.runExecutable(this._running.username, this._running.exe, this._running.name, this.requestData)
     .subscribe((response: any) => {
-      try {
+      if (this.isJson(response.result)) {
         this.responseData = JSON.stringify(response.result, null, 2);
-      } catch {
+      } else {
         this.responseData = response.result;
       }
     });
     this.requestData = JSON.stringify(this.requestData, null, 2);
+  }
+
+  isJson(str: string) {
+    try {
+      JSON.parse(str)
+    } catch {
+      return false;
+    }
+    return true;
   }
 }

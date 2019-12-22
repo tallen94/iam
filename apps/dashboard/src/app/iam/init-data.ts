@@ -58,13 +58,13 @@ export class InitData {
       exe: "environment",
       name: name,
       description: "This is an environment.",
-      input: "",
+      input: '{"tag":"icanplayguitar94/iam:' + name + '"}',
       output: "",
-      host: "localhost",
-      port: "5000",
+      host: name + ".default",
+      port: "80",
       image: "FROM icanplayguitar94/iam:base-latest",
       kubernetes: "",
-      environment: "base"
+      environment: "environment-builder"
     }
   }
 }

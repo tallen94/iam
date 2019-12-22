@@ -45,9 +45,7 @@
           [mode]="data.command || 'mysql'" 
           [theme]="'eclipse'"
           [options]="options"
-          [readOnly]="false"
-          [autoUpdateContent]="true" 
-          [durationBeforeCallback]="500"></div>
+          [readOnly]="false"></div>
         <div class="markdown" *ngIf="!isEditing()">
           <ngx-md [data]="getCodeMarkdown(data.command, data.text)" ></ngx-md>
         </div>
@@ -62,9 +60,7 @@
           [mode]="data.command || 'mysql'" 
           [theme]="'eclipse'"
           [options]="options"
-          [readOnly]="false"
-          [autoUpdateContent]="true" 
-          [durationBeforeCallback]="500"></div>
+          [readOnly]="false"></div>
         <div class="markdown" *ngIf="!isEditing()">
           <ngx-md [data]="getCodeMarkdown(data.command, data.text)" ></ngx-md>
         </div>
@@ -120,9 +116,7 @@
           [mode]="data.command || 'mysql'" 
           [theme]="'eclipse'"
           [options]="options"
-          [readOnly]="false"
-          [autoUpdateContent]="true" 
-          [durationBeforeCallback]="500"></div>
+          [readOnly]="false"></div>
         <div class="markdown" *ngIf="!isEditing()">
           <ngx-md [data]="getCodeMarkdown('docker', data.image)" ></ngx-md>
         </div>
@@ -135,9 +129,7 @@
           [mode]="'yaml'" 
           [theme]="'eclipse'"
           [options]="options"
-          [readOnly]="false"
-          [autoUpdateContent]="true" 
-          [durationBeforeCallback]="500"></div>
+          [readOnly]="false"></div>
         <div class="markdown" *ngIf="!isEditing()">
           <ngx-md [data]="getCodeMarkdown('yaml', data.kubernetes)" ></ngx-md>
         </div>
