@@ -1,7 +1,7 @@
 export const environment = {
   production: true,
   executorUrl: undefined,
-  executorPort: undefined,
+  executorPort: 30004,
   routerUrl: undefined,
-  routerPort: undefined
+  routerPort: 30005
 };

@@ -40,6 +40,8 @@ setupPassword() {
 applyConfig() {
    echo [...Initializing config...]
    kubectl apply -f kubernetes/secrets/dbconfig.yaml
+   kubectl apply -f kubernetes/secrets/dockerconfig.yaml
+   kubectl apply -f kubernetes/serviceaccounts/deployment.yaml
    echo [...Deploying databse...]
    kubectl apply -f kubernetes/apps/database.yaml
    echo [...Setting up filesystem...]
@@ -106,6 +108,17 @@ data:
   user: aWFt
   db_name: aWFt
   password: $PASSWORD
+EOF
+touch kubernetes/secrets/dockerconfig.yaml
+cat > kubernetes/secrets/dockerconfig.yaml <<EOF
+apiVersion: v1
+kind: Secret
+metadata:
+  name: dockerconfig
+type: Opaque
+data:
+  user: $(echo -ne $DOCKER_USERNAME | base64)
+  password: $(echo -ne $DOCKER_PASSWORD | base64)
 EOF
 
 applyConfig

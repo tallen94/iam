@@ -6,6 +6,7 @@ PUSH=$2
 
 # Build dashboard project
 ENV=$3
+rm -rf images/dashboard/src
 bash apps/dashboard/build.sh $ENV  && cp -r apps/dashboard/dist images/dashboard/src
 
 # Build and push docker container

@@ -14,11 +14,6 @@ export class ClientCommunicator {
     return this.host;
   }
 
-  public setHostPort(host: string, port: number) {
-    this.host = host;
-    this.port = port;
-  }
-
   public get(url: string, params?: any, data?: any, headers?: any) {
     const absUrl = this.getAbsoluteUrl(url, params);
     return this.http.get(absUrl, { params: data, headers: headers });

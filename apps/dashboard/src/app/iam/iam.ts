@@ -12,10 +12,10 @@ export class Iam {
 
   constructor(httpClient: HttpClient) {
     this.user = {};
-    const executorUrl = environment.executorUrl || window.location.hostname;
-    const executorPort = environment.executorPort || 30001;
-    const routerUrl = environment.routerUrl || window.location.hostname;
-    const routerPort = environment.routerPort || 30005;
+    const executorUrl = environment.executorUrl == undefined ? window.location.hostname : environment.executorUrl;
+    const executorPort = environment.executorPort;
+    const routerUrl = environment.routerUrl == undefined ? window.location.hostname : environment.routerUrl;
+    const routerPort = environment.routerPort;
     this.executor = new ClientCommunicator(httpClient, executorUrl, executorPort);
     this.router = new ClientCommunicator(httpClient, routerUrl, routerPort);
   }
