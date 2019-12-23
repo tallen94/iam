@@ -31,11 +31,13 @@ export class EditorComponent implements OnInit {
         if (result) {
           this.data = result;
         } else {
-          this.data = this.initData(exe, name)
+          const id = exe == "graph" ? "0" : "1";
+          this.data = this.initData(id, exe, name)
         }
       })
     } else {
-      this.data = this.initData(exe, name)
+      const id = exe == "graph" ? "0" : "1";
+      this.data = this.initData(id, exe, name)
     }
   }
   
@@ -51,11 +53,15 @@ export class EditorComponent implements OnInit {
 
   public receiveEmitEditing(data: any) {
     this.editing = [...data]
+    this.addHidden(this.editing)
+  }
+
+  public receiveEmitHidden(data: any) {
+    this.hidden = [...data];
   }
 
   public receiveEmitNewNode(data: any) {
-    const newNode = this.initData(data.exe, "NewNode");
-    newNode["id"] = data.id
+    const newNode = this.initData(data.id, data.exe, "New" + data.exe);
     this.data.graph.nodes.push(newNode)
     this.data.graph.nodes = [...this.data.graph.nodes]
   }
@@ -63,6 +69,10 @@ export class EditorComponent implements OnInit {
   public receiveEmitNewEdge(edge: any) {
     this.data.graph.edges.push(edge);
     this.data.graph.edges = [...this.data.graph.edges]  
+  }
+
+  public receiveUpdateData(data: any) {
+    this.data = data
   }
 
   public receiveDeleteEditing(linksEditing: any) {
@@ -81,6 +91,9 @@ export class EditorComponent implements OnInit {
       Lodash.remove(this.data.graph.edges, (edge: any) => {
         return edge.source == id || edge.target == id
       })
+      Lodash.remove(this.hidden, (hiddenId: any) => {
+        return hiddenId == id;
+      })
     })
     this.data.graph.nodes = [...this.data.graph.nodes];
     this.data.graph.edges = [...this.data.graph.edges];
@@ -94,7 +107,16 @@ export class EditorComponent implements OnInit {
     });
   }
 
-  private initData(exe, name) {
-    return new InitData(this.iam)[exe](1, name);
+  private initData(id: string, exe: string, name: string) {
+    return new InitData(this.iam)[exe](id, name);
+  }
+
+  private addHidden(values: any[]) {
+    Lodash.each(values, (value) => {
+      if (Lodash.indexOf(this.hidden, value) == -1) {
+        this.hidden.push(value);
+      }
+    });
+    this.hidden = [...this.hidden]
   }
 }

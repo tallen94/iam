@@ -78,7 +78,9 @@
           [data]="node" 
           [editing]="editing"
           (emitEditing)="receiveEmitEditing($event)"
+          (emitHidden)="receiveEmitHidden($event)"
           (emitRunning)="receiveEmitRunning($event)"
+          (emitUpdateData)="receiveUpdateData($event)"
           [(hidden)]="hidden"></nested-input>
       </div>
     </div>

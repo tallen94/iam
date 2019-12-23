@@ -44,6 +44,8 @@ applyConfig() {
    kubectl apply -f kubernetes/apps/database.yaml
    echo [...Setting up filesystem...]
    kubectl apply -f kubernetes/apps/filesystem.yaml
+   echo [...Initializing router...]
+   kubectl apply -f kubernetes/apps/router.yaml
    echo [...Setting up base...]
    kubectl apply -f kubernetes/apps/base.yaml
    echo [...Initializing environment-builder...]

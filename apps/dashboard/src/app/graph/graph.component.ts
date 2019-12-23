@@ -112,6 +112,9 @@ export class GraphComponent implements OnInit {
       const newEdge = { source: this.editing[0], target: newNodeId }
       this.emitNewEdge.emit(newEdge);
     }
+    this.editing.push(newNodeId)
+    this.editing = [...this.editing]
+    this.emitEditing.emit(this.editing)
   }
 
   deleteEditing() {

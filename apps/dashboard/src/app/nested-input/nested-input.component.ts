@@ -10,7 +10,9 @@ import * as Lodash from "lodash";
 export class NestedInputComponent implements OnInit {
   @Output() run: EventEmitter<any> = new EventEmitter();
   @Output() emitEditing: EventEmitter<any> = new EventEmitter();
+  @Output() emitHidden: EventEmitter<any> = new EventEmitter();
   @Output() emitRunning: EventEmitter<any> = new EventEmitter();
+  @Output() emitUpdateData: EventEmitter<any> = new EventEmitter();
 
   @Input() data: any;
   @Input() border: boolean;
@@ -29,7 +31,7 @@ export class NestedInputComponent implements OnInit {
   constructor(private iam: Iam) { }
 
   ngOnInit() {
-    this.prevData = {};
+    this.prevData = JSON.parse(JSON.stringify(this.data));
     if (this.data.id == undefined) {
       this.data.id = (this.data.exe == "graph" ? "0" : "1")
     }
@@ -59,6 +61,7 @@ export class NestedInputComponent implements OnInit {
       this.hidden.push(this.data.id)
     }
     this.hidden = [...this.hidden];
+    this.emitHidden.emit(this.hidden)
   }
 
   triggerEdit() {
@@ -89,16 +92,28 @@ export class NestedInputComponent implements OnInit {
     this.emitEditing.emit(data)
   }
 
+  receiveEmitHidden(data: any) {
+    this.hidden = data;
+    this.emitHidden.emit(data)
+  }
+
   receiveEmitRunning(data: any) {
     this.emitRunning.emit(data);
   }
 
   receiveUpdateData(data: any) {
-    data.id = this.data.id;
-    this.data = JSON.parse(JSON.stringify(data));
-    if (this.isHidden()) {
-      this.triggerShow();
+    if (this.data.exe != "graph") {
+      data.id = this.data.id;
+      this.data = data;
+    } else {
+      this.data.graph.nodes = Lodash.map(this.data.graph.nodes, (node) => {
+        if (node.id == data.id) {
+          return data;
+        }
+        return node;
+      })
     }
+    this.emitUpdateData.emit(this.data)
   }
 
   getCodeMarkdown(command, text) {
@@ -111,6 +126,7 @@ export class NestedInputComponent implements OnInit {
       .subscribe((response) => {
         this.prevData = this.data;
         this.cancelEdit();
+        this.emitUpdateData.emit(this.data)
       })
     }
   }

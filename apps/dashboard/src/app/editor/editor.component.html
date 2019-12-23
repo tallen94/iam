@@ -10,7 +10,9 @@
       [editing]="editing"
       [(hidden)]="hidden"
       (emitEditing)="receiveEmitEditing($event)"
-      (emitRunning)="receiveEmitRunning($event)"></nested-input>
+      (emitHidden)="receiveEmitHidden($event)"
+      (emitRunning)="receiveEmitRunning($event)"
+      (emitUpdateData)="receiveUpdateData($event)"></nested-input>
     <run 
       class="right" 
       *ngIf="running != undefined" 

@@ -12,7 +12,7 @@ export class RunComponent implements OnInit {
   requestData: string = "";
   responseData: string = "";
   _running: any = {};
-  private options = {
+  public options = {
   }
 
   constructor(
@@ -52,21 +52,23 @@ export class RunComponent implements OnInit {
 
     this.iam.runExecutable(this._running.username, this._running.exe, this._running.name, this.requestData)
     .subscribe((response: any) => {
-      if (this.isJson(response.result)) {
+      const json =  this.isJsonString(response.result);
+      if (json) {
+        this.responseData = JSON.stringify(json, null, 2);
+      } else if (response.result instanceof Array || response.result instanceof Object) {
         this.responseData = JSON.stringify(response.result, null, 2);
       } else {
-        this.responseData = response.result;
+        this.responseData = "" + response.result;
       }
     });
     this.requestData = JSON.stringify(this.requestData, null, 2);
   }
 
-  isJson(str: string) {
+  isJsonString(str: any) {
     try {
-      JSON.parse(str)
+      return JSON.parse(str)
     } catch {
       return false;
     }
-    return true;
   }
 }

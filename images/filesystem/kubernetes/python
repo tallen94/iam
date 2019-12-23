@@ -1,22 +1,22 @@
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
-  name: iam-router
+  name: python
 spec:
   selector:
     matchLabels:
-      app: iam-router
+      app: python
   replicas: 1 # tells deployment to run 2 pods matching the template
   template:
     metadata:
       labels:
-        app: iam-router
+        app: python
     spec:
       imagePullSecrets:
       - name: regcred
       containers:
-      - name: iam-router
-        image: icanplayguitar94/iam:base-environments
+      - name: python
+        image: icanplayguitar94/iam:python2
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
@@ -30,7 +30,7 @@ spec:
         - name: HOME
           value: "/usr/home/iam"
         - name: TYPE 
-          value: "router"
+          value: "executor"
         - name: SERVER_PORT
           value: "5000"
 
@@ -62,13 +62,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: iam-router
+  name: python
 spec:
   selector:
-    app: iam-router
-  type: NodePort
+    app: python
   ports:
     - protocol: TCP
       port: 80
       targetPort: 5000
-      nodePort: 30005
