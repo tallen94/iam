@@ -25,7 +25,6 @@ export class HeaderComponent implements OnInit {
   ngOnInit() {
   }
 
-
   public nameOnChange(value) {
     if (value !== "") {
       this.iam.searchExecutables(value + "%")
@@ -49,19 +48,19 @@ export class HeaderComponent implements OnInit {
     switch (value) {
       case "query":
         if (this.data.name === "" && value !== this.prevExe)  {
-          this.emitUpdateData.emit(new InitData(this.iam).query(this.data.id))
+          this.emitUpdateData.emit(new InitData(this.iam).query(this.data.id, "NewQuery"))
           this.prevExe = value;
         }
         break
       case "function":
         if (this.data.name === "" && value !== this.prevExe)  {
-          this.emitUpdateData.emit(new InitData(this.iam).function(this.data.id))
+          this.emitUpdateData.emit(new InitData(this.iam).function(this.data.id, "NewFunction"))
           this.prevExe = value;
         }
         break;
       case "graph": 
         if (this.data.name === "" && value !== this.prevExe)  {
-          this.emitUpdateData.emit(new InitData(this.iam).graph())
+          this.emitUpdateData.emit(new InitData(this.iam).graph("0", "NewGraph"))
           this.prevExe = value;
         }
         break;

@@ -13,5 +13,5 @@ if [ "$PUSH" = "push" ]; then
 fi
 
 # Update downstreams
-bash images/templates/bash.sh $TAG
+bash images/templates/base.sh $TAG
 bash build-base.sh $1

@@ -1,21 +1,28 @@
 import { Injectable } from '@angular/core';
 import { ClientCommunicator } from "./communicator";
 import { ApiPaths } from "./api-paths";
+import { environment } from "../../environments/environment";
+import { HttpClient } from '@angular/common/http';
 
 @Injectable()
 export class Iam {
-  private clientCommunicator: ClientCommunicator;
   private user: any;
+  private executor: ClientCommunicator;
+  private router: ClientCommunicator;
 
-  constructor(clientCommunicator: ClientCommunicator) {
-    this.clientCommunicator = clientCommunicator;
+  constructor(httpClient: HttpClient) {
     this.user = {};
+    const executorUrl = environment.executorUrl == undefined ? window.location.hostname : environment.executorUrl;
+    const executorPort = environment.executorPort;
+    const routerUrl = environment.routerUrl == undefined ? window.location.hostname : environment.routerUrl;
+    const routerPort = environment.routerPort;
+    this.executor = new ClientCommunicator(httpClient, executorUrl, executorPort);
+    this.router = new ClientCommunicator(httpClient, routerUrl, routerPort);
   }
 
-  public setUser(username: string, userId: number, token: string) {
+  public setUser(username: string, token: string) {
     this.user = {
       username: username,
-      userId: userId,
       token: token
     }
   }
@@ -25,7 +32,7 @@ export class Iam {
   }
 
   public spawn(name: string, data: any) {
-    return this.clientCommunicator.post(
+    return this.executor.post(
       ApiPaths.SPAWN_PROCESS, 
       data, 
       {type: "LOCAL", name: name}, 
@@ -35,34 +42,34 @@ export class Iam {
   }
 
   public addExecutable(data: any) {
-    return this.clientCommunicator.post(ApiPaths.ADD_EXECUTABLE, data, {}, { user: JSON.stringify(this.user) })
+    return this.executor.post(ApiPaths.ADD_EXECUTABLE, data)
   }
 
   public getExecutable(username: string, exe: string, name: string) {
-    return this.clientCommunicator.get(ApiPaths.GET_EXECUTABLE, {username: username, name: name, exe: exe}, {}, { user: JSON.stringify(this.user) });
+    return this.executor.get(ApiPaths.GET_EXECUTABLE, {username: username, name: name, exe: exe});
   }
 
   public getExecutables(username: string, exe: string) {
-    return this.clientCommunicator.get(ApiPaths.GET_EXECUTABLES, {username: username, exe: exe}, {}, { user: JSON.stringify(this.user) });
+    return this.executor.get(ApiPaths.GET_EXECUTABLES, {username: username, exe: exe});
   }
 
   public runExecutable(username: string, exe: string, name: string, data: any) {
-    return this.clientCommunicator.post(ApiPaths.RUN_EXECUTABLE, data, {username: username, exe: exe, name: name}, { user: JSON.stringify(this.user) });
+    return this.router.post(ApiPaths.RUN_EXECUTABLE, data, {username: username, exe: exe, name: name});
   }
 
   public searchExecutables(searchText: string) {
-    return this.clientCommunicator.get(ApiPaths.SEARCH_EXECUTABLES, {}, {searchText: searchText}, { user: JSON.stringify(this.user) });
+    return this.executor.get(ApiPaths.SEARCH_EXECUTABLES, {}, {searchText: searchText});
   }
 
   public getHost() {
-    return this.clientCommunicator.getHost();
+    return this.executor.getHost();
   }
 
   public getStatus() {
-    return this.clientCommunicator.get(ApiPaths.GET_STATUS, {}, {}, { user: JSON.stringify(this.user) });
+    return this.executor.get(ApiPaths.GET_STATUS, {}, {});
   }
 
   public addClient(host: string, port: number) {
-    return this.clientCommunicator.post(ApiPaths.ADD_CLIENT, {host: host, port: port}, {}, { user: JSON.stringify(this.user) });
+    return this.executor.post(ApiPaths.ADD_CLIENT, {host: host, port: port}, {});
   }
 }

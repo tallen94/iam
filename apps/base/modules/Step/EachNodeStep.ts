@@ -26,7 +26,7 @@ export class EachNodeStep implements Step {
   }
 
   public execute(data: any) {
-    return this.step.executeEach(data);
+    // return this.step.executeEach(data);
   }
 
   public executeEach(data: any[]) {

@@ -8,11 +8,11 @@ export class FileSystemCommunicator {
     this.clientCommunicator = clientCommunicator;
   }
 
-  public getProgram(name: string) {
-    return this.clientCommunicator.get("/programs/" + name);
+  public getFile(folder: string, name: string) {
+    return this.clientCommunicator.get("/" + folder + "/" + name);
   }
 
-  public putProgram(program: any) {
-    return this.clientCommunicator.post("/programs", program);
+  public putFile(folder: string, file: any) {
+    return this.clientCommunicator.post("/" + folder, file)
   }
 }

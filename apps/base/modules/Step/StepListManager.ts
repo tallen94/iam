@@ -11,26 +11,27 @@ import { Database } from "../Executor/Database";
 import { ClientPool } from "../Executor/ClientPool";
 import * as UUID from "uuid";
 import { Executor } from "../Executor/Executor";
+import { Client } from "../Executor/Client";
 
 export class StepListManager {
   constructor(private shell: Shell, private database: Database, private clientPool: ClientPool, private executor: Executor) {
   }
 
   // ADD
-  public addStepList(username: string, userId: number, data: any) {
+  public addStepList(data: any) {
     const trimmedData = this.trimStepJson(data);
-    return this.getStepList(username, data.name, data.exe)
+    return this.getStepList(data.username, data.name, data.exe)
     .then((result) => {
       if (result == undefined) {
         return this.database.runQuery("admin", "add-exe", {
-          username: username,
+          username: data.username,
           name: data.name,
           uuid: UUID.v4(),
           exe: data.exe,
           data: JSON.stringify(trimmedData.steps || trimmedData.step),
           input: data.input,
           output: data.output,
-          userId: userId,
+          userId: data.userId,
           description: data.description
         });
       } else {
@@ -40,7 +41,7 @@ export class StepListManager {
           data: JSON.stringify(trimmedData.steps || trimmedData.step),
           input: data.input,
           output: data.output,
-          userId: userId,
+          userId: data.userId,
           description: data.description
         });
       }
@@ -100,24 +101,24 @@ export class StepListManager {
     return null;
   }
 
-  public stepJsonToStep(stepJson) {
+  public stepJsonToStep(stepJson, client?: Client) {
     switch (stepJson.exe) {
       case "function":
-        return new ProgramStep(stepJson.username, stepJson.name, this.shell, this.clientPool);
+        return new ProgramStep(stepJson.username, stepJson.name, this.shell, client);
       case "query":
-        return new QueryStep(stepJson.username, stepJson.name, this.database, this.clientPool);
-      case "pipe":
-        return new PipeStep(Lodash.map(stepJson.steps || stepJson.data, (step) => {
-          return this.stepJsonToStep(step);
-        }));
-      case "async":
-        return new AsyncStep(Lodash.map(stepJson.steps || stepJson.data, (step) => {
-          return this.stepJsonToStep(step);
-        }));
-      case "foreach":
-        return new ForEachStep(this.stepJsonToStep(stepJson.step || stepJson.data), this.executor.getClientPool().numClients() * 2, this.shell);
-      case "eachnode":
-        return new EachNodeStep(this.stepJsonToStep(stepJson.step || stepJson.data));
+        return new QueryStep(stepJson.username, stepJson.name, this.database, client);
+      // case "pipe":
+      //   return new PipeStep(Lodash.map(stepJson.steps || stepJson.data, (step) => {
+      //     return this.stepJsonToStep(step);
+      //   }));
+      // case "async":
+      //   return new AsyncStep(Lodash.map(stepJson.steps || stepJson.data, (step) => {
+      //     return this.stepJsonToStep(step);
+      //   }));
+      // case "foreach":
+      //   return new ForEachStep(this.stepJsonToStep(stepJson.step || stepJson.data), this.executor.getClientPool().numClients() * 2, this.shell);
+      // case "eachnode":
+      //   return new EachNodeStep(this.stepJsonToStep(stepJson.step || stepJson.data));
     }
   }
 

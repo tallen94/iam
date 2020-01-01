@@ -4,8 +4,10 @@
 
 export const environment = {
   production: false,
-  url: "localhost",
-  port: 5000
+  executorUrl: "iam-local",
+  executorPort: 30004,
+  routerUrl: "iam-local",
+  routerPort: 30005
 };
 
 /*

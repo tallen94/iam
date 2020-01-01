@@ -54,13 +54,13 @@ export class PipeStep implements Step {
     return promise;
   }
 
-  public executeEach(data: any) {
-    let promise = Promise.resolve(data);
-    Lodash.each(this.steps, (step) => {
-      promise = promise.then((result) => {
-        return step.executeEach(result);
-      });
-    });
-    return promise;
-  }
+  // public executeEach(data: any) {
+  //   let promise = Promise.resolve(data);
+  //   Lodash.each(this.steps, (step) => {
+  //     promise = promise.then((result) => {
+  //       return step.executeEach(result);
+  //     });
+  //   });
+  //   return promise;
+  // }
 }
