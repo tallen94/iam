@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Iam } from '../iam/iam';
 import * as Lodash from "lodash";
 import { Router } from '@angular/router';
+import { InitData } from '../iam/init-data';
 
 @Component({
   selector: 'app-home',
@@ -11,13 +12,13 @@ import { Router } from '@angular/router';
 export class HomeComponent implements OnInit {
   public columns: any;
   public iam: Iam;
-  public selected: string;
+  public data: any;
   public showNewDialog: boolean = false;
+  public searchText: string = "";
 
   constructor(iam: Iam, private router: Router) {
     this.iam = iam;
     this.columns = this.initColumns();
-    this.selected = "function";
   }
 
   ngOnInit() {
@@ -56,8 +57,13 @@ export class HomeComponent implements OnInit {
     };
   }
 
-  public select(selection: string) {
-    this.selected = selection;
+  public select(exe: string, selection: any) {
+    this.data = null;
+    this.iam.getExecutable(selection.username, exe, selection.name)
+      .subscribe((result) => {
+        this.data = result;
+        this.data.id = this.data.exe == "graph" ? "0" : "1";
+      })
   }
 
   public values(obj: any) {
@@ -72,10 +78,25 @@ export class HomeComponent implements OnInit {
 
   public receiveCreateExecutable(data: any) {
     this.showNewDialog = false;
-    this.router.navigateByUrl("editor/" + this.iam.getUser().username + "/" + data.exe + "/" + data.name)
+    this.data = this.initData("0", data.exe, data.name)
   }
 
   public receiveCancelCreateExecutable() {
     this.showNewDialog = false;
   }
+
+  public filter(values: any[]) {
+    return Lodash.orderBy(Lodash.filter(values, (item) => {
+      return item.name.includes(this.searchText)
+    }), ["name"]);
+  }
+
+  public hide(title: string) {
+    this.columns[title].hidden = !this.columns[title].hidden
+  }
+
+  private initData(id: string, exe: string, name: string) {
+    return new InitData(this.iam)[exe](id, name);
+  }
+
 }

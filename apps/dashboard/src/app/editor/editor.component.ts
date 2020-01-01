@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { Iam } from "../iam/iam";
 import * as Lodash from "lodash";
@@ -10,7 +10,7 @@ import { InitData } from '../iam/init-data';
   styleUrls: ['./editor.component.css']
 })
 export class EditorComponent implements OnInit {
-  data: any;
+  @Input() data: any;
   editing: any[] = [];
   hidden: any[] = [];
   running: any;
@@ -22,23 +22,7 @@ export class EditorComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    const name = this.route.snapshot.params["name"]
-    const exe = this.route.snapshot.params["exe"]
-    const username = this.route.snapshot.params["username"]
-    if (name !== undefined && name !== "" && exe !== undefined && exe !== "") {  
-      this.iam.getExecutable(username, exe, name)
-      .subscribe((result) => {
-        if (result) {
-          this.data = result;
-        } else {
-          const id = exe == "graph" ? "0" : "1";
-          this.data = this.initData(id, exe, name)
-        }
-      })
-    } else {
-      const id = exe == "graph" ? "0" : "1";
-      this.data = this.initData(id, exe, name)
-    }
+    this.hidden.push(this.data.id)
   }
   
   public keys(obj: any) {
@@ -101,7 +85,7 @@ export class EditorComponent implements OnInit {
   }
 
   public delete() {
-    this.iam.runExecutable("admin", "QUERY", "delete-exe", this.data)
+    this.iam.runExecutable("admin", "query", "delete-exe", this.data)
     .subscribe((response) => {
       this.router.navigate(["/home"]);
     });
