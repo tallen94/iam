@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { Iam } from "../iam/iam";
 import * as Lodash from "lodash";
@@ -10,7 +10,7 @@ import { InitData } from '../iam/init-data';
   styleUrls: ['./editor.component.css']
 })
 export class EditorComponent implements OnInit {
-  data: any;
+  @Input() data: any;
   editing: any[] = [];
   hidden: any[] = [];
   running: any;
@@ -22,17 +22,7 @@ export class EditorComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    const name = this.route.snapshot.params["name"]
-    const exe = this.route.snapshot.params["exe"]
-    const username = this.route.snapshot.params["username"]
-    if (name !== undefined && name !== "" && exe !== undefined && exe !== "") {
-      this.iam.getExecutable(username, exe, name)
-      .subscribe((result) => {
-        this.data = result;
-      })
-    } else {
-      this.data = this.initData(exe)
-    }
+    this.hidden.push(this.data.id)
   }
   
   public keys(obj: any) {
@@ -47,11 +37,15 @@ export class EditorComponent implements OnInit {
 
   public receiveEmitEditing(data: any) {
     this.editing = [...data]
+    this.addHidden(this.editing)
+  }
+
+  public receiveEmitHidden(data: any) {
+    this.hidden = [...data];
   }
 
   public receiveEmitNewNode(data: any) {
-    const newNode = this.initData(data.exe);
-    newNode["id"] = data.id
+    const newNode = this.initData(data.id, data.exe, "New" + data.exe);
     this.data.graph.nodes.push(newNode)
     this.data.graph.nodes = [...this.data.graph.nodes]
   }
@@ -59,6 +53,10 @@ export class EditorComponent implements OnInit {
   public receiveEmitNewEdge(edge: any) {
     this.data.graph.edges.push(edge);
     this.data.graph.edges = [...this.data.graph.edges]  
+  }
+
+  public receiveUpdateData(data: any) {
+    this.data = data
   }
 
   public receiveDeleteEditing(linksEditing: any) {
@@ -77,6 +75,9 @@ export class EditorComponent implements OnInit {
       Lodash.remove(this.data.graph.edges, (edge: any) => {
         return edge.source == id || edge.target == id
       })
+      Lodash.remove(this.hidden, (hiddenId: any) => {
+        return hiddenId == id;
+      })
     })
     this.data.graph.nodes = [...this.data.graph.nodes];
     this.data.graph.edges = [...this.data.graph.edges];
@@ -84,13 +85,22 @@ export class EditorComponent implements OnInit {
   }
 
   public delete() {
-    this.iam.runExecutable("admin", "QUERY", "delete-exe", this.data)
+    this.iam.runExecutable("admin", "query", "delete-exe", this.data)
     .subscribe((response) => {
       this.router.navigate(["/home"]);
     });
   }
 
-  private initData(exe) {
-    return new InitData(this.iam)[exe]();
+  private initData(id: string, exe: string, name: string) {
+    return new InitData(this.iam)[exe](id, name);
+  }
+
+  private addHidden(values: any[]) {
+    Lodash.each(values, (value) => {
+      if (Lodash.indexOf(this.hidden, value) == -1) {
+        this.hidden.push(value);
+      }
+    });
+    this.hidden = [...this.hidden]
   }
 }

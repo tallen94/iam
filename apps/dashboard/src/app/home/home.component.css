@@ -5,12 +5,16 @@
 
 .sidebar-row {
   width: 100%;
-  margin-top: 8px;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
+}
+
+.sidebar-row-title {
+  font-size: 15px;
+  cursor: pointer;
 }
 
 .selection {
-  text-align: center;
+  text-align: left;
   padding: 16px;
 }
 
@@ -39,10 +43,29 @@
   border-radius: 8px;
   width: 100%;
   margin-top: 8px;
+  position: relative;
 }
 
 .list-item .description {
   color: rgb(160, 160, 160);
+}
+
+.list-item-name {
+  width: 200px;
+}
+
+.list-item-buttons {
+  text-align: right;
+  position: absolute;
+  left: 200px;
+  right: 8px;
+  top: 0;
+  bottom: 0;
+}
+
+.list-item-buttons span {
+  margin-right: 4px;
+  cursor: pointer;
 }
 
 .new-description {
@@ -52,4 +75,28 @@
 
 button {
   margin-right: 2px;
+}
+
+.sidebar-row-title {
+  height: 30px;
+}
+
+.sidebar-row-subrows {
+  list-style: none;
+  max-height: 200px;
+  overflow-y: scroll;
+  padding-left: 8px;
+  margin: 0;
+}
+
+.sidebar-row-subrow {
+  cursor: pointer;
+}
+
+.sidebar-row-subrow:hover {
+  background-color: rgb(226, 226, 226);
+}
+
+.search {
+  margin-bottom: 16px;
 }

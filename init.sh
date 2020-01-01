@@ -40,14 +40,18 @@ setupPassword() {
 applyConfig() {
    echo [...Initializing config...]
    kubectl apply -f kubernetes/secrets/dbconfig.yaml
+   kubectl apply -f kubernetes/secrets/dockerconfig.yaml
+   kubectl apply -f kubernetes/serviceaccounts/deployment.yaml
    echo [...Deploying databse...]
    kubectl apply -f kubernetes/apps/database.yaml
    echo [...Setting up filesystem...]
    kubectl apply -f kubernetes/apps/filesystem.yaml
-   echo [...Setting up executor...]
-   kubectl apply -f kubernetes/apps/executor.yaml
-   echo [...Initializing master...]
-   kubectl apply -f kubernetes/apps/master.yaml
+   echo [...Initializing router...]
+   kubectl apply -f kubernetes/apps/router.yaml
+   echo [...Setting up base...]
+   kubectl apply -f kubernetes/apps/base.yaml
+   echo [...Initializing environment-builder...]
+   kubectl apply -f kubernetes/apps/environment-builder.yaml
    echo [...Configuring dashboard...]
    kubectl apply -f kubernetes/apps/dashboard.yaml
    echo IAM is ready to use.
@@ -104,6 +108,17 @@ data:
   user: aWFt
   db_name: aWFt
   password: $PASSWORD
+EOF
+touch kubernetes/secrets/dockerconfig.yaml
+cat > kubernetes/secrets/dockerconfig.yaml <<EOF
+apiVersion: v1
+kind: Secret
+metadata:
+  name: dockerconfig
+type: Opaque
+data:
+  user: $(echo -ne $DOCKER_USERNAME | base64)
+  password: $(echo -ne $DOCKER_PASSWORD | base64)
 EOF
 
 applyConfig

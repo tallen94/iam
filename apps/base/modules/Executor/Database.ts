@@ -22,20 +22,21 @@ export class Database {
     return Promise.resolve(this.status);
   }
 
-  public addQuery(username: string, userId: number, data: any): Promise<any> {
-    return this.getQuery(username, data.name)
+  public addQuery(data: any): Promise<any> {
+    return this.getQuery(data.username, data.name)
     .then((result) => {
       if (result == undefined) {
         return this.runQuery("admin", "add-exe", {
-          username: username,
+          username: data.username,
           name: data.name,
           uuid: UUID.v4(),
           exe: data.exe,
           data: data.text,
           input: data.input,
           output: data.output,
-          userId: userId,
-          description: data.description
+          userId: data.userId,
+          description: data.description,
+          environment: data.environment
         });
       } else {
         return this.runQuery("admin", "update-exe", {
@@ -44,7 +45,8 @@ export class Database {
           data: data.text,
           input: data.input,
           output: data.output,
-          description: data.description
+          description: data.description,
+          environment: data.environment
         });
       }
     });
@@ -63,7 +65,8 @@ export class Database {
           text: item.data,
           input: item.input,
           output: item.output,
-          description: item.description
+          description: item.description,
+          environment: item.environment
         };
       }
       return Promise.resolve(undefined);

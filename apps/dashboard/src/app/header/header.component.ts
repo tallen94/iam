@@ -15,41 +15,52 @@ export class HeaderComponent implements OnInit {
   private options = {
     maxLines: 32,
     wrap: true,
-    autoScrollEditorIntoView: true
+    autoScrollEditorIntoView: true,
+    fontSize: "18px"
   }
+  searchResults: any = {}
 
   constructor(private iam: Iam) { }
 
-  ngOnInit() { }
+  ngOnInit() {
+  }
 
   public nameOnChange(value) {
     if (value !== "") {
-      this.iam.getExecutable(this.iam.getUser().username, this.data.exe, value)
+      this.iam.searchExecutables(value + "%")
       .subscribe((result) => {
-        if (result != null) {
-          this.emitUpdateData.emit(result)
-        }
+        this.searchResults = result;
       })
+    } else {
+      this.searchResults = []
     }
+  }
+
+  public clickSearchResult(result) {
+    this.iam.getExecutable(result.username, result.exe, result.name)
+    .subscribe((data) => {
+      this.searchResults = []
+      this.emitUpdateData.emit(data);
+    })
   }
   
   public exeOnChange(value) {
     switch (value) {
       case "query":
         if (this.data.name === "" && value !== this.prevExe)  {
-          this.emitUpdateData.emit(new InitData(this.iam).query(this.data.id))
+          this.emitUpdateData.emit(new InitData(this.iam).query(this.data.id, "NewQuery"))
           this.prevExe = value;
         }
         break
       case "function":
         if (this.data.name === "" && value !== this.prevExe)  {
-          this.emitUpdateData.emit(new InitData(this.iam).function(this.data.id))
+          this.emitUpdateData.emit(new InitData(this.iam).function(this.data.id, "NewFunction"))
           this.prevExe = value;
         }
         break;
       case "graph": 
         if (this.data.name === "" && value !== this.prevExe)  {
-          this.emitUpdateData.emit(new InitData(this.iam).graph())
+          this.emitUpdateData.emit(new InitData(this.iam).graph("0", "NewGraph"))
           this.prevExe = value;
         }
         break;
@@ -69,6 +80,10 @@ export class HeaderComponent implements OnInit {
 
   isEmpty(str: string) {
     return str == undefined || str == '';
+  }
+
+  keys(obj: any) {
+    return Object.keys(obj)
   }
 
 }

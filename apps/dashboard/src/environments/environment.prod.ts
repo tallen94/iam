@@ -1,4 +1,7 @@
 export const environment = {
   production: true,
-  url: undefined
+  executorUrl: undefined,
+  executorPort: 30004,
+  routerUrl: undefined,
+  routerPort: 30005
 };

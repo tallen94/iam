@@ -1,2 +1,4 @@
-FROM icanplayguitar94/iam:base-e3ccd3a0d14f295ba54e08a9b5a2fb90b1c1018a
+FROM icanplayguitar94/iam:base-environments
 ADD programs /usr/home/iam/programs
+ADD images /usr/home/iam/images
+ADD kubernetes /usr/home/iam/kubernetes

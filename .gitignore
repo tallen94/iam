@@ -21,6 +21,8 @@ apps/dashboard/dist
 
 notes
 designs
+database
+local
 
 kubernetes/secrets
 images/base/deploy.tgz

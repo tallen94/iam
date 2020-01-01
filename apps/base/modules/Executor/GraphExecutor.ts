@@ -5,6 +5,8 @@ import { DirectedGraph } from "../Graph/DirectedGraph";
 import { Executor } from "./Executor";
 import { StepListManager } from "../Step/StepListManager";
 import * as UUID from "uuid";
+import { ClientCommunicator } from "../Communicator/ClientCommunicator";
+import { Client } from "./Client";
 
 export class GraphExecutor {
 
@@ -13,20 +15,21 @@ export class GraphExecutor {
     private executor: Executor,
     private stepListManager: StepListManager) { }
 
-  public addGraph(username: string, userId: number, data: any) {
+  public addGraph(data: any) {
     const trimmedData = this.trimData(data.graph);
     return this.getGraph(data.username, data.name).then((result) => {
       if (result == undefined) {
         return this.database.runQuery("admin", "add-exe", {
-          username: username,
+          username: data.username,
           name: data.name,
           uuid: UUID.v4(),
           exe: data.exe,
           data: JSON.stringify(trimmedData),
           input: data.input,
           output: data.output,
-          userId: userId,
-          description: data.description
+          userId: data.userId,
+          description: data.description,
+          environment: data.environment
         });
       } else {
         return this.database.runQuery("admin", "update-exe", {
@@ -35,7 +38,8 @@ export class GraphExecutor {
           data: JSON.stringify(trimmedData),
           input: data.input,
           output: data.output,
-          description: data.description
+          description: data.description,
+          environment: data.environment
         });
       }
     });
@@ -86,7 +90,15 @@ export class GraphExecutor {
       (node) => this.executor.getExecutable(node.username, node.name, node.exe))
       .map((nodePromise) => {
         return nodePromise.then((node) => {
-          return this.stepListManager.stepJsonToStep(node);
+          return this.database.runQuery("admin", "get-exe-environment", {username: node.username, exe: node.exe, name: node.name})
+          .then((results) => {
+            if (results.length > 0) {
+              const env = JSON.parse(results[0].data)
+              const clientCommunicator = new ClientCommunicator(env.host, env.port)
+              const client = new Client(clientCommunicator);
+              return this.stepListManager.stepJsonToStep(node, client);
+            }
+          })
         });
       }));
   }

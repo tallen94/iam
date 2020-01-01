@@ -1,27 +1,17 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import * as Lodash from 'lodash';
-import { environment } from "../../environments/environment"
 
 @Injectable()
 export class ClientCommunicator {
-  private host: string;
-  private port: number;
-  private http: HttpClient;
-
-  constructor(http: HttpClient) {
-    this.host = environment.url || window.location.hostname;
-    this.port = 30001;
-    this.http = http;
-  }
+  constructor(
+    private http: HttpClient,
+    private host: string,
+    private port: number
+  ) { }
 
   public getHost() {
     return this.host;
-  }
-
-  public setHostPort(host: string, port: number) {
-    this.host = host;
-    this.port = port;
   }
 
   public get(url: string, params?: any, data?: any, headers?: any) {

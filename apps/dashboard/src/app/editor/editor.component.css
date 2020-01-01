@@ -1,6 +1,6 @@
 .full {
   position: absolute;
-  top: 64px;
+  top: 0;
   left: 0;
   right: 0;
   bottom: 0;
@@ -11,19 +11,13 @@
 
 .upper {
   width: 100%;
-  padding: 8px;
-  box-shadow: 1px 0px 6px 1px;
+  padding: 4px;
   background-color: white;
-}
-
-.upper button {
-  height: 40px;
-  margin-right: 8px;
 }
 
 .lower {
   position: absolute;
-  top: 64px;
+  top: 0;
   left: 0;
   right: 0;
   bottom: 0;

@@ -1,7 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Iam } from '../iam/iam';
 import * as Lodash from "lodash";
-import { InitData } from '../iam/init-data';
 
 @Component({
   selector: 'nested-input',
@@ -11,7 +10,9 @@ import { InitData } from '../iam/init-data';
 export class NestedInputComponent implements OnInit {
   @Output() run: EventEmitter<any> = new EventEmitter();
   @Output() emitEditing: EventEmitter<any> = new EventEmitter();
+  @Output() emitHidden: EventEmitter<any> = new EventEmitter();
   @Output() emitRunning: EventEmitter<any> = new EventEmitter();
+  @Output() emitUpdateData: EventEmitter<any> = new EventEmitter();
 
   @Input() data: any;
   @Input() border: boolean;
@@ -23,16 +24,16 @@ export class NestedInputComponent implements OnInit {
   private options = {
     maxLines: 32,
     wrap: true,
-    autoScrollEditorIntoView: true
+    autoScrollEditorIntoView: true,
+    fontSize: "18px"
   }
 
   constructor(private iam: Iam) { }
 
   ngOnInit() {
-    if (this.data.exe == "graph") {
-      this.data.id = "0";
-    } else if (this.data.id == undefined) {
-      this.data.id = "1";
+    this.prevData = JSON.parse(JSON.stringify(this.data));
+    if (this.data.id == undefined) {
+      this.data.id = (this.data.exe == "graph" ? "0" : "1")
     }
   }
 
@@ -45,14 +46,8 @@ export class NestedInputComponent implements OnInit {
     this.data = newData;
   }
 
-  match(item: any) {
-    return item.name == this.data.name
-    && item.exe === this.data.exe
-    && item.username === this.data.username;
-  }
-
   isHidden() {
-    return !Lodash.some(this.hidden, this.data);
+    return !(this.data.id !== undefined && Lodash.indexOf(this.hidden, this.data.id) != -1);
   }
 
   isEditing() {
@@ -61,31 +56,31 @@ export class NestedInputComponent implements OnInit {
 
   triggerShow() {
     if (!this.isHidden()) {
-      this.hidden = Lodash.filter(this.hidden, (item) => !this.match(item))
+      this.hidden = Lodash.filter(this.hidden, (item) => item !== this.data.id)
     } else {
-      this.hidden.push(this.data)
+      this.hidden.push(this.data.id)
     }
     this.hidden = [...this.hidden];
+    this.emitHidden.emit(this.hidden)
   }
 
   triggerEdit() {
-    if (!this.isEditing()) {
-      this.prevData = JSON.parse(JSON.stringify(this.data));
-      this.data.id = "" + this.data.id;
-      this.editing.push(this.data.id)
-      this.editing = [...this.editing];
-      this.emitEditing.emit(this.editing);
+    if (this.isHidden()) {
+      this.triggerShow();
     }
+    this.prevData = JSON.parse(JSON.stringify(this.data));
+    this.data.id = "" + this.data.id;
+    this.editing.push(this.data.id)
+    this.editing = [...this.editing];
+    this.emitEditing.emit(this.editing);
   }
 
   cancelEdit() {
-    if (this.isEditing()) {
-      this.editing = Lodash.filter(this.editing, (item) => item !== this.data.id)
-      this.data = JSON.parse(JSON.stringify(this.prevData));
-      this.data.id = "" + this.data.id;
-      this.editing = [...this.editing];
-      this.emitEditing.emit(this.editing);
-    } 
+    this.editing = Lodash.filter(this.editing, (item) => item !== this.data.id)
+    this.data = JSON.parse(JSON.stringify(this.prevData));
+    this.data.id = "" + this.data.id;
+    this.editing = [...this.editing];
+    this.emitEditing.emit(this.editing); 
   }
 
   triggerRunning() {
@@ -97,12 +92,28 @@ export class NestedInputComponent implements OnInit {
     this.emitEditing.emit(data)
   }
 
+  receiveEmitHidden(data: any) {
+    this.hidden = data;
+    this.emitHidden.emit(data)
+  }
+
   receiveEmitRunning(data: any) {
     this.emitRunning.emit(data);
   }
 
   receiveUpdateData(data: any) {
-    this.data = data;
+    if (this.data.exe != "graph") {
+      data.id = this.data.id;
+      this.data = data;
+    } else {
+      this.data.graph.nodes = Lodash.map(this.data.graph.nodes, (node) => {
+        if (node.id == data.id) {
+          return data;
+        }
+        return node;
+      })
+    }
+    this.emitUpdateData.emit(this.data)
   }
 
   getCodeMarkdown(command, text) {
@@ -113,7 +124,9 @@ export class NestedInputComponent implements OnInit {
     if (this.data.name !== "" && this.data.exe !== "") {
       this.iam.addExecutable(this.data)
       .subscribe((response) => {
-        this.triggerEdit();
+        this.prevData = this.data;
+        this.cancelEdit();
+        this.emitUpdateData.emit(this.data)
       })
     }
   }

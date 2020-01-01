@@ -22,7 +22,7 @@ export class LoginComponent implements OnInit {
     .subscribe((result: any) => {
       if (result.result.length > 0) {
         const user = result.result[0];
-        this.iam.setUser(user.username, user.userId, token);
+        this.iam.setUser(user.username, token);
         this.router.navigate(["/home"]);
       }
     });
@@ -34,7 +34,7 @@ export class LoginComponent implements OnInit {
     .subscribe((result: any) => {
       if (result.result.length > 0) {
         const user = result.result[0];
-        this.iam.setUser(user.username, user.userId, user.token);
+        this.iam.setUser(user.username, user.token);
         localStorage.setItem("token", user.token);
         this.router.navigate(["/home"])
       }
@@ -46,7 +46,7 @@ export class LoginComponent implements OnInit {
     .subscribe((result: any) => {
       if (result.result.length > 0) {
         const user = result.result[0];
-        this.iam.setUser(user.username, user.userId, user.token);
+        this.iam.setUser(user.username, user.token);
         localStorage.setItem("token", user.token);
         this.router.navigate(["/home"])
       }

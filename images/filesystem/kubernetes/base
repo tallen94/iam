@@ -1,26 +1,22 @@
-#!/bin/bash
-TAG=$1
-
-cat > kubernetes/apps/executor.yaml <<EOF
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
-  name: iam-executor
+  name: base
 spec:
   selector:
     matchLabels:
-      app: iam-executor
+      app: base
   replicas: 1 # tells deployment to run 2 pods matching the template
   template:
     metadata:
       labels:
-        app: iam-executor
+        app: base
     spec:
       imagePullSecrets:
       - name: regcred
       containers:
-      - name: iam-executor
-        image: $TAG
+      - name: base
+        image: icanplayguitar94/iam:base-environments
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
@@ -66,14 +62,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: iam-executor
+  name: base
 spec:
   selector:
-    app: iam-executor
+    app: base
   type: NodePort
   ports:
     - protocol: TCP
       port: 80
       targetPort: 5000
       nodePort: 30004
-EOF

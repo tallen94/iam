@@ -1,25 +1,26 @@
 <div class="full row">
   <div class="sidebar col-sm-2">
-    <div class="sidebar-row" *ngFor="let col of values(columns)" (click)="select(col.title)">
-        <div class="selected selection" *ngIf="selected == col.title">{{col.title}} ({{col.list.length}})</div>
-        <div class="selection" *ngIf="selected != col.title">{{col.title}} ({{col.list.length}})</div>
+    <div class="sidebar-row search">
+      <input class="form-control search-input" type="text" [(ngModel)]="searchText" placeholder="search" (ngModelChange)="searching($event)"/>
     </div>
-    <div class="sidebar-row"><button class="sidebar-row btn btn-primary" [routerLink]="['/editor', iam.getUser().username, selected, '']">New</button></div>
-  </div>
-  <div class="list-section col-sm-10" *ngIf="columns[selected].list.length > 0">
-    <div class="list-item" *ngFor="let item of columns[selected].list" [routerLink]="['/editor', item.username, selected, item.name]">
-      <h4>{{item.name}}</h4>
-      <p class="description">
-        <ngx-md [data]="item.description"></ngx-md>
-      </p>
-      <button class="btn-sm btn-primary" *ngFor="let steplist of item.steplists" [routerLink]="['/editor', steplist.username, 'pipe', steplist.name]">{{steplist.name}}</button>
+    <div class="sidebar-row" *ngFor="let col of values(columns)">
+      <div class="sidebar-row-title" (click)="hide(col.title)">{{col.title}} ({{col.list.length}})</div>
+      <ul class="sidebar-row-subrows" *ngIf="col.hidden || showAll">
+        <li class="sidebar-row-subrow" *ngFor="let item of filter(columns[col.title].list)" (click)="select(col.title, item)">{{item.name}}</li>
+      </ul>
     </div>
+    <div class="sidebar-row"><button class="sidebar-row btn btn-primary" (click)="newExecutable()">New</button></div>
   </div>
-  <div class="list-section col-sm-10" *ngIf="columns[selected].list.length == 0">
-    <div class="new-description">
-      <h3>Looks like you don't have any {{selected}} yet</h3>
-      <p class="description">Click "New" on the left bar to create one!</p>
-    </div>
+
+  <div class="list-section col-sm-10" *ngIf="data">
+    <app-editor *ngIf="data" [data]="data"></app-editor>
   </div>
+</div>
+
+<div *ngIf="showNewDialog">
+  <app-new-executable 
+    (emitCreateExecutable)="receiveCreateExecutable($event)"
+    (emitCancelCreateExecutable)="receiveCancelCreateExecutable()"
+  ></app-new-executable>
 </div>
 
