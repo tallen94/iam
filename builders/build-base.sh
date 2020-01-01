@@ -26,3 +26,6 @@ bash builders/build-filesystem.sh $VERSION $PUSH
 
 bash images/templates/dashboard.sh $TAG
 bash builders/build-dashboard.sh $VERSION $PUSH -prod
+
+bash images/templates/environment-builder.sh $TAG
+bash builders/build-environment-builder.sh $VERSION $PUSH
