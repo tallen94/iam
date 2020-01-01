@@ -1,7 +1,7 @@
 #!/bin/bash
 TAG=$1
 
-cat > kubernetes/apps/base.yaml <<EOF
+cat > kubernetes/apps/environment-builder.yaml <<EOF
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
