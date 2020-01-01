@@ -16,7 +16,7 @@ spec:
       - name: regcred
       containers:
       - name: base
-        image: icanplayguitar94/iam:base-environments
+        image: icanplayguitar94/iam:base-21d4a90e0272a4173c43a55a4bdfa598bc11a009
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
