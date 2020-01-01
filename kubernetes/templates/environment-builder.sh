@@ -1,22 +1,27 @@
+#!/bin/bash
+TAG=$1
+
+cat > kubernetes/apps/environment-builder.yaml <<EOF
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
-  name: base
+  name: environment-builder
 spec:
   selector:
     matchLabels:
-      app: base
+      app: environment-builder
   replicas: 1 # tells deployment to run 2 pods matching the template
   template:
     metadata:
       labels:
-        app: base
+        app: environment-builder
     spec:
+      serviceAccountName: api-service-account
       imagePullSecrets:
       - name: regcred
       containers:
-      - name: base
-        image: icanplayguitar94/iam:base-21d4a90e0272a4173c43a55a4bdfa598bc11a009
+      - name: environment-builder
+        image: $TAG
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
@@ -58,17 +63,38 @@ spec:
             secretKeyRef:
               name: dbconfig
               key: db_name
+              
+        # DOCKER_CONFIG
+        - name: DOCKER_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: dockerconfig
+              key: user
+        - name: DOCKER_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: dockerconfig
+              key: password
+        
+        securityContext: 
+            privileged: true 
+        volumeMounts:
+            - name: dockersock
+              mountPath: "/var/run/docker.sock"
+      volumes:
+      - name: dockersock
+        hostPath:
+          path: /var/run/docker.sock
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: base
+  name: environment-builder
 spec:
   selector:
-    app: base
-  type: NodePort
+    app: environment-builder
   ports:
     - protocol: TCP
       port: 80
       targetPort: 5000
-      nodePort: 30004
+EOF
