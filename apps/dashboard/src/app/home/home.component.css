@@ -10,6 +10,7 @@
 
 .sidebar-row-title {
   font-size: 15px;
+  cursor: pointer;
 }
 
 .selection {

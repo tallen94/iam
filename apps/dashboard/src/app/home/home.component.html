@@ -1,11 +1,11 @@
 <div class="full row">
   <div class="sidebar col-sm-2">
     <div class="sidebar-row search">
-      <input class="form-control search-input" type="text" [(ngModel)]="searchText" placeholder="search"/>
+      <input class="form-control search-input" type="text" [(ngModel)]="searchText" placeholder="search" (ngModelChange)="searching($event)"/>
     </div>
     <div class="sidebar-row" *ngFor="let col of values(columns)">
       <div class="sidebar-row-title" (click)="hide(col.title)">{{col.title}} ({{col.list.length}})</div>
-      <ul class="sidebar-row-subrows" *ngIf="col.hidden">
+      <ul class="sidebar-row-subrows" *ngIf="col.hidden || showAll">
         <li class="sidebar-row-subrow" *ngFor="let item of filter(columns[col.title].list)" (click)="select(col.title, item)">{{item.name}}</li>
       </ul>
     </div>

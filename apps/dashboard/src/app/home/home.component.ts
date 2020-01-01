@@ -15,6 +15,7 @@ export class HomeComponent implements OnInit {
   public data: any;
   public showNewDialog: boolean = false;
   public searchText: string = "";
+  public showAll: boolean = false;
 
   constructor(iam: Iam, private router: Router) {
     this.iam = iam;
@@ -93,6 +94,14 @@ export class HomeComponent implements OnInit {
 
   public hide(title: string) {
     this.columns[title].hidden = !this.columns[title].hidden
+  }
+
+  public searching(value: string) {
+    if (value == "") {
+      this.showAll = false;
+    } else {
+      this.showAll = true;
+    }
   }
 
   private initData(id: string, exe: string, name: string) {
