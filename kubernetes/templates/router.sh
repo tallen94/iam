@@ -1,22 +1,26 @@
+#!/bin/bash
+TAG=$1
+
+cat > kubernetes/apps/router.yaml <<EOF
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
-  name: base
+  name: iam-router
 spec:
   selector:
     matchLabels:
-      app: base
+      app: iam-router
   replicas: 1 # tells deployment to run 2 pods matching the template
   template:
     metadata:
       labels:
-        app: base
+        app: iam-router
     spec:
       imagePullSecrets:
       - name: regcred
       containers:
-      - name: base
-        image: icanplayguitar94/iam:base-43234b05f0e72d02f818a03ed2a646df68e18ef4
+      - name: iam-router
+        image: $TAG
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
@@ -30,7 +34,7 @@ spec:
         - name: HOME
           value: "/usr/home/iam"
         - name: TYPE 
-          value: "executor"
+          value: "router"
         - name: SERVER_PORT
           value: "5000"
 
@@ -62,13 +66,14 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: base
+  name: iam-router
 spec:
   selector:
-    app: base
+    app: iam-router
   type: NodePort
   ports:
     - protocol: TCP
       port: 80
       targetPort: 5000
-      nodePort: 30004
+      nodePort: 30005
+EOF
