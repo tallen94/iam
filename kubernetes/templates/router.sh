@@ -1,3 +1,7 @@
+#!/bin/bash
+TAG=$1
+
+cat > kubernetes/apps/router.yaml <<EOF
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
@@ -16,7 +20,7 @@ spec:
       - name: regcred
       containers:
       - name: iam-router
-        image: icanplayguitar94/iam:base-43234b05f0e72d02f818a03ed2a646df68e18ef4
+        image: $TAG
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
@@ -72,3 +76,4 @@ spec:
       port: 80
       targetPort: 5000
       nodePort: 30005
+EOF

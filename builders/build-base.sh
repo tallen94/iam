@@ -19,6 +19,7 @@ fi
 # Create kubernetes apps
 bash kubernetes/templates/base.sh $TAG
 bash kubernetes/templates/job.sh $TAG
+bash kubernetes/templates/router.sh $TAG
 
 # Update downstreams
 bash images/templates/filesystem.sh $TAG
