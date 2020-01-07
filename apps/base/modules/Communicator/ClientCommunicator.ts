@@ -24,7 +24,8 @@ export class ClientCommunicator {
       const options = {
         method: "get",
         json: true,
-        url: absUrl
+        url: absUrl,
+        timeout: 9999999
       };
       Request(options, (err: any, response: Request.Response, body: any) => {
         if (err) {
@@ -42,7 +43,8 @@ export class ClientCommunicator {
         method: "POST",
         body: data,
         json: true,
-        url: absUrl
+        url: absUrl,
+        timeout: 9999999
       };
       Request(options, (err: any, response: Request.Response, body: any) => {
         if (err) {
@@ -60,7 +62,8 @@ export class ClientCommunicator {
         method: "POST",
         json: true,
         url: absUrl,
-        formData: formData
+        formData: formData,
+        timeout: 9999999
       };
       Request(options, (err: any, response: Request.Response, body: any) => {
         if (err) {

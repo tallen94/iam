@@ -16,7 +16,7 @@ spec:
       - name: regcred
       containers:
       - name: python
-        image: icanplayguitar94/iam:python2
+        image: icanplayguitar94/iam:python
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000

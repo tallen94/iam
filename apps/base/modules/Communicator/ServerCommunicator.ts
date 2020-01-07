@@ -1,11 +1,11 @@
 import Express from "express";
-import Http from "http";
+import Http, { Server } from "http";
 import BodyParser from "body-parser";
 import Cors from "cors";
-import { ClientCommunicator } from "./ClientCommunicator";
 
 export class ServerCommunicator {
   private api: Express.Application;
+  private server: Server;
   private port: number;
 
   constructor(port: number) {
@@ -14,7 +14,8 @@ export class ServerCommunicator {
     this.api.use(Cors());
     this.api.use(BodyParser.json({limit: "100mb"}));
     this.api.use(BodyParser.urlencoded({extended: false, limit: "100mb"}));
-    Http.createServer(this.api);
+    this.server = Http.createServer(this.api);
+    this.server.timeout = 9999999
   }
 
   public static(fileDir: string, path?: string) {
@@ -35,7 +36,7 @@ export class ServerCommunicator {
 
   public listen() {
     return new Promise((resolve, reject) => {
-      this.api.listen(this.port, () => {
+      this.server.listen(this.port, () => {
         resolve();
       });
     });

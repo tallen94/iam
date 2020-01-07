@@ -18,6 +18,8 @@ Request access to docker hub via [email](mailto:icanplayguitar@gmail.com?Subject
 ### Kubernetes
 Iam runs on a Kubernetes cluster. Follow the [minikube](https://kubernetes.io/docs/tutorials/hello-minikube/) tutorial for local development setup.
 
+*Note: you must enable `hairpin mode` on the cluster
+
 ### Start from scratch
 Setup your environment by executing the init.sh bash script.
 
@@ -33,26 +35,27 @@ The first thing to do is create an `admin` user.
 Create a user with username `admin`, email `admin` and generate a secure password.
 
 ## Images
-There are 4 images that can be built:
+There are 5 images that can be built:
 - dependencies
-  - base
-    - filesystem
-    - dashboard
+- base
+- filesystem
+- dashboard
+- environment-builder
 
 ### Building Locally
 There is a build script to build apps locally to deploy to `minikube`
 
 `bash build.sh <image_name> <tag> <push>`
-- `<image_name>`: dependencies | base | filesystem | dashbaord
+- `<image_name>`: dependencies | base | filesystem | dashbaord | environment-builder | database
 - `<tag>`: anystring
-- `<push>`: "push" to push docker image to docker hub
+- `<push>`: "push" or "no-push" to push docker image to docker hub
 
 Eeach image has its own build script located at `builders/build-<image_name>`. When these scripts are run, they execute the build scripts of images dependent on the current one. Run `kubernetes/update.sh` to update kubernetes.
 
 ### Image Release Cycles
-To make changes to an image create a branch that contains the `<image_name>` in the branch.
+To make changes to an image create a branch and push to `origin/<branch_name>`.
 
-Eg. `git checkout -b base-new-feature`
+Eg. `git checkout -b <branch_name>`
 
 This will open a PR and will run the build for that image. Get these changes approved and merge.
 
@@ -60,3 +63,14 @@ This will open a PR and will run the build for that image. Get these changes app
 To release the image you just built, create a pull request from `master` to `release/<image_name>`. This will run the build for that image. Get approval and merge.
 
 Merging this PR will trigger a build of the docker files and all images dependent on the image being built. A new PR will be created to `master` from `deploy/<image_name>-<git_sha>` that will contain the necessary version updates for the new images to be deployed. Get this approved and merge.
+
+# System
+What it does:
+- Automates building of environments into services
+- Create executables that can run in the environments
+- Edit code in the browser
+- Dependency chain visualization
+- Search
+- Auto Complete
+
+
