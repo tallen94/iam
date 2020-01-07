@@ -3,8 +3,8 @@
 TAG=$1
 IMAGE=$2
 
-curl -s http://iam-filesystem.default/images/$IMAGE | docker build --rm --no-cache -t $TAG -
 echo "$DOCKER_PASSWORD" | docker login -u $DOCKER_USERNAME --password-stdin 
+curl -s http://iam-filesystem.default/images/$IMAGE | docker build --rm --no-cache -t $TAG -
 docker push $TAG
 
 kubectl apply -f http://iam-filesystem.default/kubernetes/$IMAGE

@@ -80,6 +80,7 @@ export class HomeComponent implements OnInit {
   public receiveCreateExecutable(data: any) {
     this.showNewDialog = false;
     this.data = this.initData("0", data.exe, data.name)
+    this.columns[data.exe].list.push(this.data)
   }
 
   public receiveCancelCreateExecutable() {
