@@ -14,6 +14,7 @@ import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
 
 import { Iam } from "./iam/iam";
+import { TimeoutInterceptor } from "./iam/timeout-interceptor";
 import { EditorComponent } from "./editor/editor.component";
 import { HomeComponent } from './home/home.component';
 import { RunComponent } from './run/run.component';
@@ -63,7 +64,11 @@ const appRoutes: Routes = [
     FormsModule,
     AppRoutingModule
   ],
-  providers: [Iam],
+  providers: [
+    Iam,
+    [{ provide: "HTTP_INTERCEPTORS", useClass: TimeoutInterceptor, multi: true }],
+    [{ provide: "DEFAULT_TIMEOUT", useValue: 9999999 }]
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
