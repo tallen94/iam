@@ -9,7 +9,7 @@
         <li class="sidebar-row-subrow" *ngFor="let item of filter(columns[col.title].list)" (click)="select(col.title, item)">{{item.name}}</li>
       </ul>
     </div>
-    <div class="sidebar-row"><button class="sidebar-row btn btn-primary" (click)="newExecutable()">New</button></div>
+    <div class="sidebar-row-button"><button class="sidebar-row btn btn-success" (click)="newExecutable()">new</button></div>
   </div>
 
   <div class="list-section col-sm-10" *ngIf="data">
