@@ -61,19 +61,19 @@ export class JobRunner {
     });
   }
 
-  public addJob(username: string, userId: number, data: any) {
+  public addJob(data: any) {
     return this.getJob(data.name)
     .then((result) => {
       if (result == undefined) {
         return this.executor.getDatabase().runQuery("admin", "add-exe", {
-          username: username,
+          username: data.username,
           name: data.name,
           uuid: UUID.v4(),
           exe: data.exe,
           data: data.data,
           input: data.input,
           output: data.output,
-          userId: userId,
+          userId: data.userId,
           description: data.description
         });
       }
@@ -83,7 +83,6 @@ export class JobRunner {
         data: data.data,
         input: data.input,
         output: data.output,
-        userId: userId,
         description: data.description
       });
     }).then((result) => {

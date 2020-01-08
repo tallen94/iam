@@ -1,21 +1,30 @@
 .sidebar {
-  background-color: rgb(165, 165, 165);
+  background-color: white;
   padding: 8px;
 }
 
 .sidebar-row {
   width: 100%;
-  margin-top: 8px;
   margin-bottom: 8px;
 }
 
-.selection {
-  text-align: center;
-  padding: 16px;
+.sidebar-row-button {
+  position: absolute;
+  bottom: 8px;
+  left: 16px;
+  right: 16px;
 }
 
-.selected {
-  background-color: rgb(226, 226, 226)
+.sidebar-row-button button {
+  font-weight: 600;
+}
+
+.sidebar-row-title {
+  cursor: pointer;
+  height: 30px;
+  font-weight: bold;
+  color: #0366d6;
+  font-size: 1.25em;
 }
 
 .full {
@@ -26,11 +35,13 @@
   bottom: 0;
   margin: 0;
   padding: 0 !important;
+  background-color: #f6f8fa;
 }
 
 .list-section {
   overflow-y: scroll;
   height: 100%;
+  background-color: #f6f8fa;
 }
 
 .list-item {
@@ -39,10 +50,29 @@
   border-radius: 8px;
   width: 100%;
   margin-top: 8px;
+  position: relative;
 }
 
 .list-item .description {
   color: rgb(160, 160, 160);
+}
+
+.list-item-name {
+  width: 200px;
+}
+
+.list-item-buttons {
+  text-align: right;
+  position: absolute;
+  left: 200px;
+  right: 8px;
+  top: 0;
+  bottom: 0;
+}
+
+.list-item-buttons span {
+  margin-right: 4px;
+  cursor: pointer;
 }
 
 .new-description {
@@ -52,4 +82,27 @@
 
 button {
   margin-right: 2px;
+}
+
+.sidebar-row-subrows {
+  list-style: none;
+  max-height: 200px;
+  overflow-y: scroll;
+  padding-left: 8px;
+  margin: 0;
+  color: #0366d6;
+  font-weight: 500;
+}
+
+.sidebar-row-subrow {
+  cursor: pointer;
+  font-size: 1.15em;
+}
+
+.sidebar-row-subrow:hover {
+  text-decoration: underline;
+}
+
+.search {
+  margin-bottom: 16px;
 }

@@ -1,0 +1,30 @@
+<div class="new-executable">
+  <div class="new-executable-dialog card">
+    <div class="card-body">
+      <h5 class="card-title">New Executable</h5>
+      <div class="form-group">
+        <label>Executable</label>
+        <select class="form-control" [(ngModel)]="data.exe">
+          <option>function</option>
+          <option>query</option>
+          <option>graph</option>
+          <option>environment</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Name</label>
+        <input 
+          class="form-control"
+          type="text" 
+          [(ngModel)]="data.name"
+          placeholder="Name">
+      </div>
+
+      <div class="action-buttons">
+        <button class="btn btn-success" (click)="create()" [disabled]="data.exe == undefined || data.exe == '' || data.name == undefined || data.name == ''">Create</button>
+        <button class="btn btn-outline-danger" (click)="cancel()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>

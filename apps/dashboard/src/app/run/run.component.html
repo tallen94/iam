@@ -1,7 +1,7 @@
 <h4>Request Data</h4>
 <div class="editor" ace-editor
   [(text)]="requestData"
-  [mode]="'python'" 
+  [mode]="'text'" 
   [theme]="'eclipse'"
   [readOnly]="false"
   [autoUpdateContent]="true" 
@@ -10,8 +10,9 @@
 <h4>Response Data</h4>
 <div class="editor" ace-editor
   [(text)]="responseData"
-  [mode]="'python'" 
+  [mode]="'text'" 
   [theme]="'eclipse'"
+  [options]="options"
   [readOnly]="false"
   [autoUpdateContent]="true" 
   [durationBeforeCallback]="500" ></div>

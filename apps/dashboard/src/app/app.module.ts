@@ -14,7 +14,7 @@ import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
 
 import { Iam } from "./iam/iam";
-import { ClientCommunicator } from "./iam/communicator";
+import { TimeoutInterceptor } from "./iam/timeout-interceptor";
 import { EditorComponent } from "./editor/editor.component";
 import { HomeComponent } from './home/home.component';
 import { RunComponent } from './run/run.component';
@@ -25,6 +25,7 @@ import { NestedInputComponent } from './nested-input/nested-input.component';
 import { GraphComponent } from './graph/graph.component';
 import { HeaderComponent } from './header/header.component';
 import { HiddenHeaderComponent } from './hidden-header/hidden-header.component';
+import { NewExecutableComponent } from './new-executable/new-executable.component';
 
 const appRoutes: Routes = [
   { path: "login", component: LoginComponent },
@@ -48,7 +49,8 @@ const appRoutes: Routes = [
     NestedInputComponent,
     GraphComponent,
     HeaderComponent,
-    HiddenHeaderComponent
+    HiddenHeaderComponent,
+    NewExecutableComponent
   ],
   imports: [
     RouterModule.forRoot(appRoutes,{ enableTracing: true }),
@@ -62,7 +64,11 @@ const appRoutes: Routes = [
     FormsModule,
     AppRoutingModule
   ],
-  providers: [ClientCommunicator, Iam],
+  providers: [
+    Iam,
+    [{ provide: "HTTP_INTERCEPTORS", useClass: TimeoutInterceptor, multi: true }],
+    [{ provide: "DEFAULT_TIMEOUT", useValue: 9999999 }]
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

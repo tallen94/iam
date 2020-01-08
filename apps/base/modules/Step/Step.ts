@@ -6,5 +6,5 @@ import { QueryProcess } from "../Process/QueryProcess";
 export interface Step {
   // spawn(): RemoteProcess | LocalProcess | QueryProcess;
   execute(data: any, local: boolean);
-  executeEach(data: any);
+  // executeEach(data: any);
 }

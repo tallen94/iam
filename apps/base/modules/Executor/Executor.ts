@@ -13,6 +13,7 @@ import * as Lodash from "lodash";
 import { JobRunner } from "../Job/JobRunner";
 import { FileSystemCommunicator } from "../Communicator/FileSystemCommunicator";
 import { GraphExecutor } from "./GraphExecutor";
+import { EnvironmentManager } from "../Environment/EnvironmentManager";
 
 export class Executor {
 
@@ -20,6 +21,7 @@ export class Executor {
   private database: Database;
   private clientPool: ClientPool;
   private stepListManager: StepListManager;
+  private environmentManager: EnvironmentManager;
   private graphExecutor: GraphExecutor;
   private jobRunner: JobRunner;
 
@@ -28,6 +30,7 @@ export class Executor {
     this.setDatabase(dbConfig);
     this.setShell(fileSystem, this.database, fsConfig);
     this.setStepListManager(this.shell, this.database, clientPool);
+    this.setEnvironmentManager(this.shell, this.database, fsConfig, fileSystem);
     this.setGraphExecutor();
   }
 
@@ -43,20 +46,22 @@ export class Executor {
     ]);
   }
 
-  public addExecutable(username: string, userId: number, data: any) {
+  public addExecutable(data: any) {
     switch (data.exe) {
       case "function":
-        return this.shell.addProgram(username, userId, data);
+        return this.shell.addProgram(data);
       case "query":
-        return this.database.addQuery(username, userId, data);
+        return this.database.addQuery(data);
       case "pipe":
       case "async":
       case "foreach":
-        return this.stepListManager.addStepList(username, userId, data);
+        return this.stepListManager.addStepList(data);
       case "job":
-        return this.jobRunner.addJob(username, userId, data);
+        return this.jobRunner.addJob(data);
       case "graph":
-        return this.graphExecutor.addGraph(username, userId, data);
+        return this.graphExecutor.addGraph(data);
+      case "environment":
+        return this.environmentManager.addEnvironment(data);
     }
   }
 
@@ -116,7 +121,8 @@ export class Executor {
               output: stepJson.output,
               text: file,
               args: data.args,
-              command: data.command
+              command: data.command,
+              environment: stepJson.environment
             };
           });
         case "graph":
@@ -132,6 +138,7 @@ export class Executor {
               input: stepJson.input,
               output: stepJson.output,
               graph: graph,
+              environment: stepJson.environment
             });
           });
         case "query":
@@ -143,7 +150,29 @@ export class Executor {
             input: stepJson.input,
             output: stepJson.output,
             text: stepJson.data,
+            environment: stepJson.environment
           });
+        case "environment":
+          return Promise.all([
+            this.environmentManager.getImageFile(stepJson.name),
+            this.environmentManager.getKubernetesFile(stepJson.name)
+          ]) 
+          .then((files) => {
+            const data = JSON.parse(stepJson.data);
+            return {
+              username: stepJson.username,
+              name: stepJson.name,
+              exe: stepJson.exe,
+              description: stepJson.description,
+              input: stepJson.input,
+              output: stepJson.output,
+              image: files[0],
+              kubernetes: files[1],
+              host: data.host,
+              port: data.port,
+              environment: stepJson.environment
+            };
+          })
       }
     });
   }
@@ -171,6 +200,8 @@ export class Executor {
         return this.jobRunner.getJobs(username);
       case "graph":
         return this.graphExecutor.getGraphs(username);
+      case "environment":
+        return this.environmentManager.getEnvironments(username);
     }
   }
 
@@ -186,6 +217,8 @@ export class Executor {
         return this.stepListManager.runStepList(username, name, exe, data);
       case "graph":
         return this.graphExecutor.runGraph(name, data);
+      case "environment":
+        return this.environmentManager.runEnvironment(username, name , data);
     }
   }
 
@@ -244,6 +277,13 @@ export class Executor {
 
   private setGraphExecutor() {
     this.graphExecutor = new GraphExecutor(this.database, this, this.stepListManager);
+  }
+
+  private setEnvironmentManager(shell: Shell, database: Database, fsConfig: any, fileSystem: FileSystem) {
+    const fsClient = new ClientCommunicator(fsConfig["host"], fsConfig["port"])
+    const fileSystemCommunicator: FileSystemCommunicator = new FileSystemCommunicator(fsClient);
+    this.environmentManager = new EnvironmentManager(fileSystem, shell, database, fileSystemCommunicator);
+    return this.environmentManager;
   }
 
   public addClientThread(host: string, port: number) {

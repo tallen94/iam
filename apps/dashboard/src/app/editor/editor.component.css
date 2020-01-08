@@ -1,35 +1,29 @@
 .full {
   position: absolute;
-  top: 64px;
+  top: 0;
   left: 0;
   right: 0;
   bottom: 0;
   margin: 0;
   padding: 0 !important;
-  background-color: rgb(199, 199, 199);
+  background-color: #f6f8fa;
 }
 
 .upper {
   width: 100%;
-  padding: 8px;
-  box-shadow: 1px 0px 6px 1px;
-  background-color: white;
-}
-
-.upper button {
-  height: 40px;
-  margin-right: 8px;
+  padding: 4px;
+  background-color: #f6f8fa;
 }
 
 .lower {
   position: absolute;
-  top: 64px;
+  top: 0;
   left: 0;
   right: 0;
   bottom: 0;
   margin: 0;
   padding: 0 !important;
-  background-color: rgb(199, 199, 199);
+  background-color: #f6f8fa;
 }
 
 .lower-full {
@@ -41,7 +35,7 @@
   overflow-y: scroll;
   padding: 8px;
   box-shadow: 0px 5px 6px 1px;
-  background-color: white;
+  background-color: #f6f8fa;
 }
 
 .left {
@@ -53,7 +47,7 @@
   overflow-y: scroll;
   padding: 8px;
   box-shadow: 0px 5px 6px 1px;
-  background-color: white;
+  background-color: #f6f8fa;
 }
 
 .right {
@@ -65,7 +59,7 @@
   overflow-y: scroll;
   padding: 8px;
   box-shadow: 0px 5px 6px 1px;
-  background-color: white;
+  background-color: #f6f8fa;
 }
 
 .center {
@@ -77,5 +71,5 @@
   display: inline-block;
   overflow-y: scroll;
   box-shadow: 0px 5px 6px 1px;
-  background-color: white;
+  background-color: #f6f8fa;
 }

@@ -1,6 +1,6 @@
 .editor {
   height: 200px !important; 
-  overflow: auto;
+  overflow: scroll;
 }
 
 button {

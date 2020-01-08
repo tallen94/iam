@@ -1,22 +1,23 @@
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
-  name: iam-master
+  name: environment-builder
 spec:
   selector:
     matchLabels:
-      app: iam-master
+      app: environment-builder
   replicas: 1 # tells deployment to run 2 pods matching the template
   template:
     metadata:
       labels:
-        app: iam-master
+        app: environment-builder
     spec:
+      serviceAccountName: api-service-account
       imagePullSecrets:
       - name: regcred
       containers:
-      - name: iam-master
-        image: icanplayguitar94/iam:base-b3f5958a97522c4885906b7b39427697220a36eb
+      - name: environment-builder
+        image: icanplayguitar94/iam:environment-builder-43234b05f0e72d02f818a03ed2a646df68e18ef4
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
@@ -30,7 +31,7 @@ spec:
         - name: HOME
           value: "/usr/home/iam"
         - name: TYPE 
-          value: "master"
+          value: "executor"
         - name: SERVER_PORT
           value: "5000"
 
@@ -58,17 +59,37 @@ spec:
             secretKeyRef:
               name: dbconfig
               key: db_name
+              
+        # DOCKER_CONFIG
+        - name: DOCKER_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: dockerconfig
+              key: user
+        - name: DOCKER_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: dockerconfig
+              key: password
+        
+        securityContext: 
+            privileged: true 
+        volumeMounts:
+            - name: dockersock
+              mountPath: "/var/run/docker.sock"
+      volumes:
+      - name: dockersock
+        hostPath:
+          path: /var/run/docker.sock
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: iam-master
+  name: environment-builder
 spec:
   selector:
-    app: iam-master
-  type: NodePort
+    app: environment-builder
   ports:
     - protocol: TCP
       port: 80
       targetPort: 5000
-      nodePort: 30001

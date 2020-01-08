@@ -1,11 +1,18 @@
 .inline-input {
   display: inline-block;
-  margin-left: 4px !important;
+  margin-right: 4px;
+}
+
+.inline-input input {
+  border: none !important;
+  border-color: transparent !important;
+  font-family: "Lucida Console", Monaco, monospace;
 }
 
 .text-editor {
   width: 100%;
   border-radius: 4px;
+  margin-top: 8px;
 }
 
 .editing {
@@ -40,7 +47,7 @@ input {
   text-align: center;
 }
 
-ul, .inline-input {
+ul {
   margin: 0;
 }
 
@@ -62,6 +69,10 @@ ul, .inline-input {
   position: absolute;
   top: 5px;
   right: 5px;
+}
+
+.action-buttons button {
+  margin-left: 4px;
 }
 
 label, ul, .col-sm-11, .col-sm-1 {

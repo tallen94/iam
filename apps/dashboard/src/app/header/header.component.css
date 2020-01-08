@@ -1,6 +1,16 @@
 .inline-input {
   display: inline-block;
-  position: relative;
+}
+
+.inline-input input {
+  border: none !important;
+  border-color: transparent !important;
+  font-family: "Lucida Console", Monaco, monospace;
+}
+
+.inline-input select {
+  border: none !important;
+  border-color: transparent !important;
 }
 
 label {
@@ -12,21 +22,30 @@ label {
 .username {
   color: #007bff;
   font-weight: 600;
+  font-size: 1.25em;
 }
 
 .exe {
   color: #28a745;
   font-weight: 600;
+  font-size: 1.25em;
+}
+
+.environment {
+  color: #dc3545;
+  font-weight: 600;
+  font-size: 1.25em;
 }
 
 .name {
   font-weight: 300;
-  font-size: 22px;
+  font-size: 1.5em;
 }
 
 .text-editor {
   width: 100%;
   border-radius: 4px;
+  margin-top: 8px;
 }
 
 .markdown {
@@ -70,4 +89,8 @@ label {
   padding: 5px;
   background-color: rgb(220, 220, 220);
   cursor: pointer;
+}
+
+.nested-title {
+  color: #007bff;
 }

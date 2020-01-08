@@ -7,6 +7,7 @@ import { FileSystem } from "../FileSystem/FileSystem";
 import { LocalProcess } from "../Process/LocalProcess";
 import { Process } from "../Process/Process";
 import { FileSystemCommunicator } from "../Communicator/FileSystemCommunicator";
+import uuid = require("uuid");
 
 export class Shell {
   private status: string;
@@ -32,21 +33,22 @@ export class Shell {
     return Promise.resolve(this.status);
   }
 
-  public addProgram(username: string, userId: number, data: any): Promise<any> {
+  public addProgram(data: any): Promise<any> {
     const programData = JSON.stringify({ command: data.command, args: data.args });
     return this.getProgram(data.username, data.name)
     .then((result) => {
       if (result == undefined) {
         return this.database.runQuery("admin", "add-exe", {
-          username: username,
+          username: data.username,
           name: data.name,
           uuid: UUID.v4(),
           exe: data.exe,
           data: programData,
           input: data.input,
           output: data.output,
-          userId: userId,
-          description: data.description
+          userId: data.userId,
+          description: data.description,
+          environment: data.environment
         });
       } else {
         return this.database.runQuery("admin", "update-exe", {
@@ -55,14 +57,14 @@ export class Shell {
           data: programData,
           input: data.input,
           output: data.output,
-          description: data.description
+          description: data.description,
+          environment: data.environment
         });
       }
     }).then(() => {
-      return this.fileSystemCommunicator.putProgram({
-        username: username,
+      return this.fileSystemCommunicator.putFile("programs", {
         name: data.name,
-        program: data.text
+        file: data.text
       });
     });
   }
@@ -81,9 +83,10 @@ export class Shell {
           command: data.command,
           input: item.input,
           output: item.output,
-          description: item.description
+          description: item.description,
+          environment: item.environment
         };
-        return this.fileSystemCommunicator.getProgram(data.filename == undefined ? name : data.filename)
+        return this.fileSystemCommunicator.getFile("programs", data.filename == undefined ? name : data.filename)
         .then((result) => {
           ret["text"] = result;
           return ret;
@@ -94,7 +97,7 @@ export class Shell {
   }
 
   public getProgramFile(name: string) {
-    return this.fileSystemCommunicator.getProgram(name);
+    return this.fileSystemCommunicator.getFile("programs", name);
   }
 
   public getPrograms(username: string) {
@@ -132,12 +135,7 @@ export class Shell {
     return this.getProgram(username, name)
     .then((program) => {
       let run = "";
-      const path = this.fileSystem.getProgramRoot() + "/" + UUID.v4();
-      if (!FS.existsSync(path)) {
-        const write = FS.createWriteStream(path);
-        write.write(program.text);
-        write.close();
-      }
+      const path = this.fileSystem.writeFolder("programs", uuid.v4(), program.text).toString();
       run = program.command + " " + path;
       if (program.args != "") {
         const args = this.replace(program.args, data);
