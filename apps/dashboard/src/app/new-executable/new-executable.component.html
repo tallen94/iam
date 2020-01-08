@@ -21,8 +21,8 @@
           placeholder="Name">
       </div>
 
-      <div>
-        <button class="btn btn-primary" (click)="create()" [disabled]="data.exe == undefined || data.exe == '' || data.name == undefined || data.name == ''">Create</button>
+      <div class="action-buttons">
+        <button class="btn btn-success" (click)="create()" [disabled]="data.exe == undefined || data.exe == '' || data.name == undefined || data.name == ''">Create</button>
         <button class="btn btn-outline-danger" (click)="cancel()">Cancel</button>
       </div>
     </div>

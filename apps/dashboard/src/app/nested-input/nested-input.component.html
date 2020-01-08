@@ -3,12 +3,12 @@
   [ngClass]="{'editing' : isEditing(), 'inset-border': border}">
   <div class="card-body">
     <div class="action-buttons">
-      <button class="btn-sm btn-outline-primary" *ngIf="isHidden()" (click)="triggerShow()">show</button>
-      <button class="btn-sm btn-outline-primary" *ngIf="!isHidden()" (click)="triggerShow()">hide</button>
-      <button class="btn-sm btn-outline-secondary"  *ngIf="isEditing()" (click)="save()">save</button>
-      <button class="btn-sm btn-outline-danger"  *ngIf="isEditing()" (click)="cancelEdit()">cancel</button>
-      <button class="btn-sm btn-outline-secondary" *ngIf="!isEditing()" (click)="triggerEdit()">edit</button>
-      <button class="btn-sm btn-outline-success" (click)="triggerRunning()">run</button>
+      <button class="btn-sm btn-primary" *ngIf="isHidden()" (click)="triggerShow()">show</button>
+      <button class="btn-sm btn-primary" *ngIf="!isHidden()" (click)="triggerShow()">hide</button>
+      <button class="btn-sm btn-secondary"  *ngIf="isEditing()" (click)="save()">save</button>
+      <button class="btn-sm btn-danger"  *ngIf="isEditing()" (click)="cancelEdit()">cancel</button>
+      <button class="btn-sm btn-secondary" *ngIf="!isEditing()" (click)="triggerEdit()">edit</button>
+      <button class="btn-sm btn-success" (click)="triggerRunning()">run</button>
     </div>
     <header [data]="data" [editing]="isEditing()" (emitUpdateData)="receiveUpdateData($event)"></header>
     <div *ngIf="data.exe == 'function'">
@@ -39,15 +39,17 @@
             placeholder="args">
           <p *ngIf="!isEditing()">{{data.args}}</p>
         </div>
-  
-        <div *ngIf="isEditing()" class="text-editor" ace-editor
-          [(text)]="data.text"
-          [mode]="data.command || 'mysql'" 
-          [theme]="'eclipse'"
-          [options]="options"
-          [readOnly]="false"></div>
-        <div class="markdown" *ngIf="!isEditing()">
-          <ngx-md [data]="getCodeMarkdown(data.command, data.text)" ></ngx-md>
+        <div>
+          <label class="nested-title" *ngIf="isEditing() || (!isEditing() && !isEmpty(data.text))">Function</label>
+          <div *ngIf="isEditing()" class="text-editor" ace-editor
+            [(text)]="data.text"
+            [mode]="data.command || 'mysql'" 
+            [theme]="'eclipse'"
+            [options]="options"
+            [readOnly]="false"></div>
+          <div class="markdown" *ngIf="!isEditing()">
+            <ngx-md [data]="getCodeMarkdown(data.command, data.text)" ></ngx-md>
+          </div>
         </div>
       </div>
     </div>
@@ -55,14 +57,17 @@
     <div *ngIf="data.exe == 'query'">
       <div *ngIf="!isHidden() || isEditing()">
         <hidden-header [data]="data" [editing]="isEditing()"></hidden-header>
-        <div *ngIf="isEditing()" class="text-editor" ace-editor
-          [(text)]="data.text"
-          [mode]="data.command || 'mysql'" 
-          [theme]="'eclipse'"
-          [options]="options"
-          [readOnly]="false"></div>
-        <div class="markdown" *ngIf="!isEditing()">
-          <ngx-md [data]="getCodeMarkdown(data.command, data.text)" ></ngx-md>
+        <div>
+          <label class="nested-title" *ngIf="isEditing() || (!isEditing() && !isEmpty(data.text))">Query</label>
+          <div *ngIf="isEditing()" class="text-editor" ace-editor
+            [(text)]="data.text"
+            [mode]="data.command || 'mysql'" 
+            [theme]="'eclipse'"
+            [options]="options"
+            [readOnly]="false"></div>
+          <div class="markdown" *ngIf="!isEditing()">
+            <ngx-md [data]="getCodeMarkdown(data.command, data.text)" ></ngx-md>
+          </div>
         </div>
       </div>
     </div>
