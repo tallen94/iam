@@ -16,7 +16,7 @@ spec:
       - name: regcred
       containers:
       - name: base
-        image: icanplayguitar94/iam:base-timeouts
+        image: icanplayguitar94/iam:base-89078fa9c47e044463ea1a5c39d746f64036a238
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
