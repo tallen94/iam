@@ -1,0 +1,20 @@
+import json
+import requests
+import boto3
+import os
+
+args = json.loads(input())
+s3client = boto3.resource('s3')
+bucket = s3client.Bucket(args["filesystem"])
+
+for obj in bucket.objects.all():
+    if not obj.key[-1] == "/":
+        bucket.download_file(obj.key, obj.key)
+        file = open(obj.key, "r").read()
+        folder, name = obj.key.split("/")
+        data = {
+            "name": name,
+            "file": file
+        }
+        requests.post("http://" + args["filesystem"] + "/" + folder, data=data)
+        os.remove(obj.key)

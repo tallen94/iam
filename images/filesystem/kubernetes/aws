@@ -1,0 +1,84 @@
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: aws
+spec:
+  selector:
+    matchLabels:
+      app: aws
+  replicas: 1 # tells deployment to run 2 pods matching the template
+  template:
+    metadata:
+      labels:
+        app: aws
+    spec:
+      imagePullSecrets:
+      - name: regcred
+      containers:
+      - name: aws
+        image: icanplayguitar94/iam:aws
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5000
+        readinessProbe:
+          httpGet:
+            path: /status
+            port: 5000
+          initialDelaySeconds: 3
+          periodSeconds: 3
+        env:
+        - name: HOME
+          value: "/usr/home/iam"
+        - name: TYPE 
+          value: "executor"
+        - name: SERVER_PORT
+          value: "5000"
+
+        # FS CONFIG
+        - name: FS_HOST
+          value: "iam-filesystem"
+        - name: FS_PORT
+          value: "80"
+
+        ## DB CONFIG
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: dbconfig
+              key: user
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: dbconfig
+              key: password
+        - name: DB_HOST
+          value: "mysqldatabase.default"
+        - name: DB_NAME
+          valueFrom:
+            secretKeyRef:
+              name: dbconfig
+              key: db_name
+              
+        ## AWS CONFIG
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: awsconfig
+              key: access_key_id
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: awsconfig
+              key: secret_access_key
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: aws
+spec:
+  selector:
+    app: aws
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 5000

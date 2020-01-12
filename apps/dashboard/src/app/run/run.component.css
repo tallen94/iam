@@ -1,0 +1,9 @@
+.editor {
+  height: 200px !important; 
+  overflow: scroll;
+}
+
+button {
+  margin-top: 8px;
+  width: 100%;
+}

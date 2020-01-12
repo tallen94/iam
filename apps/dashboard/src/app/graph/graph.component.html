@@ -1,0 +1,56 @@
+<div class="graph">
+    <ngx-graph
+      layout="dagre"
+      [layoutSettings]="layoutSettings"
+      [draggingEnabled]="false"
+      [links]="links"
+      [nodes]="nodes"
+      [zoomToFit$]="zoomToFit$"
+      [center$]="center$"
+      [zoomSpeed]=".05"
+    >
+
+    <ng-template #defsTemplate>
+      <svg:marker id="arrow" viewBox="0 -5 10 10" refX="8" refY="0" markerWidth="4" markerHeight="4" orient="auto">
+        <svg:path d="M0,-5L10,0L0,5" class="arrow-head" />
+      </svg:marker>
+    </ng-template>
+    
+    <ng-template #nodeTemplate let-node>
+      <svg:g (click)="select(node)" *ngIf="!isSelected(node)" class="node" ngx-tooltip [tooltipPlacement]="'top'" [tooltipType]="'tooltip'" [tooltipTitle]="node.exe">
+        <svg:rect
+          [attr.width]="node.dimension.width"
+          [attr.height]="node.dimension.height"
+          [attr.fill]="white"/>
+        <svg:text alignment-baseline="central" [attr.x]="10" [attr.y]="node.dimension.height / 2">
+          {{node.label}}
+        </svg:text>
+      </svg:g>
+      <svg:g (click)="select(node)" *ngIf="isSelected(node)" class="node selected" ngx-tooltip [tooltipPlacement]="'top'" [tooltipType]="'tooltip'" [tooltipTitle]="node.exe">
+        <svg:rect
+          [attr.width]="node.dimension.width"
+          [attr.height]="node.dimension.height"
+          [attr.fill]="white"/>
+        <svg:text alignment-baseline="central" [attr.x]="10" [attr.y]="node.dimension.height / 2">
+          {{node.label}}
+        </svg:text>
+      </svg:g>
+    </ng-template>
+
+    <ng-template #linkTemplate let-link>
+      <svg:g (click)="selectEdge(link)" [ngClass]="{'selected': isEdgeSelected(link)}" class="edge">
+        <svg:path width="100" class="line" stroke-width="3" marker-end="url(#arrow)">
+        </svg:path>
+      </svg:g>
+    </ng-template>
+  </ngx-graph>
+
+
+  <div class="controls">
+    <button class="btn-sm btn-secondary" (click)="fitGraph()">Fit</button>
+    <button class="btn-sm btn-primary" (click)="linkEditing()">-></button>
+    <button class="btn-sm btn-success" (click)="newNode('function')">F</button>
+    <button class="btn-sm btn-success" (click)="newNode('query')">Q</button>
+    <button class="btn-sm btn-danger" (click)="deleteEditing()">X</button>
+  </div>
+</div>

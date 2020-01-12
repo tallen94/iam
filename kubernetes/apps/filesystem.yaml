@@ -16,7 +16,7 @@ spec:
       - name: regcred
       containers:
       - name: iam-filesystem
-        image: icanplayguitar94/iam:filesystem-8fed7fb525466ee5a46450b192244d75414e3533
+        image: icanplayguitar94/iam:filesystem-04ab437d8aaa5d83187c80d7fc114073a65be3bb
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
@@ -30,9 +30,34 @@ spec:
         - name: HOME
           value: "/usr/home/iam"
         - name: TYPE 
-          value: "filesystem"
+          value: "executor"
         - name: SERVER_PORT
           value: "5000"
+
+        # FS CONFIG
+        - name: FS_HOST
+          value: "iam-filesystem"
+        - name: FS_PORT
+          value: "80"
+
+        ## DB CONFIG
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: dbconfig
+              key: user
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: dbconfig
+              key: password
+        - name: DB_HOST
+          value: "mysqldatabase.default"
+        - name: DB_NAME
+          valueFrom:
+            secretKeyRef:
+              name: dbconfig
+              key: db_name
 
 ---
 apiVersion: v1
@@ -42,7 +67,9 @@ metadata:
 spec:
   selector:
     app: iam-filesystem
+  type: NodePort
   ports:
     - protocol: TCP
       port: 80
       targetPort: 5000
+      nodePort: 30003

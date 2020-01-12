@@ -3,7 +3,7 @@ name: Release Base
 on: 
   push:
     branches:
-      - 'release/base'
+    - 'release/base'
 
 jobs:
   build:
@@ -18,12 +18,15 @@ jobs:
     
     - name: Build Base
       run: bash build.sh base $GITHUB_SHA push
-
-    - name: Create Pull Request
-      uses: peter-evans/create-pull-request@v1
+    
+    - name: Commit Changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git checkout -b deploy/base-${{ github.sha }}
+        git commit -m "Deploy Request for base ${{ github.sha }}" -a
+    - name: Push changes
+      uses: ad-m/github-push-action@master
       with:
-        branch: deploy/base
-        commit-message: "Deploy Request for base-${{ github.sha }}"
-        base: master
-        title: Deploy Request for base-${{ github.sha }}
-        token: ${{ secrets.GITHUB_TOKEN }}
+        branch: deploy/base-${{ github.sha }}
+        github_token: ${{ secrets.ACTIONS_TOKEN }}

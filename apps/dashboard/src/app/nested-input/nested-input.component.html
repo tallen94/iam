@@ -1,0 +1,148 @@
+<div 
+  class="step card" 
+  [ngClass]="{'editing' : isEditing(), 'inset-border': border}">
+  <div class="card-body">
+    <div class="action-buttons">
+      <button class="btn-sm btn-primary" *ngIf="isHidden()" (click)="triggerShow()">show</button>
+      <button class="btn-sm btn-primary" *ngIf="!isHidden()" (click)="triggerShow()">hide</button>
+      <button class="btn-sm btn-secondary"  *ngIf="isEditing()" (click)="save()">save</button>
+      <button class="btn-sm btn-danger"  *ngIf="isEditing()" (click)="cancelEdit()">cancel</button>
+      <button class="btn-sm btn-secondary" *ngIf="!isEditing()" (click)="triggerEdit()">edit</button>
+      <button class="btn-sm btn-success" (click)="triggerRunning()">run</button>
+    </div>
+    <header [data]="data" [editing]="isEditing()" (emitUpdateData)="receiveUpdateData($event)"></header>
+    <div *ngIf="data.exe == 'function'">
+      <div *ngIf="!isHidden() || isEditing()">
+        <hidden-header [data]="data" [editing]="isEditing()"></hidden-header>
+  
+        <div class="inline-input"> 
+          <label *ngIf="isEditing() || (!isEditing() && !isEmpty(data.command))">Command</label>
+          <input 
+            class="form-control"
+            size="{{inputSize('command')}}"
+            *ngIf="isEditing()" 
+            type="text" 
+            [(ngModel)]="data.command"
+            [ngModelOptions]="{debounce: 500}"
+            placeholder="command">
+          <p *ngIf="!isEditing()">{{data.command}}</p>
+        </div>
+  
+        <div class="inline-input">
+          <label *ngIf="isEditing() || (!isEditing() && !isEmpty(data.args))">Args</label>
+          <input 
+            class="form-control"
+            size="{{inputSize('args')}}"
+            *ngIf="isEditing()" 
+            type="text" 
+            [(ngModel)]="data.args"
+            placeholder="args">
+          <p *ngIf="!isEditing()">{{data.args}}</p>
+        </div>
+        <div>
+          <label class="nested-title" *ngIf="isEditing() || (!isEditing() && !isEmpty(data.text))">Function</label>
+          <div *ngIf="isEditing()" class="text-editor" ace-editor
+            [(text)]="data.text"
+            [mode]="data.command || 'mysql'" 
+            [theme]="'eclipse'"
+            [options]="options"
+            [readOnly]="false"></div>
+          <div class="markdown" *ngIf="!isEditing()">
+            <ngx-md [data]="getCodeMarkdown(data.command, data.text)" ></ngx-md>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div *ngIf="data.exe == 'query'">
+      <div *ngIf="!isHidden() || isEditing()">
+        <hidden-header [data]="data" [editing]="isEditing()"></hidden-header>
+        <div>
+          <label class="nested-title" *ngIf="isEditing() || (!isEditing() && !isEmpty(data.text))">Query</label>
+          <div *ngIf="isEditing()" class="text-editor" ace-editor
+            [(text)]="data.text"
+            [mode]="data.command || 'mysql'" 
+            [theme]="'eclipse'"
+            [options]="options"
+            [readOnly]="false"></div>
+          <div class="markdown" *ngIf="!isEditing()">
+            <ngx-md [data]="getCodeMarkdown(data.command, data.text)" ></ngx-md>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="data.exe == 'graph'">
+      <div *ngIf="!isHidden() || isEditing()">
+        <hidden-header [data]="data" [editing]="isEditing()"></hidden-header>
+      </div>
+  
+      <label class="nested-title">Nodes</label>
+      <div *ngFor="let node of data.graph.nodes; let i = index;">
+        <nested-input 
+          [data]="node" 
+          [editing]="editing"
+          (emitEditing)="receiveEmitEditing($event)"
+          (emitHidden)="receiveEmitHidden($event)"
+          (emitRunning)="receiveEmitRunning($event)"
+          (emitUpdateData)="receiveUpdateData($event)"
+          [(hidden)]="hidden"></nested-input>
+      </div>
+    </div>
+
+    <div *ngIf="data.exe == 'environment'">
+      <hidden-header [data]="data" [editing]="isEditing()"></hidden-header>
+      <div class="inline-input"> 
+        <label *ngIf="isEditing() || (!isEditing() && !isEmpty(data.host))">Host</label>
+        <input 
+          class="form-control"
+          size="{{inputSize('host')}}"
+          *ngIf="isEditing()" 
+          type="text" 
+          [(ngModel)]="data.host"
+          placeholder="host">
+        <p *ngIf="!isEditing()">{{data.host}}</p>
+      </div>
+
+      <div class="inline-input">
+        <label *ngIf="isEditing() || (!isEditing() && !isEmpty(data.port))">Port</label>
+        <input 
+          class="form-control"
+          size="{{inputSize('port')}}"
+          *ngIf="isEditing()" 
+          type="text" 
+          [(ngModel)]="data.port"
+          placeholder="port">
+        <p *ngIf="!isEditing()">{{data.port}}</p>
+      </div>
+
+      <div>
+        <label class="nested-title" *ngIf="isEditing() || (!isEditing() && !isEmpty(data.image))">Image</label>
+        <div *ngIf="isEditing()" class="text-editor" ace-editor
+          [(text)]="data.image"
+          [mode]="data.command || 'mysql'" 
+          [theme]="'eclipse'"
+          [options]="options"
+          [readOnly]="false"></div>
+        <div class="markdown" *ngIf="!isEditing()">
+          <ngx-md [data]="getCodeMarkdown('docker', data.image)" ></ngx-md>
+        </div>
+      </div>
+
+      <div>
+        <label class="nested-title" *ngIf="isEditing() || (!isEditing() && !isEmpty(data.kubernetes))">Kubernetes</label>
+        <div *ngIf="isEditing()" class="text-editor" ace-editor
+          [(text)]="data.kubernetes"
+          [mode]="'yaml'" 
+          [theme]="'eclipse'"
+          [options]="options"
+          [readOnly]="false"></div>
+        <div class="markdown" *ngIf="!isEditing()">
+          <ngx-md [data]="getCodeMarkdown('yaml', data.kubernetes)" ></ngx-md>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  

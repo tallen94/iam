@@ -1,0 +1,95 @@
+.inline-input {
+  display: inline-block;
+  margin-right: 4px;
+}
+
+.inline-input input {
+  border: none !important;
+  border-color: transparent !important;
+  font-family: "Lucida Console", Monaco, monospace;
+}
+
+.text-editor {
+  width: 100%;
+  border-radius: 4px;
+  margin-top: 8px;
+}
+
+.editing {
+  border: 2px solid rgb(190, 190, 190) !important;
+}
+
+.inset-border {
+  border-left: 1px solid rgb(200, 200, 200);
+}
+
+.nested-title {
+  color: #007bff;
+  margin-top: 8px;
+}
+
+ul { 
+  list-style: none;
+  width: 100%;
+}
+
+label {
+  color: rgb(160, 160, 160);
+  font-size: 15px;
+  text-transform: capitalize;
+}
+
+label {
+  display: inline-block;
+}
+
+input {
+  text-align: center;
+}
+
+ul {
+  margin: 0;
+}
+
+.step {
+  padding: 4px;
+  margin-top: 4px;
+  margin-right: 4px;
+  position: relative;
+}
+
+.separator {
+  height: 1px; 
+  width: 80%;
+  margin: auto;
+  background-color: rgb(212, 212, 212);
+}
+
+.action-buttons {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}
+
+.action-buttons button {
+  margin-left: 4px;
+}
+
+label, ul, .col-sm-11, .col-sm-1 {
+  padding: 0 !important;
+}
+
+.markdown {
+  max-height: 500px;
+  overflow-y: scroll;
+  margin-left: 4px;
+}
+
+.add-bar {
+  height: 30px;
+  width: 100%;
+}
+
+.add-bar:hover {
+  background-color: rgb(160, 160, 160);
+}

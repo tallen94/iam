@@ -1,0 +1,22 @@
+.graph {
+  height: 100%;
+  width: 100%;
+  position: relative;
+}
+
+.selected {
+  outline: 2px solid #007bff;
+}
+
+.controls {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 100;
+  width: 50px;
+}
+
+.controls button {
+  width: 50px;
+  margin-top: 4px;
+}

@@ -16,11 +16,13 @@ dist
 # IAM
 tmp
 
-public/node_modules
-public/dist
+apps/dashboard/node_modules
+apps/dashboard/dist
 
 notes
 designs
+database
+local
 
 kubernetes/secrets
 images/base/deploy.tgz

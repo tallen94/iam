@@ -1,9 +1,0 @@
-.inline-input {
-  display: inline-block;
-}
-
-label {
-  color: rgb(160, 160, 160);
-  font-size: 15px;
-  text-transform: capitalize;
-}
