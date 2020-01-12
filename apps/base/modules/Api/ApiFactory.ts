@@ -50,6 +50,7 @@ export class ApiFactory {
     new StatusApi(serverCommunicator);
     const executor: Executor = new Executor(fileSystem, dbconfig, fsconfig, clientThreadPool);
     new ExecutableApi(executor, serverCommunicator);
+    new FileSystemApi(fileSystem, serverCommunicator);
   }
 
   job(fileSystem: FileSystem, serverCommunicator: ServerCommunicator) {
@@ -73,10 +74,5 @@ export class ApiFactory {
   dashboard(fileSystem: FileSystem, serverCommunicator: ServerCommunicator) {
     new StatusApi(serverCommunicator);
     new DashboardApi(fileSystem, serverCommunicator);
-  }
-
-  filesystem(fileSystem: FileSystem, serverCommunicator: ServerCommunicator) {
-    new StatusApi(serverCommunicator);
-    new FileSystemApi(fileSystem, serverCommunicator);
   }
 }

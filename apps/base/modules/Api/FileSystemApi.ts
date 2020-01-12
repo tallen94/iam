@@ -23,5 +23,16 @@ export class FileSystemApi {
         res.status(200).json({});
       });
     })
+
+    this.serverCommunicator.get("/files", (req, res) => {
+      const files = Lodash.map(this.fileSystem.getFolderNames(), (folderName) => {
+        return {
+          folderName: folderName,
+          files: this.fileSystem.getFiles(folderName)
+        }
+      })
+
+      res.status(200).json(files)
+    })
   }
 }
