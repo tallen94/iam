@@ -1,6 +1,7 @@
 import Path from "path";
 import FS from "fs";
 import Lodash from "lodash";
+import { Shell } from "../Executor/Shell";
 
 export class FileSystem {
 
@@ -71,5 +72,23 @@ export class FileSystem {
 
   public deletePath(path: string) {
     FS.unlinkSync(path);
+  }
+
+  public getFile(name: string) {
+    const file = FS.readFileSync(this.path(name));
+    return {
+      name: name,
+      data: file.toString()
+    }
+  }
+
+  public listFiles(dirName: string) {
+    return FS.readdirSync(this.path(dirName))
+  }
+
+  public getFiles(path: string) {
+    return Lodash.map(this.listFiles(path), (file) => {
+      return this.getFile(path + "/" + file)
+    })
   }
 }

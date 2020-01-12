@@ -1,22 +1,22 @@
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
-  name: iam-router
+  name: aws
 spec:
   selector:
     matchLabels:
-      app: iam-router
+      app: aws
   replicas: 1 # tells deployment to run 2 pods matching the template
   template:
     metadata:
       labels:
-        app: iam-router
+        app: aws
     spec:
       imagePullSecrets:
       - name: regcred
       containers:
-      - name: iam-router
-        image: icanplayguitar94/iam:base-fs-backup
+      - name: aws
+        image: icanplayguitar94/iam:aws
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
@@ -30,7 +30,7 @@ spec:
         - name: HOME
           value: "/usr/home/iam"
         - name: TYPE 
-          value: "router"
+          value: "executor"
         - name: SERVER_PORT
           value: "5000"
 
@@ -58,17 +58,27 @@ spec:
             secretKeyRef:
               name: dbconfig
               key: db_name
+              
+        ## AWS CONFIG
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: awsconfig
+              key: access_key_id
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: awsconfig
+              key: secret_access_key
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: iam-router
+  name: aws
 spec:
   selector:
-    app: iam-router
-  type: NodePort
+    app: aws
   ports:
     - protocol: TCP
       port: 80
       targetPort: 5000
-      nodePort: 30005

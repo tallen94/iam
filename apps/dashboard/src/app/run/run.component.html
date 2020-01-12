@@ -7,6 +7,7 @@
   [autoUpdateContent]="true" 
   [durationBeforeCallback]="500" ></div>
 
+
 <h4>Response Data</h4>
 <div class="editor" ace-editor
   [(text)]="responseData"
@@ -16,6 +17,7 @@
   [readOnly]="false"
   [autoUpdateContent]="true" 
   [durationBeforeCallback]="500" ></div>
-  
+
+<p>Time: {{time}}</p>
 <button class="btn btn-success" (click)="run()">Run</button>
 <button class="btn btn-danger" (click)="close()">Close</button>
