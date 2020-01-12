@@ -34,9 +34,34 @@ spec:
         - name: HOME
           value: "/usr/home/iam"
         - name: TYPE 
-          value: "filesystem"
+          value: "executor"
         - name: SERVER_PORT
           value: "5000"
+
+        # FS CONFIG
+        - name: FS_HOST
+          value: "iam-filesystem"
+        - name: FS_PORT
+          value: "80"
+
+        ## DB CONFIG
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: dbconfig
+              key: user
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: dbconfig
+              key: password
+        - name: DB_HOST
+          value: "mysqldatabase.default"
+        - name: DB_NAME
+          valueFrom:
+            secretKeyRef:
+              name: dbconfig
+              key: db_name
 
 ---
 apiVersion: v1

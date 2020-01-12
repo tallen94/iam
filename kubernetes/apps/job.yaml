@@ -16,7 +16,7 @@ spec:
       - name: regcred
       containers:
       - name: iam-job
-        image: icanplayguitar94/iam:base-timeouts
+        image: icanplayguitar94/iam:base-fs-backup
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000

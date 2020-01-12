@@ -5,6 +5,7 @@ import uuid from "uuid";
 import * as FS from "fs";
 import { FileSystem } from "../FileSystem/FileSystem";
 import { Shell } from "../Executor/Shell";
+import { EnvironmentRouter } from "../Executor/EnvironmentRouter";
 
 export class EnvironmentManager {
 
@@ -12,7 +13,8 @@ export class EnvironmentManager {
     private fileSystem: FileSystem,
     private shell: Shell,
     private database: Database,
-    private fileSystemCommunicator: FileSystemCommunicator
+    private fileSystemCommunicator: FileSystemCommunicator,
+    private environmentRouter: EnvironmentRouter
   ) { }
 
   public addEnvironment(data: any) {

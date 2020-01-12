@@ -1,22 +1,22 @@
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
-  name: base
+  name: aws
 spec:
   selector:
     matchLabels:
-      app: base
+      app: aws
   replicas: 1 # tells deployment to run 2 pods matching the template
   template:
     metadata:
       labels:
-        app: base
+        app: aws
     spec:
       imagePullSecrets:
       - name: regcred
       containers:
-      - name: base
-        image: icanplayguitar94/iam:base-89078fa9c47e044463ea1a5c39d746f64036a238
+      - name: aws
+        image: icanplayguitar94/iam:aws
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
@@ -58,17 +58,27 @@ spec:
             secretKeyRef:
               name: dbconfig
               key: db_name
+              
+        ## AWS CONFIG
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: awsconfig
+              key: access_key_id
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: awsconfig
+              key: secret_access_key
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: base
+  name: aws
 spec:
   selector:
-    app: base
-  type: NodePort
+    app: aws
   ports:
     - protocol: TCP
       port: 80
       targetPort: 5000
-      nodePort: 30004

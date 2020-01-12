@@ -50,15 +50,18 @@
   </div>
 </div>
 
-<div *ngIf="editing" class="text-editor" ace-editor
-  [(text)]="data.description"
-  [mode]="'markdown'" 
-  [theme]="'eclipse'"
-  [options]="options"
-  [readOnly]="false"
-  [autoUpdateContent]="true" 
-  [durationBeforeCallback]="500"></div>
-<p *ngIf="!editing" class="card-text">{{data.description}}</p>
+<div>
+  <label class="nested-title" *ngIf="editing || (data.description && data.description != '')">Description</label>
+  <div *ngIf="editing" class="text-editor" ace-editor
+    [(text)]="data.description"
+    [mode]="'markdown'" 
+    [theme]="'eclipse'"
+    [options]="options"
+    [readOnly]="false"
+    [autoUpdateContent]="true" 
+    [durationBeforeCallback]="500"></div>
+  <p *ngIf="!editing && data.description && data.description != ''" class="card-text">{{data.description}}</p>
+</div>
 <!-- <div class="markdown" *ngIf="!editing">
   <ngx-md [data]="data.description"></ngx-md>
 </div> -->

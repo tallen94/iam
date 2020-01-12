@@ -1,4 +1,4 @@
-FROM icanplayguitar94/iam:base-89078fa9c47e044463ea1a5c39d746f64036a238
+FROM icanplayguitar94/iam:base-fs-backup
 
 RUN apt-get clean
 RUN apt-get update && apt-get install \
@@ -8,4 +8,6 @@ ENV VIRTUAL_ENV=/opt/venv
 RUN python3 -m virtualenv --python=/usr/bin/python3 $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
-RUN pip install mlflow
+RUN pip install awscli \
+    && pip install boto3 \
+    && pip install requests

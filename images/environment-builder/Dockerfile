@@ -1,4 +1,4 @@
-FROM icanplayguitar94/iam:base-timeouts
+FROM icanplayguitar94/iam:base-fs-backup
 
 RUN apt-get update
 RUN apt-get install docker.io -y

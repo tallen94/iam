@@ -8,6 +8,7 @@ import { LocalProcess } from "../Process/LocalProcess";
 import { Process } from "../Process/Process";
 import { FileSystemCommunicator } from "../Communicator/FileSystemCommunicator";
 import uuid = require("uuid");
+import { EnvironmentRouter } from "./EnvironmentRouter";
 
 export class Shell {
   private status: string;
@@ -15,18 +16,21 @@ export class Shell {
   private fileSystemCommunicator: FileSystemCommunicator;
   private database: Database;
   private fileSystem: FileSystem;
+  private environmentRouter: EnvironmentRouter;
 
   constructor(
     shellCommunicator: ShellCommunicator,
     fileSystemCommunicator: FileSystemCommunicator,
     database: Database,
-    fileSystem: FileSystem
+    fileSystem: FileSystem,
+    environmentRouter: EnvironmentRouter
   ) {
     this.status = "OK";
     this.shell = shellCommunicator;
     this.fileSystemCommunicator = fileSystemCommunicator;
     this.database = database;
     this.fileSystem = fileSystem;
+    this.environmentRouter = environmentRouter;
   }
 
   public getStatus(): Promise<string> {
@@ -62,11 +66,13 @@ export class Shell {
         });
       }
     }).then(() => {
-      return this.fileSystemCommunicator.putFile("programs", {
-        name: data.name,
-        file: data.text
-      });
-    });
+      return Promise.all([
+        this.fileSystemCommunicator.putFile("programs", {
+          name: data.name,
+          file: data.text
+        })
+      ])
+    })
   }
 
   public getProgram(username: string, name: string) {

@@ -1,5 +1,12 @@
 .inline-input {
   display: inline-block;
+  margin-right: 4px;
+}
+
+.inline-input input {
+  border: none !important;
+  border-color: transparent !important;
+  font-family: "Lucida Console", Monaco, monospace;
 }
 
 label {

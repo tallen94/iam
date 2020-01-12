@@ -133,13 +133,13 @@ export class NestedInputComponent implements OnInit {
 
   inputSize(key: string) {
     if (key && this.data[key]) {
-      if ((this.data[key].length) < 5) {
-        return 5
+      if ((this.data[key].length) < 8) {
+        return 8
       }
 
       return this.data[key].length
     }
-    return 5;
+    return 8;
   }
 
   isEmpty(str: string) {

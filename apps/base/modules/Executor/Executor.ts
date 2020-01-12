@@ -14,6 +14,7 @@ import { JobRunner } from "../Job/JobRunner";
 import { FileSystemCommunicator } from "../Communicator/FileSystemCommunicator";
 import { GraphExecutor } from "./GraphExecutor";
 import { EnvironmentManager } from "../Environment/EnvironmentManager";
+import { EnvironmentRouter } from "./EnvironmentRouter";
 
 export class Executor {
 
@@ -257,7 +258,8 @@ export class Executor {
     const fsClient = new ClientCommunicator(fsConfig["host"], fsConfig["port"]);
     const shellCommunicator: ShellCommunicator = new ShellCommunicator();
     const fileSystemCommunicator: FileSystemCommunicator = new FileSystemCommunicator(fsClient);
-    const thread = new Shell(shellCommunicator, fileSystemCommunicator, database, fileSystem);
+    const environmentRouter: EnvironmentRouter = new EnvironmentRouter(database);
+    const thread = new Shell(shellCommunicator, fileSystemCommunicator, database, fileSystem, environmentRouter);
     this.shell = thread;
     return this.shell;
   }
@@ -282,7 +284,8 @@ export class Executor {
   private setEnvironmentManager(shell: Shell, database: Database, fsConfig: any, fileSystem: FileSystem) {
     const fsClient = new ClientCommunicator(fsConfig["host"], fsConfig["port"])
     const fileSystemCommunicator: FileSystemCommunicator = new FileSystemCommunicator(fsClient);
-    this.environmentManager = new EnvironmentManager(fileSystem, shell, database, fileSystemCommunicator);
+    const environmentRouter: EnvironmentRouter = new EnvironmentRouter(database);
+    this.environmentManager = new EnvironmentManager(fileSystem, shell, database, fileSystemCommunicator, environmentRouter);
     return this.environmentManager;
   }
 
