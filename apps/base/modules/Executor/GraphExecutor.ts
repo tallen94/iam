@@ -65,6 +65,33 @@ export class GraphExecutor {
         const graphData = JSON.parse(item.data);
         return this.buildGraph(graphData.nodes, graphData.edges)
         .then((graph) => {
+          if (graphData.foreach) {
+            const numThreads = 2;
+            const threads = [];
+            const results = [];
+
+            for (let index = 0; index < data.length; index++) {
+              if (threads.length < numThreads) {
+                threads.push(Promise.resolve().then(() => {
+                  return graph.execute(data[index])
+                  .then((result: any) => {
+                    results.push(result);
+                  })
+                }))
+              } else {
+                threads[index % numThreads] = threads[index % numThreads]
+                .then(() => {
+                  return graph.execute(data[index])
+                  .then((result: any) => {
+                    results.push(result);
+                  })
+                })
+              }
+            }
+            return Promise.all(threads).then(() => {
+              return results;
+            })
+          }
           return graph.execute(data);
         });
       }
@@ -86,10 +113,11 @@ export class GraphExecutor {
   }
 
   private getSteps(nodes: any[]) {
-    return Promise.all(Lodash.map(nodes,
-      (node) => this.executor.getExecutable(node.username, node.name, node.exe))
-      .map((nodePromise) => {
+    return Promise.all(Lodash.map(nodes, (node) => {
+      return this.executor.getExecutable(node.username, node.name, node.exe)
+    }).map((nodePromise, index) => {
         return nodePromise.then((node) => {
+          node.foreach = nodes[index].foreach
           return this.database.runQuery("admin", "get-exe-environment", {username: node.username, exe: node.exe, name: node.name})
           .then((results) => {
             if (results.length > 0) {
@@ -130,7 +158,8 @@ export class GraphExecutor {
         id: node.id,
         name: node.name,
         exe: node.exe,
-        username: node.username
+        username: node.username,
+        foreach: node.foreach
       };
     });
 

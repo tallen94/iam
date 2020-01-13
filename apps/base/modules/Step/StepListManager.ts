@@ -104,9 +104,9 @@ export class StepListManager {
   public stepJsonToStep(stepJson, client?: Client) {
     switch (stepJson.exe) {
       case "function":
-        return new ProgramStep(stepJson.username, stepJson.name, this.shell, client);
+        return new ProgramStep(stepJson.username, stepJson.name, this.shell, client, stepJson.foreach);
       case "query":
-        return new QueryStep(stepJson.username, stepJson.name, this.database, client);
+        return new QueryStep(stepJson.username, stepJson.name, this.database, client, stepJson.foreach);
       // case "pipe":
       //   return new PipeStep(Lodash.map(stepJson.steps || stepJson.data, (step) => {
       //     return this.stepJsonToStep(step);

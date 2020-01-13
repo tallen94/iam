@@ -9,7 +9,8 @@
       (emitEditing)="receiveEmitEditing($event)"
       (emitHidden)="receiveEmitHidden($event)"
       (emitRunning)="receiveEmitRunning($event)"
-      (emitUpdateData)="receiveUpdateData($event)"></nested-input>
+      (emitUpdateData)="receiveUpdateData($event)"
+      [showForeach]="data.exe == 'graph'"></nested-input>
     <run 
       class="right" 
       *ngIf="running != undefined" 

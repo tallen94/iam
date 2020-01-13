@@ -139,7 +139,8 @@ export class Executor {
               input: stepJson.input,
               output: stepJson.output,
               graph: graph,
-              environment: stepJson.environment
+              environment: stepJson.environment,
+              foreach: graph.foreach
             });
           });
         case "query":
