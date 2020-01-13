@@ -8,6 +8,8 @@ import { AceEditorModule } from "ng2-ace-editor";
 import { NgxMdModule } from 'ngx-md';
 import { NgxGraphModule } from '@swimlane/ngx-graph';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { ɵROUTER_PROVIDERS } from '@angular/router';
+import {LocationStrategy, HashLocationStrategy} from '@angular/common';
 
 
 import { AppRoutingModule } from "./app-routing.module";
@@ -67,8 +69,12 @@ const appRoutes: Routes = [
   providers: [
     Iam,
     [{ provide: "HTTP_INTERCEPTORS", useClass: TimeoutInterceptor, multi: true }],
-    [{ provide: "DEFAULT_TIMEOUT", useValue: 9999999 }]
+    [{ provide: "DEFAULT_TIMEOUT", useValue: 9999999 }],
+    [{provide: LocationStrategy, useClass: HashLocationStrategy}],
+    ɵROUTER_PROVIDERS,
   ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
+
+
