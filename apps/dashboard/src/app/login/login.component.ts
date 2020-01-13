@@ -20,8 +20,8 @@ export class LoginComponent implements OnInit {
   login() {
     this.iam.runExecutable("admin", "graph", "gen-token", [{email: this.email}, {password: this.password}])
     .subscribe((result: any) => {
-      if (result.result.length > 0) {
-        const user = result.result[0];
+      if (result.result) {
+        const user = result.result;
         this.iam.setUser(user.username, user.token);
         localStorage.setItem("token", user.token);
         this.router.navigate(["/home"])
@@ -30,10 +30,10 @@ export class LoginComponent implements OnInit {
   }
 
   signup() {
-    this.iam.runExecutable("admin", "graph", "add-user", [{email: this.email, username: this.username, password: this.password}])
+    this.iam.runExecutable("admin", "graph", "add-user", {email: this.email, username: this.username, password: this.password})
     .subscribe((result: any) => {
-      if (result.result.length > 0) {
-        const user = result.result[0];
+      if (result.result) {
+        const user = result.result;
         this.iam.setUser(user.username, user.token);
         localStorage.setItem("token", user.token);
         this.router.navigate(["/home"])

@@ -1,2 +1,2 @@
-FROM icanplayguitar94/iam:base-redirect
+FROM icanplayguitar94/iam:base-foreach
 COPY ./src public/dist

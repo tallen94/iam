@@ -10,4 +10,4 @@
     <button (click)="logout()" type="button" class="btn button-bottom"><i class="fa fa-sign-out"></i></button>
   </div>
 </div>
-<router-outlet *ngIf="iam.getUser()"></router-outlet>
+<router-outlet *ngIf="iam.getUser() || router.url == '/login'"></router-outlet>

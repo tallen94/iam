@@ -16,7 +16,7 @@ spec:
       - name: regcred
       containers:
       - name: base
-        image: icanplayguitar94/iam:base-redirect
+        image: icanplayguitar94/iam:base-foreach
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000

@@ -10,6 +10,7 @@ import { InitData } from '../iam/init-data';
 export class HeaderComponent implements OnInit {
   @Input() data: any;
   @Input() editing: boolean;
+  @Input() showForeach: boolean;
   @Output() emitUpdateData: EventEmitter<any> = new EventEmitter();
   private prevExe: string = "";
   private options = {
@@ -20,10 +21,10 @@ export class HeaderComponent implements OnInit {
   }
   searchResults: any = {}
 
-  constructor(private iam: Iam) { }
-
-  ngOnInit() {
+  constructor(private iam: Iam) {
   }
+
+  ngOnInit() {}
 
   public nameOnChange(value) {
     if (value !== "") {
