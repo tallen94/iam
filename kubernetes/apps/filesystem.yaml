@@ -16,7 +16,7 @@ spec:
       - name: regcred
       containers:
       - name: iam-filesystem
-        image: icanplayguitar94/iam:filesystem-efd4f619d66b4d7a006b582f0c0a51398c4f1194
+        image: icanplayguitar94/iam:filesystem-92284ffaa546d09d09ef077de2ffeffb04532488
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
