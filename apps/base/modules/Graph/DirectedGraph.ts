@@ -7,7 +7,7 @@ export class DirectedGraph {
     private nodes: Node[]
   ) {}
 
-  public execute(data: any[]) {
+  public execute(data: any) {
     // Starting nodes have no parents
     const startNodes = Lodash.filter(this.nodes, (node) => node.numParents() == 0);
 
@@ -18,13 +18,21 @@ export class DirectedGraph {
     const other = Lodash.filter(this.nodes, (node) => node.numParents() > 0);
 
     // Begin execution by calling execute on all nodes without parents
-    Lodash.each(startNodes, (node, i) => node.execute(data[i]));
+    if (startNodes.length == 1) {
+      startNodes[0].execute(data)
+    } else {
+      Lodash.each(startNodes, (node, i) => node.execute(data[i]));
+    }
 
     // Continue execution by calling execute for remaining nodes
     // These will wait for parent execution before executing
     Lodash.each(other, (node) => node.execute());
 
     // Return results from all leaf nodes
-    return Promise.all(Lodash.map(leafNodes, (node) => node.getPromise()));
+    if (leafNodes.length == 1) {
+      return leafNodes[0].getPromise()
+    } else {
+      return Promise.all(Lodash.map(leafNodes, (node) => node.getPromise()));
+    }
   }
 }

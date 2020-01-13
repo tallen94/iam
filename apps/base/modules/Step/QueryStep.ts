@@ -1,22 +1,16 @@
 import { Step } from "./Step";
 import { Database } from "../Executor/Database";
 import { Client } from "../Executor/Client";
+import * as Lodash from "lodash";
 
 export class QueryStep implements Step {
 
-  private database: Database;
-  private name: string;
-  private username: string;
-
   constructor(
-    username: string,
-    name: string,
-    databaseExecutor: Database,
-    private client: Client) {
-      this.database = databaseExecutor;
-      this.name = name;
-      this.username = username;
-  }
+    private username: string,
+    private name: string,
+    private databaseExecutor: Database,
+    private client: Client,
+    private foreach?: boolean) { }
 
   // public spawn() {
   //   return this.clientPool.numClients() > 0 ?
@@ -25,6 +19,33 @@ export class QueryStep implements Step {
   // }
 
   public execute(data: any): Promise<any> {
+    if (this.foreach) {
+      const numThreads = 2;
+      const threads = [];
+      const results = [];
+
+      for (let index = 0; index < data.length; index++) {
+        if (threads.length < numThreads) {
+          threads.push(Promise.resolve().then(() => {
+            return this.client.runExecutable(this.username, "query", this.name, data[index])
+            .then((result: any) => {
+              results.push(result.result);
+            })
+          }))
+        } else {
+          threads[index % numThreads] = threads[index % numThreads]
+          .then(() => {
+            return this.client.runExecutable(this.username, "query", this.name, data[index])
+            .then((result: any) => {
+              results.push(result.result);
+            })
+          })
+        }
+      }
+      return Promise.all(threads).then(() => {
+        return results;
+      })
+    }
     return this.client.runExecutable(this.username, "query", this.name, data)
     .then((result: any) => {
       return result.result;
