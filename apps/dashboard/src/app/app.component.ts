@@ -10,10 +10,20 @@ import { Router } from '@angular/router';
 export class AppComponent {
 
   constructor(
-    private iam: Iam,
+    public iam: Iam,
     public router: Router
   ) {
-
+    const token = localStorage.getItem("token");
+    if (token !== null) {
+      this.iam.runExecutable("admin", "graph", "validate-token", [{token: token}])
+      .subscribe((result: any) => {
+        if (result.result.length > 0) {
+          const user = result.result[0];
+          this.iam.setUser(user.username, token);
+          this.router.navigate(["/home"]);
+        }
+      });
+    }
   }
 
   logout() {

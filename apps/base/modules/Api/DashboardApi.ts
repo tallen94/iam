@@ -12,5 +12,8 @@ export class DashboardApi {
 
   private init() {
     this.serverCommunicator.static(this.fileSystem.getPublicRoot());
+    this.serverCommunicator.use(function(req, res, next) {
+      res.redirect("/")
+    });
   }
 }
