@@ -1,2 +1,2 @@
-FROM icanplayguitar94/iam:base-fs-backup
+FROM icanplayguitar94/iam:base-redirect
 COPY ./src public/dist

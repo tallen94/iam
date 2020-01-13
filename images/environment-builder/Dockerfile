@@ -1,4 +1,4 @@
-FROM icanplayguitar94/iam:base-fs-backup
+FROM icanplayguitar94/iam:base-redirect
 
 RUN apt-get update
 RUN apt-get install docker.io -y

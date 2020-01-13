@@ -34,6 +34,10 @@ export class ServerCommunicator {
     this.api.post(path, fn);
   }
 
+  public use(fn: (req, res, next) => void) {
+    this.api.use(fn)
+  }
+  
   public listen() {
     return new Promise((resolve, reject) => {
       this.server.listen(this.port, () => {

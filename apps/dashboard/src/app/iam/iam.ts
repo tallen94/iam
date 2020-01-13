@@ -11,7 +11,6 @@ export class Iam {
   private router: ClientCommunicator;
 
   constructor(httpClient: HttpClient) {
-    this.user = {};
     const executorUrl = environment.executorUrl == undefined ? window.location.hostname : environment.executorUrl;
     const executorPort = environment.executorPort;
     const routerUrl = environment.routerUrl == undefined ? window.location.hostname : environment.routerUrl;
