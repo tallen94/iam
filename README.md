@@ -18,7 +18,7 @@ Request access to docker hub via [email](mailto:icanplayguitar@gmail.com?Subject
 ### Kubernetes
 Iam runs on a Kubernetes cluster. Follow the [minikube](https://kubernetes.io/docs/tutorials/hello-minikube/) tutorial for local development setup.
 
-*Note: you must enable `hairpin mode` on the cluster
+*Note: you must enable `hairpin mode` on the cluster. To enable in minikube run `./hairpin.sh`
 
 ### Start from scratch
 Setup your environment by executing the init.sh bash script.
@@ -28,7 +28,7 @@ Setup your environment by executing the init.sh bash script.
 Check status of cluster through `minikube dashboard`
 
 ### Using the Dasbhoard
-Navigate to dashboard at `iam-local:30000`
+Navigate to dashboard at `<cluster_host>:30000`
 
 The first thing to do is create an `admin` user.
 
@@ -50,7 +50,9 @@ There is a build script to build apps locally to deploy to `minikube`
 - `<tag>`: anystring
 - `<push>`: "push" or "no-push" to push docker image to docker hub
 
-Eeach image has its own build script located at `builders/build-<image_name>`. When these scripts are run, they execute the build scripts of images dependent on the current one. Run `kubernetes/update.sh` to update kubernetes.
+Eeach image has its own build script located at `builders/build-<image_name>`. When these scripts are run, they execute the build scripts of images dependent on the current one. 
+
+Run `kubernetes/update.sh` to update kubernetes. In order for the apps to update, kubernetes requires a change to its yaml config. If you build with the same images name as currently deployed, run `kubernetes/delete.sh` before updating.
 
 ### Image Release Cycles
 To make changes to an image create a branch and push to `origin/<branch_name>`.
