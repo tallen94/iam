@@ -9,9 +9,6 @@ This tool enables the same freedom and iteration speed as developing locally wit
 ## Iam Cluster
 An Iam cluster is deployed to Kubernetes. It allows you to create environments that comprise of a Dockerfile and Kubernetes object yaml files. It manages the repository for all your code, Dockerfile's and Kubernetes object files. Once you initialize the interactions can take place from within the user interface or through the `Executable` api.
 
-## App Structure
-There are a few different components to Iam. A router, executor, database, filesystem, and dashboard.
-
 ## Development Setup
 ### Docker Hub
 Request access to docker hub via [email](mailto:icanplayguitar@gmail.com?Subject=IAM%20Docker%20Access&Body=Docker%20pull%20request), include your docker hub username in the email.
@@ -66,14 +63,4 @@ This will open a PR and will run the build for that image. Get these changes app
 To release the image you just built, create a pull request from `master` to `release/<image_name>`. This will run the build for that image. Get approval and merge.
 
 Merging this PR will trigger a build of the docker files and all images dependent on the image being built. A new PR will be created to `master` from `deploy/<image_name>-<git_sha>` that will contain the necessary version updates for the new images to be deployed. Get this approved and merge.
-
-# System
-What it does:
-- Automates building of environments into services
-- Create executables that can run in the environments
-- Edit code in the browser
-- Dependency chain visualization
-- Search
-- Auto Complete
-
 
