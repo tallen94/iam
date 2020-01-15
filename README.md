@@ -16,7 +16,7 @@ Request access to docker hub via [email](mailto:icanplayguitar@gmail.com?Subject
 ### Kubernetes
 Iam runs on a Kubernetes cluster. Follow the [minikube](https://kubernetes.io/docs/tutorials/hello-minikube/) tutorial for local development setup.
 
-*Note: you must enable `hairpin mode` on the cluster. To enable in minikube run `./hairpin.sh`
+*Note: you must enable `hairpin mode` on the cluster. To enable in minikube run `./hairpin.sh`*
 
 ### Start from scratch
 Setup your environment by executing the init.sh bash script.
