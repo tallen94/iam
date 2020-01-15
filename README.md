@@ -1,4 +1,4 @@
-# Iam: Infinitely Scalable Execution Cluster
+# Iam: Infinitely Scalable Customizable Execution Cluster
 
 Iam is a space for collaborating and building. Use it to create instantly available, autoscaling data pipelines. Use it to share code snippets that are instantly available through an api and re-usable in other pipelines. 
 
