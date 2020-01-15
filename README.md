@@ -40,6 +40,8 @@ There are 5 images that can be built:
 - dashboard
 - environment-builder
 
+*Note: To build images locally without pushing to docker hub, you need to run `eval $(minikube docker-env)` to use the minikube VM's docker daemon.
+
 ### Building Locally
 There is a build script to build apps locally to deploy to `minikube`
 
