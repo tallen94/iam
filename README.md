@@ -9,6 +9,9 @@ This tool enables the same freedom and iteration speed as developing locally wit
 ## Iam Cluster
 An Iam cluster is deployed to Kubernetes. It allows you to create environments that comprise of a Dockerfile and Kubernetes object yaml files. It manages the repository for all your code, Dockerfile's and Kubernetes object files. Once you initialize the interactions can take place from within the user interface or through the `Executable` api.
 
+#### Tutorials
+Follow the [introduction](https://github.com/tallen94/iam/blob/master/tutorials/introduction.md) tutorial to learn about the main concepts of Iam.
+
 ## Development Setup
 ### Docker Hub
 Request access to docker hub via [email](mailto:icanplayguitar@gmail.com?Subject=IAM%20Docker%20Access&Body=Docker%20pull%20request), include your docker hub username in the email.
