@@ -1,8 +1,7 @@
 # Introduction
 Iam is a limitless tool for developing highly scalable code
 
-This tutorial will introduce you to the main concepts and describe some simple use cases. 
-Once you feel comfortable with the information in this tutorial, move on to the next.
+This tutorial will introduce you to the main concepts. Once you feel comfortable with the information in this tutorial, move on to the next.
 
 ### Executable
 The resources available on the cluster. You can:
