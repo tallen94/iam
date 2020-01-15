@@ -4,14 +4,6 @@ Iam is a limitless tool for developing highly scalable code
 This tutorial will introduce you to the main concepts and describe some simple use cases. 
 Once you feel comfortable with the information in this tutorial, move on to the next.
 
-### Creating a User
-The first step is to sign up on the first page. 
-
-### The Navigator
-On the left side of the screen you will see 4 sections: functions, queries, graphs, environments.
-
-These are the 4 types of executables that can be created.
-
 ### Executable
 The resources available on the cluster. You can:
 - Add and executable
@@ -26,10 +18,13 @@ These operations are available as the `Executable Api`
 - `/executable/:username/:exe/:name/run`
 
 #### Environments
-These are descriptions of where executables can be run. Each environment requires a `Dockerfile` and `kubernetes` yaml file.
-Running these runs a function to build the image and deploy the kubernetes objects to the cluster. 
+These are descriptions of Kubernetes objects. Each environment requires a `Dockerfile` and `kubernetes` yaml file. You can deploy any kubernetes object using environments. 
 
-They run the `build-environment` function, which takes in the image name.
+Environments that extend any image based off of `icanplayguitar/iam:base-*`, and implement the required pod definition for `executor` will have the executable and filesystem api available. This means they can be used to run any other `executable`.
+
+Each `executable` must specify what environment it is run in. By default they run in the `base` environment. 
+
+*Environments run in the `environment-builer` environment, which has kubectl and docker running.*
 
 #### Function
 Functions are pieces of code that get executed in the `environment`. Functions require a command and code to run that takes input from stdin and outputs to stdout.
