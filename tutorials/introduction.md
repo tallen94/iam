@@ -43,8 +43,10 @@ Graphs are descriptions of the execution plan of a series of `functions` and `qu
 
 Graphs are Directed Acyclic Graphs. It can have as many starting and ending nodes, with any edges as long as no cycles are created.
 
+Nodes on a graph are indexed in topological sort order, with parallel nodes indexed by when they were added to the graph.
+
 There are a few different ways of specifying input into a graph. 
-- Graphs with a single start node will be passed the whole body.
-- Graphs with multiple start nodes will expect an `[]` of data where the objects at each index are passed to the corresponding start node.
+- Graphs with a single start node will be passed the whole request body.
+- Graphs with multiple start nodes will expect an `[]` of data where the ith object is passed to the corresponding ith start node.
 - Using the `FOREACH` option will make a node expect an `[]` of data input and execute the node for each item in that dataset.
 
