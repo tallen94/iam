@@ -26,7 +26,7 @@ local
 
 kubernetes/secrets
 images/base/deploy.tgz
-images/dashboard/src
+images/router/src
 
 yarn.lock
 
