@@ -1,9 +1,5 @@
 #! /bin/bash
 
-echo Deleting kube dashboard...
-kubectl delete deployment iam-dashboard
-kubectl delete service iam-dashboard
-
 echo Deleting kube database setup...
 kubectl delete pod mysqldatabase
 kubectl delete service mysqldatabase

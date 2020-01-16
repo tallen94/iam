@@ -52,8 +52,6 @@ applyConfig() {
    kubectl apply -f kubernetes/apps/base.yaml
    echo [...Initializing environment-builder...]
    kubectl apply -f kubernetes/apps/environment-builder.yaml
-   echo [...Configuring dashboard...]
-   kubectl apply -f kubernetes/apps/dashboard.yaml
    echo IAM is ready to use.
 }
 
