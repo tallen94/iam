@@ -7,15 +7,11 @@ import { HttpClient } from '@angular/common/http';
 @Injectable()
 export class Iam {
   private user: any;
-  private executor: ClientCommunicator;
   private router: ClientCommunicator;
 
   constructor(httpClient: HttpClient) {
-    const executorUrl = environment.executorUrl == undefined ? window.location.hostname : environment.executorUrl;
-    const executorPort = environment.executorPort;
     const routerUrl = environment.routerUrl == undefined ? window.location.hostname : environment.routerUrl;
     const routerPort = environment.routerPort;
-    this.executor = new ClientCommunicator(httpClient, executorUrl, executorPort);
     this.router = new ClientCommunicator(httpClient, routerUrl, routerPort);
   }
 
@@ -31,7 +27,7 @@ export class Iam {
   }
 
   public spawn(name: string, data: any) {
-    return this.executor.post(
+    return this.router.post(
       ApiPaths.SPAWN_PROCESS, 
       data, 
       {type: "LOCAL", name: name}, 
@@ -41,15 +37,15 @@ export class Iam {
   }
 
   public addExecutable(data: any) {
-    return this.executor.post(ApiPaths.ADD_EXECUTABLE, data)
+    return this.router.post(ApiPaths.ADD_EXECUTABLE, data)
   }
 
   public getExecutable(username: string, exe: string, name: string) {
-    return this.executor.get(ApiPaths.GET_EXECUTABLE, {username: username, name: name, exe: exe});
+    return this.router.get(ApiPaths.GET_EXECUTABLE, {username: username, name: name, exe: exe});
   }
 
   public getExecutables(username: string, exe: string) {
-    return this.executor.get(ApiPaths.GET_EXECUTABLES, {username: username, exe: exe});
+    return this.router.get(ApiPaths.GET_EXECUTABLES, {username: username, exe: exe});
   }
 
   public runExecutable(username: string, exe: string, name: string, data: any) {
@@ -57,18 +53,18 @@ export class Iam {
   }
 
   public searchExecutables(searchText: string) {
-    return this.executor.get(ApiPaths.SEARCH_EXECUTABLES, {}, {searchText: searchText});
+    return this.router.get(ApiPaths.SEARCH_EXECUTABLES, {}, {searchText: searchText});
   }
 
   public getHost() {
-    return this.executor.getHost();
+    return this.router.getHost();
   }
 
   public getStatus() {
-    return this.executor.get(ApiPaths.GET_STATUS, {}, {});
+    return this.router.get(ApiPaths.GET_STATUS, {}, {});
   }
 
   public addClient(host: string, port: number) {
-    return this.executor.post(ApiPaths.ADD_CLIENT, {host: host, port: port}, {});
+    return this.router.post(ApiPaths.ADD_CLIENT, {host: host, port: port}, {});
   }
 }

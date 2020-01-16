@@ -71,10 +71,8 @@ metadata:
 spec:
   selector:
     app: iam-filesystem
-  type: NodePort
   ports:
     - protocol: TCP
       port: 80
       targetPort: 5000
-      nodePort: 30003
 EOF
