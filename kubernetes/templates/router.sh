@@ -62,6 +62,20 @@ spec:
             secretKeyRef:
               name: dbconfig
               key: db_name
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: iam-router
+# spec:
+#   selector:
+#     app: iam-router
+#   type: NodePort
+#   ports:
+#     - protocol: TCP
+#       port: 80
+#       targetPort: 5000
+#       nodePort: 30000
 ---
 apiVersion: v1
 kind: Service
@@ -70,10 +84,9 @@ metadata:
 spec:
   selector:
     app: iam-router
-  type: NodePort
+  type: LoadBalancer
   ports:
     - protocol: TCP
       port: 80
       targetPort: 5000
-      nodePort: 30005
 EOF

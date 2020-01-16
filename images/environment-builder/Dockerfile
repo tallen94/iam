@@ -1,4 +1,4 @@
-FROM icanplayguitar94/iam:base-foreach
+FROM icanplayguitar94/iam:base-test1
 
 RUN apt-get update
 RUN apt-get install docker.io -y
