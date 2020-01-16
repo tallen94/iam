@@ -17,7 +17,7 @@ spec:
       - name: regcred
       containers:
       - name: environment-builder
-        image: icanplayguitar94/iam:environment-builder-test1
+        image: icanplayguitar94/iam:environment-builder-f464753ae97241f40424a5b8fb0507c6b57eab15
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
