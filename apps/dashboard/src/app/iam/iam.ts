@@ -11,7 +11,7 @@ export class Iam {
 
   constructor(httpClient: HttpClient) {
     const routerUrl = window.location.hostname;
-    const routerPort = parseInt(window.location.port);
+    const routerPort = environment.port;
     this.router = new ClientCommunicator(httpClient, routerUrl, routerPort);
   }
 
