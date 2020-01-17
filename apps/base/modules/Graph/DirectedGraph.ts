@@ -21,6 +21,7 @@ export class DirectedGraph {
     if (startNodes.length == 1) {
       startNodes[0].execute(data)
     } else {
+      // TODO: Make each start node take in whole payload?
       Lodash.each(startNodes, (node, i) => node.execute(data[i]));
     }
 

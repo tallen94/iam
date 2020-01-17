@@ -105,7 +105,7 @@ export class GraphComponent implements OnInit {
   }
 
   newNode(exe: string) {
-    const newNodeId = "" + (this._nodes.length + 1);
+    const newNodeId = "" + this.maxId(this._nodes).id + 1;
     this.emitNewNode.emit({ id: newNodeId, exe: exe });
     
     if (this.editing.length == 1) {
@@ -115,6 +115,10 @@ export class GraphComponent implements OnInit {
     this.editing.push(newNodeId)
     this.editing = [...this.editing]
     this.emitEditing.emit(this.editing)
+  }
+
+  maxId(nodes: any[]) {
+    return Lodash.maxBy(nodes, (node) => node.id);
   }
 
   deleteEditing() {

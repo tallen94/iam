@@ -3,9 +3,7 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false,
-  routerUrl: "iam-local",
-  routerPort: 30000
+  production: false
 };
 
 /*
