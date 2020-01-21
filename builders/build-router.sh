@@ -5,7 +5,7 @@ TAG="icanplayguitar94/iam:router-$1"
 PUSH=$2
 
 # Build router project
-ENV=$3
+ENV=$4
 rm -rf images/router/src
 bash apps/dashboard/build.sh $ENV  && cp -r apps/dashboard/dist images/router/src
 
@@ -18,4 +18,5 @@ if [ "$PUSH" = "push" ]; then
 fi
 
 # Generate kubernetes app file
-bash kubernetes/templates/router.sh $TAG
+PROVIDER=$3
+bash kubernetes/templates/router.sh $TAG $PROVIDER

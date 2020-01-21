@@ -16,7 +16,7 @@ spec:
       - name: regcred
       containers:
       - name: iam-router
-        image: icanplayguitar94/iam:router-800e426df5aec706a317b0c594bd4d44a0aa0512
+        image: icanplayguitar94/iam:router-minikube
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
@@ -58,20 +58,6 @@ spec:
             secretKeyRef:
               name: dbconfig
               key: db_name
-# ---
-# apiVersion: v1
-# kind: Service
-# metadata:
-#   name: iam-router
-# spec:
-#   selector:
-#     app: iam-router
-#   type: NodePort
-#   ports:
-#     - protocol: TCP
-#       port: 80
-#       targetPort: 5000
-#       nodePort: 30000
 ---
 apiVersion: v1
 kind: Service
@@ -80,8 +66,9 @@ metadata:
 spec:
   selector:
     app: iam-router
-  type: LoadBalancer
+  type: NodePort
   ports:
     - protocol: TCP
       port: 80
       targetPort: 5000
+      nodePort: 30000
