@@ -10,8 +10,8 @@ export class Iam {
   private router: ClientCommunicator;
 
   constructor(httpClient: HttpClient) {
-    const routerUrl = environment.routerUrl == undefined ? window.location.hostname : environment.routerUrl;
-    const routerPort = environment.routerPort;
+    const routerUrl = window.location.hostname;
+    const routerPort = environment.port;
     this.router = new ClientCommunicator(httpClient, routerUrl, routerPort);
   }
 

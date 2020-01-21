@@ -4,8 +4,7 @@
 
 export const environment = {
   production: false,
-  routerUrl: "iam-local",
-  routerPort: 30000
+  port: 80
 };
 
 /*

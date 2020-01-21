@@ -16,7 +16,7 @@ spec:
       - name: regcred
       containers:
       - name: iam-filesystem
-        image: icanplayguitar94/iam:filesystem-test1
+        image: icanplayguitar94/iam:filesystem-minikube
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
