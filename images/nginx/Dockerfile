@@ -8,4 +8,4 @@ ENV IAM_KUBE_HOST=$host
 ENV IAM_KUBE_PORT=$port
 
 EXPOSE 80
-RUN envsubst < /etc/nginx/nginx.conf.template > /etc/nginx/conf.d/default.conf
+RUN envsubst '\$IAM_KUBE_HOST \$IAM_KUBE_PORT' < /etc/nginx/nginx.conf.template > /etc/nginx/conf.d/default.conf
