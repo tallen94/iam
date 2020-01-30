@@ -13,15 +13,33 @@ export class FileSystemApi {
   }
 
   private init() {
-
-    Lodash.each(this.fileSystem.getFolderNames(), (folderName) => {
-      // User local filesystem
-      this.serverCommunicator.static(this.fileSystem.getFolderRoot(folderName), "/" + folderName);
-      this.serverCommunicator.post("/" + folderName, (req, res) => {
-        const path = this.fileSystem.getFolderRoot(folderName) + "/" + req.body.name;
-        FS.createWriteStream(path).write(req.body.file);
-        res.status(200).json({});
+    this.serverCommunicator.get("/fs*", (req, res) => {
+      this.fileSystem.get(req.params[0])
+      .then((result) => {
+        res.status(200).send(result)
       });
+    });
+
+    this.serverCommunicator.post("/fs*", (req, res) => {
+      this.fileSystem.put(req.params[0], req.body.name, req.body.file)
+      .then((err: any) => {
+        if (err) {
+          res.status(500).send(err)
+        } else {
+          res.status(200)
+        }
+      })
+    });
+
+    this.serverCommunicator.delete("/fs*", (req, res) => {
+      this.fileSystem.delete(req.params[0])
+      .then((err: any) => {
+        if (err) {
+          res.status(500).send(err)
+        } else {
+          res.status(200)
+        }
+      })
     })
 
     this.serverCommunicator.get("/files", (req, res) => {
