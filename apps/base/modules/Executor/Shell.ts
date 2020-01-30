@@ -92,7 +92,7 @@ export class Shell {
           description: item.description,
           environment: item.environment
         };
-        return this.fileSystemCommunicator.getFile("programs", data.filename == undefined ? name : data.filename)
+        return this.fileSystemCommunicator.getFile("programs", name)
         .then((result) => {
           ret["text"] = result;
           return ret;
@@ -140,22 +140,28 @@ export class Shell {
   public runProgram(username: string, name: string, data: any): Promise<any> {
     return this.getProgram(username, name)
     .then((program) => {
-      let run = "";
-      const path = this.fileSystem.writeFolder("programs", uuid.v4(), program.text).toString();
-      run = program.command + " " + path;
-      if (program.args != "") {
-        const args = this.replace(program.args, data);
-        run = run + " " + args;
-      }
-      return this.shell.exec(run, JSON.stringify(data))
-      .then((result: any) => {
-        FS.unlinkSync(path);
-        try {
-          return JSON.parse(result);
-        } catch {
-          return result;
+      const tmpName = uuid.v4()
+      return this.fileSystem.put("programs", tmpName, program.text)
+      .then((err: any) => {
+        if (err) {
+          return err;
         }
-      });
+        const path = this.fileSystem.path("programs/" + tmpName);
+        let run = program.command + " " + path;
+        if (program.args != "") {
+          const args = this.replace(program.args, data);
+          run = run + " " + args;
+        }
+        return this.shell.exec(run, JSON.stringify(data))
+        .then((result: any) => {
+          this.fileSystem.delete("programs/" + tmpName)
+          try {
+            return JSON.parse(result);
+          } catch {
+            return result;
+          }
+        });
+      })
     });
   }
 
