@@ -19,6 +19,7 @@ export class NestedInputComponent implements OnInit {
   @Input() hidden: any[] = [];
   @Input() editing: any[] = [];
   @Input() running: any;
+  @Input() showForeach: boolean;
   private prevData: any;
   private prevExe: string = "";
   private options = {

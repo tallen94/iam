@@ -5,10 +5,12 @@ VERSION=$2
 PUSH=$3
 
 if [ $APP_NAME = "base" ]; then
-  bash builders/build-$APP_NAME.sh $VERSION $PUSH
-elif [ $APP_NAME = "dashboard" ]; then
-  ENV=$4
-  bash builders/build-$APP_NAME.sh $VERSION $PUSH $ENV
+  PROVIDER=$4
+  bash builders/build-$APP_NAME.sh $VERSION $PUSH $PROVIDER
+elif [ $APP_NAME = "router" ]; then
+  PROVIDER=$4
+  ENV=$5
+  bash builders/build-$APP_NAME.sh $VERSION $PUSH $PROVIDER $ENV
 elif [ $APP_NAME = "database" ]; then 
   bash builders/build-$APP_NAME.sh $VERSION $PUSH
 elif [ $APP_NAME = "dependencies" ]; then

@@ -3,7 +3,7 @@ name: Release Dashboard
 on: 
   push:
     branches:
-    - 'release/dashboard'
+    - 'release/router'
 
 jobs:
   build:
@@ -17,7 +17,7 @@ jobs:
         node-version: '11.14.0'
     
     - name: Build Dashboard
-      run: bash build.sh dashboard $GITHUB_SHA push -prod
+      run: bash build.sh router $GITHUB_SHA push eks -prod
     
     - name: Commit Changes
       run: |

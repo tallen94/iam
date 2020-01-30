@@ -50,6 +50,26 @@
   </div>
 </div>
 
+<div class="inline-input foreach" *ngIf="showForeach && data.exe == 'graph'">
+  <div *ngIf="editing">
+    <label>FOREACH</label>
+    <input type="checkbox" [(ngModel)]="data.graph.foreach">
+  </div>
+  <div *ngIf="!editing && data.graph.foreach">
+    <p>[FOREACH]</p>
+  </div>
+</div>
+
+<div class="inline-input foreach" *ngIf="showForeach && data.exe != 'graph'">
+  <div *ngIf="editing">
+    <label>FOREACH</label>
+    <input type="checkbox" [(ngModel)]="data.foreach">
+  </div>
+  <div *ngIf="!editing && data.foreach">
+    <p>[FOREACH]</p>
+  </div>
+</div>
+
 <div>
   <label class="nested-title" *ngIf="editing || (data.description && data.description != '')">Description</label>
   <div *ngIf="editing" class="text-editor" ace-editor

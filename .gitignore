@@ -1,5 +1,6 @@
 .DS_Store
 .vscode
+.idea
 
 # DEPENDENCIES
 node_modules
@@ -26,7 +27,7 @@ local
 
 kubernetes/secrets
 images/base/deploy.tgz
-images/dashboard/src
+images/router/src
 
 yarn.lock
 

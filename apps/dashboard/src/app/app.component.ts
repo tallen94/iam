@@ -15,14 +15,20 @@ export class AppComponent {
   ) {
     const token = localStorage.getItem("token");
     if (token !== null) {
-      this.iam.runExecutable("admin", "graph", "validate-token", [{token: token}])
+      this.iam.runExecutable("admin", "graph", "validate-token", {token: token})
       .subscribe((result: any) => {
-        if (result.result.length > 0) {
-          const user = result.result[0];
+        if (result.result) {
+          const user = result.result;
           this.iam.setUser(user.username, token);
           this.router.navigate(["/home"]);
+        } else {
+          localStorage.removeItem("token")
+          this.router.navigate(["/login"])
         }
       });
+    } else {
+      localStorage.removeItem("token")
+      this.router.navigate(["/login"])
     }
   }
 

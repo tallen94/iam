@@ -10,7 +10,7 @@
       <button class="btn-sm btn-secondary" *ngIf="!isEditing()" (click)="triggerEdit()">edit</button>
       <button class="btn-sm btn-success" (click)="triggerRunning()">run</button>
     </div>
-    <header [data]="data" [editing]="isEditing()" (emitUpdateData)="receiveUpdateData($event)"></header>
+    <header [data]="data" [editing]="isEditing()" (emitUpdateData)="receiveUpdateData($event)" [showForeach]="showForeach"></header>
     <div *ngIf="data.exe == 'function'">
       <div *ngIf="!isHidden() || isEditing()">
         <hidden-header [data]="data" [editing]="isEditing()"></hidden-header>
@@ -86,7 +86,8 @@
           (emitHidden)="receiveEmitHidden($event)"
           (emitRunning)="receiveEmitRunning($event)"
           (emitUpdateData)="receiveUpdateData($event)"
-          [(hidden)]="hidden"></nested-input>
+          [(hidden)]="hidden"
+          [showForeach]="true"></nested-input>
       </div>
     </div>
 

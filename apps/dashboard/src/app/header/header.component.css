@@ -94,3 +94,15 @@ label {
 .nested-title {
   color: #007bff;
 }
+
+.foreach {
+  color: #17a2b8;
+  font-weight: 600;
+  font-size: 1em;
+  margin-left: 16px;
+}
+
+input[type="checkbox"] {
+  transform: scale(1.25);
+  margin-left: 4px;
+}

@@ -34,6 +34,10 @@ export class ServerCommunicator {
     this.api.post(path, fn);
   }
 
+  public delete(path: string, fn: (req: any, res: any) => void) {
+    this.api.delete(path, fn);
+  }
+
   public use(fn: (req, res, next) => void) {
     this.api.use(fn)
   }
