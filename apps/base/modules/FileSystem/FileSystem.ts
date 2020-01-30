@@ -1,7 +1,6 @@
 import Path from "path";
 import FS from "fs";
 import Lodash from "lodash";
-import { Shell } from "../Executor/Shell";
 
 export class FileSystem {
 
@@ -25,6 +24,69 @@ export class FileSystem {
         }
       }
       this.writeDirectory(folder, "")
+    })
+  }
+
+  public get(path: string) {
+    return new Promise((resolve, reject) => {
+      path = this.path(path);
+      if (FS.lstatSync(path).isFile()) {
+        FS.readFile(path, (err, buffer) => {
+          resolve(buffer.toString())
+        })
+      } else {
+        FS.readdir(path, (err, files) => {
+          resolve(files)
+        })
+      } 
+    })
+  }
+
+  public put(folder: string, name: string, file: string) {
+    return new Promise((resolve, reject) => {
+      folder = this.path(folder)
+      if (FS.lstatSync(folder).isFile()) {
+        resolve("invalid folder")
+      } else {
+        if (!FS.existsSync(folder)) {
+          FS.mkdir(folder, (err) => {
+            if (err) {
+              resolve(err)
+            } else {
+              const path = folder + "/" + name;
+              FS.createWriteStream(path).write(file);
+              resolve()
+            }
+          })
+        } else {
+          const path = folder + "/" + name;
+          FS.createWriteStream(path).write(file);
+          resolve()
+        }
+      }
+    })
+  }
+
+  public delete(path: string) {
+    return new Promise((resolve, reject) => {
+      path = this.path(path)
+      if (FS.lstatSync(path).isFile()) {
+        FS.unlink(path, (err) => {
+          if (err) {
+            resolve(err)
+          } else {
+            resolve()
+          }
+        })
+      } else {
+        FS.rmdir(path, (err) => {
+          if (err) {
+            resolve(err)
+          } else {
+            resolve()
+          }
+        })
+      }
     })
   }
 
