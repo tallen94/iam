@@ -26,7 +26,7 @@ export class FileSystemApi {
         if (err) {
           res.status(500).send(err)
         } else {
-          res.status(200)
+          res.status(200).send()
         }
       })
     });
@@ -37,7 +37,7 @@ export class FileSystemApi {
         if (err) {
           res.status(500).send(err)
         } else {
-          res.status(200)
+          res.status(200).send()
         }
       })
     })
