@@ -21,10 +21,8 @@
     "serve-debug": "nodemon --inspect dist/server.js",
     "watch-debug": "concurrently -k -p \"[{name}]\" -n \"Sass,TypeScript,Node\" -c \"yellow.bold,cyan.bold,green.bold\" \"npm run watch-sass\" \"npm run watch-ts\" \"npm run serve-debug\"",
     "cli": "node dist/modules/CliTools/CliTools.js",
-    "executor": "node dist/server.js executor '/home/treovor/git/iam/local' 5000 iam password iam-local 30002 iam localhost 5003",
-    "router": "node dist/server.js router '/home/treovor/git/iam/local' 5001 iam password iam-local 30002 iam",
-    "filesystem": "node dist/server.js filesystem '/home/treovor/git/iam/images/filesystem' 5003",
-    "environment": "node dist/server.js environment '/home/treovor/git/iam/local' 5004 iam password iam-local 30002 iam localhost 5003"
+    "executor": "node dist/server.js executor '/home/treovor/git/iam/local' 5000 iam password iam-local 30002 iam iam-local 30001",
+    "router": "node dist/server.js router '/home/treovor/git/iam/local' 5001 iam password iam-local 30002 iam"
   },
   "author": "Trevor Allen",
   "license": "ISC",

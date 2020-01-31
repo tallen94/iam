@@ -105,7 +105,7 @@ export class GraphComponent implements OnInit {
   }
 
   newNode(exe: string) {
-    const newNodeId = "" + this.maxId(this._nodes).id + 1;
+    const newNodeId = "" + (parseInt(this.maxId(this._nodes).id) + 1);
     this.emitNewNode.emit({ id: newNodeId, exe: exe });
     
     if (this.editing.length == 1) {
