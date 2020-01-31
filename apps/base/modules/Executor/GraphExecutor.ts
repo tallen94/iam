@@ -116,39 +116,41 @@ export class GraphExecutor {
     return Promise.all(Lodash.map(nodes, (node) => {
       return this.executor.getExecutable(node.username, node.name, node.exe)
     }).map((nodePromise, index) => {
-        return nodePromise.then((node) => {
-          node.foreach = nodes[index].foreach
-          return this.database.runQuery("admin", "get-exe-environment", {username: node.username, exe: node.exe, name: node.name})
-          .then((results) => {
-            if (results.length > 0) {
-              const env = JSON.parse(results[0].data)
-              const clientCommunicator = new ClientCommunicator(env.host, env.port)
-              const client = new Client(clientCommunicator);
-              return this.stepListManager.stepJsonToStep(node, client);
-            }
-          })
-        });
-      }));
+      return nodePromise.then((node) => {
+        node.foreach = nodes[index].foreach
+        return this.database.runQuery("admin", "get-exe-environment", {username: node.username, exe: node.exe, name: node.name})
+        .then((results) => {
+          if (results.length > 0) {
+            const env = JSON.parse(results[0].data)
+            const clientCommunicator = new ClientCommunicator(env.host, env.port)
+            const client = new Client(clientCommunicator);
+            return this.stepListManager.stepJsonToStep(node, client);
+          }
+        })
+      });
+    }));
   }
 
   private buildGraph(nodes: any[], edges: any[]) {
     return this.getSteps(nodes)
     .then((steps) => {
-      const nodeList = Lodash.map(steps, (step) => {
-        return new Node([], [], step);
+      const indexedNodes = {}
+      Lodash.each(steps, (step, i) => {
+        const node = new Node([], [], step)
+        indexedNodes[nodes[i].id] = node;
       });
 
       Lodash.each(edges, (edge) => {
-        const source = edge.source - 1;
-        const target = edge.target - 1;
-        if (nodeList[target] != undefined) {
-          nodeList[target].addParent(nodeList[source]);
+        const source = edge.source;
+        const target = edge.target;
+        if (indexedNodes[target] != undefined) {
+          indexedNodes[target].addParent(indexedNodes[source]);
         }
-        if (nodeList[source] != undefined) {
-          nodeList[source].addChild(nodeList[target]);
+        if (indexedNodes[source] != undefined) {
+          indexedNodes[source].addChild(indexedNodes[target]);
         }
       });
-      return new DirectedGraph(nodeList);
+      return new DirectedGraph(Lodash.values(indexedNodes));
     });
   }
 
