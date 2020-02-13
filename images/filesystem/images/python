@@ -1,4 +1,4 @@
-FROM icanplayguitar94/iam:base-83bb4886394ba7180ebea13d8ab41e315f3a654a
+FROM icanplayguitar94/iam:base-minikube
 
 RUN apt-get clean
 RUN apt-get update && apt-get install \

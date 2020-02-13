@@ -146,4 +146,25 @@ export class NestedInputComponent implements OnInit {
   isEmpty(str: string) {
     return str === undefined || str === '';
   }
+
+  applyKubernetes() {
+    this.iam.runExecutable("admin", "function", "kubectl-apply", { file: this.data.name })
+    .subscribe((result) => {
+      console.log(result)
+    })
+  }
+
+  buildImage() {
+    this.iam.runExecutable("admin", "function", "build-image", { tag: this.data.imageTag, image: this.data.name})
+    .subscribe((result) => {
+      console.log(result)
+    })
+  }
+
+  applyPool() {
+    this.iam.runExecutable("admin", "graph", "update-env-pool", [{svc: this.data.environment}, {username: this.data.username, name: this.data.name}])
+    .subscribe((result) => {
+      console.log(result)
+    })
+  }
 } 

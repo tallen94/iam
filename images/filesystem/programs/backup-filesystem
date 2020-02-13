@@ -13,6 +13,6 @@ for folder in folders:
         tmp.close()
         
         s3client = boto3.client('s3')
-        response = s3client.upload_file(file["name"], args["filesystem"], file["name"])
+        response = s3client.upload_file(file["name"], args["bucket"], file["name"])
         
         os.remove(file["name"])

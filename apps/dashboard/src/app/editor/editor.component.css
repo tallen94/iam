@@ -10,14 +10,14 @@
 }
 
 .upper {
-  width: 100%;
-  padding: 4px;
-  background-color: #f6f8fa;
+  padding: 2px;
+  background-color: transparent;
+  height: 40px;
 }
 
 .lower {
   position: absolute;
-  top: 0;
+  top: 42px;
   left: 0;
   right: 0;
   bottom: 0;

@@ -1,7 +1,9 @@
 import Shell from "shelljs";
-import { LocalProcess } from "../Process/LocalProcess";
+import uuid from "uuid";
 
 export class ShellCommunicator {
+
+  private processes = {}
 
   constructor() { }
 
@@ -26,5 +28,34 @@ export class ShellCommunicator {
         resolve(out);
       });
     });
+  }
+
+  public createProcess(command) {
+    const pid = uuid.v4()
+    return {
+      pid: pid,
+      promise: new Promise((resolve, reject) => {
+        this.processes[pid] = Shell.exec(command, { silent: true }, (code: number, out: string, err: any) => { });
+        let out = "";
+        this.processes[pid].stdout.on("data", (data: string) => {
+          out = out + data;
+        });
+
+        this.processes[pid].stderr.on("data", (data: string) => {
+          out = out + data;
+        });
+
+        this.processes[pid].on("close", (code, signal) => {
+          this.processes[pid].closed = true
+          resolve(out);
+        });
+      })
+    };
+  }
+
+  public pipeProcess(pid: string, data: string) {
+    if (data != undefined && !this.processes[pid].closed) {
+      this.processes[pid].stdin.write(data + "\n");
+    }
   }
 }

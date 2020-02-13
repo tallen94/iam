@@ -67,4 +67,21 @@ export class InitData {
       environment: "environment-builder"
     }
   }
+
+  pool(id: number, name: string) {
+    return {
+      id: id,
+      username: this.iam.getUser().username,
+      exe: "pool",
+      name: name,
+      environment: "base",
+      description: "This is pool.",
+      input: "",
+      output: "",
+      executableName: "",
+      executableExe: "",
+      executableUsername: "",
+      size: 0
+    }
+  }
 }

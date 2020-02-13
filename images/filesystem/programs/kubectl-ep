@@ -1,0 +1,3 @@
+#!/bin/bash
+
+kubectl get ep $1 | egrep $1 | cut -d ' ' -f 4
