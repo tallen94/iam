@@ -1,2 +1,0 @@
-args = input()
-print(args)
