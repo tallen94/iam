@@ -16,7 +16,7 @@ spec:
       - name: regcred
       containers:
       - name: base
-        image: icanplayguitar94/iam:base-7d6f95208ad8fb4636fc8a6997039429d59da3e4
+        image: icanplayguitar94/iam:base-minikube
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
@@ -33,6 +33,8 @@ spec:
           value: "executor"
         - name: SERVER_PORT
           value: "5000"
+        - name: "ENVIRONMENT"
+          value: "base"
 
         # FS CONFIG
         - name: FS_HOST

@@ -87,7 +87,7 @@ export class EditorComponent implements OnInit {
   public delete() {
     this.iam.runExecutable("admin", "query", "delete-exe", this.data)
     .subscribe((response) => {
-      this.router.navigate(["/home"]);
+      this.data = undefined;
     });
   }
 

@@ -24,7 +24,7 @@ export class HeaderComponent implements OnInit {
   constructor(private iam: Iam) {
   }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   public nameOnChange(value) {
     if (value !== "") {

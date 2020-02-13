@@ -1,0 +1,10 @@
+import json
+import requests
+
+args = input()
+data = json.loads(args)
+
+file = requests.get("http://" + host + "/fs" + file).text
+dest = open(dest, "w")
+dest.write(file)
+dest.close()

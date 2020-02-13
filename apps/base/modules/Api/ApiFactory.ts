@@ -35,7 +35,7 @@ export class ApiFactory {
     )
     const database = new Database(databaseCommunicator);
     const clientThreadPool: ClientPool = new ClientPool();
-    const executor: Executor = new Executor(fileSystem, dbconfig, fsconfig, clientThreadPool);
+    const executor: Executor = new Executor("base", fileSystem, dbconfig, fsconfig, clientThreadPool);
     const router: EnvironmentRouter = new EnvironmentRouter(database);
     new EnvironmentRouterApi(router, serverCommunicator, executor);
     new DashboardApi(fileSystem, serverCommunicator);
@@ -53,9 +53,10 @@ export class ApiFactory {
       host: process.env.FS_HOST || process.argv[10],
       port: process.env.FS_PORT || process.argv[11]
     };
+    const environment = process.env.ENVIRONMENT || process.argv[12]
     const clientThreadPool: ClientPool = new ClientPool();
     new StatusApi(serverCommunicator);
-    const executor: Executor = new Executor(fileSystem, dbconfig, fsconfig, clientThreadPool);
+    const executor: Executor = new Executor(environment, fileSystem, dbconfig, fsconfig, clientThreadPool);
     new ExecutableApi(executor, serverCommunicator);
     new FileSystemApi(fileSystem, serverCommunicator);
   }
@@ -74,7 +75,7 @@ export class ApiFactory {
     };
     const clientThreadPool: ClientPool = new ClientPool();
     new StatusApi(serverCommunicator);
-    const executor: Executor = new Executor(fileSystem, dbconfig, fsconfig, clientThreadPool);
+    const executor: Executor = new Executor("base", fileSystem, dbconfig, fsconfig, clientThreadPool);
     new JobRunner(executor);
   }
 }

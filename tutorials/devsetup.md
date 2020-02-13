@@ -7,15 +7,34 @@ Iam runs on a Kubernetes cluster. Follow the [minikube](https://kubernetes.io/do
 
 *Note: you must enable `hairpin mode` on the cluster. To enable in minikube run `./hairpin.sh`*
 
+### Install Build Deps
+Building the project requires `nodejs v[8-11]`. Ensure your system has this installed by running `node -v`
+
+### Build Base
+
+*Note: To build images locally without pushing to docker hub, you need to run `eval $(minikube docker-env)` to use the minikube VM's docker daemon.*
+
+Build the application to run on minikube. (see `Building Locally` for details)
+
+`>$ ./build.sh base minikube no minikube`
+
+This builds the images with minikube version and will not push to docker hub.
+
 ### Start from scratch
-Setup your environment by executing the init.sh bash script.
+Deploy the application by executing the init.sh bash script.
 
 `>$ ./init.sh`
 
 Check status of cluster through `minikube dashboard`
 
+### Start the Proxy
+The application will be running on `<minikube_ip>:30000`, but the dashboard expects the backend to be at the current browser host on port 80. 
+Starting the proxy will allow us to access the application at `http://localhost`.
+
+`>$ ./proxy.sh <minikube_ip> 30000`
+
 ### Using the Dasbhoard
-Navigate to dashboard at `<cluster_host>:30000`
+Navigate to dashboard at `http://localhost`
 
 The first thing to do is create an `admin` user.
 
@@ -29,8 +48,6 @@ There are 5 images that can be built:
 - dashboard
 - environment-builder
 
-*Note: To build images locally without pushing to docker hub, you need to run `eval $(minikube docker-env)` to use the minikube VM's docker daemon.*
-
 ### Building Locally
 There is a build script to build apps locally to deploy to `minikube`
 
@@ -38,6 +55,7 @@ There is a build script to build apps locally to deploy to `minikube`
 - `<image_name>`: dependencies | base | filesystem | dashbaord | environment-builder | database
 - `<tag>`: anystring
 - `<push>`: "push" or "no-push" to push docker image to docker hub
+- `<provider>`: minikube | eks
 
 Eeach image has its own build script located at `builders/build-<image_name>`. When these scripts are run, they execute the build scripts of images dependent on the current one. 
 

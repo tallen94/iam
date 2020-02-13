@@ -1,0 +1,21 @@
+import json
+import requests
+
+args = input()
+data = json.loads(args)
+
+endpoints = data[0]["endpoints"]
+functions = data[1]
+
+results = []
+for function in functions:
+    file = requests.get("http://iam-filesystem.default/fs/programs/" + function["name"]).text
+    for endpoint in endpoints:
+        print("http://" + endpoint + "/fs/programs")
+        # res = requests.post("http://" + endpoint + "/fs/programs", data={
+        #     "name": function["name"],
+        #     "file": file
+        # }).text
+        # results.append(res)
+    
+print(json.dumps(results))

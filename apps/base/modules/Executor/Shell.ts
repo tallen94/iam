@@ -165,6 +165,10 @@ export class Shell {
     });
   }
 
+  public getShellCommunicator() {
+    return this.shell;
+  }
+  
   private replace(s: string, data: any): string {
     const re = new RegExp("{root}", "g");
     s = s.replace(re, this.fileSystem.getRoot());

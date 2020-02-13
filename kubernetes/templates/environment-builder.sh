@@ -38,6 +38,8 @@ spec:
           value: "executor"
         - name: SERVER_PORT
           value: "5000"
+        - name: "ENVIRONMENT"
+          value: "environment-builder"
 
         # FS CONFIG
         - name: FS_HOST
