@@ -15,24 +15,30 @@ import { FileSystemCommunicator } from "../Communicator/FileSystemCommunicator";
 import { GraphExecutor } from "./GraphExecutor";
 import { EnvironmentManager } from "../Environment/EnvironmentManager";
 import { EnvironmentRouter } from "./EnvironmentRouter";
+import { PoolManager } from "../Pool/PoolManager";
 
 export class Executor {
 
   private shell: Shell;
   private database: Database;
-  private clientPool: ClientPool;
   private stepListManager: StepListManager;
   private environmentManager: EnvironmentManager;
   private graphExecutor: GraphExecutor;
   private jobRunner: JobRunner;
+  private poolManager: PoolManager;
 
-  constructor(fileSystem: FileSystem, dbConfig: any, fsConfig: any, clientPool: ClientPool) {
-    this.clientPool = clientPool;
+  constructor(
+    environment: string,
+    fileSystem: FileSystem,
+    dbConfig: any,
+    fsConfig: any,
+    private clientPool: ClientPool) {
     this.setDatabase(dbConfig);
     this.setShell(fileSystem, this.database, fsConfig);
     this.setStepListManager(this.shell, this.database, clientPool);
     this.setEnvironmentManager(this.shell, this.database, fsConfig, fileSystem);
     this.setGraphExecutor();
+    this.setPoolManager(fileSystem, environment);
   }
 
   public setJobRunner(jobRunner: JobRunner) {
@@ -63,6 +69,8 @@ export class Executor {
         return this.graphExecutor.addGraph(data);
       case "environment":
         return this.environmentManager.addEnvironment(data);
+      case "pool":
+        return this.poolManager.addPool(data);
     }
   }
 
@@ -172,8 +180,28 @@ export class Executor {
               kubernetes: files[1],
               host: data.host,
               port: data.port,
+              replicas: data.replicas,
+              cpu: data.cpu,
+              memory: data.memory,
+              imageRepo: data.imageRepo,
+              type: data.type,
               environment: stepJson.environment
             };
+          })
+        case "pool":
+          const data = JSON.parse(stepJson.data)
+          return Promise.resolve({
+            username: stepJson.username,
+            name: stepJson.name,
+            exe: stepJson.exe,
+            description: stepJson.description,
+            input: stepJson.input,
+            output: stepJson.output,
+            executableUsername: data.username,
+            executableExe: data.exe,
+            executableName: data.name,
+            poolSize: data.poolSize,
+            environment: stepJson.environment
           })
       }
     });
@@ -204,12 +232,17 @@ export class Executor {
         return this.graphExecutor.getGraphs(username);
       case "environment":
         return this.environmentManager.getEnvironments(username);
+      case "pool":
+        return this.poolManager.getPools(username)
     }
   }
 
   public runExecutable(username: string, name: string, exe: string, data: any) {
     switch (exe) {
       case "function":
+        if (this.poolManager.hasPool(username, name, exe)) {
+          return this.poolManager.useDroplet(username, name, exe, data)
+        }
         return this.shell.runProgram(username, name, data);
       case "query":
         return this.database.runQuery(username, name, data);
@@ -220,7 +253,9 @@ export class Executor {
       case "graph":
         return this.graphExecutor.runGraph(name, data);
       case "environment":
-        return this.environmentManager.runEnvironment(username, name , data);
+        return this.environmentManager.runEnvironment(username, name, data);
+      case "pool":
+        return this.poolManager.runPool(username, name, data)
     }
   }
 
@@ -285,13 +320,16 @@ export class Executor {
   private setEnvironmentManager(shell: Shell, database: Database, fsConfig: any, fileSystem: FileSystem) {
     const fsClient = new ClientCommunicator(fsConfig["host"], fsConfig["port"])
     const fileSystemCommunicator: FileSystemCommunicator = new FileSystemCommunicator(fsClient);
-    const environmentRouter: EnvironmentRouter = new EnvironmentRouter(database);
-    this.environmentManager = new EnvironmentManager(fileSystem, shell, database, fileSystemCommunicator, environmentRouter);
+    this.environmentManager = new EnvironmentManager(fileSystem, shell, database, fileSystemCommunicator);
     return this.environmentManager;
   }
 
   public addClientThread(host: string, port: number) {
     const clientCommunicator: ClientCommunicator = new ClientCommunicator(host, port);
     this.clientPool.addClient(new Client(clientCommunicator));
+  }
+
+  public setPoolManager(fileSystem: FileSystem, environment) {
+    this.poolManager = new PoolManager(this, fileSystem, environment);
   }
 }

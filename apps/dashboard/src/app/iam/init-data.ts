@@ -64,7 +64,29 @@ export class InitData {
       port: "80",
       image: "FROM icanplayguitar94/iam:base-latest",
       kubernetes: "",
-      environment: "environment-builder"
+      environment: "environment-builder",
+      replicas: 1,
+      imageRepo: "icanplayguitar94/iam",
+      cpu: "500Mi",
+      memory: "500MB",
+      type: "executor"
+    }
+  }
+
+  pool(id: number, name: string) {
+    return {
+      id: id,
+      username: this.iam.getUser().username,
+      exe: "pool",
+      name: name,
+      environment: "base",
+      description: "This is pool.",
+      input: "",
+      output: "",
+      executableName: "",
+      executableExe: "",
+      executableUsername: "",
+      size: 0
     }
   }
 }

@@ -80,21 +80,15 @@ loginDocker() {
    fi
 
 }
-addHosts() {
-echo Sudo adding iam host to /etc/hosts...
-sudo tee -a /etc/hosts > /dev/null <<EOF
-# Added by IAM setup
-# To access the cluster
-192.168.64.2 iam-local
-# End of section
-EOF
-}
 
 # Main
 loginDocker
+
 echo Configure your IAM by creating a password for the database
 setupPassword
+
 mkdir -p kubernetes/secrets/
+
 touch kubernetes/secrets/dbconfig.yaml
 cat > kubernetes/secrets/dbconfig.yaml <<EOF
 apiVersion: v1
@@ -107,6 +101,7 @@ data:
   db_name: aWFt
   password: $PASSWORD
 EOF
+
 touch kubernetes/secrets/dockerconfig.yaml
 cat > kubernetes/secrets/dockerconfig.yaml <<EOF
 apiVersion: v1
@@ -120,10 +115,3 @@ data:
 EOF
 
 applyConfig
-
-if grep -Fxq "# Added by IAM setup" /etc/hosts
-then
-   exit 0
-else
-   addHosts
-fi

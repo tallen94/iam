@@ -17,7 +17,7 @@ spec:
       - name: regcred
       containers:
       - name: environment-builder
-        image: icanplayguitar94/iam:environment-builder-aac3d5ffc6133866e11bf5f1d3d5ed34eef364b3
+        image: icanplayguitar94/iam:environment-builder-minikube
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
@@ -34,6 +34,8 @@ spec:
           value: "executor"
         - name: SERVER_PORT
           value: "5000"
+        - name: "ENVIRONMENT"
+          value: "environment-builder"
 
         # FS CONFIG
         - name: FS_HOST

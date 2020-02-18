@@ -1,0 +1,3 @@
+#!/bin/bash
+
+kubectl apply -f http://iam-filesystem.default/fs/kubernetes/$1

@@ -16,7 +16,7 @@ spec:
       - name: regcred
       containers:
       - name: iam-router
-        image: icanplayguitar94/iam:router-aac3d5ffc6133866e11bf5f1d3d5ed34eef364b3
+        image: icanplayguitar94/iam:router-minikube
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
@@ -66,8 +66,9 @@ metadata:
 spec:
   selector:
     app: iam-router
-  type: LoadBalancer
+  type: NodePort
   ports:
     - protocol: TCP
       port: 80
       targetPort: 5000
+      nodePort: 30000

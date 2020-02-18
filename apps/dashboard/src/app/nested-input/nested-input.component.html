@@ -93,6 +93,18 @@
 
     <div *ngIf="data.exe == 'environment'">
       <hidden-header [data]="data" [editing]="isEditing()"></hidden-header>
+
+      <div class="inline-input type">
+        <label *ngIf="isEditing() || (!isEditing() && !isEmpty(data.type))">Type</label>
+        <div *ngIf="isEditing()">
+          <select class="form-control" [(ngModel)]="data.type">
+            <option>executor</option>
+            <option>yaml</option>
+          </select>
+        </div>
+        <p *ngIf="!isEditing()">{{data.type}}</p>
+      </div>
+
       <div class="inline-input"> 
         <label *ngIf="isEditing() || (!isEditing() && !isEmpty(data.host))">Host</label>
         <input 
@@ -119,6 +131,22 @@
 
       <div>
         <label class="nested-title" *ngIf="isEditing() || (!isEditing() && !isEmpty(data.image))">Image</label>
+
+        <div>
+          <div class="inline-input">
+            <label *ngIf="isEditing() || (!isEditing() && !isEmpty(data.port))">Image Repo</label>
+            <input 
+              class="form-control"
+              size="{{inputSize('imageRepo')}}"
+              *ngIf="isEditing()" 
+              type="text" 
+              [(ngModel)]="data.imageRepo"
+              placeholder="imageRepo">
+            <p *ngIf="!isEditing()">{{data.imageRepo}}</p>
+          </div>
+          <button class="btn-sm btn-primary" (click)="buildImage()">build</button>
+        </div>
+
         <div *ngIf="isEditing()" class="text-editor" ace-editor
           [(text)]="data.image"
           [mode]="data.command || 'mysql'" 
@@ -130,8 +158,57 @@
         </div>
       </div>
 
-      <div>
+      <div *ngIf="data.type == 'executor'">
+        <label class="nested-title">Resource Limits</label>
+        <div>
+          <button class="btn-sm btn-primary" (click)="applyKubernetes()">apply</button>
+        </div>
+
+        <div class="inline-input">
+          <label *ngIf="isEditing() || (!isEditing() && !isEmpty(data.replicas))">Replicas</label>
+          <input 
+            class="form-control"
+            size="{{inputSize('replicas')}}"
+            *ngIf="isEditing()" 
+            type="text" 
+            [(ngModel)]="data.replicas"
+            placeholder="replicas">
+          <p *ngIf="!isEditing()">{{data.replicas}}</p>
+        </div>
+
+        <div>
+          <div class="inline-input">
+            <label *ngIf="isEditing() || (!isEditing() && !isEmpty(data.cpu))">Cpu</label>
+            <input 
+              class="form-control"
+              size="{{inputSize('cpu')}}"
+              *ngIf="isEditing()" 
+              type="text" 
+              [(ngModel)]="data.cpu"
+              placeholder="CPU">
+            <p *ngIf="!isEditing()">{{data.cpu}}</p>
+          </div>
+  
+          <div class="inline-input">
+            <label *ngIf="isEditing() || (!isEditing() && !isEmpty(data.memory))">Memory</label>
+            <input 
+              class="form-control"
+              size="{{inputSize('memory')}}"
+              *ngIf="isEditing()" 
+              type="text" 
+              [(ngModel)]="data.memory"
+              placeholder="MEM">
+            <p *ngIf="!isEditing()">{{data.memory}}</p>
+          </div>
+        </div>
+      </div>
+
+
+      <div *ngIf="data.type == 'yaml'">
         <label class="nested-title" *ngIf="isEditing() || (!isEditing() && !isEmpty(data.kubernetes))">Kubernetes</label>
+        <div>
+          <button class="btn-sm btn-primary" (click)="applyKubernetes()">apply</button>
+        </div>
         <div *ngIf="isEditing()" class="text-editor" ace-editor
           [(text)]="data.kubernetes"
           [mode]="'yaml'" 
@@ -141,6 +218,70 @@
         <div class="markdown" *ngIf="!isEditing()">
           <ngx-md [data]="getCodeMarkdown('yaml', data.kubernetes)" ></ngx-md>
         </div>
+      </div>
+    </div>
+
+    <div *ngIf="data.exe == 'pool'">
+      <div *ngIf="!isHidden() || isEditing()">
+        <hidden-header [data]="data" [editing]="isEditing()"></hidden-header>
+      </div>
+
+      <div class="inline-input">
+        <label *ngIf="isEditing() || (!isEditing() && !isEmpty(data.poolSize))">PoolSize</label>
+        <input 
+          class="form-control"
+          size="{{inputSize('poolSize')}}"
+          *ngIf="isEditing()" 
+          type="text" 
+          [(ngModel)]="data.poolSize"
+          placeholder="poolSize">
+        <p *ngIf="!isEditing()">{{data.poolSize}}</p>
+      </div>
+
+      <div>
+        <label class="nested-title">Executable</label>
+        <div>
+          <div class="inline-input">
+            <label *ngIf="isEditing() || (!isEditing() && !isEmpty(data.executableUsername))">Username</label>
+            <input 
+              class="form-control"
+              size="{{inputSize('executableUsername')}}"
+              *ngIf="isEditing()" 
+              type="text" 
+              [(ngModel)]="data.executableUsername"
+              placeholder="executableUsername">
+            <p *ngIf="!isEditing()">{{data.executableUsername}}</p>
+          </div>
+    
+          <div class="inline-input">
+            <label *ngIf="isEditing() || (!isEditing() && !isEmpty(data.executableExe))">Exe</label>
+            <input 
+              class="form-control"
+              size="{{inputSize('executableExe')}}"
+              *ngIf="isEditing()" 
+              type="text" 
+              [(ngModel)]="data.executableExe"
+              placeholder="executableExe">
+            <p *ngIf="!isEditing()">{{data.executableExe}}</p>
+          </div>
+    
+          <div class="inline-input">
+            <label *ngIf="isEditing() || (!isEditing() && !isEmpty(data.executableName))">Name</label>
+            <input 
+              class="form-control"
+              size="{{inputSize('executableName')}}"
+              *ngIf="isEditing()" 
+              type="text" 
+              [(ngModel)]="data.executableName"
+              placeholder="executableName">
+            <p *ngIf="!isEditing()">{{data.executableName}}</p>
+          </div>
+        </div>
+
+      </div>
+
+      <div>
+        <button class="btn-sm btn-primary" (click)="applyPool()">apply</button>
       </div>
     </div>
   </div>
