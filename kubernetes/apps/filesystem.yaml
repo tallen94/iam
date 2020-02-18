@@ -16,7 +16,7 @@ spec:
       - name: regcred
       containers:
       - name: iam-filesystem
-        image: icanplayguitar94/iam:filesystem-minikube
+        image: icanplayguitar94/iam:filesystem-30e255655aade10de065bf861a420a3aa28f105c
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
@@ -33,8 +33,6 @@ spec:
           value: "executor"
         - name: SERVER_PORT
           value: "5000"
-        - name: "ENVIRONMENT"
-          value: "iam-filesystem"
 
         # FS CONFIG
         - name: FS_HOST
@@ -69,9 +67,7 @@ metadata:
 spec:
   selector:
     app: iam-filesystem
-  type: NodePort
   ports:
     - protocol: TCP
       port: 80
       targetPort: 5000
-      nodePort: 30003
