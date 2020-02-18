@@ -2,10 +2,8 @@ import { Database } from "../modules";
 import { FileSystemCommunicator } from "../Communicator/FileSystemCommunicator";
 import Lodash from "lodash";
 import uuid from "uuid";
-import * as FS from "fs";
 import { FileSystem } from "../FileSystem/FileSystem";
 import { Shell } from "../Executor/Shell";
-import { EnvironmentRouter } from "../Executor/EnvironmentRouter";
 
 export class EnvironmentManager {
 
@@ -13,12 +11,19 @@ export class EnvironmentManager {
     private fileSystem: FileSystem,
     private shell: Shell,
     private database: Database,
-    private fileSystemCommunicator: FileSystemCommunicator,
-    private environmentRouter: EnvironmentRouter
+    private fileSystemCommunicator: FileSystemCommunicator
   ) { }
 
   public addEnvironment(data: any) {
-    const envData = JSON.stringify({host: data.host, port: data.port})
+    const envData = JSON.stringify({
+      host: data.host,
+      port: data.port, 
+      imageRepo: data.imageRepo,
+      replicas: data.replicas,
+      memory: data.memory,
+      cpu: data.cpu,
+      type: data.type
+    })
     return this.getEnvironment(data.username, data.name)
     .then((result) => {
       if (result == undefined) {
@@ -44,15 +49,24 @@ export class EnvironmentManager {
         environment: data.environment
       })
     }).then(() => {
+      let promise;
+      if (data.type == "executor") {
+        promise = this.kubernetesTemplate(data)
+      } else {
+        promise = Promise.resolve(data.kubernetes)
+      }
+
       return Promise.all([
         this.fileSystemCommunicator.putFile("images", {
           name: data.name,
           file: data.image
-        }), 
-        this.fileSystemCommunicator.putFile("kubernetes", {
-          name: data.name,
-          file: data.kubernetes
-        })
+        }),
+        promise.then((kubernetes) => {
+          return this.fileSystemCommunicator.putFile("kubernetes", {
+            name: data.name,
+            file: kubernetes
+          })
+        }) 
       ])
     })
   }
@@ -69,6 +83,11 @@ export class EnvironmentManager {
           exe: item.exe,
           host: data.host,
           port: data.port,
+          replicas: data.replicas,
+          cpu: data.cpu,
+          memory: data.memory,
+          imageRepo: data.imageRepo,
+          type: data.type,
           input: item.input,
           output: item.output,
           description: item.description,
@@ -116,5 +135,22 @@ export class EnvironmentManager {
 
   public getKubernetesFile(filename: string) {
     return this.fileSystemCommunicator.getFile("kubernetes", filename);
+  }
+
+  private kubernetesTemplate(data: any) {
+    return this.fileSystemCommunicator.getFile("templates/kubernetes", "executor.yaml")
+    .then((file: string) => {
+      return this.replace(file, data)
+    })
+  }
+
+  private replace(s: string, data: any): string {
+    const re = new RegExp("{root}", "g");
+    s = s.replace(re, this.fileSystem.getRoot());
+    Lodash.each(data, (value, key) => {
+      const re = new RegExp("{" + key + "}", "g");
+      s = s.replace(re, value);
+    });
+    return s;
   }
 }

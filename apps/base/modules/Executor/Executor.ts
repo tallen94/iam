@@ -180,6 +180,11 @@ export class Executor {
               kubernetes: files[1],
               host: data.host,
               port: data.port,
+              replicas: data.replicas,
+              cpu: data.cpu,
+              memory: data.memory,
+              imageRepo: data.imageRepo,
+              type: data.type,
               environment: stepJson.environment
             };
           })
@@ -315,8 +320,7 @@ export class Executor {
   private setEnvironmentManager(shell: Shell, database: Database, fsConfig: any, fileSystem: FileSystem) {
     const fsClient = new ClientCommunicator(fsConfig["host"], fsConfig["port"])
     const fileSystemCommunicator: FileSystemCommunicator = new FileSystemCommunicator(fsClient);
-    const environmentRouter: EnvironmentRouter = new EnvironmentRouter(database);
-    this.environmentManager = new EnvironmentManager(fileSystem, shell, database, fileSystemCommunicator, environmentRouter);
+    this.environmentManager = new EnvironmentManager(fileSystem, shell, database, fileSystemCommunicator);
     return this.environmentManager;
   }
 
