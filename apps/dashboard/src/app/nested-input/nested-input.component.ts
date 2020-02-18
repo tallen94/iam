@@ -155,7 +155,8 @@ export class NestedInputComponent implements OnInit {
   }
 
   buildImage() {
-    this.iam.runExecutable("admin", "function", "build-image", { tag: this.data.imageTag, image: this.data.name})
+    const tag = this.data.imageRepo + ":" + this.data.name;
+    this.iam.runExecutable("admin", "function", "build-image", { tag: tag, image: this.data.name})
     .subscribe((result) => {
       console.log(result)
     })

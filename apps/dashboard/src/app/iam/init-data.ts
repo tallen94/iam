@@ -64,7 +64,12 @@ export class InitData {
       port: "80",
       image: "FROM icanplayguitar94/iam:base-latest",
       kubernetes: "",
-      environment: "environment-builder"
+      environment: "environment-builder",
+      replicas: 1,
+      imageRepo: "icanplayguitar94/iam",
+      cpu: "500Mi",
+      memory: "500MB",
+      type: "executor"
     }
   }
 
