@@ -1,0 +1,3 @@
+INSERT INTO user (email, password, username) VALUES ({email},{password},{username});
+
+SELECT * from user WHERE username={username};

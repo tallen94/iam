@@ -1,0 +1,4 @@
+INSERT INTO session_token(token, userId, username) 
+VALUES ({token}, {userId}, {username}); 
+
+SELECT {token} AS token, {userId} AS userId, {username} as username;

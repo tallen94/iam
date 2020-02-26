@@ -1,0 +1,1 @@
+DELETE FROM executable WHERE exe={exe} AND name={name};

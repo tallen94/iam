@@ -9,7 +9,7 @@ spec:
   - name: regcred
   containers:
   - name: mysqldatabase
-    image: icanplayguitar94/iam:database-0.0.9
+    image: icanplayguitar94/iam:database-0.0.10
     imagePullPolicy: IfNotPresent
     ports:
     - containerPort: 3306
