@@ -10,6 +10,8 @@ import { EnvironmentRouter } from "../Executor/EnvironmentRouter";
 import { Database } from "../Executor/Database";
 import { DatabaseCommunicator } from "../Communicator/DatabaseCommunicator";
 import { EnvironmentRouterApi } from "./EnvironmentRouterApi";
+import { FileSystemCommunicator } from "../Communicator/FileSystemCommunicator";
+import { ClientCommunicator } from "../Communicator/ClientCommunicator";
 
 export class ApiFactory {
 
@@ -34,7 +36,9 @@ export class ApiFactory {
       parseInt(dbconfig.port),
       dbconfig.database
     )
-    const database = new Database(databaseCommunicator);
+    const clientCommunicator: ClientCommunicator = new ClientCommunicator(fsconfig.host, parseInt(fsconfig.port))
+    const fileSystemCommunicator: FileSystemCommunicator = new FileSystemCommunicator(clientCommunicator)
+    const database = new Database(databaseCommunicator, fileSystemCommunicator);
     const clientThreadPool: ClientPool = new ClientPool();
     const executor: Executor = new Executor(environment, fileSystem, dbconfig, fsconfig, clientThreadPool);
     const router: EnvironmentRouter = new EnvironmentRouter(database);

@@ -1,0 +1,1 @@
+UPDATE executable  SET data={data}, input={input}, output={output}, description={description}, environment={environment} WHERE exe={exe} AND name={name};

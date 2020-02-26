@@ -1,0 +1,8 @@
+DELETE FROM job_queue WHERE id={id} AND visible = 0;
+
+
+
+
+
+
+

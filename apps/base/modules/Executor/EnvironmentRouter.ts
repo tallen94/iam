@@ -6,7 +6,7 @@ export class EnvironmentRouter {
 
   constructor(
     private database: Database
-  ) { }
+  ) {}
 
   public runExecutable(exe: string, username: string, name: string, data: any) {
     return this.database.runQuery('admin', 'get-exe-environment', {username: username, name: name, exe: exe})

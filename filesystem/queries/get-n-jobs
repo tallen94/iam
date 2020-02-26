@@ -1,0 +1,29 @@
+START TRANSACTION;
+
+-- Dequeue the records into a temp table
+CREATE TEMPORARY TABLE `{table}` (
+    SELECT id FROM job_queue 
+    WHERE visible=1 
+    AND id <= UNIX_TIMESTAMP()
+    LIMIT {size}
+);
+
+-- Update the visibility
+UPDATE job_queue 
+SET visible=0 
+WHERE id IN (SELECT id FROM `{table}`) 
+AND visible=1;
+
+-- Select the job rows
+SELECT * 
+FROM job_queue 
+WHERE id IN (SELECT id FROM `{table}`);
+
+DROP TABLE `{table}`;
+
+COMMIT;
+
+
+
+
+

@@ -40,8 +40,6 @@ spec:
           value: "executor"
         - name: SERVER_PORT
           value: "5000"
-        - name: "ENVIRONMENT"
-          value: "iam-filesystem"
 
         # FS CONFIG
         - name: FS_HOST
@@ -67,6 +65,14 @@ spec:
             secretKeyRef:
               name: dbconfig
               key: db_name
+        
+        volumeMounts:
+            - name: iamhome
+              mountPath: "/usr/home/iam"
+      volumes:
+      - name: iamhome
+        hostPath:
+          path: /home/docker/iam
 
 ---
 apiVersion: v1
