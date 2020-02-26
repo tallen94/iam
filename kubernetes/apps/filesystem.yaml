@@ -16,7 +16,7 @@ spec:
       - name: regcred
       containers:
       - name: iam-filesystem
-        image: icanplayguitar94/iam:filesystem-30e255655aade10de065bf861a420a3aa28f105c
+        image: icanplayguitar94/iam:base-minikube
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
@@ -58,6 +58,14 @@ spec:
             secretKeyRef:
               name: dbconfig
               key: db_name
+        
+        volumeMounts:
+            - name: iamhome
+              mountPath: "/usr/home/iam"
+      volumes:
+      - name: iamhome
+        hostPath:
+          path: /home/docker/iam
 
 ---
 apiVersion: v1
@@ -67,7 +75,9 @@ metadata:
 spec:
   selector:
     app: iam-filesystem
+  type: NodePort
   ports:
     - protocol: TCP
       port: 80
       targetPort: 5000
+      nodePort: 30003

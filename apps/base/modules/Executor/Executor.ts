@@ -33,7 +33,7 @@ export class Executor {
     dbConfig: any,
     fsConfig: any,
     private clientPool: ClientPool) {
-    this.setDatabase(dbConfig);
+    this.setDatabase(dbConfig, fsConfig);
     this.setShell(fileSystem, this.database, fsConfig);
     this.setStepListManager(this.shell, this.database, clientPool);
     this.setEnvironmentManager(this.shell, this.database, fsConfig, fileSystem);
@@ -152,16 +152,19 @@ export class Executor {
             });
           });
         case "query":
-          return Promise.resolve({
-            username: stepJson.username,
-            name: stepJson.name,
-            exe: stepJson.exe,
-            description: stepJson.description,
-            input: stepJson.input,
-            output: stepJson.output,
-            text: stepJson.data,
-            environment: stepJson.environment
-          });
+          return this.database.getQueryFile(stepJson.name)
+          .then((file) => {
+            return Promise.resolve({
+              username: stepJson.username,
+              name: stepJson.name,
+              exe: stepJson.exe,
+              description: stepJson.description,
+              input: stepJson.input,
+              output: stepJson.output,
+              text: file,
+              environment: stepJson.environment
+            });
+          })
         case "environment":
           return Promise.all([
             this.environmentManager.getImageFile(stepJson.name),
@@ -300,9 +303,11 @@ export class Executor {
     return this.shell;
   }
 
-  private setDatabase(config: any) {
+  private setDatabase(config: any, fsConfig: any) {
     const databaseCommunicator: DatabaseCommunicator = new DatabaseCommunicator(config.user, config.password, config.host, config.port, config.database);
-    const thread = new Database(databaseCommunicator);
+    const fsClient = new ClientCommunicator(fsConfig["host"], fsConfig["port"]);
+    const fileSystemCommunicator: FileSystemCommunicator = new FileSystemCommunicator(fsClient);
+    const thread = new Database(databaseCommunicator, fileSystemCommunicator);
     this.database = thread;
     return this.database;
   }

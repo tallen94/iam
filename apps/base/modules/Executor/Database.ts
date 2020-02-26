@@ -3,14 +3,15 @@ import * as UUID from "uuid";
 import {
   DatabaseCommunicator
 } from "../modules";
+import { FileSystemCommunicator } from "../Communicator/FileSystemCommunicator";
 import { QueryProcess } from "../Process/QueryProcess";
 
 export class Database {
   private status: string;
-  private databaseCommunicator: DatabaseCommunicator;
 
-  constructor(databaseCommunicator: DatabaseCommunicator) {
-    this.databaseCommunicator = databaseCommunicator;
+  constructor(
+    private databaseCommunicator: DatabaseCommunicator,
+    private fileSystemCommunicator: FileSystemCommunicator) {
     this.status = "OK";
   }
 
@@ -31,7 +32,7 @@ export class Database {
           name: data.name,
           uuid: UUID.v4(),
           exe: data.exe,
-          data: data.text,
+          data: "",
           input: data.input,
           output: data.output,
           userId: data.userId,
@@ -42,14 +43,25 @@ export class Database {
         return this.runQuery("admin", "update-exe", {
           name: data.name,
           exe: data.exe,
-          data: data.text,
+          data: "",
           input: data.input,
           output: data.output,
           description: data.description,
           environment: data.environment
         });
       }
+    }).then(() => {
+      return Promise.all([
+        this.fileSystemCommunicator.putFile("queries", {
+          name: data.name,
+          file: data.text
+        })
+      ])
     });
+  }
+
+  public getQueryFile(name: string) {
+    return this.fileSystemCommunicator.getFile("queries", name);
   }
 
   public getQuery(username: string, name: string) {
@@ -58,16 +70,20 @@ export class Database {
     .then((result: any) => {
       if (result.length > 0) {
         const item = result[0];
-        return {
+        const ret = {
           username: item.username,
           name: item.name,
           exe: item.exe,
-          text: item.data,
           input: item.input,
           output: item.output,
           description: item.description,
           environment: item.environment
         };
+        return this.fileSystemCommunicator.getFile("queries", name)
+        .then((result) => {
+          ret["text"] = result;
+          return ret;
+        });
       }
       return Promise.resolve(undefined);
     });
