@@ -19,6 +19,8 @@ spec:
       serviceAccountName: api-service-account
       imagePullSecrets:
       - name: regcred
+      nodeSelector:
+        type: basic
       containers:
       - name: environment-builder
         image: $TAG
@@ -31,6 +33,14 @@ spec:
             port: 5000
           initialDelaySeconds: 3
           periodSeconds: 3
+        
+        resources:
+          requests:
+            memory: "500Mi"
+            cpu: "250m"
+          limits:
+            memory: "500Mi"
+            cpu: "250m"
         env:
         - name: HOME
           value: "/usr/home/iam"
@@ -48,6 +58,8 @@ spec:
           value: "80"
 
         ## DB CONFIG
+        - name: DB_HOST
+          value: "mysqldatabase.default"
         - name: DB_USER
           valueFrom:
             secretKeyRef:
@@ -58,8 +70,6 @@ spec:
             secretKeyRef:
               name: dbconfig
               key: password
-        - name: DB_HOST
-          value: "mysqldatabase.default"
         - name: DB_NAME
           valueFrom:
             secretKeyRef:
@@ -77,16 +87,27 @@ spec:
             secretKeyRef:
               name: dockerconfig
               key: password
-        
-        securityContext: 
-            privileged: true 
+        - name: DOCKER_HOST
+          value: tcp://localhost:2375
+      
+      - name: dind
+        image: docker:18.05-dind
+        resources:
+          requests:
+            memory: "1000Mi"
+            cpu: "500m"
+          limits:
+            memory: "1000Mi"
+            cpu: "500m"
+        securityContext:
+          privileged: true
         volumeMounts:
-            - name: dockersock
-              mountPath: "/var/run/docker.sock"
+          - name: dind-storage
+            mountPath: /var/lib/docker
+        
       volumes:
-      - name: dockersock
-        hostPath:
-          path: /var/run/docker.sock
+        - name: dind-storage
+          emptyDir: {}
 ---
 apiVersion: v1
 kind: Service

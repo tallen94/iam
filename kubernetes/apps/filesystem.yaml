@@ -14,9 +14,11 @@ spec:
     spec:
       imagePullSecrets:
       - name: regcred
+      nodeSelector:
+        type: basic
       containers:
       - name: iam-filesystem
-        image: icanplayguitar94/iam:base-293a29c4174b000cf6f7504df8d531dada3b75c8
+        image: icanplayguitar94/iam:base-eks-test
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
@@ -26,6 +28,15 @@ spec:
             port: 5000
           initialDelaySeconds: 3
           periodSeconds: 3
+        
+        resources:
+          requests:
+            memory: "500Mi"
+            cpu: "250m"
+          limits:
+            memory: "500Mi"
+            cpu: "250m"
+
         env:
         - name: HOME
           value: "/usr/home/iam"
@@ -41,6 +52,8 @@ spec:
           value: "80"
 
         ## DB CONFIG
+        - name: DB_HOST
+          value: "mysqldatabase.default"
         - name: DB_USER
           valueFrom:
             secretKeyRef:
@@ -51,13 +64,21 @@ spec:
             secretKeyRef:
               name: dbconfig
               key: password
-        - name: DB_HOST
-          value: "mysqldatabase.default"
         - name: DB_NAME
           valueFrom:
             secretKeyRef:
               name: dbconfig
               key: db_name
+        
+        volumeMounts:
+        - mountPath: /usr/home/iam
+          name: iam-filesystem-ebs
+      
+      volumes:
+      - name: iam-filesystem-ebs
+        awsElasticBlockStore:
+          volumeID: vol-053932f7f4915df95
+          fsType: ext4
 
 ---
 apiVersion: v1

@@ -1,50 +1,52 @@
 apiVersion: v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Pod
 metadata:
-  name: mysqldatabase
+  name: {name}
   labels:
-    app: mysqldatabase
+    app: {name}
 spec:
   imagePullSecrets:
   - name: regcred
   nodeSelector:
     type: basic
   containers:
-  - name: mysqldatabase
-    image: icanplayguitar94/iam:database-0.0.10
+  - name: {name}
+    image: {imageRepo}:{name}
     imagePullPolicy: IfNotPresent
     ports:
     - containerPort: 3306
-    
+        
     resources:
       requests:
-        memory: "2000Mi"
-        cpu: "1000m"
+        memory: "{memory}"
+        cpu: "{cpu}"
       limits:
-        memory: "2000Mi"
-        cpu: "1000m"
+        memory: "{memory}"
+        cpu: "{cpu}"
 
     env:
     - name: MYSQL_ROOT_PASSWORD
-      value: 'password'
+      valueFrom:
+        secretKeyRef:
+          name: {name}dbmasterpw
+          key: secret
     ## DB CONFIG
     - name: MYSQL_USER
       valueFrom:
         secretKeyRef:
-          name: dbconfig
-          key: user
+          name: {name}dbuser
+          key: secret
     - name: MYSQL_PASSWORD
       valueFrom:
         secretKeyRef:
-          name: dbconfig
-          key: password
+          name: {name}dbpassword
+          key: secret
     - name: MYSQL_DATABASE
       valueFrom:
         secretKeyRef:
-          name: dbconfig
-          key: db_name
-    
-      
+          name: {name}dbname
+          key: secret
+        
     volumeMounts:
     - mountPath: /var/lib/mysql
       name: ebs-volume
@@ -52,18 +54,17 @@ spec:
   volumes:
   - name: ebs-volume
     awsElasticBlockStore:
-      volumeID: vol-08a7669b85c4faaac
+      volumeID: {ebsVolumeId}
       fsType: ext4
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: mysqldatabase
+  name: {name}
 spec:
   selector:
-    app: mysqldatabase
-  type: LoadBalancer
+    app: {name}
   ports:
     - protocol: TCP
       port: 3306

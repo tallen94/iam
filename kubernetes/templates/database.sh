@@ -11,31 +11,42 @@ metadata:
 spec:
   imagePullSecrets:
   - name: regcred
+  nodeSelector:
+    type: basic
   containers:
   - name: mysqldatabase
     image: $TAG
     imagePullPolicy: IfNotPresent
     ports:
     - containerPort: 3306
+    
+    resources:
+      requests:
+        memory: "2000Mi"
+        cpu: "1000m"
+      limits:
+        memory: "2000Mi"
+        cpu: "1000m"
+
     env:
-      - name: MYSQL_ROOT_PASSWORD
-        value: 'password'
-      ## DB CONFIG
-      - name: MYSQL_USER
-        valueFrom:
-          secretKeyRef:
-            name: dbconfig
-            key: user
-      - name: MYSQL_PASSWORD
-        valueFrom:
-          secretKeyRef:
-            name: dbconfig
-            key: password
-      - name: MYSQL_DATABASE
-        valueFrom:
-          secretKeyRef:
-            name: dbconfig
-            key: db_name
+    - name: MYSQL_ROOT_PASSWORD
+      value: 'password'
+    ## DB CONFIG
+    - name: MYSQL_USER
+      valueFrom:
+        secretKeyRef:
+          name: dbconfig
+          key: user
+    - name: MYSQL_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: dbconfig
+          key: password
+    - name: MYSQL_DATABASE
+      valueFrom:
+        secretKeyRef:
+          name: dbconfig
+          key: db_name
 
 ---
 apiVersion: v1

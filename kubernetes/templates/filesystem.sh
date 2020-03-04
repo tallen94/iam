@@ -48,6 +48,8 @@ spec:
           value: "80"
 
         ## DB CONFIG
+        - name: DB_HOST
+          value: "mysqldatabase.default"
         - name: DB_USER
           valueFrom:
             secretKeyRef:
@@ -58,8 +60,6 @@ spec:
             secretKeyRef:
               name: dbconfig
               key: password
-        - name: DB_HOST
-          value: "mysqldatabase.default"
         - name: DB_NAME
           valueFrom:
             secretKeyRef:
@@ -110,6 +110,8 @@ spec:
     spec:
       imagePullSecrets:
       - name: regcred
+      nodeSelector:
+        type: basic
       containers:
       - name: iam-filesystem
         image: $TAG
@@ -122,6 +124,15 @@ spec:
             port: 5000
           initialDelaySeconds: 3
           periodSeconds: 3
+        
+        resources:
+          requests:
+            memory: "500Mi"
+            cpu: "250m"
+          limits:
+            memory: "500Mi"
+            cpu: "250m"
+
         env:
         - name: HOME
           value: "/usr/home/iam"
@@ -137,6 +148,8 @@ spec:
           value: "80"
 
         ## DB CONFIG
+        - name: DB_HOST
+          value: "mysqldatabase.default"
         - name: DB_USER
           valueFrom:
             secretKeyRef:
@@ -147,13 +160,21 @@ spec:
             secretKeyRef:
               name: dbconfig
               key: password
-        - name: DB_HOST
-          value: "mysqldatabase.default"
         - name: DB_NAME
           valueFrom:
             secretKeyRef:
               name: dbconfig
               key: db_name
+        
+        volumeMounts:
+        - mountPath: /usr/home/iam
+          name: ebs-volume
+          
+      volumes:
+      - name: ebs-volume
+        awsElasticBlockStore:
+          volumeID: vol-026ba890557281748
+          fsType: ext4
 
 ---
 apiVersion: v1

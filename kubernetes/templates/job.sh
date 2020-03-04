@@ -18,6 +18,8 @@ spec:
     spec:
       imagePullSecrets:
       - name: regcred
+      nodeSelector:
+        type: basic
       containers:
       - name: iam-job
         image: $TAG
@@ -30,6 +32,14 @@ spec:
             port: 5000
           initialDelaySeconds: 3
           periodSeconds: 3
+        
+        resources:
+          requests:
+            memory: "500Mi"
+            cpu: "250m"
+          limits:
+            memory: "500Mi"
+            cpu: "250m"
         env:
         - name: HOME
           value: "/usr/home/iam"
@@ -47,6 +57,8 @@ spec:
           value: "80"
 
         ## DB CONFIG
+        - name: DB_HOST
+          value: "mysqldatabase.default"
         - name: DB_USER
           valueFrom:
             secretKeyRef:
@@ -57,8 +69,6 @@ spec:
             secretKeyRef:
               name: dbconfig
               key: password
-        - name: DB_HOST
-          value: "mysqldatabase.default"
         - name: DB_NAME
           valueFrom:
             secretKeyRef:
