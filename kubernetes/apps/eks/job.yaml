@@ -1,23 +1,24 @@
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
-  name: environment-builder
+  name: iam-job
 spec:
   selector:
     matchLabels:
-      app: environment-builder
+      app: iam-job
   replicas: 1 # tells deployment to run 2 pods matching the template
   template:
     metadata:
       labels:
-        app: environment-builder
+        app: iam-job
     spec:
-      serviceAccountName: api-service-account
       imagePullSecrets:
       - name: regcred
+      nodeSelector:
+        type: ng-1
       containers:
-      - name: environment-builder
-        image: icanplayguitar94/iam:environment-builder-293a29c4174b000cf6f7504df8d531dada3b75c8
+      - name: iam-job
+        image: icanplayguitar94/iam:base-eks
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
@@ -27,15 +28,23 @@ spec:
             port: 5000
           initialDelaySeconds: 3
           periodSeconds: 3
+        
+        resources:
+          requests:
+            memory: "500Mi"
+            cpu: "250m"
+          limits:
+            memory: "500Mi"
+            cpu: "250m"
         env:
         - name: HOME
           value: "/usr/home/iam"
         - name: TYPE 
-          value: "executor"
+          value: "job"
         - name: SERVER_PORT
           value: "5000"
         - name: "ENVIRONMENT"
-          value: "environment-builder"
+          value: "base"
 
         # FS CONFIG
         - name: FS_HOST
@@ -44,6 +53,8 @@ spec:
           value: "80"
 
         ## DB CONFIG
+        - name: DB_HOST
+          value: "mysqldatabase.default"
         - name: DB_USER
           valueFrom:
             secretKeyRef:
@@ -54,43 +65,19 @@ spec:
             secretKeyRef:
               name: dbconfig
               key: password
-        - name: DB_HOST
-          value: "mysqldatabase.default"
         - name: DB_NAME
           valueFrom:
             secretKeyRef:
               name: dbconfig
               key: db_name
-              
-        # DOCKER_CONFIG
-        - name: DOCKER_USERNAME
-          valueFrom:
-            secretKeyRef:
-              name: dockerconfig
-              key: user
-        - name: DOCKER_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: dockerconfig
-              key: password
-        
-        securityContext: 
-            privileged: true 
-        volumeMounts:
-            - name: dockersock
-              mountPath: "/var/run/docker.sock"
-      volumes:
-      - name: dockersock
-        hostPath:
-          path: /var/run/docker.sock
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: environment-builder
+  name: iam-job
 spec:
   selector:
-    app: environment-builder
+    app: iam-job
   ports:
     - protocol: TCP
       port: 80

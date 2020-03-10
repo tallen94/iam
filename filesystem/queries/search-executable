@@ -1,1 +1,0 @@
-SELECT name, exe, username FROM executable  WHERE name LIKE {searchText};        

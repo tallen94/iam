@@ -1,1 +1,0 @@
-select data from executable where exe='environment' and name=(select environment from executable where name={name} and username={username} and exe={exe})

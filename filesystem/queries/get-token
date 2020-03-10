@@ -1,1 +1,0 @@
-SELECT * FROM session_token WHERE token={token};

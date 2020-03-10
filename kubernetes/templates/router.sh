@@ -4,7 +4,7 @@ PROVIDER=$2
 
 if [ $PROVIDER = "minikube" ] 
 then
-cat > kubernetes/apps/router.yaml <<EOF
+cat > kubernetes/apps/minikube/router.yaml <<EOF
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
@@ -48,6 +48,8 @@ spec:
           value: "80"
 
         ## DB CONFIG
+        - name: DB_HOST
+          value: "mysqldatabase.default"
         - name: DB_USER
           valueFrom:
             secretKeyRef:
@@ -58,8 +60,6 @@ spec:
             secretKeyRef:
               name: dbconfig
               key: password
-        - name: DB_HOST
-          value: "mysqldatabase.default"
         - name: DB_NAME
           valueFrom:
             secretKeyRef:
@@ -84,7 +84,7 @@ fi
 
 if [ $PROVIDER = "eks" ] 
 then
-cat > kubernetes/apps/router.yaml <<EOF
+cat > kubernetes/apps/eks/router.yaml <<EOF
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
@@ -101,6 +101,8 @@ spec:
     spec:
       imagePullSecrets:
       - name: regcred
+      nodeSelector:
+        type: ng-1
       containers:
       - name: iam-router
         image: $TAG
@@ -113,6 +115,15 @@ spec:
             port: 5000
           initialDelaySeconds: 3
           periodSeconds: 3
+        
+        resources:
+          requests:
+            memory: "500Mi"
+            cpu: "250m"
+          limits:
+            memory: "500Mi"
+            cpu: "250m"
+
         env:
         - name: HOME
           value: "/usr/home/iam"
@@ -128,6 +139,8 @@ spec:
           value: "80"
 
         ## DB CONFIG
+        - name: DB_HOST
+          value: "mysqldatabase.default"
         - name: DB_USER
           valueFrom:
             secretKeyRef:
@@ -138,8 +151,6 @@ spec:
             secretKeyRef:
               name: dbconfig
               key: password
-        - name: DB_HOST
-          value: "mysqldatabase.default"
         - name: DB_NAME
           valueFrom:
             secretKeyRef:

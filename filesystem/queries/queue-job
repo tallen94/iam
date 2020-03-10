@@ -1,7 +1,0 @@
-INSERT INTO job_queue(id, visible, data, jobId) VALUES ({date}, 1, {data}, {jobId});
-
-
-
-
-
-

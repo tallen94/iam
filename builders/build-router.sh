@@ -3,6 +3,7 @@
 # Set Tag
 TAG="icanplayguitar94/iam:router-$1"
 PUSH=$2
+PROVIDER=$3
 
 # Build router project
 ENV=$4
@@ -18,5 +19,4 @@ if [ "$PUSH" = "push" ]; then
 fi
 
 # Generate kubernetes app file
-PROVIDER=$3
 bash kubernetes/templates/router.sh $TAG $PROVIDER
