@@ -1,4 +1,4 @@
-FROM icanplayguitar94/iam:base-eks
+FROM icanplayguitar94/iam:base-cdb92a5740284c2cf9c3c17d9b11374b09cdded7
 
 RUN apt-get update
 RUN apt-get install docker.io -y

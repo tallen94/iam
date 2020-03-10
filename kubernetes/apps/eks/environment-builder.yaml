@@ -19,7 +19,7 @@ spec:
         type: basic
       containers:
       - name: environment-builder
-        image: icanplayguitar94/iam:environment-builder-eks
+        image: icanplayguitar94/iam:environment-builder-cdb92a5740284c2cf9c3c17d9b11374b09cdded7
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
