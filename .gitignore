@@ -31,4 +31,5 @@ images/router/src
 
 yarn.lock
 
+kubernetes/apps/minikube
 

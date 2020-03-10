@@ -1,8 +1,0 @@
-UPDATE job_queue SET visible=1 WHERE id={id} AND visible = 0;
-
-
-
-
-
-
-

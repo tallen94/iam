@@ -14,9 +14,11 @@ spec:
     spec:
       imagePullSecrets:
       - name: regcred
+      nodeSelector:
+        type: ng-1
       containers:
       - name: base
-        image: icanplayguitar94/iam:base-minikube
+        image: icanplayguitar94/iam:base-eks
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
@@ -26,6 +28,15 @@ spec:
             port: 5000
           initialDelaySeconds: 3
           periodSeconds: 3
+        
+        resources:
+          requests:
+            memory: "500Mi"
+            cpu: 250m"
+          limits:
+            memory: "500Mi"
+            cpu: "250m"
+
         env:
         - name: HOME
           value: "/usr/home/iam"
@@ -43,6 +54,8 @@ spec:
           value: "80"
 
         ## DB CONFIG
+        - name: DB_HOST
+          value: "mysqldatabase.default"
         - name: DB_USER
           valueFrom:
             secretKeyRef:
@@ -53,8 +66,6 @@ spec:
             secretKeyRef:
               name: dbconfig
               key: password
-        - name: DB_HOST
-          value: "mysqldatabase.default"
         - name: DB_NAME
           valueFrom:
             secretKeyRef:
