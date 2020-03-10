@@ -1,8 +1,0 @@
-#!/bin/bash
-
-TAG=$1
-IMAGE=$2
-
-echo "$DOCKER_PASSWORD" | docker login -u $DOCKER_USERNAME --password-stdin 
-curl -s http://iam-filesystem.default/fs/images/$IMAGE | docker build --rm --no-cache -t $TAG -
-docker push $TAG

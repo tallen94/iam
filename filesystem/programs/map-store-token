@@ -1,6 +1,0 @@
-import json
-
-args = raw_input()
-data = json.loads(args)
-result = data[1][0]
-print json.dumps(result)

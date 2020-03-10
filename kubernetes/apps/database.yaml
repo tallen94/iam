@@ -8,7 +8,7 @@ spec:
   imagePullSecrets:
   - name: regcred
   nodeSelector:
-    type: basic
+    type: ng-1
   containers:
   - name: mysqldatabase
     image: icanplayguitar94/iam:database-0.0.10
@@ -52,7 +52,7 @@ spec:
   volumes:
   - name: ebs-volume
     awsElasticBlockStore:
-      volumeID: vol-08a7669b85c4faaac
+      volumeID: vol-0e7cd4ae9de4d64a2
       fsType: ext4
 
 ---

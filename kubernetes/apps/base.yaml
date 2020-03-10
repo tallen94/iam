@@ -15,7 +15,7 @@ spec:
       imagePullSecrets:
       - name: regcred
       nodeSelector:
-        type: basic
+        type: ng-1
       containers:
       - name: base
         image: icanplayguitar94/iam:base-eks-test

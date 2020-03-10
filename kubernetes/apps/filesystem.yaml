@@ -15,7 +15,7 @@ spec:
       imagePullSecrets:
       - name: regcred
       nodeSelector:
-        type: basic
+        type: ng-1
       containers:
       - name: iam-filesystem
         image: icanplayguitar94/iam:base-eks-test
@@ -77,7 +77,7 @@ spec:
       volumes:
       - name: iam-filesystem-ebs
         awsElasticBlockStore:
-          volumeID: vol-053932f7f4915df95
+          volumeID: vol-088c24f05d4d4e5aa
           fsType: ext4
 
 ---

@@ -16,7 +16,7 @@ spec:
       imagePullSecrets:
       - name: regcred
       nodeSelector:
-        type: basic
+        type: ng-1
       containers:
       - name: environment-builder
         image: icanplayguitar94/iam:environment-builder-eks-test

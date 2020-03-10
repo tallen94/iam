@@ -1,2 +1,0 @@
-INSERT INTO executable(username, uuid, name, data, exe, input, output, description, environment) 
-VALUES ({username},{uuid},{name},{data},{exe},{input},{output},{description},{environment})

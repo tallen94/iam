@@ -15,7 +15,7 @@ spec:
       imagePullSecrets:
       - name: regcred
       nodeSelector:
-        type: basic
+        type: ng-1
       containers:
       - name: iam-router
         image: icanplayguitar94/iam:router-eks-test

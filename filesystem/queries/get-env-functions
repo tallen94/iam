@@ -1,1 +1,0 @@
-select name from executable where exe="function" and environment={environment}
