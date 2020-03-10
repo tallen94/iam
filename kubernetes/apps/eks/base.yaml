@@ -1,24 +1,24 @@
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
-  name: iam-router
+  name: base
 spec:
   selector:
     matchLabels:
-      app: iam-router
+      app: base
   replicas: 1 # tells deployment to run 2 pods matching the template
   template:
     metadata:
       labels:
-        app: iam-router
+        app: base
     spec:
       imagePullSecrets:
       - name: regcred
       nodeSelector:
         type: ng-1
       containers:
-      - name: iam-router
-        image: icanplayguitar94/iam:router-eks-test
+      - name: base
+        image: icanplayguitar94/iam:base-eks
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
@@ -32,7 +32,7 @@ spec:
         resources:
           requests:
             memory: "500Mi"
-            cpu: "250m"
+            cpu: 250m"
           limits:
             memory: "500Mi"
             cpu: "250m"
@@ -41,9 +41,11 @@ spec:
         - name: HOME
           value: "/usr/home/iam"
         - name: TYPE 
-          value: "router"
+          value: "executor"
         - name: SERVER_PORT
           value: "5000"
+        - name: "ENVIRONMENT"
+          value: "base"
 
         # FS CONFIG
         - name: FS_HOST
@@ -73,11 +75,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: iam-router
+  name: base
 spec:
   selector:
-    app: iam-router
-  type: LoadBalancer
+    app: base
   ports:
     - protocol: TCP
       port: 80

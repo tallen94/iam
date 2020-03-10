@@ -16,10 +16,10 @@ spec:
       imagePullSecrets:
       - name: regcred
       nodeSelector:
-        type: ng-1
+        type: basic
       containers:
       - name: environment-builder
-        image: icanplayguitar94/iam:environment-builder-eks-test
+        image: icanplayguitar94/iam:environment-builder-eks
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
@@ -98,11 +98,12 @@ spec:
         securityContext:
           privileged: true
         volumeMounts:
-          - name: dind-storage
-            mountPath: /var/lib/docker
-      volumes:
         - name: dind-storage
-          emptyDir: {}
+          mountPath: /var/lib/docker
+        
+      volumes:
+      - name: dind-storage
+        emptyDir: {}
 ---
 apiVersion: v1
 kind: Service

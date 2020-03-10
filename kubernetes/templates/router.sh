@@ -4,7 +4,7 @@ PROVIDER=$2
 
 if [ $PROVIDER = "minikube" ] 
 then
-cat > kubernetes/apps/router.yaml <<EOF
+cat > kubernetes/apps/minikube/router.yaml <<EOF
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
@@ -84,7 +84,7 @@ fi
 
 if [ $PROVIDER = "eks" ] 
 then
-cat > kubernetes/apps/router.yaml <<EOF
+cat > kubernetes/apps/eks/router.yaml <<EOF
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
@@ -102,7 +102,7 @@ spec:
       imagePullSecrets:
       - name: regcred
       nodeSelector:
-        type: basic
+        type: ng-1
       containers:
       - name: iam-router
         image: $TAG

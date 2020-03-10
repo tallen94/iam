@@ -18,7 +18,7 @@ spec:
         type: ng-1
       containers:
       - name: iam-filesystem
-        image: icanplayguitar94/iam:base-eks-test
+        image: icanplayguitar94/iam:base-eks
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
@@ -72,10 +72,10 @@ spec:
         
         volumeMounts:
         - mountPath: /usr/home/iam
-          name: iam-filesystem-ebs
-      
+          name: ebs-volume
+          
       volumes:
-      - name: iam-filesystem-ebs
+      - name: ebs-volume
         awsElasticBlockStore:
           volumeID: vol-088c24f05d4d4e5aa
           fsType: ext4

@@ -4,7 +4,7 @@ PROVIDER=$2
 
 if [ $PROVIDER = "minikube" ] 
 then
-cat > kubernetes/apps/filesystem.yaml <<EOF
+cat > kubernetes/apps/minikube/filesystem.yaml <<EOF
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
@@ -67,8 +67,8 @@ spec:
               key: db_name
         
         volumeMounts:
-            - name: iamhome
-              mountPath: "/usr/home/iam"
+        - name: iamhome
+          mountPath: "/usr/home/iam"
       volumes:
       - name: iamhome
         hostPath:
@@ -93,7 +93,7 @@ fi
 
 if [ $PROVIDER = "eks" ] 
 then
-cat > kubernetes/apps/filesystem.yaml <<EOF
+cat > kubernetes/apps/eks/filesystem.yaml <<EOF
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
@@ -111,7 +111,7 @@ spec:
       imagePullSecrets:
       - name: regcred
       nodeSelector:
-        type: basic
+        type: ng-1
       containers:
       - name: iam-filesystem
         image: $TAG
@@ -173,7 +173,7 @@ spec:
       volumes:
       - name: ebs-volume
         awsElasticBlockStore:
-          volumeID: vol-026ba890557281748
+          volumeID: vol-088c24f05d4d4e5aa
           fsType: ext4
 
 ---

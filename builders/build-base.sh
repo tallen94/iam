@@ -18,12 +18,12 @@ if [ "$PUSH" = "push" ]; then
 fi
 
 # Create kubernetes apps
-bash kubernetes/templates/base.sh $TAG
-bash kubernetes/templates/job.sh $TAG
+bash kubernetes/templates/base.sh $TAG $PROVIDER
+bash kubernetes/templates/job.sh $TAG $PROVIDER
 bash kubernetes/templates/filesystem.sh $TAG $PROVIDER
 
 bash images/templates/router.sh $TAG
 bash builders/build-router.sh $VERSION $PUSH $PROVIDER -prod
 
 bash images/templates/environment-builder.sh $TAG
-bash builders/build-environment-builder.sh $VERSION $PUSH
+bash builders/build-environment-builder.sh $VERSION $PUSH $PROVIDER
