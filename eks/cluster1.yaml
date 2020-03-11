@@ -56,44 +56,6 @@ Resources:
             Resource: '*'
       Roles:
         - !Ref NodeInstanceRole
-  
-  EKSBastionRole:
-    Type: "AWS::IAM::Role"
-    Properties:
-      RoleName: EKSBastion-Role
-      AssumeRolePolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service:
-                - ec2.amazonaws.com
-            Action:
-              - "sts:AssumeRole"
-      Path: /
-  
-  EKSBastionPolicy:
-    Type: 'AWS::IAM::Policy'
-    Properties:
-      PolicyName: EksBastion-Policy
-      PolicyDocument:
-        Version: 2012-10-17
-        Statement:
-          - Effect: Allow
-            Action:
-              - 'eks:*'
-              - 'ec2:DetachVolume'
-            Resource: '*'
-      Roles:
-        - !Ref EKSBastionRole
-  
-  BastionInstanceProfile:
-    Type: AWS::IAM::InstanceProfile
-    Properties: 
-      InstanceProfileName: BastionInstanceProfile
-      Path: /
-      Roles: 
-        - !Ref EKSBastionRole
 
   VPC:
     Type: AWS::EC2::VPC
@@ -255,76 +217,10 @@ Resources:
       Subnets: 
         - !Ref Subnet1
   
-  EksBastion:
-    Type: AWS::EC2::Instance
-    DependsOn: EKS
-    Properties: 
-      AvailabilityZone: us-west-2a
-      IamInstanceProfile: !Ref BastionInstanceProfile 
-      ImageId: ami-0edf3b95e26a682df
-      InstanceType: t3.medium
-      PrivateIpAddress: 10.0.1.0
-      KeyName: iam-eks-node
-      SecurityGroupIds: 
-        - !Ref SshSecurityGroup
-      SubnetId: !Ref Subnet1
-      Tags: 
-        - Key: Name
-          Value: EksBastion
-      UserData:
-        Fn::Base64: !Sub 
-          - |
-            #!/bin/sh -xe
-            mkdir -p /mnt/iam/filesystem
-            mkdir -p /mnt/iam/database
-            
-            # Wait for volumes
-            while [ ! -e /dev/nvme1n1 ]; do echo Waiting for EBS volume to attach; sleep 10; done   
-            while [ ! -e /dev/nvme2n1 ]; do echo Waiting for EBS volume to attach; sleep 10; done
-            
-            # Init volumes
-            mkfs -t ext4 /dev/nvme1n1
-            mkfs -t ext4 /dev/nvme2n1
-            
-            # Mount volumes
-            mount /dev/nvme1n1 /mnt/iam/filesystem
-            mount /dev/nvme2n1 /mnt/iam/database
-            
-            # Remove lost+found
-            rm -r /mnt/iam/filesystem/lost+found
-            rm -r /mnt/iam/database/lost+found
-            
-            # Clone filesystem
-            git clone https://github.com/tallen94/iam-filesystem.git /mnt/iam/filesystem
-            
-            # Install kubectl
-            apt-get update
-            curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
-            chmod +x ./kubectl
-            mv ./kubectl /usr/local/bin/kubectl
-
-            # Aws Iam Authenticator
-            curl -o aws-iam-authenticator https://amazon-eks.s3-us-west-2.amazonaws.com/1.13.8/2019-08-14/bin/linux/amd64/aws-iam-authenticator
-            chmod +x ./aws-iam-authenticator
-            mv aws-iam-authenticator /usr/local/bin
-            
-            # Python Venv
-            apt-get install -y --no-install-recommends python3 python3-pip
-
-            # Awscli
-            pip3 install awscli
-            
-            # Eks
-            aws eks --region us-west-2 update-kubeconfig --name cf-test
-
-            # Detach volumes
-            aws ec2 detach-volume --region us-west-2 --volume-id ${dbvolume}
-            aws ec2 detach-volume --region us-west-2 --volume-id ${fsvolume} 
-          - { dbvolume: !Ref DBVolume, fsvolume: !Ref FSVolume }
-  
   FSVolume:
     Type: AWS::EC2::Volume
     Properties: 
+      SnapshotId: snap-04a57a4198e1d5909
       AvailabilityZone: us-west-2a
       Encrypted: false
       Size: 10
@@ -336,6 +232,7 @@ Resources:
   DBVolume:
     Type: AWS::EC2::Volume
     Properties: 
+      SnapshotId: snap-0300b02191e61bf6e
       AvailabilityZone: us-west-2a
       Encrypted: false
       Size: 10
@@ -343,17 +240,3 @@ Resources:
         - Key: Name
           Value: DBVolume
     DeletionPolicy: Snapshot
-            
-  FSVolumeAttachment:
-    Type: AWS::EC2::VolumeAttachment
-    Properties:
-      InstanceId: !Ref EksBastion
-      VolumeId: !Ref FSVolume
-      Device: /dev/xvdf
-  
-  DBVolumeAttachment:
-    Type: AWS::EC2::VolumeAttachment
-    Properties:
-      InstanceId: !Ref EksBastion
-      VolumeId: !Ref DBVolume
-      Device: /dev/xvdg

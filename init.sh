@@ -43,7 +43,7 @@ applyConfig() {
    kubectl apply -f kubernetes/secrets/dockerconfig.yaml
    kubectl apply -f kubernetes/serviceaccounts/deployment.yaml
    echo [...Init...]
-   ./kubernetes/init.sh $PROVIDER
+   ./kubernetes/update.sh $PROVIDER
    echo IAM is ready to use.
 }
 

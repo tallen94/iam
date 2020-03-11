@@ -52,7 +52,7 @@ spec:
   volumes:
   - name: ebs-volume
     awsElasticBlockStore:
-      volumeID: vol-0e7cd4ae9de4d64a2
+      volumeID: vol-04e791be5277d2d83
       fsType: ext4
 
 ---
