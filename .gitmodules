@@ -1,3 +1,0 @@
-[submodule "iam-filesystem"]
-	path = iam-filesystem
-	url = ssh://git@github.com/tallen94/iam-filesystem
