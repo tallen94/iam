@@ -131,7 +131,7 @@ spec:
       imagePullSecrets:
       - name: regcred
       nodeSelector:
-        type: basic
+        type: ng-1
       containers:
       - name: environment-builder
         image: $TAG
@@ -205,11 +205,11 @@ spec:
         image: docker:18.05-dind
         resources:
           requests:
-            memory: "1000Mi"
-            cpu: "500m"
+            memory: "500Mi"
+            cpu: "250m"
           limits:
-            memory: "1000Mi"
-            cpu: "500m"
+            memory: "500Mi"
+            cpu: "250m"
         securityContext:
           privileged: true
         volumeMounts:
