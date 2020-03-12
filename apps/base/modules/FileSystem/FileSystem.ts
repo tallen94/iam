@@ -30,39 +30,32 @@ export class FileSystem {
   public get(path: string) {
     return new Promise((resolve, reject) => {
       path = this.path(path);
-      if (FS.lstatSync(path).isFile()) {
-        FS.readFile(path, (err, buffer) => {
-          resolve(buffer.toString())
-        })
+      if (!FS.existsSync(path)) {
+        resolve("invalid path")
       } else {
-        FS.readdir(path, (err, files) => {
-          resolve(files)
-        })
-      } 
+        if (FS.lstatSync(path).isFile()) {
+          FS.readFile(path, (err, buffer) => {
+            resolve(buffer.toString())
+          })
+        } else {
+          FS.readdir(path, (err, files) => {
+            resolve(files)
+          })
+        } 
+      }
     })
   }
 
   public put(folder: string, name: string, file: string) {
     return new Promise((resolve, reject) => {
-      folder = this.path(folder)
-      if (FS.lstatSync(folder).isFile()) {
-        resolve("invalid folder")
+      const fullPath = this.path(folder)
+      if (FS.existsSync(fullPath) && FS.lstatSync(fullPath).isFile()) {
+        resolve("invalid path")
       } else {
-        if (!FS.existsSync(folder)) {
-          FS.mkdir(folder, (err) => {
-            if (err) {
-              resolve(err)
-            } else {
-              const path = folder + "/" + name;
-              FS.createWriteStream(path).write(file);
-              resolve()
-            }
-          })
-        } else {
-          const path = folder + "/" + name;
-          FS.createWriteStream(path).write(file);
-          resolve()
-        }
+        this.makeFolder(folder);
+        const path = fullPath + "/" + name;
+        FS.createWriteStream(path).write(file);
+        resolve()
       }
     })
   }
@@ -70,22 +63,26 @@ export class FileSystem {
   public delete(path: string) {
     return new Promise((resolve, reject) => {
       path = this.path(path)
-      if (FS.lstatSync(path).isFile()) {
-        FS.unlink(path, (err) => {
-          if (err) {
-            resolve(err)
-          } else {
-            resolve()
-          }
-        })
+      if (!FS.existsSync(path)) {
+        resolve()
       } else {
-        FS.rmdir(path, (err) => {
-          if (err) {
-            resolve(err)
-          } else {
-            resolve()
-          }
-        })
+        if (FS.lstatSync(path).isFile()) {
+          FS.unlink(path, (err) => {
+            if (err) {
+              resolve(err)
+            } else {
+              resolve()
+            }
+          })
+        } else {
+          FS.rmdir(path, (err) => {
+            if (err) {
+              resolve(err)
+            } else {
+              resolve()
+            }
+          })
+        }
       }
     })
   }
@@ -152,5 +149,15 @@ export class FileSystem {
     return Lodash.map(this.listFiles(path), (file) => {
       return this.getFile(path + "/" + file)
     })
+  }
+
+  private makeFolder(folder: string) {
+    const levels = folder.split("/")
+    for (let i = 0; i < levels.length; i++) {
+      const path = this.path(levels.slice(0, i+1).join("/"))
+      if (!FS.existsSync(path)) {
+        FS.mkdirSync(path)
+      }
+    }
   }
 }
