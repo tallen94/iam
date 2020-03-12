@@ -118,7 +118,7 @@ export class Executor {
             };
           });
         case "function":
-          return this.shell.getProgramFile(stepJson.name)
+          return this.shell.getProgramFile(stepJson.username, stepJson.name)
           .then((file) => {
             const data = JSON.parse(stepJson.data);
             return {
@@ -152,7 +152,7 @@ export class Executor {
             });
           });
         case "query":
-          return this.database.getQueryFile(stepJson.name)
+          return this.database.getQueryFile(stepJson.username, stepJson.name)
           .then((file) => {
             return Promise.resolve({
               username: stepJson.username,
@@ -167,8 +167,8 @@ export class Executor {
           })
         case "environment":
           return Promise.all([
-            this.environmentManager.getImageFile(stepJson.name),
-            this.environmentManager.getKubernetesFile(stepJson.name)
+            this.environmentManager.getImageFile(stepJson.username, stepJson.name),
+            this.environmentManager.getKubernetesFile(stepJson.username, stepJson.name)
           ]) 
           .then((files) => {
             const data = JSON.parse(stepJson.data);

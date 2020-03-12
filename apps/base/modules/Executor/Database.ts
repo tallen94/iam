@@ -52,7 +52,7 @@ export class Database {
       }
     }).then(() => {
       return Promise.all([
-        this.fileSystemCommunicator.putFile("queries", {
+        this.fileSystemCommunicator.putFile(data.username + "/queries", {
           name: data.name,
           file: data.text
         })
@@ -60,8 +60,8 @@ export class Database {
     });
   }
 
-  public getQueryFile(name: string) {
-    return this.fileSystemCommunicator.getFile("queries", name);
+  public getQueryFile(username: string, name: string) {
+    return this.fileSystemCommunicator.getFile(username + "/queries", name);
   }
 
   public getQuery(username: string, name: string) {
@@ -79,7 +79,7 @@ export class Database {
           description: item.description,
           environment: item.environment
         };
-        return this.fileSystemCommunicator.getFile("queries", name)
+        return this.fileSystemCommunicator.getFile(username + "/queries", name)
         .then((result) => {
           ret["text"] = result;
           return ret;
