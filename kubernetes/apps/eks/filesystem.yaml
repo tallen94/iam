@@ -18,7 +18,7 @@ spec:
         type: ng-1
       containers:
       - name: iam-filesystem
-        image: icanplayguitar94/iam:base-2ff412c4af743e0c501c3afc017dd9b817655151
+        image: icanplayguitar94/iam:base-9dacf5e7c7367623a7471fee6c23f0ad6fe6d42a
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
