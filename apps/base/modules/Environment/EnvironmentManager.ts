@@ -57,12 +57,12 @@ export class EnvironmentManager {
       }
 
       return Promise.all([
-        this.fileSystemCommunicator.putFile("images", {
+        this.fileSystemCommunicator.putFile(data.username + "/images", {
           name: data.name,
           file: data.image
         }),
         promise.then((kubernetes) => {
-          return this.fileSystemCommunicator.putFile("kubernetes", {
+          return this.fileSystemCommunicator.putFile(data.username + "/kubernetes", {
             name: data.name,
             file: kubernetes
           })
@@ -94,8 +94,8 @@ export class EnvironmentManager {
           environment: item.environment
         }
         return Promise.all([
-          this.fileSystemCommunicator.getFile("images", item.name),
-          this.fileSystemCommunicator.getFile("kubernetes", item.name)
+          this.fileSystemCommunicator.getFile(username + "/images", item.name),
+          this.fileSystemCommunicator.getFile(username + "/kubernetes", item.name)
         ]).then((result) => {
           ret["image"] = result[0];
           ret["kubernetes"] = result[1]
@@ -129,16 +129,16 @@ export class EnvironmentManager {
     })
   }
 
-  public getImageFile(filename: string) {
-    return this.fileSystemCommunicator.getFile("images", filename);
+  public getImageFile(username: string, filename: string) {
+    return this.fileSystemCommunicator.getFile(username + "/images", filename);
   }
 
-  public getKubernetesFile(filename: string) {
-    return this.fileSystemCommunicator.getFile("kubernetes", filename);
+  public getKubernetesFile(username: string, filename: string) {
+    return this.fileSystemCommunicator.getFile(username + "/kubernetes", filename);
   }
 
   private kubernetesTemplate(data: any) {
-    return this.fileSystemCommunicator.getFile("templates/kubernetes", "executor.yaml")
+    return this.fileSystemCommunicator.getFile(data.username + "/templates/kubernetes", "executor.yaml")
     .then((file: string) => {
       return this.replace(file, data)
     })
