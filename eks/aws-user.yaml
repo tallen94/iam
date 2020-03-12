@@ -1,0 +1,27 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Creates a Role for setting up the cluster
+Resources:
+  Role:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: IAMClusterAdmin-Role
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action: sts:AssumeRole
+            Principal:
+              AWS: arn:aws:iam::305106812319:user/dellxps
+      Path: /
+      Policies:
+        - PolicyName: IAMClusterAdmin-Policy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'eks:*'
+                  - 'ec2:*'
+                  - 'cloudformation:*'
+                  - 'iam:*'
+                Resource: '*'

@@ -70,7 +70,7 @@ spec:
   imagePullSecrets:
   - name: regcred
   nodeSelector:
-    type: basic
+    type: ng-1
   containers:
   - name: mysqldatabase
     image: $TAG

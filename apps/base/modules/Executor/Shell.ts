@@ -67,7 +67,7 @@ export class Shell {
       }
     }).then(() => {
       return Promise.all([
-        this.fileSystemCommunicator.putFile("programs", {
+        this.fileSystemCommunicator.putFile(data.username + "/programs", {
           name: data.name,
           file: data.text
         })
@@ -92,7 +92,7 @@ export class Shell {
           description: item.description,
           environment: item.environment
         };
-        return this.fileSystemCommunicator.getFile("programs", name)
+        return this.fileSystemCommunicator.getFile(username + "/programs", name)
         .then((result) => {
           ret["text"] = result;
           return ret;
@@ -102,8 +102,8 @@ export class Shell {
     });
   }
 
-  public getProgramFile(name: string) {
-    return this.fileSystemCommunicator.getFile("programs", name);
+  public getProgramFile(username: string, name: string) {
+    return this.fileSystemCommunicator.getFile(username + "/programs", name);
   }
 
   public getPrograms(username: string) {
