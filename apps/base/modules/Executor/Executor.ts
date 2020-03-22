@@ -56,7 +56,16 @@ export class Executor {
   public addExecutable(data: any) {
     switch (data.exe) {
       case "function":
-        return this.shell.addProgram(data);
+        // check if user can write to environment
+        // a user can write to an environment if they own it
+        return this.database.runQuery("admin", "get-exe-by-type-name", {username: data.username, exe: 'environment', name: data.environment})
+        .then((results) => {
+          if (results.length > 0) {
+            // the user owns the environment
+            return this.shell.addProgram(data);
+          } 
+          return "Environment named " + data.environment + " does not exist"
+        })
       case "query":
         return this.database.addQuery(data);
       case "pipe":
@@ -72,6 +81,7 @@ export class Executor {
       case "pool":
         return this.poolManager.addPool(data);
     }
+    
   }
 
   public getExecutable(username: string, name: string, exe: string): Promise<any> {
@@ -254,7 +264,7 @@ export class Executor {
       case "foreach":
         return this.stepListManager.runStepList(username, name, exe, data);
       case "graph":
-        return this.graphExecutor.runGraph(name, data);
+        return this.graphExecutor.runGraph(username, name, data);
       case "environment":
         return this.environmentManager.runEnvironment(username, name, data);
       case "pool":

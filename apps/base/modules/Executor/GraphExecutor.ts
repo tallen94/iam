@@ -57,8 +57,8 @@ export class GraphExecutor {
     });
   }
 
-  public runGraph(name: string, data: any) {
-    return this.database.runQuery("admin", "get-exe-by-type-name", { name: name, exe: "graph"})
+  public runGraph(username: string, name: string, data: any) {
+    return this.database.runQuery("admin", "get-exe-by-type-name", {username: username, name: name, exe: "graph"})
     .then((result) => {
       if (result.length > 0) {
         const item = result[0];

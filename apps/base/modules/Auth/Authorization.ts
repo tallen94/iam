@@ -1,4 +1,5 @@
 import { Executor } from "../Executor/Executor";
+import { Database } from "../Executor/Database";
 
 export class Authorization {
 
@@ -7,8 +8,18 @@ export class Authorization {
   // Permissions can require or not require a user to have a session token.
   // Read, Write, Execute
   //
-  constructor(executor: Executor) {
-    this.executor = executor;
+  constructor(private database: Database) {
+
+  }
+
+  public validateUserToken(username: string, token: string) {
+    return this.database.runQuery("admin", "get-token", { token: token })
+    .then((results) => {
+      if (results.length == 0) {
+        return false
+      }
+      return username == results[0].username;
+    })
   }
 
   public getReadPermission(type: string, name: string, token: string) {

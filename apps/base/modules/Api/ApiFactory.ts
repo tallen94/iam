@@ -12,6 +12,7 @@ import { DatabaseCommunicator } from "../Communicator/DatabaseCommunicator";
 import { EnvironmentRouterApi } from "./EnvironmentRouterApi";
 import { FileSystemCommunicator } from "../Communicator/FileSystemCommunicator";
 import { ClientCommunicator } from "../Communicator/ClientCommunicator";
+import { Authorization } from "../Auth/Authorization";
 
 export class ApiFactory {
 
@@ -42,7 +43,8 @@ export class ApiFactory {
     const clientThreadPool: ClientPool = new ClientPool();
     const executor: Executor = new Executor(environment, fileSystem, dbconfig, fsconfig, clientThreadPool);
     const router: EnvironmentRouter = new EnvironmentRouter(database);
-    new EnvironmentRouterApi(router, serverCommunicator, executor);
+    const authorization: Authorization = new Authorization(database);
+    new EnvironmentRouterApi(router, serverCommunicator, executor, authorization);
     new DashboardApi(fileSystem, serverCommunicator);
   }
 

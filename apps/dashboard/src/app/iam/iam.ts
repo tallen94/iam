@@ -37,7 +37,7 @@ export class Iam {
   }
 
   public addExecutable(data: any) {
-    return this.router.post(ApiPaths.ADD_EXECUTABLE, data)
+    return this.router.post(ApiPaths.ADD_EXECUTABLE, data, {}, {token: this.user.token})
   }
 
   public getExecutable(username: string, exe: string, name: string) {

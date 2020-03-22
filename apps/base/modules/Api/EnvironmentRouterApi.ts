@@ -4,13 +4,15 @@ import {
 } from "../modules";
 import { EnvironmentRouter } from "../Executor/EnvironmentRouter";
 import { Executor } from "../Executor/Executor";
+import { Authorization } from "../Auth/Authorization";
 
 export class EnvironmentRouterApi {
 
   constructor(
     private router: EnvironmentRouter,
     private serverCommunicator: ServerCommunicator,
-    private executor: Executor) {
+    private executor: Executor,
+    private authorization: Authorization) {
     this.init();
   }
 
@@ -24,10 +26,20 @@ export class EnvironmentRouterApi {
      * body: any
      */
     this.serverCommunicator.post(ApiPaths.ADD_EXECUTABLE, (req: any, res: any) => {
-      this.executor.addExecutable(req.body)
-      .then((result: any) => {
-        res.status(200).send(result);
-      });
+      const data = req.body;
+      const token = req.headers.token
+      this.authorization.validateUserToken(data.username, token)
+      .then((authorized) => {
+        if (authorized) {
+          // User authorized to add executables for themselves
+          this.executor.addExecutable(data)
+          .then((result: any) => {
+            res.status(200).send(result);
+          });
+        } else {
+          res.status(401).send("Unauthorized")
+        }
+      })
     });
 
     /**
