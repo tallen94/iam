@@ -13,5 +13,5 @@ kubectl delete deployment environment-builder
 kubectl delete service environment-builder
 
 # Database
-kubectl delete pod mysqldatabase
-kubectl delete service mysqldatabase
+# kubectl delete pod mysqldatabase
+# kubectl delete service mysqldatabase
