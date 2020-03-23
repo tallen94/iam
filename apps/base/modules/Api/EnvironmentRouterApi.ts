@@ -3,16 +3,12 @@ import {
   ApiPaths
 } from "../modules";
 import { EnvironmentRouter } from "../Executor/EnvironmentRouter";
-import { Executor } from "../Executor/Executor";
-import { Authorization } from "../Auth/Authorization";
 
 export class EnvironmentRouterApi {
 
   constructor(
     private router: EnvironmentRouter,
-    private serverCommunicator: ServerCommunicator,
-    private executor: Executor,
-    private authorization: Authorization) {
+    private serverCommunicator: ServerCommunicator) {
     this.init();
   }
 
@@ -28,18 +24,10 @@ export class EnvironmentRouterApi {
     this.serverCommunicator.post(ApiPaths.ADD_EXECUTABLE, (req: any, res: any) => {
       const data = req.body;
       const token = req.headers.token
-      this.authorization.validateUserToken(data.username, token)
-      .then((authorized) => {
-        if (authorized) {
-          // User authorized to add executables for themselves
-          this.executor.addExecutable(data)
-          .then((result: any) => {
-            res.status(200).send(result);
-          });
-        } else {
-          res.status(401).send("Unauthorized")
-        }
-      })
+      this.router.addExecutable(data, token)
+      .then((result: any) => {
+        res.status(200).send(result);
+      });
     });
 
     /**
@@ -52,7 +40,7 @@ export class EnvironmentRouterApi {
       const username = req.params.username;
       const exe = req.params.exe;
       const name = req.params.name;
-      this.executor.getExecutable(username, name, exe).then((result) => {
+      this.router.getExecutable(username, name, exe).then((result) => {
         res.status(200).send(result);
       });
     });
@@ -66,7 +54,7 @@ export class EnvironmentRouterApi {
     this.serverCommunicator.get(ApiPaths.GET_EXECUTABLES, (req: any, res: any) => {
       const exe = req.params.exe;
       const username = req.params.username;
-      this.executor.getExecutables(username, exe)
+      this.router.getExecutables(username, exe)
       .then((results) => {
         res.status(200).send(results);
       });
@@ -80,7 +68,7 @@ export class EnvironmentRouterApi {
      */
     this.serverCommunicator.get(ApiPaths.SEARCH_EXECUTABLES, (req: any, res: any) => {
       const searchText = req.query.searchText;
-      this.executor.searchExecutables(searchText)
+      this.router.searchExecutables(searchText)
       .then((results) => {
         res.status(200).send(results);
       });

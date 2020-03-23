@@ -74,9 +74,9 @@ export class Database {
           username: item.username,
           name: item.name,
           exe: item.exe,
+          description: item.description,
           input: item.input,
           output: item.output,
-          description: item.description,
           environment: item.environment
         };
         return this.fileSystemCommunicator.getFile(username + "/queries", name)

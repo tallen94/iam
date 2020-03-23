@@ -3,13 +3,18 @@ import * as Lodash from "lodash";
 import * as uuid from "uuid";
 import { FileSystem } from "../FileSystem/FileSystem";
 import { Droplet } from "./Droplet";
+import { Shell } from "../Executor/Shell";
+import { Database } from "../Executor/Database";
+import { GraphExecutor } from "../Executor/GraphExecutor";
 
 export class PoolManager {
 
   private pools: { [key: string]: Droplet[] } = {}
 
   constructor(
-    private executor: Executor,
+    private shell: Shell,
+    private database: Database,
+    private graphExecutor: GraphExecutor,
     private fileSystem: FileSystem,
     private environment: string
   ) {
@@ -17,7 +22,7 @@ export class PoolManager {
   }
 
   private initPools(environment: string) {
-    return this.executor.runExecutable("admin", "get-env-pools", "query", { environment: environment })
+    return this.database.runQuery("admin", "get-env-pools", { environment: environment })
     .then((results) => {
       return Promise.all(Lodash.map(results, (pool) => {
         return this.initPool(pool)
@@ -27,7 +32,7 @@ export class PoolManager {
 
   private initPool(pool: any) {
     pool.data = JSON.parse(pool.data)
-    return this.executor.getExecutable(pool.data.username, pool.data.name, pool.data.exe)
+    return this.shell.getProgram(pool.data.username, pool.data.name)
     .then((result: any) => {
       return this.fileSystem.put("programs", pool.data.name, result.text)
       .then((err: any) => {
@@ -39,7 +44,7 @@ export class PoolManager {
 
       for (let i = 0; i < pool.data.poolSize; i++) {
         const droplet = new Droplet(
-          this.executor.getShell().getShellCommunicator(), 
+          this.shell.getShellCommunicator(), 
           program,
           this.fileSystem) 
         droplet.activate({})
@@ -82,7 +87,7 @@ export class PoolManager {
     return this.getPool(data.username, data.name)
     .then((result) => {
       if (result == undefined) {
-        return this.executor.runExecutable("admin", "add-exe", "query", {
+        return this.database.runQuery("admin", "add-exe", {
           username: data.username,
           name: data.name,
           uuid: uuid.v4(),
@@ -95,7 +100,7 @@ export class PoolManager {
           environment: data.environment
         })
       } else {
-        return this.executor.runExecutable("admin", "update-exe", "query", {
+        return this.database.runQuery("admin", "update-exe", {
           name: data.name,
           exe: data.exe,
           data: poolData,
@@ -106,12 +111,12 @@ export class PoolManager {
         })
       }
     }).then(() => {
-      return this.executor.runExecutable("admin", "update-env-pool", "graph", [{svc: this.environment}, {username: data.username, name: data.name}])
+      return this.graphExecutor.runGraph("admin", "update-env-pool", [{svc: this.environment}, {username: data.username, name: data.name}])
     })
   }
 
   public getPool(username: string, name: string) {
-    return this.executor.runExecutable("admin", "get-exe-by-type-name", "query", {username: username, name: name, exe: "pool"})
+    return this.database.runQuery("admin", "get-exe-by-type-name", {username: username, name: name, exe: "pool"})
     .then((result) => {
       if (result.length > 0) {
         const item = result[0];
@@ -135,7 +140,7 @@ export class PoolManager {
   }
 
   public getPools(username: string) {
-    return this.executor.runExecutable("admin", "get-exe-for-user", "query", {exe: "pool", username: username})
+    return this.database.runQuery("admin", "get-exe-for-user", {exe: "pool", username: username})
     .then((data) => {
       return Promise.all(Lodash.map(data, (item) => {
         return {
@@ -148,7 +153,7 @@ export class PoolManager {
   }
 
   public runPool(username: string, name: string, data: any) {
-    return this.executor.runExecutable("admin", "get-exe-by-type-name", "query", {username: username, name: name, exe: "pool"})
+    return this.database.runQuery("admin", "get-exe-by-type-name", {username: username, name: name, exe: "pool"})
     .then((result) => {
       return this.initPool(result[0])
     })

@@ -1,22 +1,15 @@
 import { Step } from "./Step";
 import { Database } from "../Executor/Database";
 import { Client } from "../Executor/Client";
-import * as Lodash from "lodash";
 
 export class QueryStep implements Step {
 
   constructor(
     private username: string,
     private name: string,
-    private databaseExecutor: Database,
+    private database: Database,
     private client: Client,
     private foreach?: boolean) { }
-
-  // public spawn() {
-  //   return this.clientPool.numClients() > 0 ?
-  //   this.clientPool.spawn(this.name, 1)[0] :
-  //   this.database.spawn(this.name);
-  // }
 
   public execute(data: any): Promise<any> {
     if (this.foreach) {
@@ -51,13 +44,4 @@ export class QueryStep implements Step {
       return result.result;
     });
   }
-
-  // public executeEach(data: any) {
-  //   return Promise.all([
-  //     this.clientPool.eachClient((client: Client) => { return client.runExecutable(this.username, "query", this.name, data); }),
-  //     this.database.runQuery(this.username, this.name, data)
-  //   ]).then((results) => {
-  //     return results[0].concat([results[1]]);
-  //   });
-  // }
 }
