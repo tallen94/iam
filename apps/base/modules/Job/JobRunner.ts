@@ -95,7 +95,7 @@ export class JobRunner {
   }
 
   public getJob(name: string) {
-    return this.executor.getDatabase().runQuery("admin", "get-exe-by-type-name", { exe: "job", name: name})
+    return this.executor.getDatabase().runQuery("admin", "get-exe-by-type-name", { username: "", exe: "job", name: name})
     .then((result) => {
       if (result.length > 0) {
         const item = result[0];

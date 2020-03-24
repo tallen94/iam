@@ -2,18 +2,18 @@ import { Database } from "./Database";
 import * as Lodash from "lodash";
 import { Node } from "../Graph/Node";
 import { DirectedGraph } from "../Graph/DirectedGraph";
-import { Executor } from "./Executor";
-import { StepListManager } from "../Step/StepListManager";
 import * as UUID from "uuid";
 import { ClientCommunicator } from "../Communicator/ClientCommunicator";
 import { Client } from "./Client";
+import { ProgramStep } from "../Step/ProgramStep";
+import { QueryStep } from "../Step/QueryStep";
+import { Shell } from "./Shell";
 
 export class GraphExecutor {
 
   constructor(
     private database: Database,
-    private executor: Executor,
-    private stepListManager: StepListManager) { }
+    private shell: Shell) { }
 
   public addGraph(data: any) {
     const trimmedData = this.trimData(data.graph);
@@ -57,8 +57,8 @@ export class GraphExecutor {
     });
   }
 
-  public runGraph(name: string, data: any) {
-    return this.database.runQuery("admin", "get-exe-by-type-name", { name: name, exe: "graph"})
+  public runGraph(username: string, name: string, data: any) {
+    return this.database.runQuery("admin", "get-exe-by-type-name", {username: username, name: name, exe: "graph"})
     .then((result) => {
       if (result.length > 0) {
         const item = result[0];
@@ -114,7 +114,12 @@ export class GraphExecutor {
 
   private getSteps(nodes: any[]) {
     return Promise.all(Lodash.map(nodes, (node) => {
-      return this.executor.getExecutable(node.username, node.name, node.exe)
+      switch (node.exe) {
+        case "function":
+          return this.shell.getProgram(node.username, node.name)
+        case "query":
+          return this.database.getQuery(node.username, node.name);
+      }
     }).map((nodePromise, index) => {
       return nodePromise.then((node) => {
         node.foreach = nodes[index].foreach
@@ -124,7 +129,7 @@ export class GraphExecutor {
             const env = JSON.parse(results[0].data)
             const clientCommunicator = new ClientCommunicator(env.host, env.port)
             const client = new Client(clientCommunicator);
-            return this.stepListManager.stepJsonToStep(node, client);
+            return this.stepJsonToStep(node, client);
           }
         })
       });
@@ -172,5 +177,14 @@ export class GraphExecutor {
       };
     });
     return data;
+  }
+
+  public stepJsonToStep(stepJson, client?: Client) {
+    switch (stepJson.exe) {
+      case "function":
+        return new ProgramStep(stepJson.username, stepJson.name, this.shell, client, stepJson.foreach);
+      case "query":
+        return new QueryStep(stepJson.username, stepJson.name, this.database, client, stepJson.foreach);
+    }
   }
 }

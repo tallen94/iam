@@ -1,44 +1,23 @@
 import {
-  Client,
   Shell,
-  Database,
-  ShellCommunicator,
-  ClientCommunicator,
-  DatabaseCommunicator,
-  FileSystem
+  Database
 } from "../modules";
-import { ClientPool } from "./ClientPool";
-import { StepListManager } from "../Step/StepListManager";
 import * as Lodash from "lodash";
 import { JobRunner } from "../Job/JobRunner";
-import { FileSystemCommunicator } from "../Communicator/FileSystemCommunicator";
 import { GraphExecutor } from "./GraphExecutor";
 import { EnvironmentManager } from "../Environment/EnvironmentManager";
-import { EnvironmentRouter } from "./EnvironmentRouter";
 import { PoolManager } from "../Pool/PoolManager";
 
 export class Executor {
 
-  private shell: Shell;
-  private database: Database;
-  private stepListManager: StepListManager;
-  private environmentManager: EnvironmentManager;
-  private graphExecutor: GraphExecutor;
   private jobRunner: JobRunner;
-  private poolManager: PoolManager;
 
   constructor(
-    environment: string,
-    fileSystem: FileSystem,
-    dbConfig: any,
-    fsConfig: any,
-    private clientPool: ClientPool) {
-    this.setDatabase(dbConfig, fsConfig);
-    this.setShell(fileSystem, this.database, fsConfig);
-    this.setStepListManager(this.shell, this.database, clientPool);
-    this.setEnvironmentManager(this.shell, this.database, fsConfig, fileSystem);
-    this.setGraphExecutor();
-    this.setPoolManager(fileSystem, environment);
+    private database: Database,
+    private shell: Shell,
+    private environmentManager: EnvironmentManager,
+    private graphExecutor: GraphExecutor,
+    private poolManager: PoolManager) {
   }
 
   public setJobRunner(jobRunner: JobRunner) {
@@ -48,30 +27,55 @@ export class Executor {
   public status(): Promise<any> {
     return Promise.all([
       this.shell.getStatus(),
-      this.database.getStatus(),
-      this.clientPool.getStatus()
+      this.database.getStatus()
     ]);
   }
 
   public addExecutable(data: any) {
     switch (data.exe) {
       case "function":
-        return this.shell.addProgram(data);
+        // check if user can write to environment
+        // a user can write to an environment if they own it
+        return this.validateUserOwnsEnvironment(data.username, data.environment)
+        .then((userOwnsEnvironment) => {
+          if (userOwnsEnvironment) {
+            // the user owns the environment
+            return this.shell.addProgram(data);
+          } 
+          return "Environment named " + data.environment + " does not exist"
+        })
       case "query":
-        return this.database.addQuery(data);
-      case "pipe":
-      case "async":
-      case "foreach":
-        return this.stepListManager.addStepList(data);
+        return this.validateUserOwnsEnvironment(data.username, data.environment)
+        .then((userOwnsEnvironment) => {
+          if (userOwnsEnvironment) {
+            // the user owns the environment
+            return this.database.addQuery(data);
+          } 
+          return "Environment named " + data.environment + " does not exist"
+        })
+      case "graph":
+        return this.validateUserOwnsEnvironment(data.username, data.environment)
+        .then((userOwnsEnvironment) => {
+          if (userOwnsEnvironment) {
+            // the user owns the environment
+            return this.graphExecutor.addGraph(data);
+          } 
+          return "Environment named " + data.environment + " does not exist"
+        })
       case "job":
         return this.jobRunner.addJob(data);
-      case "graph":
-        return this.graphExecutor.addGraph(data);
       case "environment":
         return this.environmentManager.addEnvironment(data);
       case "pool":
         return this.poolManager.addPool(data);
     }
+  }
+
+  private validateUserOwnsEnvironment(username: string, environment: string) {
+    return this.database.runQuery("admin", "get-exe-by-type-name", {username: username, exe: 'environment', name: environment})
+    .then((results) => {
+      return results.length > 0
+    })
   }
 
   public getExecutable(username: string, name: string, exe: string): Promise<any> {
@@ -225,10 +229,6 @@ export class Executor {
         return this.shell.getPrograms(username);
       case "query":
         return this.database.getQueries(username);
-      case "pipe":
-      case "async":
-      case "foreach":
-        return this.stepListManager.getStepLists(username, exe);
       case "job":
         return this.jobRunner.getJobs(username);
       case "graph":
@@ -249,12 +249,8 @@ export class Executor {
         return this.shell.runProgram(username, name, data);
       case "query":
         return this.database.runQuery(username, name, data);
-      case "pipe":
-      case "async":
-      case "foreach":
-        return this.stepListManager.runStepList(username, name, exe, data);
       case "graph":
-        return this.graphExecutor.runGraph(name, data);
+        return this.graphExecutor.runGraph(username, name, data);
       case "environment":
         return this.environmentManager.runEnvironment(username, name, data);
       case "pool":
@@ -283,58 +279,5 @@ export class Executor {
 
   public getDatabase(): Database {
     return this.database;
-  }
-
-  public getClientPool(): ClientPool {
-    return this.clientPool;
-  }
-
-  public getStepListManager(): StepListManager {
-    return this.stepListManager;
-  }
-
-  private setShell(fileSystem: FileSystem, database: Database, fsConfig: any) {
-    const fsClient = new ClientCommunicator(fsConfig["host"], fsConfig["port"]);
-    const shellCommunicator: ShellCommunicator = new ShellCommunicator();
-    const fileSystemCommunicator: FileSystemCommunicator = new FileSystemCommunicator(fsClient);
-    const environmentRouter: EnvironmentRouter = new EnvironmentRouter(database);
-    const thread = new Shell(shellCommunicator, fileSystemCommunicator, database, fileSystem, environmentRouter);
-    this.shell = thread;
-    return this.shell;
-  }
-
-  private setDatabase(config: any, fsConfig: any) {
-    const databaseCommunicator: DatabaseCommunicator = new DatabaseCommunicator(config.user, config.password, config.host, config.port, config.database);
-    const fsClient = new ClientCommunicator(fsConfig["host"], fsConfig["port"]);
-    const fileSystemCommunicator: FileSystemCommunicator = new FileSystemCommunicator(fsClient);
-    const thread = new Database(databaseCommunicator, fileSystemCommunicator);
-    this.database = thread;
-    return this.database;
-  }
-
-  private setStepListManager(shell: Shell, database: Database, clientPool: ClientPool) {
-    const thread = new StepListManager(shell, database, clientPool, this);
-    this.stepListManager = thread;
-    return this.stepListManager;
-  }
-
-  private setGraphExecutor() {
-    this.graphExecutor = new GraphExecutor(this.database, this, this.stepListManager);
-  }
-
-  private setEnvironmentManager(shell: Shell, database: Database, fsConfig: any, fileSystem: FileSystem) {
-    const fsClient = new ClientCommunicator(fsConfig["host"], fsConfig["port"])
-    const fileSystemCommunicator: FileSystemCommunicator = new FileSystemCommunicator(fsClient);
-    this.environmentManager = new EnvironmentManager(fileSystem, shell, database, fileSystemCommunicator);
-    return this.environmentManager;
-  }
-
-  public addClientThread(host: string, port: number) {
-    const clientCommunicator: ClientCommunicator = new ClientCommunicator(host, port);
-    this.clientPool.addClient(new Client(clientCommunicator));
-  }
-
-  public setPoolManager(fileSystem: FileSystem, environment) {
-    this.poolManager = new PoolManager(this, fileSystem, environment);
   }
 }
