@@ -1,4 +1,15 @@
 <div class="inline-input">
+  <label *ngIf="editing || (!editing && !isEmpty(data.visibility))">Visibility</label>
+  <div *ngIf="editing">
+    <select class="form-control" [(ngModel)]="data.visibility">
+      <option>private</option>
+      <option>public</option>
+    </select>
+  </div>
+  <p *ngIf="!editing">{{data.visibility}}</p>
+</div>
+
+<div class="inline-input">
   <label *ngIf="editing || (!editing && !isEmpty(data.input))">Input</label>
   <input 
     class="form-control"

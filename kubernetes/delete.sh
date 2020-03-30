@@ -1,17 +1,19 @@
 #!/bin/bash
 
+NAMESPACE=$1
+
 # System apps
-kubectl delete deployment iam-router
-kubectl delete service iam-router
-kubectl delete deployment iam-filesystem
-kubectl delete service iam-filesystem
+kubectl delete deployment iam-router --namespace=$NAMESPACE
+kubectl delete service iam-router --namespace=$NAMESPACE
+kubectl delete deployment iam-filesystem --namespace=$NAMESPACE
+kubectl delete service iam-filesystem --namespace=$NAMESPACE
 
 # Environments
-kubectl delete deployment base
-kubectl delete service base
-kubectl delete deployment environment-builder
-kubectl delete service environment-builder
+kubectl delete deployment base --namespace=$NAMESPACE
+kubectl delete service base --namespace=$NAMESPACE
+kubectl delete deployment environment-builder --namespace=$NAMESPACE
+kubectl delete service environment-builder --namespace=$NAMESPACE
 
 # Database
-# kubectl delete pod mysqldatabase
-# kubectl delete service mysqldatabase
+# kubectl delete pod mysqldatabase --namespace=$NAMESPACE
+# kubectl delete service mysqldatabase --namespace=$NAMESPACE

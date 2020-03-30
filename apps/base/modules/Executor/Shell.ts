@@ -8,6 +8,7 @@ import { LocalProcess } from "../Process/LocalProcess";
 import { Process } from "../Process/Process";
 import { FileSystemCommunicator } from "../Communicator/FileSystemCommunicator";
 import uuid = require("uuid");
+import { Authorization } from "../Auth/Authorization";
 
 export class Shell {
   private status: string;
@@ -20,7 +21,8 @@ export class Shell {
     shellCommunicator: ShellCommunicator,
     fileSystemCommunicator: FileSystemCommunicator,
     database: Database,
-    fileSystem: FileSystem
+    fileSystem: FileSystem,
+    private authorization: Authorization
   ) {
     this.status = "OK";
     this.shell = shellCommunicator;
@@ -48,8 +50,9 @@ export class Shell {
           output: data.output,
           userId: data.userId,
           description: data.description,
-          environment: data.environment
-        });
+          environment: data.environment,
+          visibility: data.visibility
+        }, "");
       } else {
         return this.database.runQuery("admin", "update-exe", {
           name: data.name,
@@ -58,8 +61,9 @@ export class Shell {
           input: data.input,
           output: data.output,
           description: data.description,
-          environment: data.environment
-        });
+          environment: data.environment,
+          visibility: data.visibility
+        }, "");
       }
     }).then(() => {
       return Promise.all([
@@ -72,7 +76,7 @@ export class Shell {
   }
 
   public getProgram(username: string, name: string) {
-    return this.database.runQuery("admin", "get-exe-by-type-name", {username: username, name: name, exe: "function"})
+    return this.database.runQuery("admin", "get-exe-by-type-name", {username: username, name: name, exe: "function"}, "")
     .then((result) => {
       if (result.length > 0) {
         const item = result[0];
@@ -86,7 +90,8 @@ export class Shell {
           output: item.output,
           args: data.args,
           command: data.command,
-          environment: item.environment
+          environment: item.environment,
+          visibility: item.visibility
         };
         return this.fileSystemCommunicator.getFile(username + "/programs", name)
         .then((result) => {
@@ -103,10 +108,10 @@ export class Shell {
   }
 
   public getPrograms(username: string) {
-    return this.database.runQuery("admin", "get-exe-for-user", {exe: "function", username: username})
+    return this.database.runQuery("admin", "get-exe-for-user", {exe: "function", username: username}, "")
     .then((data) => {
       return Promise.all(Lodash.map(data, (item) => {
-        return this.database.runQuery("admin", "search-steplists", {query: "%name\":\"" + item.name + "\"%"})
+        return this.database.runQuery("admin", "search-steplists", {query: "%name\":\"" + item.name + "\"%"}, "")
         .then((results) => {
           return {
             username: item.username,
@@ -133,8 +138,16 @@ export class Shell {
     return process;
   }
 
-  public runProgram(username: string, name: string, data: any): Promise<any> {
+  public runProgram(username: string, name: string, data: any, token: string): Promise<any> {
     return this.getProgram(username, name)
+    .then((program) => {
+      if (program.visibility == "private") {
+        return this.authorization.validateUserToken(program.username, token, this.database, () => {
+          return program;
+        })
+      }
+      return program;
+    })
     .then((program) => {
       const tmpName = uuid.v4()
       return this.fileSystem.put("programs", tmpName, program.text)

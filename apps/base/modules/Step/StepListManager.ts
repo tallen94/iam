@@ -27,8 +27,9 @@ export class StepListManager {
           input: data.input,
           output: data.output,
           userId: data.userId,
-          description: data.description
-        });
+          description: data.description,
+          visibility: data.visibility
+        }, "");
       } else {
         return this.database.runQuery("admin", "update-exe", {
           name: data.name,
@@ -37,15 +38,16 @@ export class StepListManager {
           input: data.input,
           output: data.output,
           userId: data.userId,
-          description: data.description
-        });
+          description: data.description,
+          visibility: data.visibility
+        }, "");
       }
     });
   }
 
   // GET ONE SYNC
   public getStepList(username, name: string, exe: string) {
-    return this.database.runQuery("admin", "get-exe-by-type-name", {exe: exe, name: name, username: username})
+    return this.database.runQuery("admin", "get-exe-by-type-name", {exe: exe, name: name, username: username}, "")
     .then((result) => {
       if (result.length > 0) {
         const item = result[0];
@@ -56,7 +58,8 @@ export class StepListManager {
           exe: item.exe,
           data: data,
           input: item.input,
-          description: item.description
+          description: item.description,
+          visibility: item.visibility
         };
         return ret;
       }
@@ -66,10 +69,10 @@ export class StepListManager {
 
   // GET ALL SYNC
   public getStepLists(username: string, exe: string) {
-    return this.database.runQuery("admin", "get-exe-for-user", {exe: exe, username: username})
+    return this.database.runQuery("admin", "get-exe-for-user", {exe: exe, username: username}, "")
     .then((data) => {
       return Promise.all(Lodash.map(data, (item) => {
-        return this.database.runQuery("admin", "search-steplists", {query: "%name\":\"" + item.name + "\"%"})
+        return this.database.runQuery("admin", "search-steplists", {query: "%name\":\"" + item.name + "\"%"}, "")
         .then((results) => {
           return {
             username: item.username,

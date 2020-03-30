@@ -85,7 +85,8 @@ export class EnvironmentRouterApi {
       const name = req.params.name;
       const exe = req.params.exe;
       const data = req.body;
-      this.router.runExecutable(exe, username, name, data)
+      const token = req.headers.token;
+      this.router.runExecutable(exe, username, name, data, token)
       .then((result: any) => {
         resp.status(200).send(result);
       });

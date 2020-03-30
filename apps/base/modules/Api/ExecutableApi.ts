@@ -25,7 +25,8 @@ export class ExecutableApi {
       const name = req.params.name;
       const exe = req.params.exe;
       const data = req.body;
-      this.executor.runExecutable(username, name, exe, data)
+      const token = req.headers.token;
+      this.executor.runExecutable(username, name, exe, data, token)
       .then((result: any) => {
         resp.status(200).send({result: result});
       });

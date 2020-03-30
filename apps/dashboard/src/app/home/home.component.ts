@@ -35,9 +35,9 @@ export class HomeComponent implements OnInit {
     this.iam.getExecutables(this.iam.getUser().username, "environment").subscribe((data) => {
       this.columns["environment"]["list"] = data
     })
-    this.iam.getExecutables(this.iam.getUser().username, "pool").subscribe((data) => {
-      this.columns["pool"]["list"] = data
-    })
+    // this.iam.getExecutables(this.iam.getUser().username, "pool").subscribe((data) => {
+    //   this.columns["pool"]["list"] = data
+    // })
   }
 
   private initColumns() {
@@ -58,10 +58,10 @@ export class HomeComponent implements OnInit {
         title: 'environment',
         list: []
       },
-      pool: {
-        title: 'pool',
-        list: []
-      }
+      // pool: {
+      //   title: 'pool',
+      //   list: []
+      // }
     };
   }
 

@@ -5,13 +5,15 @@ import {
 } from "../modules";
 import { FileSystemCommunicator } from "../Communicator/FileSystemCommunicator";
 import { QueryProcess } from "../Process/QueryProcess";
+import { Authorization } from "../Auth/Authorization";
 
 export class Database {
   private status: string;
 
   constructor(
     private databaseCommunicator: DatabaseCommunicator,
-    private fileSystemCommunicator: FileSystemCommunicator) {
+    private fileSystemCommunicator: FileSystemCommunicator,
+    private authorization: Authorization) {
     this.status = "OK";
   }
 
@@ -37,8 +39,9 @@ export class Database {
           output: data.output,
           userId: data.userId,
           description: data.description,
-          environment: data.environment
-        });
+          environment: data.environment,
+          visibility: data.visibility
+        }, "");
       } else {
         return this.runQuery("admin", "update-exe", {
           name: data.name,
@@ -47,8 +50,9 @@ export class Database {
           input: data.input,
           output: data.output,
           description: data.description,
-          environment: data.environment
-        });
+          environment: data.environment,
+          visibility: data.visibility
+        }, "");
       }
     }).then(() => {
       return Promise.all([
@@ -77,7 +81,8 @@ export class Database {
           description: item.description,
           input: item.input,
           output: item.output,
-          environment: item.environment
+          environment: item.environment,
+          visibility: item.visibility
         };
         return this.fileSystemCommunicator.getFile(username + "/queries", name)
         .then((result) => {
@@ -94,7 +99,7 @@ export class Database {
     return this.databaseCommunicator.execute(queryStr, {username: username})
     .then((data: any) => {
       return Promise.all(Lodash.map(data, (item) => {
-        return this.runQuery("admin", "search-steplists", {query: "%name\":\"" + item.name + "\"%"})
+        return this.runQuery("admin", "search-steplists", {query: "%name\":\"" + item.name + "\"%"}, "")
         .then((results) => {
           return {
             username: item.username,
@@ -117,8 +122,17 @@ export class Database {
     return new QueryProcess(query, this.databaseCommunicator.getConnection());
   }
 
-  public runQuery(username: string, name: string, data: any): Promise<any> {
-    return this.getQuery(username, name).then((query) => {
+  public runQuery(username: string, name: string, data: any, token: string): Promise<any> {
+    return this.getQuery(username, name)
+    .then((query) => {
+      if (query.visibility == "private") {
+        return this.authorization.validateUserToken(query.username, token, this, () => {
+          return query;
+        })
+      }
+      return query;
+    })
+    .then((query) => {
       return this.runQueryString(query.text, data);
     });
   }

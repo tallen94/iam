@@ -12,7 +12,7 @@ elif [ $APP_NAME = "router" ]; then
   ENV=$5
   bash builders/build-$APP_NAME.sh $VERSION $PUSH $PROVIDER $ENV
 elif [ $APP_NAME = "database" ]; then 
-  bash builders/build-$APP_NAME.sh $VERSION $PUSH
+  bash builders/build-$APP_NAME.sh $VERSION $PUSH $PROVIDER
 elif [ $APP_NAME = "dependencies" ]; then
   bash builders/build-$APP_NAME.sh $VERSION $PUSH
 elif [ $APP_NAME = "filesystem" ]; then

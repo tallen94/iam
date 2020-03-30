@@ -8,12 +8,14 @@ import { Client } from "./Client";
 import { ProgramStep } from "../Step/ProgramStep";
 import { QueryStep } from "../Step/QueryStep";
 import { Shell } from "./Shell";
+import { Authorization } from "../Auth/Authorization";
 
 export class GraphExecutor {
 
   constructor(
     private database: Database,
-    private shell: Shell) { }
+    private shell: Shell,
+    private authorization: Authorization) { }
 
   public addGraph(data: any) {
     const trimmedData = this.trimData(data.graph);
@@ -29,8 +31,9 @@ export class GraphExecutor {
           output: data.output,
           userId: data.userId,
           description: data.description,
-          environment: data.environment
-        });
+          environment: data.environment,
+          visibility: data.visibility
+        }, "");
       } else {
         return this.database.runQuery("admin", "update-exe", {
           name: data.name,
@@ -39,14 +42,15 @@ export class GraphExecutor {
           input: data.input,
           output: data.output,
           description: data.description,
-          environment: data.environment
-        });
+          environment: data.environment,
+          visibility: data.visibility
+        }, "");
       }
     });
   }
 
   public getGraph(username: string, name: string) {
-    return this.database.runQuery("admin", "get-exe-by-type-name", { username: username, name: name, exe: "graph"})
+    return this.database.runQuery("admin", "get-exe-by-type-name", { username: username, name: name, exe: "graph"}, "")
     .then((result) => {
       if (result.length > 0) {
         const item = result[0];
@@ -57,50 +61,8 @@ export class GraphExecutor {
     });
   }
 
-  public runGraph(username: string, name: string, data: any) {
-    return this.database.runQuery("admin", "get-exe-by-type-name", {username: username, name: name, exe: "graph"})
-    .then((result) => {
-      if (result.length > 0) {
-        const item = result[0];
-        const graphData = JSON.parse(item.data);
-        return this.buildGraph(graphData.nodes, graphData.edges)
-        .then((graph) => {
-          if (graphData.foreach) {
-            const numThreads = 2;
-            const threads = [];
-            const results = [];
-
-            for (let index = 0; index < data.length; index++) {
-              if (threads.length < numThreads) {
-                threads.push(Promise.resolve().then(() => {
-                  return graph.execute(data[index])
-                  .then((result: any) => {
-                    results.push(result);
-                  })
-                }))
-              } else {
-                threads[index % numThreads] = threads[index % numThreads]
-                .then(() => {
-                  return graph.execute(data[index])
-                  .then((result: any) => {
-                    results.push(result);
-                  })
-                })
-              }
-            }
-            return Promise.all(threads).then(() => {
-              return results;
-            })
-          }
-          return graph.execute(data);
-        });
-      }
-      return Promise.resolve(undefined);
-    });
-  }
-
   public getGraphs(username: string) {
-    return this.database.runQuery("admin", "get-exe-for-user", {exe: "graph", username: username})
+    return this.database.runQuery("admin", "get-exe-for-user", {exe: "graph", username: username}, "")
     .then((data) => {
       return Promise.all(Lodash.map(data, (item) => {
         return {
@@ -109,6 +71,52 @@ export class GraphExecutor {
           description: item.description
         };
       }));
+    });
+  }
+
+  public runGraph(username: string, name: string, data: any, token: string) {
+    return this.getGraph(username, name)
+    .then((graph) => {
+      if (graph.visibility == "private") {
+        return this.authorization.validateUserToken(graph.username, token, this.database, () => {
+          return graph;
+        })
+      }
+      return graph;
+    })
+    .then((graph) => {
+      const graphData = graph.data;
+      return this.buildGraph(graphData.nodes, graphData.edges)
+      .then((graph) => {
+        if (graphData.foreach) {
+          const numThreads = 2;
+          const threads = [];
+          const results = [];
+
+          for (let index = 0; index < data.length; index++) {
+            if (threads.length < numThreads) {
+              threads.push(Promise.resolve().then(() => {
+                return graph.execute(data[index])
+                .then((result: any) => {
+                  results.push(result);
+                })
+              }))
+            } else {
+              threads[index % numThreads] = threads[index % numThreads]
+              .then(() => {
+                return graph.execute(data[index])
+                .then((result: any) => {
+                  results.push(result);
+                })
+              })
+            }
+          }
+          return Promise.all(threads).then(() => {
+            return results;
+          })
+        }
+        return graph.execute(data);
+      });
     });
   }
 
@@ -123,11 +131,12 @@ export class GraphExecutor {
     }).map((nodePromise, index) => {
       return nodePromise.then((node) => {
         node.foreach = nodes[index].foreach
-        return this.database.runQuery("admin", "get-exe-environment", {username: node.username, exe: node.exe, name: node.name})
+        return this.database.runQuery("admin", "get-exe-environment", {username: node.username, exe: node.exe, name: node.name}, "")
         .then((results) => {
           if (results.length > 0) {
-            const env = JSON.parse(results[0].data)
-            const clientCommunicator = new ClientCommunicator(env.host, env.port)
+            const environment = results[0]
+            const host = environment.name + "." + node.username
+            const clientCommunicator: ClientCommunicator = new ClientCommunicator(host, 80)
             const client = new Client(clientCommunicator);
             return this.stepJsonToStep(node, client);
           }

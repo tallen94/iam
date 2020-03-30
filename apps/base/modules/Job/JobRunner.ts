@@ -75,7 +75,7 @@ export class JobRunner {
           output: data.output,
           userId: data.userId,
           description: data.description
-        });
+        }, "");
       }
       return this.executor.getDatabase().runQuery("admin", "update-exe", {
         name: data.name,
@@ -84,7 +84,7 @@ export class JobRunner {
         input: data.input,
         output: data.output,
         description: data.description
-      });
+      }, "");
     }).then((result) => {
       return this.getJob(name);
     }).then((job) => {
@@ -95,7 +95,7 @@ export class JobRunner {
   }
 
   public getJob(name: string) {
-    return this.executor.getDatabase().runQuery("admin", "get-exe-by-type-name", { username: "", exe: "job", name: name})
+    return this.executor.getDatabase().runQuery("admin", "get-exe-by-type-name", { username: "", exe: "job", name: name}, "")
     .then((result) => {
       if (result.length > 0) {
         const item = result[0];
@@ -118,10 +118,10 @@ export class JobRunner {
   }
 
   public getJobs(username: string) {
-    return this.executor.getDatabase().runQuery("admin", "get-exe-for-user", {exe: "job", username: username})
+    return this.executor.getDatabase().runQuery("admin", "get-exe-for-user", {exe: "job", username: username}, "")
     .then((data) => {
       return Promise.all(Lodash.map(data, (item) => {
-        return this.executor.getDatabase().runQuery("admin", "search-steplists", {query: "%name\":\"" + item.name + "\"%"})
+        return this.executor.getDatabase().runQuery("admin", "search-steplists", {query: "%name\":\"" + item.name + "\"%"}, "")
         .then((results) => {
           return {
             name: item.name,
@@ -134,7 +134,7 @@ export class JobRunner {
   }
 
   public getAllJobs() {
-    return this.executor.getDatabase().runQuery("admin", "get-exe-by-type", {exe: "job"})
+    return this.executor.getDatabase().runQuery("admin", "get-exe-by-type", {exe: "job"}, "")
     .then((result) => {
       return Lodash.map(result, (item) => {
         return {
@@ -149,7 +149,7 @@ export class JobRunner {
   }
 
   private ack(id: number) {
-    return this.executor.getDatabase().runQuery("admin", "ack-job", {id: id});
+    return this.executor.getDatabase().runQuery("admin", "ack-job", {id: id}, "");
   }
 
   private queueJob(jobId: number, data: any) {
