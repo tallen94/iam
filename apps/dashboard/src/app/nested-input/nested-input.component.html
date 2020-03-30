@@ -105,30 +105,6 @@
         <p *ngIf="!isEditing()">{{data.type}}</p>
       </div>
 
-      <div class="inline-input"> 
-        <label *ngIf="isEditing() || (!isEditing() && !isEmpty(data.host))">Host</label>
-        <input 
-          class="form-control"
-          size="{{inputSize('host')}}"
-          *ngIf="isEditing()" 
-          type="text" 
-          [(ngModel)]="data.host"
-          placeholder="host">
-        <p *ngIf="!isEditing()">{{data.host}}</p>
-      </div>
-
-      <div class="inline-input">
-        <label *ngIf="isEditing() || (!isEditing() && !isEmpty(data.port))">Port</label>
-        <input 
-          class="form-control"
-          size="{{inputSize('port')}}"
-          *ngIf="isEditing()" 
-          type="text" 
-          [(ngModel)]="data.port"
-          placeholder="port">
-        <p *ngIf="!isEditing()">{{data.port}}</p>
-      </div>
-
       <div>
         <label class="nested-title" *ngIf="isEditing() || (!isEditing() && !isEmpty(data.image))">Image</label>
 

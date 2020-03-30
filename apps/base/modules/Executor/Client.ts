@@ -26,8 +26,8 @@ export class Client {
     return this.clientCommunicator.get(ApiPaths.GET_EXECUTABLES, {username: username, exe: exe});
   }
 
-  public runExecutable(username: string, exe: string, name: string, data: any) {
-    return this.clientCommunicator.post(ApiPaths.RUN_EXECUTABLE, data, {username: username, exe: exe, name: name});
+  public runExecutable(username: string, exe: string, name: string, data: any, token: string) {
+    return this.clientCommunicator.post(ApiPaths.RUN_EXECUTABLE, data, {username: username, exe: exe, name: name}, {token: token});
   }
 
   public getHost() {

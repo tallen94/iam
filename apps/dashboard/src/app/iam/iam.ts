@@ -37,7 +37,7 @@ export class Iam {
   }
 
   public addExecutable(data: any) {
-    return this.router.post(ApiPaths.ADD_EXECUTABLE, data, {}, {token: this.user.token})
+    return this.router.post(ApiPaths.ADD_EXECUTABLE, data, {}, {token: this.user == undefined ? "" : this.user.token})
   }
 
   public getExecutable(username: string, exe: string, name: string) {
@@ -49,7 +49,7 @@ export class Iam {
   }
 
   public runExecutable(username: string, exe: string, name: string, data: any) {
-    return this.router.post(ApiPaths.RUN_EXECUTABLE, data, {username: username, exe: exe, name: name});
+    return this.router.post(ApiPaths.RUN_EXECUTABLE, data, {username: username, exe: exe, name: name}, {token: this.user == undefined ? "" : this.user.token});
   }
 
   public searchExecutables(searchText: string) {

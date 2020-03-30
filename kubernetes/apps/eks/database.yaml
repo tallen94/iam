@@ -11,7 +11,7 @@ spec:
     type: ng-1
   containers:
   - name: mysqldatabase
-    image: icanplayguitar94/iam:database-0.0.10
+    image: icanplayguitar94/iam:database-0.0.11
     imagePullPolicy: IfNotPresent
     ports:
     - containerPort: 3306
@@ -52,7 +52,7 @@ spec:
   volumes:
   - name: ebs-volume
     awsElasticBlockStore:
-      volumeID: vol-04e791be5277d2d83
+      volumeID: vol-0e7cd4ae9de4d64a2
       fsType: ext4
 
 ---

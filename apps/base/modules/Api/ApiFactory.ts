@@ -36,8 +36,7 @@ export class ApiFactory {
     const environment = process.env.ENVIRONMENT || process.argv[12] || "base"
     new StatusApi(serverCommunicator);
     const executor: Executor = this.constructExecutor(dbconfig, fsconfig, fileSystem, environment)
-    const authorization: Authorization = new Authorization(executor);
-    const router: EnvironmentRouter = new EnvironmentRouter(executor, authorization);
+    const router: EnvironmentRouter = new EnvironmentRouter(executor, new Authorization());
     new EnvironmentRouterApi(router, serverCommunicator);
     new DashboardApi(fileSystem, serverCommunicator);
   }
@@ -85,31 +84,31 @@ export class ApiFactory {
     const environmentManager: EnvironmentManager = this.constructEnvironmentManager(shell, database, fsconfig, fileSystem);
     const graphExecutor: GraphExecutor = this.constructGraphExecutor(database, shell);
     const poolManager: PoolManager = this.constructPoolManager(shell, database, graphExecutor, fileSystem, environment)
-    return new Executor(database, shell, environmentManager, graphExecutor, poolManager);
+    return new Executor(database, shell, environmentManager, graphExecutor, poolManager, new Authorization());
   }
 
   private constructDatabase(config: any, fsConfig: any) {
     const databaseCommunicator: DatabaseCommunicator = new DatabaseCommunicator(config.user, config.password, config.host, config.port, config.database);
     const fsClient = new ClientCommunicator(fsConfig["host"], fsConfig["port"]);
     const fileSystemCommunicator: FileSystemCommunicator = new FileSystemCommunicator(fsClient);
-    return new Database(databaseCommunicator, fileSystemCommunicator);
+    return new Database(databaseCommunicator, fileSystemCommunicator, new Authorization());
   }
 
   private constructShell(fileSystem: FileSystem, database: Database, fsConfig: any) {
     const fsClient = new ClientCommunicator(fsConfig["host"], fsConfig["port"]);
     const shellCommunicator: ShellCommunicator = new ShellCommunicator();
     const fileSystemCommunicator: FileSystemCommunicator = new FileSystemCommunicator(fsClient);
-    return new Shell(shellCommunicator, fileSystemCommunicator, database, fileSystem);
+    return new Shell(shellCommunicator, fileSystemCommunicator, database, fileSystem, new Authorization());
   }
 
   private constructEnvironmentManager(shell: Shell, database: Database, fsConfig: any, fileSystem: FileSystem) {
     const fsClient = new ClientCommunicator(fsConfig["host"], fsConfig["port"])
     const fileSystemCommunicator: FileSystemCommunicator = new FileSystemCommunicator(fsClient);
-    return new EnvironmentManager(fileSystem, shell, database, fileSystemCommunicator);
+    return new EnvironmentManager(fileSystem, shell, database, fileSystemCommunicator, new Authorization());
   }
 
   private constructGraphExecutor(database: Database, shell: Shell) {
-    return new GraphExecutor(database, shell);
+    return new GraphExecutor(database, shell, new Authorization());
   }
 
   public constructPoolManager(shell: Shell, database: Database, graphExecutor: GraphExecutor, fileSystem: FileSystem, environment) {

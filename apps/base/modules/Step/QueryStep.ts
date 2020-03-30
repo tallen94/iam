@@ -20,7 +20,7 @@ export class QueryStep implements Step {
       for (let index = 0; index < data.length; index++) {
         if (threads.length < numThreads) {
           threads.push(Promise.resolve().then(() => {
-            return this.client.runExecutable(this.username, "query", this.name, data[index])
+            return this.client.runExecutable(this.username, "query", this.name, data[index], "")
             .then((result: any) => {
               results.push(result.result);
             })
@@ -28,7 +28,7 @@ export class QueryStep implements Step {
         } else {
           threads[index % numThreads] = threads[index % numThreads]
           .then(() => {
-            return this.client.runExecutable(this.username, "query", this.name, data[index])
+            return this.client.runExecutable(this.username, "query", this.name, data[index], "")
             .then((result: any) => {
               results.push(result.result);
             })
@@ -39,7 +39,7 @@ export class QueryStep implements Step {
         return results;
       })
     }
-    return this.client.runExecutable(this.username, "query", this.name, data)
+    return this.client.runExecutable(this.username, "query", this.name, data, "")
     .then((result: any) => {
       return result.result;
     });

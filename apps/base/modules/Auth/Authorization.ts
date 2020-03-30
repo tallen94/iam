@@ -1,21 +1,31 @@
-import { Executor } from "../Executor/Executor";
+import { Database } from "../Executor/Database";
 
 export class Authorization {
 
   // Permissions can require or not require a user to have a session token.
   // Read, Write, Execute
   //
-  constructor(private executor: Executor) {
+  constructor() {
 
   }
 
-  public validateUserToken(username: string, token: string) {
-    return this.executor.runExecutable("admin", "get-token", "query", { token: token })
+  public validateUserToken(username: string, token: string, database: Database, complete: () => any) {
+    return database.runQuery("admin", "get-token", { token: token }, "")
     .then((results) => {
-      if (results.length == 0) {
-        return false
+      if (results.length > 0 && username == results[0].username) {
+        return complete();
       }
-      return username == results[0].username;
+      return "Unauthorized";
+    })
+  }
+
+  public validateUserOwnsEnvironment(username: string, environment: string, database: Database, complete: () => any) {
+    return database.runQuery("admin", "get-exe-by-type-name", {username: username, exe: 'environment', name: environment}, "")
+    .then((results) => {
+      if (results.length > 0) {
+        return complete()
+      }
+      return "Environment does not exist for user"
     })
   }
 

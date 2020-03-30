@@ -41,6 +41,7 @@ CREATE TABLE `executable` (
   `uuid` varchar(64) DEFAULT NULL,
   `username` varchar(50) DEFAULT NULL,
   `environment` varchar(255) DEFAULT NULL,
+  `visibility` varchar(10) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=372 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
