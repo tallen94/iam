@@ -22,7 +22,7 @@ export class PoolManager {
   }
 
   private initPools(environment: string) {
-    return this.database.runQuery("admin", "get-env-pools", { environment: environment })
+    return this.database.runQuery("admin", "get-env-pools", { environment: environment }, "")
     .then((results) => {
       return Promise.all(Lodash.map(results, (pool) => {
         return this.initPool(pool)
@@ -98,7 +98,7 @@ export class PoolManager {
           userId: data.userId,
           description: data.description,
           environment: data.environment
-        })
+        }, "")
       } else {
         return this.database.runQuery("admin", "update-exe", {
           name: data.name,
@@ -108,7 +108,7 @@ export class PoolManager {
           output: data.output,
           description: data.description,
           environment: data.environment
-        })
+        }, "")
       }
     }).then(() => {
       return this.graphExecutor.runGraph("admin", "update-env-pool", [{svc: this.environment}, {username: data.username, name: data.name}])
@@ -116,7 +116,7 @@ export class PoolManager {
   }
 
   public getPool(username: string, name: string) {
-    return this.database.runQuery("admin", "get-exe-by-type-name", {username: username, name: name, exe: "pool"})
+    return this.database.runQuery("admin", "get-exe-by-type-name", {username: username, name: name, exe: "pool"}, "")
     .then((result) => {
       if (result.length > 0) {
         const item = result[0];
@@ -140,7 +140,7 @@ export class PoolManager {
   }
 
   public getPools(username: string) {
-    return this.database.runQuery("admin", "get-exe-for-user", {exe: "pool", username: username})
+    return this.database.runQuery("admin", "get-exe-for-user", {exe: "pool", username: username}, "")
     .then((data) => {
       return Promise.all(Lodash.map(data, (item) => {
         return {
@@ -153,7 +153,7 @@ export class PoolManager {
   }
 
   public runPool(username: string, name: string, data: any) {
-    return this.database.runQuery("admin", "get-exe-by-type-name", {username: username, name: name, exe: "pool"})
+    return this.database.runQuery("admin", "get-exe-by-type-name", {username: username, name: name, exe: "pool"}, "")
     .then((result) => {
       return this.initPool(result[0])
     })

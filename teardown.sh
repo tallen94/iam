@@ -1,31 +1,33 @@
 #! /bin/bash
 
+NAMESPACE=$1
+
 echo Deleting kube database setup...
-kubectl delete pod mysqldatabase
-kubectl delete service mysqldatabase
+kubectl delete pod mysqldatabase --namespace=$NAMESPACE
+kubectl delete service mysqldatabase --namespace=$NAMESPACE
 
 echo Deleting kube filesystem setup..
-kubectl delete deployment iam-filesystem
-kubectl delete service iam-filesystem
+kubectl delete deployment iam-filesystem --namespace=$NAMESPACE
+kubectl delete service iam-filesystem --namespace=$NAMESPACE
 
 echo Deleting kube iam-router setup..
-kubectl delete deployment iam-router
-kubectl delete service iam-router
+kubectl delete deployment iam-router --namespace=$NAMESPACE
+kubectl delete service iam-router --namespace=$NAMESPACE
 
 echo Deleting kube base..
-kubectl delete deployment base
-kubectl delete service base
+kubectl delete deployment base --namespace=$NAMESPACE
+kubectl delete service base --namespace=$NAMESPACE
 
 echo Deleting kube environment-builder
-kubectl delete deployment environment-builder
-kubectl delete service environment-builder
+kubectl delete deployment environment-builder --namespace=$NAMESPACE
+kubectl delete service environment-builder --namespace=$NAMESPACE
 
 echo Deleting kube secrets...
-kubectl delete secret regcred
-kubectl delete secret dbconfig
-kubectl delete secret dockerconfig
+kubectl delete secret regcred --namespace=$NAMESPACE
+kubectl delete secret dbconfig --namespace=$NAMESPACE
+kubectl delete secret dockerconfig --namespace=$NAMESPACE
 
 echo Deleting kube service accounts
-kubectl delete serviceaccount api-service-account 
-kubectl delete clusterrole api-access
-kubectl delete clusterrolebinding api-access
+kubectl delete serviceaccount api-service-account --namespace=$NAMESPACE
+kubectl delete clusterrole api-access --namespace=$NAMESPACE
+kubectl delete clusterrolebinding api-access --namespace=$NAMESPACE

@@ -16,7 +16,7 @@ export class ForEachStep implements Step {
   }
 
   public execute(data: any[]) {
-    return this.shell.runProgram("admin", "group-data", {n: this.groupSize, data: data})
+    return this.shell.runProgram("admin", "group-data", {n: this.groupSize, data: data}, "")
     .then((groups) => {
       let promise = Promise.resolve([]);
       Lodash.each(groups, (dataList) => {
@@ -33,7 +33,7 @@ export class ForEachStep implements Step {
   }
 
   public executeEach(data: any[]) {
-    return this.shell.runProgram("admin", "group-data", {n: this.groupSize, data: data})
+    return this.shell.runProgram("admin", "group-data", {n: this.groupSize, data: data}, "")
     .then((groups) => {
       let promise = Promise.resolve([]);
       Lodash.each(groups, (dataList) => {

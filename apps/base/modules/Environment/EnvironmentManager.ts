@@ -4,6 +4,7 @@ import Lodash from "lodash";
 import uuid from "uuid";
 import { FileSystem } from "../FileSystem/FileSystem";
 import { Shell } from "../Executor/Shell";
+import { Authorization } from "../Auth/Authorization";
 
 export class EnvironmentManager {
 
@@ -11,13 +12,12 @@ export class EnvironmentManager {
     private fileSystem: FileSystem,
     private shell: Shell,
     private database: Database,
-    private fileSystemCommunicator: FileSystemCommunicator
+    private fileSystemCommunicator: FileSystemCommunicator,
+    private authorization: Authorization,
   ) { }
 
   public addEnvironment(data: any) {
     const envData = JSON.stringify({
-      host: data.host,
-      port: data.port, 
       imageRepo: data.imageRepo,
       replicas: data.replicas,
       memory: data.memory,
@@ -36,8 +36,9 @@ export class EnvironmentManager {
           input: data.input,
           output: data.output,
           description: data.description,
-          environment: data.environment
-        })
+          environment: data.environment,
+          visibility: data.visibility
+        }, "")
       }
       return this.database.runQuery("admin", "update-exe", { 
         name: data.name,
@@ -46,8 +47,9 @@ export class EnvironmentManager {
         input: data.input,
         output: data.output,
         description: data.description,
-        environment: data.environment
-      })
+        environment: data.environment,
+        visibility: data.visibility
+      }, "")
     }).then(() => {
       let promise;
       if (data.type == "executor") {
@@ -72,7 +74,7 @@ export class EnvironmentManager {
   }
 
   public getEnvironment(username: string, name: string) {
-    return this.database.runQuery("admin", "get-exe-by-type-name", { username: username, name: name, exe: "environment" })
+    return this.database.runQuery("admin", "get-exe-by-type-name", { username: username, name: name, exe: "environment" }, "")
     .then((result) => {
       if (result.length > 0) {
         const item = result[0];
@@ -81,8 +83,6 @@ export class EnvironmentManager {
           username: item.username,
           name: item.name,
           exe: item.exe,
-          host: data.host,
-          port: data.port,
           replicas: data.replicas,
           cpu: data.cpu,
           memory: data.memory,
@@ -91,7 +91,8 @@ export class EnvironmentManager {
           input: item.input,
           output: item.output,
           description: item.description,
-          environment: item.environment
+          environment: item.environment,
+          visibility: item.visibility
         }
         return Promise.all([
           this.fileSystemCommunicator.getFile(username + "/images", item.name),
@@ -107,7 +108,7 @@ export class EnvironmentManager {
   }
 
   public getEnvironments(username: string) {
-    return this.database.runQuery("admin", "get-exe-for-user", { exe: "environment", username: username })
+    return this.database.runQuery("admin", "get-exe-for-user", { exe: "environment", username: username }, "")
     .then((results) => {
       return Lodash.map(results, (result) => {
         return {
@@ -119,14 +120,19 @@ export class EnvironmentManager {
     })
   }
 
-  public runEnvironment(username: string, name: string, data: any) {
+  public runEnvironment(username: string, name: string, data: any, token: string) {
+    // Only users can create environments under their own account
     return this.getEnvironment(username, name)
     .then((environment) => {
-      return this.shell.runProgram("admin", "build-environment", {tag: data.tag, image: name})
-      .then((result) => {
-        return result;
+      return this.authorization.validateUserToken(environment.username, token, this.database, () => {
+        // need to have separate build environment in each namespace, that can all reference the same admin build function
+        return this.shell.runProgram(username, "build-environment", {tag: data.tag, image: name, username: username}, token)
+        .then((result) => {
+          return result;
+        })
       })
     })
+    
   }
 
   public getImageFile(username: string, filename: string) {

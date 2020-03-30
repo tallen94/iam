@@ -14,7 +14,8 @@ export class InitData {
       input: "",
       output: "",
       text: "",
-      environment: "base"
+      environment: "base",
+      visibility: "private"
     }
   }
 
@@ -30,7 +31,8 @@ export class InitData {
       args: "",
       command: "python",
       text: "import json\n\nargs = raw_input()\ndata = json.loads(args)\nout={}\nprint json.dumps(out)",
-      environment: "base"
+      environment: "base",
+      visibility: "private"
     }
   }
 
@@ -47,7 +49,8 @@ export class InitData {
       graph: {
         nodes: [new InitData(this.iam)["function"]("1", "NewFunction")],
         edges: []
-      }
+      },
+      visibility: "private"
     }
   }
 
@@ -60,8 +63,6 @@ export class InitData {
       description: "This is an environment.",
       input: '{"tag":"icanplayguitar94/iam:' + name + '"}',
       output: "",
-      host: name + ".default",
-      port: "80",
       image: "FROM icanplayguitar94/iam:base-latest",
       kubernetes: "",
       environment: "environment-builder",
@@ -69,7 +70,8 @@ export class InitData {
       imageRepo: "icanplayguitar94/iam",
       cpu: "500Mi",
       memory: "500MB",
-      type: "executor"
+      type: "executor",
+      visibility: "private"
     }
   }
 
@@ -86,7 +88,8 @@ export class InitData {
       executableName: "",
       executableExe: "",
       executableUsername: "",
-      size: 0
+      size: 0,
+      visibility: "private"
     }
   }
 }

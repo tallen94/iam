@@ -7,6 +7,7 @@ import { JobRunner } from "../Job/JobRunner";
 import { GraphExecutor } from "./GraphExecutor";
 import { EnvironmentManager } from "../Environment/EnvironmentManager";
 import { PoolManager } from "../Pool/PoolManager";
+import { Authorization } from "../Auth/Authorization";
 
 export class Executor {
 
@@ -17,7 +18,8 @@ export class Executor {
     private shell: Shell,
     private environmentManager: EnvironmentManager,
     private graphExecutor: GraphExecutor,
-    private poolManager: PoolManager) {
+    private poolManager: PoolManager,
+    private authorization: Authorization) {
   }
 
   public setJobRunner(jobRunner: JobRunner) {
@@ -36,46 +38,24 @@ export class Executor {
       case "function":
         // check if user can write to environment
         // a user can write to an environment if they own it
-        return this.validateUserOwnsEnvironment(data.username, data.environment)
-        .then((userOwnsEnvironment) => {
-          if (userOwnsEnvironment) {
-            // the user owns the environment
-            return this.shell.addProgram(data);
-          } 
-          return "Environment named " + data.environment + " does not exist"
+        return this.authorization.validateUserOwnsEnvironment(data.username, data.environment, this.database, () => {
+          return this.shell.addProgram(data);
         })
       case "query":
-        return this.validateUserOwnsEnvironment(data.username, data.environment)
-        .then((userOwnsEnvironment) => {
-          if (userOwnsEnvironment) {
-            // the user owns the environment
-            return this.database.addQuery(data);
-          } 
-          return "Environment named " + data.environment + " does not exist"
+        return this.authorization.validateUserOwnsEnvironment(data.username, data.environment, this.database, () => {
+          return this.database.addQuery(data);
         })
       case "graph":
-        return this.validateUserOwnsEnvironment(data.username, data.environment)
-        .then((userOwnsEnvironment) => {
-          if (userOwnsEnvironment) {
-            // the user owns the environment
-            return this.graphExecutor.addGraph(data);
-          } 
-          return "Environment named " + data.environment + " does not exist"
+        return this.authorization.validateUserOwnsEnvironment(data.username, data.environment, this.database, () => {
+          return this.graphExecutor.addGraph(data);
         })
       case "job":
         return this.jobRunner.addJob(data);
       case "environment":
         return this.environmentManager.addEnvironment(data);
-      case "pool":
-        return this.poolManager.addPool(data);
+      // case "pool":
+      //   return this.poolManager.addPool(data);
     }
-  }
-
-  private validateUserOwnsEnvironment(username: string, environment: string) {
-    return this.database.runQuery("admin", "get-exe-by-type-name", {username: username, exe: 'environment', name: environment})
-    .then((results) => {
-      return results.length > 0
-    })
   }
 
   public getExecutable(username: string, name: string, exe: string): Promise<any> {
@@ -83,7 +63,7 @@ export class Executor {
   }
 
   private hydrateStepJson(data: any) {
-    return this.database.runQuery("admin", "get-exe-by-type-name", {name: data.name, exe: data.exe, username: data.username})
+    return this.database.runQuery("admin", "get-exe-by-type-name", {name: data.name, exe: data.exe, username: data.username}, "")
     .then((result) => {
       let stepJson;
       if (result.length == 0) {
@@ -94,33 +74,9 @@ export class Executor {
       switch (stepJson.exe) {
         case "pipe":
         case "async":
-          return Promise.all(Lodash.map(stepJson.steps || JSON.parse(stepJson.data), (step) => {
-            return this.hydrateStepJson(step);
-          })).then((result) => {
-            return {
-              username: stepJson.username,
-              name: stepJson.name,
-              exe: stepJson.exe,
-              description: stepJson.description,
-              input: stepJson.input,
-              output: stepJson.output,
-              steps: result
-            };
-          });
         case "eachnode":
         case "foreach":
-          return this.hydrateStepJson(stepJson.step || JSON.parse(stepJson.data))
-          .then((result) => {
-            return {
-              username: stepJson.username,
-              name: stepJson.name,
-              exe: stepJson.exe,
-              description: stepJson.description,
-              input: stepJson.input,
-              output: stepJson.output,
-              step: result
-            };
-          });
+          return Promise.resolve(undefined);
         case "function":
           return this.shell.getProgramFile(stepJson.username, stepJson.name)
           .then((file) => {
@@ -135,7 +91,8 @@ export class Executor {
               text: file,
               args: data.args,
               command: data.command,
-              environment: stepJson.environment
+              environment: stepJson.environment,
+              visibility: stepJson.visibility
             };
           });
         case "graph":
@@ -152,7 +109,8 @@ export class Executor {
               output: stepJson.output,
               graph: graph,
               environment: stepJson.environment,
-              foreach: graph.foreach
+              foreach: graph.foreach,
+              visibility: stepJson.visibility
             });
           });
         case "query":
@@ -166,7 +124,8 @@ export class Executor {
               input: stepJson.input,
               output: stepJson.output,
               text: file,
-              environment: stepJson.environment
+              environment: stepJson.environment,
+              visibility: stepJson.visibility
             });
           })
         case "environment":
@@ -185,31 +144,31 @@ export class Executor {
               output: stepJson.output,
               image: files[0],
               kubernetes: files[1],
-              host: data.host,
-              port: data.port,
               replicas: data.replicas,
               cpu: data.cpu,
               memory: data.memory,
               imageRepo: data.imageRepo,
               type: data.type,
-              environment: stepJson.environment
+              environment: stepJson.environment,
+              visibility: stepJson.visibility
             };
           })
-        case "pool":
-          const data = JSON.parse(stepJson.data)
-          return Promise.resolve({
-            username: stepJson.username,
-            name: stepJson.name,
-            exe: stepJson.exe,
-            description: stepJson.description,
-            input: stepJson.input,
-            output: stepJson.output,
-            executableUsername: data.username,
-            executableExe: data.exe,
-            executableName: data.name,
-            poolSize: data.poolSize,
-            environment: stepJson.environment
-          })
+        // case "pool":
+        //   const data = JSON.parse(stepJson.data)
+        //   return Promise.resolve({
+        //     username: stepJson.username,
+        //     name: stepJson.name,
+        //     exe: stepJson.exe,
+        //     description: stepJson.description,
+        //     input: stepJson.input,
+        //     output: stepJson.output,
+        //     executableUsername: data.username,
+        //     executableExe: data.exe,
+        //     executableName: data.name,
+        //     poolSize: data.poolSize,
+        //     environment: stepJson.environment,
+        //     visibility: stepJson.visibility
+        //   })
       }
     });
   }
@@ -235,31 +194,31 @@ export class Executor {
         return this.graphExecutor.getGraphs(username);
       case "environment":
         return this.environmentManager.getEnvironments(username);
-      case "pool":
-        return this.poolManager.getPools(username)
-    }
+      // case "pool":
+      //   return this.poolManager.getPools(username)
+    }``
   }
 
-  public runExecutable(username: string, name: string, exe: string, data: any) {
+  public runExecutable(username: string, name: string, exe: string, data: any, token: string) {
     switch (exe) {
       case "function":
-        if (this.poolManager.hasPool(username, name, exe)) {
-          return this.poolManager.useDroplet(username, name, exe, data)
-        }
-        return this.shell.runProgram(username, name, data);
+        // if (this.poolManager.hasPool(username, name, exe)) {
+        //   return this.poolManager.useDroplet(username, name, exe, data)
+        // }
+        return this.shell.runProgram(username, name, data, token);
       case "query":
-        return this.database.runQuery(username, name, data);
+        return this.database.runQuery(username, name, data, token);
       case "graph":
-        return this.graphExecutor.runGraph(username, name, data);
+        return this.graphExecutor.runGraph(username, name, data, token);
       case "environment":
-        return this.environmentManager.runEnvironment(username, name, data);
-      case "pool":
-        return this.poolManager.runPool(username, name, data)
+        return this.environmentManager.runEnvironment(username, name, data, token);
+      // case "pool":
+      //   return this.poolManager.runPool(username, name, data)
     }
   }
 
   public searchExecutables(searchText: string) {
-    return this.database.runQuery("admin", "search-executable", {searchText: searchText})
+    return this.database.runQuery("admin", "search-executable", {searchText: searchText}, "")
     .then((results) => {
       const groups = {};
       Lodash.each(results, (item) => {
