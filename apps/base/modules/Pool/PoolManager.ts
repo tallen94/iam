@@ -111,7 +111,7 @@ export class PoolManager {
         }, "")
       }
     }).then(() => {
-      return this.graphExecutor.runGraph("admin", "update-env-pool", [{svc: this.environment}, {username: data.username, name: data.name}])
+      return this.graphExecutor.runGraph("admin", "update-env-pool", [{svc: this.environment}, {username: data.username, name: data.name}], "")
     })
   }
 
