@@ -19,7 +19,7 @@ spec:
       labels:
         app: environment-builder
     spec:
-      serviceAccountName: api-service-account
+      serviceAccountName: admin-service-account
       imagePullSecrets:
       - name: regcred
       containers:
@@ -127,7 +127,7 @@ spec:
       labels:
         app: environment-builder
     spec:
-      serviceAccountName: api-service-account
+      serviceAccountName: admin-service-account
       imagePullSecrets:
       - name: regcred
       nodeSelector:

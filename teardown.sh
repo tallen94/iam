@@ -28,6 +28,6 @@ kubectl delete secret dbconfig --namespace=$NAMESPACE
 kubectl delete secret dockerconfig --namespace=$NAMESPACE
 
 echo Deleting kube service accounts
-kubectl delete serviceaccount api-service-account --namespace=$NAMESPACE
-kubectl delete clusterrole api-access --namespace=$NAMESPACE
-kubectl delete clusterrolebinding api-access --namespace=$NAMESPACE
+kubectl delete serviceaccount admin-service-account --namespace=$NAMESPACE
+kubectl delete clusterrole admin-cluster-role --namespace=$NAMESPACE
+kubectl delete clusterrolebinding admin-cluster-role-binding --namespace=$NAMESPACE

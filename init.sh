@@ -41,7 +41,7 @@ applyConfig() {
    echo [...Initializing config...]
    kubectl apply -f kubernetes/secrets/dbconfig.yaml --namespace=$NAMESPACE
    kubectl apply -f kubernetes/secrets/dockerconfig.yaml --namespace=$NAMESPACE
-   kubectl apply -f kubernetes/serviceaccounts/deployment.yaml --namespace=$NAMESPACE
+   kubectl apply -f kubernetes/serviceaccounts/admin.yaml --namespace=$NAMESPACE
    echo [...Init...]
    ./kubernetes/update.sh $PROVIDER $NAMESPACE
    echo IAM is ready to use.
