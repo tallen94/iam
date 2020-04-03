@@ -141,8 +141,12 @@ export class Shell {
   public runProgram(username: string, name: string, data: any, token: string): Promise<any> {
     return this.getProgram(username, name)
     .then((program) => {
-      if (program.visibility == "private") {
+      if (program.visibility == "auth") {
         return this.authorization.validateUserToken(program.username, token, this.database, () => {
+          return program;
+        })
+      } else if (program.visibility == "private") {
+        return this.authorization.validateClusterToken(token, () => {
           return program;
         })
       }

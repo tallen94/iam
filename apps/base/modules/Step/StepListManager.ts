@@ -89,7 +89,7 @@ export class StepListManager {
     return this.executor.getExecutable(username, name, exe)
     .then((stepList) => {
       const step = this.stepJsonToStep(stepList);
-      return step.execute(data);
+      return step.execute(data, "");
     });
   }
 

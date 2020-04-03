@@ -40,6 +40,13 @@ spec:
           value: "router"
         - name: SERVER_PORT
           value: "5000"
+          
+        # CLUSTER SECRET TOKEN
+        - name: CLUSTER_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: clustertoken
+              key: token
 
         # FS CONFIG
         - name: FS_HOST
@@ -131,6 +138,13 @@ spec:
           value: "router"
         - name: SERVER_PORT
           value: "5000"
+          
+        # CLUSTER SECRET TOKEN
+        - name: CLUSTER_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: clustertoken
+              key: token
 
         # FS CONFIG
         - name: FS_HOST

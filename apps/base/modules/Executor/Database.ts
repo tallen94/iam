@@ -125,8 +125,12 @@ export class Database {
   public runQuery(username: string, name: string, data: any, token: string): Promise<any> {
     return this.getQuery(username, name)
     .then((query) => {
-      if (query.visibility == "private") {
+      if (query.visibility == "auth") {
         return this.authorization.validateUserToken(query.username, token, this, () => {
+          return query;
+        })
+      } else if (query.visibility == "private") {
+        return this.authorization.validateClusterToken(token, () => {
           return query;
         })
       }

@@ -43,6 +43,13 @@ spec:
           value: "5000"
         - name: "ENVIRONMENT"
           value: "base"
+          
+        # CLUSTER SECRET TOKEN
+        - name: CLUSTER_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: clustertoken
+              key: token
 
         # FS CONFIG
         - name: FS_HOST

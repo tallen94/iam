@@ -22,7 +22,7 @@ export class ForEachStep implements Step {
       Lodash.each(groups, (dataList) => {
         promise = promise.then((results) => {
           return Promise.all(Lodash.map(dataList, (item) => {
-            return this.step.execute(item, false);
+            return this.step.execute(item, "");
           })).then((results2) => {
             return results.concat(results2);
           });
@@ -39,7 +39,7 @@ export class ForEachStep implements Step {
       Lodash.each(groups, (dataList) => {
         promise = promise.then((results) => {
           return Promise.all(Lodash.map(dataList, (item) => {
-            return this.step.execute(item, false);
+            return this.step.execute(item, "");
           })).then((results2) => {
             return results.concat(results2);
           });

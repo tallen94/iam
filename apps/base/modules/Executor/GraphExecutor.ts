@@ -77,7 +77,7 @@ export class GraphExecutor {
   public runGraph(username: string, name: string, data: any, token: string) {
     return this.getGraph(username, name)
     .then((graph) => {
-      if (graph.visibility == "private") {
+      if (graph.visibility == "auth") {
         return this.authorization.validateUserToken(graph.username, token, this.database, () => {
           return graph;
         })

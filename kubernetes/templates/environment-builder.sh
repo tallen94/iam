@@ -44,6 +44,13 @@ spec:
           value: "5000"
         - name: "ENVIRONMENT"
           value: "environment-builder"
+          
+        # CLUSTER SECRET TOKEN
+        - name: CLUSTER_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: clustertoken
+              key: token
 
         # FS CONFIG
         - name: FS_HOST
@@ -161,6 +168,13 @@ spec:
           value: "5000"
         - name: "ENVIRONMENT"
           value: "environment-builder"
+          
+        # CLUSTER SECRET TOKEN
+        - name: CLUSTER_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: clustertoken
+              key: token
 
         # FS CONFIG
         - name: FS_HOST

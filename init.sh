@@ -41,6 +41,7 @@ applyConfig() {
    echo [...Initializing config...]
    kubectl apply -f kubernetes/secrets/dbconfig.yaml --namespace=$NAMESPACE
    kubectl apply -f kubernetes/secrets/dockerconfig.yaml --namespace=$NAMESPACE
+   kubectl apply -f kubernetes/secrets/clustertoken.yaml --namespace=$NAMESPACE
    kubectl apply -f kubernetes/serviceaccounts/admin.yaml --namespace=$NAMESPACE
    echo [...Init...]
    ./kubernetes/update.sh $PROVIDER $NAMESPACE
@@ -107,6 +108,17 @@ type: Opaque
 data:
   user: $(echo -ne $DOCKER_USERNAME | base64)
   password: $(echo -ne $DOCKER_PASSWORD | base64)
+EOF
+
+touch kubernetes/secrets/clustertoken.yaml
+cat > kubernetes/secrets/clustertoken.yaml <<EOF
+apiVersion: v1
+kind: Secret
+metadata:
+  name: clustertoken
+type: Opaque
+data:
+  token: $(openssl rand -base64 24 | base64 | base64)
 EOF
 
 printf "Provider (minikube|eks):"

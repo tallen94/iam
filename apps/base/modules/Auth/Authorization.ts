@@ -12,7 +12,7 @@ export class Authorization {
   public validateUserToken(username: string, token: string, database: Database, complete: () => any) {
     return database.runQuery("admin", "get-token", { token: token }, "")
     .then((results) => {
-      if (results.length > 0 && username == results[0].username) {
+      if (token == process.env.CLUSTER_TOKEN || (results.length > 0 && username == results[0].username)) {
         return complete();
       }
       return "Unauthorized";
@@ -27,6 +27,13 @@ export class Authorization {
       }
       return "Environment does not exist for user"
     })
+  }
+
+  public validateClusterToken(token: string, complete: () => any) {
+    if (process.env.CLUSTER_TOKEN == token) {
+      return complete()
+    }
+    return "Unauthorized"
   }
 
   public getReadPermission(type: string, name: string, token: string) {
