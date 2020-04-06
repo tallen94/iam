@@ -7,7 +7,6 @@ export class QueryStep implements Step {
   constructor(
     private username: string,
     private name: string,
-    private database: Database,
     private client: Client,
     private foreach?: boolean) { }
 

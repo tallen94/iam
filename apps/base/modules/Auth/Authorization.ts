@@ -1,17 +1,23 @@
 import { Database } from "../Executor/Database";
+import { ExecutableFactory } from "../Executable/ExecutableFactory";
+import { Query } from "../Executable/Query";
 
 export class Authorization {
 
   // Permissions can require or not require a user to have a session token.
   // Read, Write, Execute
   //
-  constructor() {
+  constructor(private executableFactory: ExecutableFactory) {
 
   }
 
-  public validateUserToken(username: string, token: string, database: Database, complete: () => any) {
-    return database.runQuery("admin", "get-token", { token: token }, "")
-    .then((results) => {
+  public validateUserToken(username: string, token: string, complete: () => any) {
+    return this.executableFactory.query({
+      username: "admin", 
+      name: "get-token"
+    }).then((query: Query) => {
+      return query.run({ token: token })
+    }).then((results) => {
       if (token == process.env.CLUSTER_TOKEN || (results.length > 0 && username == results[0].username)) {
         return complete();
       }
@@ -19,9 +25,13 @@ export class Authorization {
     })
   }
 
-  public validateUserOwnsEnvironment(username: string, environment: string, database: Database, complete: () => any) {
-    return database.runQuery("admin", "get-exe-by-type-name", {username: username, exe: 'environment', name: environment}, "")
-    .then((results) => {
+  public validateUserOwnsEnvironment(username: string, environment: string, complete: () => any) {
+    return this.executableFactory.query({
+      username: "admin", 
+      name: "get-exe-by-type-name"
+    }).then((query: Query) => {
+      return query.run({username: username, exe: 'environment', name: environment})
+    }).then((results) => {
       if (results.length > 0) {
         return complete()
       }

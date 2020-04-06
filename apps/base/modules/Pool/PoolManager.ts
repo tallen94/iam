@@ -6,6 +6,9 @@ import { Droplet } from "./Droplet";
 import { Shell } from "../Executor/Shell";
 import { Database } from "../Executor/Database";
 import { GraphExecutor } from "../Executor/GraphExecutor";
+import { ExecutableFactory } from "../Executable/ExecutableFactory";
+import { Query } from "../Executable/Query";
+import { Graph } from "../Executable/Graph";
 
 export class PoolManager {
 
@@ -16,14 +19,19 @@ export class PoolManager {
     private database: Database,
     private graphExecutor: GraphExecutor,
     private fileSystem: FileSystem,
-    private environment: string
+    private environment: string,
+    private executableFactory: ExecutableFactory
   ) {
     // this.initPools(environment)
   }
 
   private initPools(environment: string) {
-    return this.database.runQuery("admin", "get-env-pools", { environment: environment }, "")
-    .then((results) => {
+    return this.executableFactory.query({
+      username: "admin", 
+      name: "get-env-pools"
+    }).then((query: Query) => {
+      return query.run({ environment: environment })
+    }).then((results) => {
       return Promise.all(Lodash.map(results, (pool) => {
         return this.initPool(pool)
       }))
@@ -87,37 +95,56 @@ export class PoolManager {
     return this.getPool(data.username, data.name)
     .then((result) => {
       if (result == undefined) {
-        return this.database.runQuery("admin", "add-exe", {
-          username: data.username,
-          name: data.name,
-          uuid: uuid.v4(),
-          exe: data.exe,
-          data: poolData,
-          input: data.input,
-          output: data.output,
-          userId: data.userId,
-          description: data.description,
-          environment: data.environment
-        }, "")
-      } else {
-        return this.database.runQuery("admin", "update-exe", {
-          name: data.name,
-          exe: data.exe,
-          data: poolData,
-          input: data.input,
-          output: data.output,
-          description: data.description,
-          environment: data.environment
-        }, "")
+        return this.executableFactory.query({
+          username: "admin", 
+          name: "add-exe"
+        }).then((query: Query) => {
+          return query.run({
+            username: data.username, 
+            name: data.name,
+            uuid: uuid.v4(),
+            exe: data.exe,
+            data: poolData,
+            input: data.input,
+            output: data.output,
+            description: data.description,
+            environment: data.environment,
+            visibility: data.visibility
+          })
+        })
       }
+      return this.executableFactory.query({
+        username: "admin", 
+        name: "update-exe"
+      }).then((query: Query) => {
+        return query.run({ 
+          name: data.name,
+          exe: data.exe,
+          data: poolData,
+          input: data.input,
+          output: data.output,
+          description: data.description,
+          environment: data.environment,
+          visibility: data.visibility
+        })
+      })
     }).then(() => {
-      return this.graphExecutor.runGraph("admin", "update-env-pool", [{svc: this.environment}, {username: data.username, name: data.name}], "")
+      return this.executableFactory.graph({
+        username: "admin", 
+        name: "update-env-pool"
+      }).then((graph: Graph) => {
+        return graph.run([{svc: this.environment}, {username: data.username, name: data.name}])
+      })
     })
   }
 
   public getPool(username: string, name: string) {
-    return this.database.runQuery("admin", "get-exe-by-type-name", {username: username, name: name, exe: "pool"}, "")
-    .then((result) => {
+    return this.executableFactory.query({
+      username: "admin", 
+      name: "get-exe-by-type-name"
+    }).then((query: Query) => {
+      return query.run({ username: username, name: name, exe: "pool" })
+    }).then((result) => {
       if (result.length > 0) {
         const item = result[0];
         const data = JSON.parse(item.data);
@@ -140,8 +167,12 @@ export class PoolManager {
   }
 
   public getPools(username: string) {
-    return this.database.runQuery("admin", "get-exe-for-user", {exe: "pool", username: username}, "")
-    .then((data) => {
+    return this.executableFactory.query({
+      username: "admin", 
+      name: "get-exe-for-user"
+    }).then((query: Query) => {
+      return query.run({ exe: "pool", username: username })
+    }).then((data) => {
       return Promise.all(Lodash.map(data, (item) => {
         return {
           username: item.username,
@@ -153,8 +184,12 @@ export class PoolManager {
   }
 
   public runPool(username: string, name: string, data: any) {
-    return this.database.runQuery("admin", "get-exe-by-type-name", {username: username, name: name, exe: "pool"}, "")
-    .then((result) => {
+    return this.executableFactory.query({
+      username: "admin", 
+      name: "get-exe-by-type-name"
+    }).then((query: Query) => {
+      return query.run({username: username, name: name, exe: "pool"})
+    }).then((result) => {
       return this.initPool(result[0])
     })
   }

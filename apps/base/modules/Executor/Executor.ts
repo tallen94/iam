@@ -8,6 +8,9 @@ import { GraphExecutor } from "./GraphExecutor";
 import { EnvironmentManager } from "../Environment/EnvironmentManager";
 import { PoolManager } from "../Pool/PoolManager";
 import { Authorization } from "../Auth/Authorization";
+import { ExecutableManager } from "../Executable/ExecutableManager";
+import { ExecutableFactory } from "../Executable/ExecutableFactory";
+import { Query } from "../Executable/Query";
 
 export class Executor {
 
@@ -19,7 +22,9 @@ export class Executor {
     private environmentManager: EnvironmentManager,
     private graphExecutor: GraphExecutor,
     private poolManager: PoolManager,
-    private authorization: Authorization) {
+    private authorization: Authorization,
+    private executableManager: ExecutableManager,
+    private executableFactory: ExecutableFactory) {
   }
 
   public setJobRunner(jobRunner: JobRunner) {
@@ -38,15 +43,15 @@ export class Executor {
       case "function":
         // check if user can write to environment
         // a user can write to an environment if they own it
-        return this.authorization.validateUserOwnsEnvironment(data.username, data.environment, this.database, () => {
+        return this.authorization.validateUserOwnsEnvironment(data.username, data.environment, () => {
           return this.shell.addProgram(data);
         })
       case "query":
-        return this.authorization.validateUserOwnsEnvironment(data.username, data.environment, this.database, () => {
+        return this.authorization.validateUserOwnsEnvironment(data.username, data.environment, () => {
           return this.database.addQuery(data);
         })
       case "graph":
-        return this.authorization.validateUserOwnsEnvironment(data.username, data.environment, this.database, () => {
+        return this.authorization.validateUserOwnsEnvironment(data.username, data.environment, () => {
           return this.graphExecutor.addGraph(data);
         })
       case "job":
@@ -63,8 +68,12 @@ export class Executor {
   }
 
   private hydrateStepJson(data: any) {
-    return this.database.runQuery("admin", "get-exe-by-type-name", {name: data.name, exe: data.exe, username: data.username}, "")
-    .then((result) => {
+    return this.executableFactory.query({
+      username: "admin", 
+      name: "get-exe-by-type-name"
+    }).then((query: Query) => {
+      return query.run({name: data.name, exe: data.exe, username: data.username})
+    }).then((result) => {
       let stepJson;
       if (result.length == 0) {
         return;
@@ -183,43 +192,41 @@ export class Executor {
   }
 
   public getExecutables(username: string, exe: string): Promise<any> {
-    switch (exe) {
-      case "function":
-        return this.shell.getPrograms(username);
-      case "query":
-        return this.database.getQueries(username);
-      case "job":
-        return this.jobRunner.getJobs(username);
-      case "graph":
-        return this.graphExecutor.getGraphs(username);
-      case "environment":
-        return this.environmentManager.getEnvironments(username);
-      // case "pool":
-      //   return this.poolManager.getPools(username)
-    }``
+    return this.executableFactory.query({
+      username: "admin", 
+      name: "get-exe-for-user"
+    }).then((query: Query) => {
+      return query.run({ exe: exe, username: username })
+    }).then((data) => {
+      return Promise.all(Lodash.map(data, (item) => {
+        return this.executableFactory.query({
+          username: "admin", 
+          name: "search-steplists"
+        }).then((query: Query) => {
+          return query.run({query: "%name\":\"" + item.name + "\"%"})
+        }).then((results) => {
+          return {
+            username: item.username,
+            name: item.name,
+            description: item.description,
+            steplists: results
+          };
+        });
+      }));
+    });
   }
 
   public runExecutable(username: string, name: string, exe: string, data: any, token: string) {
-    switch (exe) {
-      case "function":
-        // if (this.poolManager.hasPool(username, name, exe)) {
-        //   return this.poolManager.useDroplet(username, name, exe, data)
-        // }
-        return this.shell.runProgram(username, name, data, token);
-      case "query":
-        return this.database.runQuery(username, name, data, token);
-      case "graph":
-        return this.graphExecutor.runGraph(username, name, data, token);
-      case "environment":
-        return this.environmentManager.runEnvironment(username, name, data, token);
-      // case "pool":
-      //   return this.poolManager.runPool(username, name, data)
-    }
+    return this.executableManager.runExecutable(username, name, exe, data, token);
   }
 
   public searchExecutables(searchText: string) {
-    return this.database.runQuery("admin", "search-executable", {searchText: searchText}, "")
-    .then((results) => {
+    return this.executableFactory.query({
+      username: "admin", 
+      name: "search-executable"
+    }).then((query: Query) => {
+      return query.run({searchText: searchText})
+    }).then((results) => {
       const groups = {};
       Lodash.each(results, (item) => {
         if (groups[item.exe] == undefined) {

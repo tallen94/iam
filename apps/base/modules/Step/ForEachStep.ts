@@ -2,12 +2,15 @@ import { Step } from "./Step";
 import Lodash from "lodash";
 import { Shell } from "../Executor/Shell";
 import { StepList } from "./StepList";
+import { ExecutableFactory } from "../Executable/ExecutableFactory";
+import { Function } from "../Executable/Function";
 
 export class ForEachStep implements Step {
 
   private step: Step;
   private groupSize: number;
   private shell: Shell;
+  private executableFactory: ExecutableFactory;
 
   constructor(step: Step, groupSize: number, shell: Shell) {
     this.step = step;
@@ -16,8 +19,12 @@ export class ForEachStep implements Step {
   }
 
   public execute(data: any[]) {
-    return this.shell.runProgram("admin", "group-data", {n: this.groupSize, data: data}, "")
-    .then((groups) => {
+    return this.executableFactory.function({
+      username: "admin", 
+      name: "group-data"
+    }).then((fn: Function) => {
+      return fn.run({n: this.groupSize, data: data})
+    }).then((groups) => {
       let promise = Promise.resolve([]);
       Lodash.each(groups, (dataList) => {
         promise = promise.then((results) => {
@@ -33,8 +40,12 @@ export class ForEachStep implements Step {
   }
 
   public executeEach(data: any[]) {
-    return this.shell.runProgram("admin", "group-data", {n: this.groupSize, data: data}, "")
-    .then((groups) => {
+    return this.executableFactory.function({
+      username: "admin", 
+      name: "group-data"
+    }).then((fn: Function) => {
+      return fn.run({n: this.groupSize, data: data})
+    }).then((groups) => {
       let promise = Promise.resolve([]);
       Lodash.each(groups, (dataList) => {
         promise = promise.then((results) => {

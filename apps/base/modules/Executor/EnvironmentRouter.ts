@@ -12,7 +12,7 @@ export class EnvironmentRouter {
   ) {}
 
   public addExecutable(data: any, token: string) {
-    return this.authorization.validateUserToken(data.username, token, this.executor.getDatabase(), () => {
+    return this.authorization.validateUserToken(data.username, token, () => {
       return this.executor.addExecutable(data);
     })
   }
