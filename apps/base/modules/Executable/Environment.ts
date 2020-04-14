@@ -1,14 +1,19 @@
 import { Executable } from "./Executable";
-import { EnvironmentManager } from "../Environment/EnvironmentManager";
-import { ExecutableFactory } from "./ExecutableFactory";
 import { Function } from "./Function";
+import { ShellCommunicator } from "../Communicator/ShellCommunicator";
+import { FileSystem } from "../FileSystem/FileSystem";
+import * as UUID from "uuid";
+import { Functions } from "../Constants/Functions";
 
 export class Environment implements Executable {
 
   constructor(
     private username: string,
     private name: string,
-    private executableFactory: ExecutableFactory
+    private image: string,
+    private kubernetes: string,
+    private shellCommunicator: ShellCommunicator,
+    private fileSystem: FileSystem
   ) {
 
   }
@@ -26,13 +31,27 @@ export class Environment implements Executable {
   }
 
   public run(data: any): Promise<any> {
-    return this.executableFactory.function({
-      username: this.username, 
-      name: "build-environment"
-    }).then((fn: Function) => {
-      return fn.run({tag: data.tag, image: this.name, username: this.username})
-    }).then((result) => {
-      return result;
+    const imagePath = UUID.v4()
+    const kubernetesPath = UUID.v4()
+
+    return Promise.all([
+      this.fileSystem.put("/tmp", imagePath, this.image),
+      this.fileSystem.put("/tmp", kubernetesPath, this.kubernetes)
+    ]).then(() => {
+      return this.shellCommunicator.exec(Functions.BUILD_IMAGE, "bash", "{tag} {imagePath}", {
+        tag: data.tag,
+        imagePath: "/tmp/" + imagePath,
+      })
+    }).then(() => {
+      return this.shellCommunicator.exec(Functions.BUILD_KUBERNETES, "bash", "{kubernetesPath} {username}", {
+        kubernetesPath: "/tmp/" + kubernetesPath,
+        username: data.username
+      })
+    }).then(() => {
+      return Promise.all([
+        this.fileSystem.delete("/tmp/" + imagePath),
+        this.fileSystem.delete("/tmp/" + kubernetesPath)
+      ])
     })
   }
 }

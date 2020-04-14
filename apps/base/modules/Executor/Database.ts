@@ -1,59 +1,26 @@
-import * as Lodash from "lodash";
 import * as uuid from "uuid";
 import {
   DatabaseCommunicator
 } from "../modules";
 import { FileSystemCommunicator } from "../Communicator/FileSystemCommunicator";
 import { QueryProcess } from "../Process/QueryProcess";
-import { Query } from "../Executable/Query";
-import { ExecutableFactory } from "../Executable/ExecutableFactory";
+import { Queries } from "../Constants/Queries";
 
 export class Database {
-  private status: string;
 
   constructor(
     private databaseCommunicator: DatabaseCommunicator,
-    private fileSystemCommunicator: FileSystemCommunicator,
-    private executableFactory: ExecutableFactory) {
-    this.status = "OK";
-  }
-
-  public getConnection() {
-    return this.databaseCommunicator.getConnection();
-  }
-
-  public getStatus(): Promise<any> {
-    return Promise.resolve(this.status);
+    private fileSystemCommunicator: FileSystemCommunicator) {
   }
 
   public addQuery(data: any): Promise<any> {
     return this.getQuery(data.username, data.name)
     .then((result) => {
       if (result == undefined) {
-        return this.executableFactory.query({
-          username: "admin", 
-          name: "add-exe"
-        }).then((query: Query) => {
-          return query.run({
-            username: data.username, 
-            name: data.name,
-            uuid: uuid.v4(),
-            exe: data.exe,
-            data: "",
-            input: data.input,
-            output: data.output,
-            description: data.description,
-            environment: data.environment,
-            visibility: data.visibility
-          })
-        })
-      }
-      return this.executableFactory.query({
-        username: "admin", 
-        name: "update-exe"
-      }).then((query: Query) => {
-        return query.run({ 
+        return this.databaseCommunicator.execute(Queries.ADD_EXECUTABLE, {
+          username: data.username, 
           name: data.name,
+          uuid: uuid.v4(),
           exe: data.exe,
           data: "",
           input: data.input,
@@ -62,6 +29,16 @@ export class Database {
           environment: data.environment,
           visibility: data.visibility
         })
+      }
+      return this.databaseCommunicator.execute(Queries.UPDATE_EXECUTABLE, { 
+        name: data.name,
+        exe: data.exe,
+        data: "",
+        input: data.input,
+        output: data.output,
+        description: data.description,
+        environment: data.environment,
+        visibility: data.visibility
       })
     }).then(() => {
       return Promise.all([
@@ -73,13 +50,8 @@ export class Database {
     });
   }
 
-  public getQueryFile(username: string, name: string) {
-    return this.fileSystemCommunicator.getFile(username + "/queries", name);
-  }
-
   public getQuery(username: string, name: string) {
-    const queryStr = "SELECT * FROM executable WHERE name={name} AND exe='query' AND username={username};";
-    return this.databaseCommunicator.execute(queryStr, {name: name, username: username})
+    return this.databaseCommunicator.execute(Queries.GET_EXE_BY_TYPE_NAME, {name: name, username: username, exe: 'query'})
     .then((result: any) => {
       if (result.length > 0) {
         const item = result[0];
@@ -101,6 +73,13 @@ export class Database {
       }
       return Promise.resolve(undefined);
     });
+  }
+
+  public deleteQuery(username: string, name: string) {
+    return this.databaseCommunicator.execute(Queries.DELETE_EXECUTABLE, {username: username, name: name, exe: "query"})
+    .then((result) => {
+      return this.fileSystemCommunicator.deleteFile(username + "/queries", name)
+    })
   }
 
   public getQueryString(name: string) {

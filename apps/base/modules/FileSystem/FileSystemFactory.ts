@@ -4,7 +4,7 @@ import { FileSystemCommunicator } from "../Communicator/FileSystemCommunicator"
 export class FileSystemFactory {
 
   public getUserFileSystem(username: string): FileSystemCommunicator {
-    return this.getFileSystemCommunicator("iam-filesystem." + username, 80)
+    return this.getFileSystemCommunicator("filesystem." + username, 80)
   }
 
   private getFileSystemCommunicator(host: string, port: number): FileSystemCommunicator {

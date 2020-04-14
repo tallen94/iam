@@ -7,12 +7,12 @@ import { HttpClient } from '@angular/common/http';
 @Injectable()
 export class Iam {
   private user: any;
-  private router: ClientCommunicator;
+  private client: ClientCommunicator;
 
   constructor(httpClient: HttpClient) {
     const routerUrl = window.location.hostname;
     const routerPort = environment.port;
-    this.router = new ClientCommunicator(httpClient, routerUrl, routerPort);
+    this.client = new ClientCommunicator(httpClient, routerUrl, routerPort);
   }
 
   public setUser(username: string, token: string) {
@@ -27,7 +27,7 @@ export class Iam {
   }
 
   public spawn(name: string, data: any) {
-    return this.router.post(
+    return this.client.post(
       ApiPaths.SPAWN_PROCESS, 
       data, 
       {type: "LOCAL", name: name}, 
@@ -36,35 +36,63 @@ export class Iam {
     );
   }
 
+  public addUser(username: string, email: string, password: string) {
+    return this.client.post(ApiPaths.ADD_USER, {username: username, email: email, password: password})
+  }
+
+  public addUserSession(username: string, password: string) {
+    return this.client.post(ApiPaths.ADD_USER_SESSION, {username: username, password: password})
+  }
+
+  public deleteUserSession(token: string) {
+    return this.client.delete(ApiPaths.DELETE_USER_SESSION, {token: token})
+  }
+
+  public validateUserSession(token: string) {
+    return this.client.post(ApiPaths.VALIDATE_USER_SESSION, {token: token})
+  }
+
+  public addUserToken(username: string) {
+    return this.client.post(ApiPaths.ADD_USER_TOKEN, {username: username})
+  }
+
+  public deleteUserToken(tokenId: string) {
+    return this.client.delete(ApiPaths.DELETE_USER_TOKEN, {tokenId: tokenId})
+  }
+
   public addExecutable(data: any) {
-    return this.router.post(ApiPaths.ADD_EXECUTABLE, data, {}, {token: this.user == undefined ? "" : this.user.token})
+    return this.client.post(ApiPaths.ADD_EXECUTABLE, data, {}, {token: this.user == undefined ? "" : this.user.token})
   }
 
   public getExecutable(username: string, exe: string, name: string) {
-    return this.router.get(ApiPaths.GET_EXECUTABLE, {username: username, name: name, exe: exe});
+    return this.client.get(ApiPaths.GET_EXECUTABLE, {username: username, name: name, exe: exe});
   }
 
   public getExecutables(username: string, exe: string) {
-    return this.router.get(ApiPaths.GET_EXECUTABLES, {username: username, exe: exe});
+    return this.client.get(ApiPaths.GET_EXECUTABLES, {username: username, exe: exe});
+  }
+
+  public deleteExecutable(username: string, exe: string, name: string) {
+    return this.client.delete(ApiPaths.DELETE_EXECUTABLE, {}, {username: username, exe: exe, name: name})
   }
 
   public runExecutable(username: string, exe: string, name: string, data: any) {
-    return this.router.post(ApiPaths.RUN_EXECUTABLE, data, {username: username, exe: exe, name: name}, {token: this.user == undefined ? "" : this.user.token});
+    return this.client.post(ApiPaths.RUN_EXECUTABLE, data, {username: username, exe: exe, name: name}, {token: this.user == undefined ? "" : this.user.token});
   }
 
   public searchExecutables(searchText: string) {
-    return this.router.get(ApiPaths.SEARCH_EXECUTABLES, {}, {searchText: searchText});
+    return this.client.get(ApiPaths.SEARCH_EXECUTABLES, {}, {searchText: searchText});
   }
 
   public getHost() {
-    return this.router.getHost();
+    return this.client.getHost();
   }
 
   public getStatus() {
-    return this.router.get(ApiPaths.GET_STATUS, {}, {});
+    return this.client.get(ApiPaths.GET_STATUS, {}, {});
   }
 
   public addClient(host: string, port: number) {
-    return this.router.post(ApiPaths.ADD_CLIENT, {host: host, port: port}, {});
+    return this.client.post(ApiPaths.ADD_CLIENT, {host: host, port: port}, {});
   }
 }

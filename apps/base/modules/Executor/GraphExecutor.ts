@@ -1,40 +1,20 @@
 import * as Lodash from "lodash";
 import * as uuid from "uuid";
-import { ExecutableFactory } from "../Executable/ExecutableFactory";
-import { Query } from "../Executable/Query";
+import { DatabaseCommunicator } from "../Communicator/DatabaseCommunicator";
+import { Queries } from "../Constants/Queries";
 
 export class GraphExecutor {
 
-  constructor(private executableFactory: ExecutableFactory) { }
+  constructor(private databaseCommunicator: DatabaseCommunicator) { }
 
   public addGraph(data: any) {
     const trimmedData = JSON.stringify(this.trimData(data.graph));
     return this.getGraph(data.username, data.name).then((result) => {
       if (result == undefined) {
-        return this.executableFactory.query({
-          username: "admin", 
-          name: "add-exe"
-        }).then((query: Query) => {
-          return query.run({
-            username: data.username, 
-            name: data.name,
-            uuid: uuid.v4(),
-            exe: data.exe,
-            data: trimmedData,
-            input: data.input,
-            output: data.output,
-            description: data.description,
-            environment: data.environment,
-            visibility: data.visibility
-          })
-        })
-      }
-      return this.executableFactory.query({
-        username: "admin", 
-        name: "update-exe"
-      }).then((query: Query) => {
-        return query.run({ 
+        return this.databaseCommunicator.execute(Queries.ADD_EXECUTABLE, {
+          username: data.username, 
           name: data.name,
+          uuid: uuid.v4(),
           exe: data.exe,
           data: trimmedData,
           input: data.input,
@@ -43,24 +23,44 @@ export class GraphExecutor {
           environment: data.environment,
           visibility: data.visibility
         })
+      }
+      return this.databaseCommunicator.execute(Queries.UPDATE_EXECUTABLE, { 
+        name: data.name,
+        exe: data.exe,
+        data: trimmedData,
+        input: data.input,
+        output: data.output,
+        description: data.description,
+        environment: data.environment,
+        visibility: data.visibility
       })
     });
   }
 
   public getGraph(username: string, name: string) {
-    return this.executableFactory.query({
-      username: "admin", 
-      name: "get-exe-by-type-name"
-    }).then((query: Query) => {
-      return query.run({ username: username, name: name, exe: "graph" })
-    }).then((result) => {
+    return this.databaseCommunicator.execute(Queries.GET_EXE_BY_TYPE_NAME, {username: username, name: name, exe: 'graph'})
+    .then((result: any[]) => {
       if (result.length > 0) {
         const item = result[0];
-        item.data = JSON.parse(item.data);
-        return item;
+        const data = JSON.parse(item.data);
+        return {
+          username: item.username,
+          name: item.name,
+          exe: item.exe,
+          description: item.description,
+          input: item.input,
+          output: item.output,
+          graph: data,
+          environment: item.environment,
+          visibility: item.visibility
+        }
       }
       return Promise.resolve(undefined);
     });
+  }
+
+  public deleteGraph(username: string, name: string) {
+    return this.databaseCommunicator.execute(Queries.DELETE_EXECUTABLE, {username: username, name: name, exe: "graph"})
   }
 
   private trimData(data: any) {

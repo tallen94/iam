@@ -1,6 +1,6 @@
 import { Step } from "./Step";
 import { Database } from "../Executor/Database";
-import { Client } from "../Executor/Client";
+import { Client } from "../Client/Client";
 
 export class QueryStep implements Step {
 

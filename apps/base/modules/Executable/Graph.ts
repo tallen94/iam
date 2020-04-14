@@ -2,10 +2,9 @@ import { Executable } from "./Executable";
 import { DirectedGraph } from "../Graph/DirectedGraph";
 import { Node } from "../Graph/Node";
 import * as Lodash from "lodash";
-import { ExecutableFactory } from "./ExecutableFactory";
 import { Query } from "./Query";
 import { ClientCommunicator } from "../Communicator/ClientCommunicator";
-import { Client } from "../Executor/Client";
+import { Client } from "../Client/Client";
 import { ProgramStep } from "../Step/ProgramStep";
 
 export class Graph implements Executable {
@@ -16,8 +15,7 @@ export class Graph implements Executable {
     private visibility: string,
     private nodes: any[],
     private edges: any[],
-    private foreach: boolean,
-    private executableFactory: ExecutableFactory
+    private foreach: boolean
   ) {
 
   }
@@ -97,20 +95,10 @@ export class Graph implements Executable {
 
   private getSteps(nodes: any[]) {
     return Promise.all(Lodash.map(nodes, (node) => {
-      return this.executableFactory.query({
-        username: "admin", 
-        name: "get-exe-environment"
-      }).then((query: Query) => {
-        return query.run({username: node.username, exe: node.exe, name: node.name})
-      }).then((results) => {
-        if (results.length > 0) {
-          const environment = results[0]
-          const host = environment.name + "." + node.username
-          const clientCommunicator: ClientCommunicator = new ClientCommunicator(host, 80)
-          const client = new Client(clientCommunicator);
-          return new ProgramStep(node.username, node.name, client, node.exe, node.foreach);
-        }
-      })
+      const host = "iam-router.default"
+      const clientCommunicator: ClientCommunicator = new ClientCommunicator(host, 80)
+      const client = new Client(clientCommunicator);
+      return new ProgramStep(node.username, node.name, client, node.exe, node.foreach);
     }))
   }
 }

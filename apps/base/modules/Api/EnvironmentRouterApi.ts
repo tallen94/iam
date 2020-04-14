@@ -23,8 +23,7 @@ export class EnvironmentRouterApi {
      */
     this.serverCommunicator.post(ApiPaths.ADD_EXECUTABLE, (req: any, res: any) => {
       const data = req.body;
-      const token = req.headers.token
-      this.router.addExecutable(data, token)
+      this.router.addExecutable(data)
       .then((result: any) => {
         res.status(200).send(result);
       });
@@ -55,6 +54,22 @@ export class EnvironmentRouterApi {
       const exe = req.params.exe;
       const username = req.params.username;
       this.router.getExecutables(username, exe)
+      .then((results) => {
+        res.status(200).send(results);
+      });
+    });
+
+    /**
+     * Delete executables
+     *
+     * path: /executable/:username/:exe/:name
+     * method: DELETE
+     */
+    this.serverCommunicator.delete(ApiPaths.DELETE_EXECUTABLE, (req: any, res: any) => {
+      const exe = req.params.exe;
+      const username = req.params.username;
+      const name = req.params.name;
+      this.router.deleteExecutable(username, exe, name)
       .then((results) => {
         res.status(200).send(results);
       });

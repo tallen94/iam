@@ -24,6 +24,7 @@ export class HomeComponent implements OnInit {
 
   ngOnInit() {
     this.iam.getExecutables(this.iam.getUser().username, "function").subscribe((data) => {
+      console.log(data)
       this.columns["function"]["list"] = data;
     })
     this.iam.getExecutables(this.iam.getUser().username, "query").subscribe((data) => {
@@ -68,10 +69,10 @@ export class HomeComponent implements OnInit {
   public select(exe: string, selection: any) {
     this.data = null;
     this.iam.getExecutable(selection.username, exe, selection.name)
-      .subscribe((result) => {
-        this.data = result;
-        this.data.id = this.data.exe == "graph" ? "0" : "1";
-      })
+    .subscribe((result) => {
+      this.data = result;
+      this.data.id = this.data.exe == "graph" ? "0" : "1";
+    })
   }
 
   public values(obj: any) {

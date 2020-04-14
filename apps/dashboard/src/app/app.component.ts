@@ -15,11 +15,10 @@ export class AppComponent {
   ) {
     const token = localStorage.getItem("token");
     if (token !== null) {
-      this.iam.runExecutable("admin", "graph", "validate-token", {token: token})
+      this.iam.validateUserSession(token)
       .subscribe((result: any) => {
-        if (result.result) {
-          const user = result.result;
-          this.iam.setUser(user.username, token);
+        if (!result.error) {
+          this.iam.setUser(result.username, token);
           this.router.navigate(["/home"]);
         } else {
           localStorage.removeItem("token")
@@ -34,7 +33,7 @@ export class AppComponent {
 
   logout() {
     const token = localStorage.getItem("token");
-    this.iam.runExecutable("admin", "query", "delete-token", {token: token})
+    this.iam.deleteUserSession(token)
     .subscribe((result) => {
       localStorage.removeItem("token");
       this.router.navigate(["/login"])

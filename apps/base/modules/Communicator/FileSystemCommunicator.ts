@@ -15,4 +15,8 @@ export class FileSystemCommunicator {
   public putFile(folder: string, file: any) {
     return this.clientCommunicator.post("/fs/" + folder, file)
   }
+
+  public deleteFile(folder: string, name: string): Promise<any> {
+    return this.clientCommunicator.delete("/fs/" + folder + "/" + name)
+  }
 }

@@ -26,16 +26,16 @@ export class PoolManager {
   }
 
   private initPools(environment: string) {
-    return this.executableFactory.query({
-      username: "admin", 
-      name: "get-env-pools"
-    }).then((query: Query) => {
-      return query.run({ environment: environment })
-    }).then((results) => {
-      return Promise.all(Lodash.map(results, (pool) => {
-        return this.initPool(pool)
-      }))
-    })
+    // return this.executableFactory.query({
+    //   username: "admin", 
+    //   name: "get-env-pools"
+    // }).then((query: Query) => {
+    //   return query.run({ environment: environment })
+    // }).then((results) => {
+    //   return Promise.all(Lodash.map(results, (pool) => {
+    //     return this.initPool(pool)
+    //   }))
+    // })
   }
 
   private initPool(pool: any) {
@@ -86,111 +86,111 @@ export class PoolManager {
   }
 
   public addPool(data: any) {
-    const poolData = JSON.stringify({ 
-      username: data.executableUsername,
-      exe: data.executableExe,
-      name: data.executableName,
-      poolSize: data.poolSize
-    })
-    return this.getPool(data.username, data.name)
-    .then((result) => {
-      if (result == undefined) {
-        return this.executableFactory.query({
-          username: "admin", 
-          name: "add-exe"
-        }).then((query: Query) => {
-          return query.run({
-            username: data.username, 
-            name: data.name,
-            uuid: uuid.v4(),
-            exe: data.exe,
-            data: poolData,
-            input: data.input,
-            output: data.output,
-            description: data.description,
-            environment: data.environment,
-            visibility: data.visibility
-          })
-        })
-      }
-      return this.executableFactory.query({
-        username: "admin", 
-        name: "update-exe"
-      }).then((query: Query) => {
-        return query.run({ 
-          name: data.name,
-          exe: data.exe,
-          data: poolData,
-          input: data.input,
-          output: data.output,
-          description: data.description,
-          environment: data.environment,
-          visibility: data.visibility
-        })
-      })
-    }).then(() => {
-      return this.executableFactory.graph({
-        username: "admin", 
-        name: "update-env-pool"
-      }).then((graph: Graph) => {
-        return graph.run([{svc: this.environment}, {username: data.username, name: data.name}])
-      })
-    })
+    // const poolData = JSON.stringify({ 
+    //   username: data.executableUsername,
+    //   exe: data.executableExe,
+    //   name: data.executableName,
+    //   poolSize: data.poolSize
+    // })
+    // return this.getPool(data.username, data.name)
+    // .then((result) => {
+    //   if (result == undefined) {
+    //     return this.executableFactory.query({
+    //       username: "admin", 
+    //       name: "add-exe"
+    //     }).then((query: Query) => {
+    //       return query.run({
+    //         username: data.username, 
+    //         name: data.name,
+    //         uuid: uuid.v4(),
+    //         exe: data.exe,
+    //         data: poolData,
+    //         input: data.input,
+    //         output: data.output,
+    //         description: data.description,
+    //         environment: data.environment,
+    //         visibility: data.visibility
+    //       })
+    //     })
+    //   }
+    //   return this.executableFactory.query({
+    //     username: "admin", 
+    //     name: "update-exe"
+    //   }).then((query: Query) => {
+    //     return query.run({ 
+    //       name: data.name,
+    //       exe: data.exe,
+    //       data: poolData,
+    //       input: data.input,
+    //       output: data.output,
+    //       description: data.description,
+    //       environment: data.environment,
+    //       visibility: data.visibility
+    //     })
+    //   })
+    // }).then(() => {
+    //   return this.executableFactory.graph({
+    //     username: "admin", 
+    //     name: "update-env-pool"
+    //   }).then((graph: Graph) => {
+    //     return graph.run([{svc: this.environment}, {username: data.username, name: data.name}])
+    //   })
+    // })
   }
 
   public getPool(username: string, name: string) {
-    return this.executableFactory.query({
-      username: "admin", 
-      name: "get-exe-by-type-name"
-    }).then((query: Query) => {
-      return query.run({ username: username, name: name, exe: "pool" })
-    }).then((result) => {
-      if (result.length > 0) {
-        const item = result[0];
-        const data = JSON.parse(item.data);
-        const ret = {
-          username: item.username,
-          name: item.name,
-          exe: item.exe,
-          description: item.description,
-          input: item.input,
-          output: item.output,
-          executableUsername: data.username,
-          executableExe: data.exe,
-          executableName: data.name,
-          poolSize: data.poolSize
-        }
-        return ret;
-      }
-      return undefined;
-    })
+    // return this.executableFactory.query({
+    //   username: "admin", 
+    //   name: "get-exe-by-type-name"
+    // }).then((query: Query) => {
+    //   return query.run({ username: username, name: name, exe: "pool" })
+    // }).then((result) => {
+    //   if (result.length > 0) {
+    //     const item = result[0];
+    //     const data = JSON.parse(item.data);
+    //     const ret = {
+    //       username: item.username,
+    //       name: item.name,
+    //       exe: item.exe,
+    //       description: item.description,
+    //       input: item.input,
+    //       output: item.output,
+    //       executableUsername: data.username,
+    //       executableExe: data.exe,
+    //       executableName: data.name,
+    //       poolSize: data.poolSize
+    //     }
+    //     return ret;
+    //   }
+    //   return undefined;
+    // })
   }
 
   public getPools(username: string) {
-    return this.executableFactory.query({
-      username: "admin", 
-      name: "get-exe-for-user"
-    }).then((query: Query) => {
-      return query.run({ exe: "pool", username: username })
-    }).then((data) => {
-      return Promise.all(Lodash.map(data, (item) => {
-        return {
-          username: item.username,
-          name: item.name,
-          description: item.description
-        }
-      }))
-    })
+    // return this.executableFactory.query({
+    //   username: "admin", 
+    //   name: "get-exe-for-user"
+    // }).then((query: Query) => {
+    //   return query.run({ exe: "pool", username: username })
+    // }).then((data) => {
+    //   return Promise.all(Lodash.map(data, (item) => {
+    //     return {
+    //       username: item.username,
+    //       name: item.name,
+    //       description: item.description
+    //     }
+    //   }))
+    // })
   }
 
   public runPool(username: string, name: string, data: any) {
-    return this.executableFactory.query({
-      username: "admin", 
-      name: "get-exe-by-type-name"
-    }).then((query: Query) => {
-      return query.run({username: username, name: name, exe: "pool"})
-    }).then((result) => {
-      return this.initPool(result[0])
-    })
+    // return this.executableFactory.query({
+    //   username: "admin", 
+    //   name: "get-exe-by-type-name"
+    // }).then((query: Query) => {
+    //   return query.run({username: username, name: name, exe: "pool"})
+    // }).then((result) => {
+    //   return this.initPool(result[0])
+    // })
   }
 }

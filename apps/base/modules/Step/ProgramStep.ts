@@ -1,6 +1,6 @@
 import { Step } from "./Step";
 import { Shell } from "../Executor/Shell";
-import { Client } from "../Executor/Client";
+import { Client } from "../Client/Client";
 
 export class ProgramStep implements Step {
 

@@ -19,45 +19,45 @@ export class ForEachStep implements Step {
   }
 
   public execute(data: any[]) {
-    return this.executableFactory.function({
-      username: "admin", 
-      name: "group-data"
-    }).then((fn: Function) => {
-      return fn.run({n: this.groupSize, data: data})
-    }).then((groups) => {
-      let promise = Promise.resolve([]);
-      Lodash.each(groups, (dataList) => {
-        promise = promise.then((results) => {
-          return Promise.all(Lodash.map(dataList, (item) => {
-            return this.step.execute(item, "");
-          })).then((results2) => {
-            return results.concat(results2);
-          });
-        });
-      });
-      return promise;
-    });
+    // return this.executableFactory.function({
+    //   username: "admin", 
+    //   name: "group-data"
+    // }).then((fn: Function) => {
+    //   return fn.run({n: this.groupSize, data: data})
+    // }).then((groups) => {
+    //   let promise = Promise.resolve([]);
+    //   Lodash.each(groups, (dataList) => {
+    //     promise = promise.then((results) => {
+    //       return Promise.all(Lodash.map(dataList, (item) => {
+    //         return this.step.execute(item, "");
+    //       })).then((results2) => {
+    //         return results.concat(results2);
+    //       });
+    //     });
+    //   });
+    //   return promise;
+    // });
   }
 
   public executeEach(data: any[]) {
-    return this.executableFactory.function({
-      username: "admin", 
-      name: "group-data"
-    }).then((fn: Function) => {
-      return fn.run({n: this.groupSize, data: data})
-    }).then((groups) => {
-      let promise = Promise.resolve([]);
-      Lodash.each(groups, (dataList) => {
-        promise = promise.then((results) => {
-          return Promise.all(Lodash.map(dataList, (item) => {
-            return this.step.execute(item, "");
-          })).then((results2) => {
-            return results.concat(results2);
-          });
-        });
-      });
-      return promise;
-    });
+    // return this.executableFactory.function({
+    //   username: "admin", 
+    //   name: "group-data"
+    // }).then((fn: Function) => {
+    //   return fn.run({n: this.groupSize, data: data})
+    // }).then((groups) => {
+    //   let promise = Promise.resolve([]);
+    //   Lodash.each(groups, (dataList) => {
+    //     promise = promise.then((results) => {
+    //       return Promise.all(Lodash.map(dataList, (item) => {
+    //         return this.step.execute(item, "");
+    //       })).then((results2) => {
+    //         return results.concat(results2);
+    //       });
+    //     });
+    //   });
+    //   return promise;
+    // });
   }
 
   private wait(seconds: number) {

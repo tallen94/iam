@@ -2,15 +2,15 @@ import { FileSystemCommunicator } from "../Communicator/FileSystemCommunicator";
 import Lodash from "lodash";
 import uuid from "uuid";
 import { FileSystem } from "../FileSystem/FileSystem";
-import { ExecutableFactory } from "../Executable/ExecutableFactory";
-import { Query } from "../Executable/Query";
+import { DatabaseCommunicator } from "../Communicator/DatabaseCommunicator";
+import { Queries } from "../Constants/Queries";
 
 export class EnvironmentManager {
 
   constructor(
     private fileSystem: FileSystem,
     private fileSystemCommunicator: FileSystemCommunicator,
-    private executableFactory: ExecutableFactory
+    private databaseCommunicator: DatabaseCommunicator
   ) { }
 
   public addEnvironment(data: any) {
@@ -24,30 +24,10 @@ export class EnvironmentManager {
     return this.getEnvironment(data.username, data.name)
     .then((result) => {
       if (result == undefined) {
-        return this.executableFactory.query({
-          username: "admin", 
-          name: "add-exe"
-        }).then((query: Query) => {
-          return query.run({
-            username: data.username, 
-            name: data.name,
-            uuid: uuid.v4(),
-            exe: data.exe,
-            data: envData,
-            input: data.input,
-            output: data.output,
-            description: data.description,
-            environment: data.environment,
-            visibility: data.visibility
-          })
-        })
-      }
-      return this.executableFactory.query({
-        username: "admin", 
-        name: "update-exe"
-      }).then((query: Query) => {
-        return query.run({ 
+        return this.databaseCommunicator.execute(Queries.ADD_EXECUTABLE, {
+          username: data.username, 
           name: data.name,
+          uuid: uuid.v4(),
           exe: data.exe,
           data: envData,
           input: data.input,
@@ -56,6 +36,16 @@ export class EnvironmentManager {
           environment: data.environment,
           visibility: data.visibility
         })
+      }
+      return this.databaseCommunicator.execute(Queries.UPDATE_EXECUTABLE, { 
+        name: data.name,
+        exe: data.exe,
+        data: envData,
+        input: data.input,
+        output: data.output,
+        description: data.description,
+        environment: data.environment,
+        visibility: data.visibility
       })
     }).then(() => {
       let promise;
@@ -81,12 +71,8 @@ export class EnvironmentManager {
   }
 
   public getEnvironment(username: string, name: string) {
-    return this.executableFactory.query({
-      username: "admin", 
-      name: "get-exe-by-type-name"
-    }).then((query: Query) => {
-      return query.run({ username: username, name: name, exe: "environment" })
-    }).then((result) => {
+    return this.databaseCommunicator.execute(Queries.GET_EXE_BY_TYPE_NAME, { username: username, name: name, exe: "environment" })
+    .then((result: any[]) => {
       if (result.length > 0) {
         const item = result[0];
         const data = JSON.parse(item.data);
@@ -118,12 +104,14 @@ export class EnvironmentManager {
     })
   }
 
-  public getImageFile(username: string, filename: string) {
-    return this.fileSystemCommunicator.getFile(username + "/images", filename);
-  }
-
-  public getKubernetesFile(username: string, filename: string) {
-    return this.fileSystemCommunicator.getFile(username + "/kubernetes", filename);
+  public deleteEnvironment(username: string, name: string) {
+    return this.databaseCommunicator.execute(Queries.DELETE_EXECUTABLE, {username: username, name: name, exe: "environment"})
+    .then((result) => {
+      return Promise.all([
+        this.fileSystemCommunicator.deleteFile(username + "/images", name),
+        this.fileSystemCommunicator.deleteFile(username + "/kubernetes", name),
+      ])
+    })
   }
 
   private kubernetesTemplate(data: any) {

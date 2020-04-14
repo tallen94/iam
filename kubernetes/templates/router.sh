@@ -8,21 +8,21 @@ cat > kubernetes/apps/minikube/router.yaml <<EOF
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
-  name: iam-router
+  name: router
 spec:
   selector:
     matchLabels:
-      app: iam-router
+      app: router
   replicas: 1 # tells deployment to run 2 pods matching the template
   template:
     metadata:
       labels:
-        app: iam-router
+        app: router
     spec:
       imagePullSecrets:
       - name: regcred
       containers:
-      - name: iam-router
+      - name: router
         image: $TAG
         imagePullPolicy: IfNotPresent
         ports:
@@ -40,23 +40,10 @@ spec:
           value: "router"
         - name: SERVER_PORT
           value: "5000"
-          
-        # CLUSTER SECRET TOKEN
-        - name: CLUSTER_TOKEN
-          valueFrom:
-            secretKeyRef:
-              name: clustertoken
-              key: token
-
-        # FS CONFIG
-        - name: FS_HOST
-          value: "iam-filesystem.admin"
-        - name: FS_PORT
-          value: "80"
 
         ## DB CONFIG
         - name: DB_HOST
-          value: "mysqldatabase.admin"
+          value: "mysqldatabase.default"
         - name: DB_USER
           valueFrom:
             secretKeyRef:
@@ -76,16 +63,14 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: iam-router
+  name: router
 spec:
   selector:
-    app: iam-router
-  type: NodePort
+    app: router
   ports:
     - protocol: TCP
       port: 80
       targetPort: 5000
-      nodePort: 30000
 EOF
 fi 
 
@@ -95,23 +80,23 @@ cat > kubernetes/apps/eks/router.yaml <<EOF
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
-  name: iam-router
+  name: router
 spec:
   selector:
     matchLabels:
-      app: iam-router
+      app: router
   replicas: 1 # tells deployment to run 2 pods matching the template
   template:
     metadata:
       labels:
-        app: iam-router
+        app: router
     spec:
       imagePullSecrets:
       - name: regcred
       nodeSelector:
         type: ng-1
       containers:
-      - name: iam-router
+      - name: router
         image: $TAG
         imagePullPolicy: IfNotPresent
         ports:
@@ -138,23 +123,10 @@ spec:
           value: "router"
         - name: SERVER_PORT
           value: "5000"
-          
-        # CLUSTER SECRET TOKEN
-        - name: CLUSTER_TOKEN
-          valueFrom:
-            secretKeyRef:
-              name: clustertoken
-              key: token
-
-        # FS CONFIG
-        - name: FS_HOST
-          value: "iam-filesystem.admin"
-        - name: FS_PORT
-          value: "80"
 
         ## DB CONFIG
         - name: DB_HOST
-          value: "mysqldatabase.admin"
+          value: "mysqldatabase.default"
         - name: DB_USER
           valueFrom:
             secretKeyRef:
@@ -174,13 +146,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: iam-router
-  annotations:
-    service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: "4000"
+  name: router
 spec:
   selector:
-    app: iam-router
-  type: LoadBalancer
+    app: router
   ports:
     - protocol: TCP
       port: 80

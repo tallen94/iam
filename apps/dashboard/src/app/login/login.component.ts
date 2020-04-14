@@ -18,25 +18,22 @@ export class LoginComponent implements OnInit {
   ngOnInit() { }
 
   login() {
-    this.iam.runExecutable("admin", "graph", "gen-token", [{email: this.email}, {password: this.password}])
+    this.iam.addUserSession(this.username, this.password)
     .subscribe((result: any) => {
-      if (result.result) {
-        const user = result.result;
-        this.iam.setUser(user.username, user.token);
-        localStorage.setItem("token", user.token);
+      console.log(result)
+      if (result.token) {
+        this.iam.setUser(this.username, result.token);
+        localStorage.setItem("token", result.token);
         this.router.navigate(["/home"])
       }
     });
   }
 
   signup() {
-    this.iam.runExecutable("admin", "graph", "add-user", {email: this.email, username: this.username, password: this.password})
+    this.iam.addUser(this.username, this.email, this.password)
     .subscribe((result: any) => {
-      if (result.result) {
-        const user = result.result;
-        this.iam.setUser(user.username, user.token);
-        localStorage.setItem("token", user.token);
-        this.router.navigate(["/home"])
+      if (result.success) {
+        this.login()
       }
     });
   }

@@ -3,23 +3,16 @@ import { ShellCommunicator } from "../modules";
 import { LocalProcess } from "../Process/LocalProcess";
 import { Process } from "../Process/Process";
 import { FileSystemCommunicator } from "../Communicator/FileSystemCommunicator";
-import { ExecutableFactory } from "../Executable/ExecutableFactory";
-import { Query } from "../Executable/Query";
+import { DatabaseCommunicator } from "../Communicator/DatabaseCommunicator";
+import { Queries } from "../Constants/Queries";
 
 export class Shell {
-  private status: string;
 
   constructor(
     private shellCommunicator: ShellCommunicator,
     private fileSystemCommunicator: FileSystemCommunicator,
-    private executableFactory: ExecutableFactory
+    private databaseCommunicator: DatabaseCommunicator
   ) {
-    this.status = "OK";
-    this.fileSystemCommunicator = fileSystemCommunicator;
-  }
-
-  public getStatus(): Promise<string> {
-    return Promise.resolve(this.status);
   }
 
   public addProgram(data: any): Promise<any> {
@@ -27,30 +20,10 @@ export class Shell {
     return this.getProgram(data.username, data.name)
     .then((result) => {
       if (result == undefined) {
-        return this.executableFactory.query({
-          username: "admin", 
-          name: "add-exe"
-        }).then((query: Query) => {
-          return query.run({
-            username: data.username, 
-            name: data.name,
-            uuid: uuid.v4(),
-            exe: data.exe,
-            data: programData,
-            input: data.input,
-            output: data.output,
-            description: data.description,
-            environment: data.environment,
-            visibility: data.visibility
-          })
-        })
-      }
-      return this.executableFactory.query({
-        username: "admin", 
-        name: "update-exe"
-      }).then((query: Query) => {
-        return query.run({ 
+        return this.databaseCommunicator.execute(Queries.ADD_EXECUTABLE, {
+          username: data.username, 
           name: data.name,
+          uuid: uuid.v4(),
           exe: data.exe,
           data: programData,
           input: data.input,
@@ -59,6 +32,16 @@ export class Shell {
           environment: data.environment,
           visibility: data.visibility
         })
+      }
+      return this.databaseCommunicator.execute(Queries.UPDATE_EXECUTABLE, { 
+        name: data.name,
+        exe: data.exe,
+        data: programData,
+        input: data.input,
+        output: data.output,
+        description: data.description,
+        environment: data.environment,
+        visibility: data.visibility
       })
     }).then(() => {
       return Promise.all([
@@ -71,12 +54,8 @@ export class Shell {
   }
 
   public getProgram(username: string, name: string) {
-    return this.executableFactory.query({
-      username: "admin", 
-      name: "get-exe-by-type-name"
-    }).then((query: Query) => {
-      return query.run({ username: username, name: name, exe: "function" })
-    }).then((result) => {
+    return this.databaseCommunicator.execute(Queries.GET_EXE_BY_TYPE_NAME, { username: username, name: name, exe: "function" })
+    .then((result: any[]) => {
       if (result.length > 0) {
         const item = result[0];
         const data = JSON.parse(item.data);
@@ -92,14 +71,21 @@ export class Shell {
           environment: item.environment,
           visibility: item.visibility
         };
-        
+        return this.fileSystemCommunicator.getFile(username + "/programs", name)
+        .then((file) => {
+          ret["text"] = file
+          return ret
+        })
       }
       return Promise.resolve(undefined);
     });
   }
 
-  public getProgramFile(username: string, name: string) {
-    return this.fileSystemCommunicator.getFile(username + "/programs", name);
+  public deleteProgram(username: string, name: string) {
+    return this.databaseCommunicator.execute(Queries.DELETE_EXECUTABLE, {username: username, name: name, exe: "function"})
+    .then((result) => {
+      return this.fileSystemCommunicator.deleteFile(username + "/programs", name)
+    })
   }
 
   public getProcess(name: string) {

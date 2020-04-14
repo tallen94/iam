@@ -24,6 +24,35 @@ CREATE DATABASE /*!32312 IF NOT EXISTS*/ `iam` /*!40100 DEFAULT CHARACTER SET la
 USE `iam`;
 
 --
+-- Table structure for table `authorization`
+--
+
+DROP TABLE IF EXISTS `authorization`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `authorization` (
+  `username` varchar(50) NOT NULL,
+  `rule` varchar(255) NOT NULL,
+  KEY `username` (`username`,`rule`),
+  KEY `username_2` (`username`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `cluster`
+--
+
+DROP TABLE IF EXISTS `cluster`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `cluster` (
+  `name` varchar(100) NOT NULL,
+  `username` varchar(50) NOT NULL,
+  KEY `username` (`username`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `executable`
 --
 
@@ -47,15 +76,6 @@ CREATE TABLE `executable` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `executable`
---
-
-LOCK TABLES `executable` WRITE;
-/*!40000 ALTER TABLE `executable` DISABLE KEYS */;
-/*!40000 ALTER TABLE `executable` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `job_queue`
 --
 
@@ -74,37 +94,21 @@ CREATE TABLE `job_queue` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `job_queue`
+-- Table structure for table `route`
 --
 
-LOCK TABLES `job_queue` WRITE;
-/*!40000 ALTER TABLE `job_queue` DISABLE KEYS */;
-/*!40000 ALTER TABLE `job_queue` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `session_token`
---
-
-DROP TABLE IF EXISTS `session_token`;
+DROP TABLE IF EXISTS `route`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `session_token` (
-  `token` varchar(64) NOT NULL,
-  `userId` int(11) DEFAULT NULL,
-  `username` varchar(50) DEFAULT NULL,
-  PRIMARY KEY (`token`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE `route` (
+  `username` varchar(50) NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `exe` varchar(50) NOT NULL,
+  `environment` varchar(50) NOT NULL,
+  KEY `username` (`username`,`name`,`exe`),
+  KEY `username_2` (`username`,`exe`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `session_token`
---
-
-LOCK TABLES `session_token` WRITE;
-/*!40000 ALTER TABLE `session_token` DISABLE KEYS */;
-/*!40000 ALTER TABLE `session_token` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `user`
@@ -114,22 +118,67 @@ DROP TABLE IF EXISTS `user`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `user` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `username` varchar(100) NOT NULL,
   `email` varchar(255) NOT NULL,
-  `password` varchar(500) DEFAULT NULL,
-  `username` varchar(50) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
+  UNIQUE KEY `username` (`username`),
+  UNIQUE KEY `email` (`email`),
+  KEY `username_2` (`username`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `user`
+-- Table structure for table `user_password`
 --
 
-LOCK TABLES `user` WRITE;
-/*!40000 ALTER TABLE `user` DISABLE KEYS */;
-/*!40000 ALTER TABLE `user` ENABLE KEYS */;
-UNLOCK TABLES;
+DROP TABLE IF EXISTS `user_password`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `user_password` (
+  `username` varchar(100) NOT NULL,
+  `passwordHash` varchar(1024) NOT NULL,
+  `salt` varchar(20) NOT NULL,
+  KEY `username` (`username`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `user_session`
+--
+
+DROP TABLE IF EXISTS `user_session`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `user_session` (
+  `username` varchar(100) NOT NULL,
+  `token` varchar(64) NOT NULL,
+  KEY `token` (`token`),
+  KEY `username` (`username`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `user_token`
+--
+
+DROP TABLE IF EXISTS `user_token`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `user_token` (
+  `username` varchar(50) NOT NULL,
+  `tokenId` varchar(50) NOT NULL,
+  `tokenSecretHash` varchar(100) NOT NULL,
+  `tokenSalt` varchar(20) NOT NULL,
+  KEY `tokenId` (`tokenId`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+CREATE USER '$MYSQL_USER'@'%' IDENTIFIED BY '$MYSQL_PASSWORD';
+GRANT SELECT ON `$MYSQL_DATABASE`.* TO '$MYSQL_USER'@'%';
+GRANT UPDATE ON `$MYSQL_DATABASE`.* TO '$MYSQL_USER'@'%';
+GRANT DELETE ON `$MYSQL_DATABASE`.* TO '$MYSQL_USER'@'%';
+GRANT INSERT ON `$MYSQL_DATABASE`.* TO '$MYSQL_USER'@'%';
+GRANT CREATE ON `$MYSQL_DATABASE`.* TO '$MYSQL_USER'@'%';
+
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -140,11 +189,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-02-26  0:09:31
--- Create Users
-CREATE USER '$MYSQL_USER'@'%' IDENTIFIED BY '$MYSQL_PASSWORD';
-GRANT SELECT ON `$MYSQL_DATABASE`.* TO '$MYSQL_USER'@'%';
-GRANT UPDATE ON `$MYSQL_DATABASE`.* TO '$MYSQL_USER'@'%';
-GRANT DELETE ON `$MYSQL_DATABASE`.* TO '$MYSQL_USER'@'%';
-GRANT INSERT ON `$MYSQL_DATABASE`.* TO '$MYSQL_USER'@'%';
-GRANT CREATE ON `$MYSQL_DATABASE`.* TO '$MYSQL_USER'@'%';
+-- Dump completed on 2020-04-13 13:33:10
