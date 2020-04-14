@@ -164,9 +164,9 @@ DROP TABLE IF EXISTS `user_token`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `user_token` (
-  `username` varchar(50) NOT NULL,
+  `username` varchar(100) NOT NULL,
   `tokenId` varchar(50) NOT NULL,
-  `tokenSecretHash` varchar(100) NOT NULL,
+  `tokenSecretHash` varchar(1024) NOT NULL,
   `tokenSalt` varchar(20) NOT NULL,
   KEY `tokenId` (`tokenId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

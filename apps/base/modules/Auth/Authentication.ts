@@ -45,7 +45,7 @@ export class Authentication {
   public addUserToken(username: string) {
     const tokenId = UUID.v4()
     const tokenSalt = this.randomString(20)
-    const tokenSecret = this.randomString(32)
+    const tokenSecret = this.randomString(64)
     const tokenHash = this.hashString(tokenSecret, tokenSalt)
     return this.databaseCommunicator.execute(Queries.ADD_USER_TOKEN, {
       username: username,
