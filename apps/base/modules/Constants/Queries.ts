@@ -26,6 +26,7 @@ export class Queries {
   public static DELETE_USER_SESSION = "delete from user_session where token={token};"
 
   public static ADD_USER_TOKEN = "insert into user_token (username, tokenId, tokenSecretHash, tokenSalt) values ({username}, {tokenId}, {tokenSecretHash}, {tokenSalt});"
+  public static GET_USER_TOKENS = "select tokenId from user_token where username={username}"
   public static GET_USER_TOKEN = "select * from user_token where tokenId={tokenId}"
   public static DELETE_USER_TOKEN = "delete from user_token where tokenId={tokenId}"
   

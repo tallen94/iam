@@ -20,7 +20,6 @@ export class LoginComponent implements OnInit {
   login() {
     this.iam.addUserSession(this.username, this.password)
     .subscribe((result: any) => {
-      console.log(result)
       if (result.token) {
         this.iam.setUser(this.username, result.token);
         localStorage.setItem("token", result.token);

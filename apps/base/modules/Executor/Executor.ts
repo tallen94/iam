@@ -95,7 +95,6 @@ export class Executor {
   public runExecutable(username: string, name: string, exe: string, data: any, token: string) {
     return this.getExecutable(username, name, exe)
     .then((executable: any) => {
-      console.log(executable)
       return this.executableFactory[exe](executable).run(data)
     })
   }

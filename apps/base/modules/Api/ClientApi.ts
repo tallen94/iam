@@ -2,7 +2,6 @@ import {
   ServerCommunicator,
   ApiPaths
 } from "../modules";
-import { Client } from "../Client/Client";
 import { ClientManager } from "../Client/ClientManager";
 
 export class ClientApi {
@@ -138,14 +137,21 @@ export class ClientApi {
     })
 
     this.serverCommunicator.post(ApiPaths.ADD_USER_TOKEN, (req: any, res: any) => {
-      this.clientManager.addUserToken(req.body.username)
+      this.clientManager.addUserToken(req.body.username, req.headers.sessiontoken)
+      .then((result) => {
+        res.status(200).send(result)
+      })
+    })
+
+    this.serverCommunicator.get(ApiPaths.GET_USER_TOKENS, (req: any, res: any) => {
+      this.clientManager.getUserTokens(req.query.username, req.headers.sessiontoken)
       .then((result) => {
         res.status(200).send(result)
       })
     })
 
     this.serverCommunicator.delete(ApiPaths.DELETE_USER_TOKEN, (req: any, res: any) => {
-      this.clientManager.deleteUserToken(req.query.tokenId)
+      this.clientManager.deleteUserToken(req.query.tokenId, req.headers.sessiontoken)
       .then((result) => {
         res.status(200).send(result)
       })

@@ -23,12 +23,16 @@ export class AuthenticationClient {
     return this.clientCommunicator.post(ApiPaths.VALIDATE_USER_SESSION, {token: token})
   }
 
-  public addUserToken(username: string) {
-    return this.clientCommunicator.post(ApiPaths.ADD_USER_TOKEN, {username: username})
+  public addUserToken(username: string, sessionToken: string) {
+    return this.clientCommunicator.post(ApiPaths.ADD_USER_TOKEN, {username: username}, {}, { sessiontoken: sessionToken })
   }
 
-  public deleteUserToken(tokenId: string) {
-    return this.clientCommunicator.delete(ApiPaths.DELETE_USER_TOKEN, {tokenId: tokenId})
+  public getUserTokens(username: string, sessionToken: string) {
+    return this.clientCommunicator.get(ApiPaths.GET_USER_TOKENS, {username: username}, {}, {sessiontoken: sessionToken})
+  }
+
+  public deleteUserToken(tokenId: string, sessionToken: string) {
+    return this.clientCommunicator.delete(ApiPaths.DELETE_USER_TOKEN, {tokenId: tokenId}, {}, { sessiontoken: sessionToken })
   }
 
   public validateUserToken(tokenId: string, tokenSecret: string): Promise<any> {

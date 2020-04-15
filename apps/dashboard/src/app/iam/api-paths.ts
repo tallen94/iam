@@ -23,6 +23,7 @@ export class ApiPaths {
   public static VALIDATE_USER_SESSION =   "/authentication/user/session/validate"
 
   public static ADD_USER_TOKEN =          "/authentication/user/token"
+  public static GET_USER_TOKENS =         "/authentication/user/token"
   public static DELETE_USER_TOKEN =       "/authentication/user/token"
   
   // User

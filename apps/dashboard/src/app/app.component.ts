@@ -35,9 +35,18 @@ export class AppComponent {
     const token = localStorage.getItem("token");
     this.iam.deleteUserSession(token)
     .subscribe((result) => {
+      this.iam.unsetUser()
       localStorage.removeItem("token");
       this.router.navigate(["/login"])
     })
+  }
+
+  settings() {
+    this.router.navigate(["/settings"])
+  }
+
+  home() {
+    this.router.navigate(["/home"])
   }
 
   getUser() {

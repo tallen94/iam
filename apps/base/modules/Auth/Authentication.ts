@@ -60,14 +60,31 @@ export class Authentication {
     })
   }
 
+  public getUserTokens(username: string) {
+    return this.databaseCommunicator.execute(Queries.GET_USER_TOKENS, {username: username})
+  }
+
   public deleteUserToken(tokenId: string) {
     return this.databaseCommunicator.execute(Queries.DELETE_USER_TOKEN, {tokenId: tokenId})
   }
 
   public validateUserToken(tokenId: string, tokenSecret: string) {
+    return this.getUserToken(tokenId)
+    .then((result: any) => {
+      if (!result.error && result.tokenSecret === this.hashString(tokenSecret, result.tokenSalt)) {
+        return { username: result.username }
+      } 
+      return { error: "invalid token" }
+    })
+  }
+
+  public getUserToken(tokenId: string) {
     return this.databaseCommunicator.execute(Queries.GET_USER_TOKEN, {tokenId: tokenId})
-    .then((result: any[]) => {
-      return result.length > 0 && result[0].tokenSecret === this.hashString(tokenSecret, result[0].tokenSalt)
+    .then((result) => {
+      if (result.length > 0) {
+        return result[0]
+      }
+      return { error: "invalid token" }
     })
   }
 

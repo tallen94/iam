@@ -1,0 +1,63 @@
+.full {
+  position: absolute;
+  top: 64px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: 0;
+  padding: 32px !important;
+  background-color: #f6f8fa;
+}
+
+.tokens {
+  width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.no-tokens {
+  font-size: 1.5em;
+}
+
+.tokens-group {
+  margin-top: 32px;
+}
+
+.inline-input {
+  display: inline-block;
+}
+
+.inline-input label {
+  font-weight: bold;
+  color: rgb(160, 160, 160);
+  font-size: 15px;
+}
+
+.token-id {
+  margin-left: 16px;
+  width: 500px;
+}
+
+.delete-button {
+  background-color: white;
+  color: #dc3545;
+  font-weight: bold;
+  font-size: 20px;
+  padding: 10px !important;
+  line-height: .75em;
+}
+
+.tokens-header {
+  position: relative;
+}
+
+.add-token-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.add-token-button button {
+  background-color: white;
+  color: #28a745;
+}

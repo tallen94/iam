@@ -63,17 +63,27 @@ export class ClientManager {
     return this.authenticationClient.validateUserSession(token)
   }
 
-  public addUserToken(username: string) {
+  public addUserToken(username: string, sessionToken: string) {
     return this.userClient.getUser(username)
     .then((result: any) => {
       if (!result.error) {
-        return this.authenticationClient.addUserToken(username)
+        return this.authenticationClient.addUserToken(username, sessionToken)
       }
       return { error: "not found" }
     })
   }
 
-  public deleteUserToken(tokenId: string) {
-    return this.authenticationClient.deleteUserToken(tokenId)
+  public getUserTokens(username: string, sessionToken: string) {
+    return this.userClient.getUser(username)
+    .then((result: any) => {
+      if (!result.error) {
+        return this.authenticationClient.getUserTokens(username, sessionToken)
+      }
+      return { error: "not found" }
+    })
+  }
+
+  public deleteUserToken(tokenId: string, sessionToken: string) {
+    return this.authenticationClient.deleteUserToken(tokenId, sessionToken)
   } 
 }

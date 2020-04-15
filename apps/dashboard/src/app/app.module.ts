@@ -28,11 +28,14 @@ import { GraphComponent } from './graph/graph.component';
 import { HeaderComponent } from './header/header.component';
 import { HiddenHeaderComponent } from './hidden-header/hidden-header.component';
 import { NewExecutableComponent } from './new-executable/new-executable.component';
+import { SettingsComponent } from './settings/settings.component';
+import { UserTokenModalComponent } from './user-token-modal/user-token-modal.component';
 
 const appRoutes: Routes = [
   { path: "login", component: LoginComponent },
   { path: "home", component: HomeComponent },
   { path: "admin", component: AdminComponent },
+  { path: "settings", component: SettingsComponent },
   { path: "graph", component: GraphComponent },
   { path: "editor/:username/:exe/:name", component: EditorComponent },
   { path: "marketplace", component: MarketplaceComponent },
@@ -46,13 +49,16 @@ const appRoutes: Routes = [
     HomeComponent,
     RunComponent,
     AdminComponent,
+    SettingsComponent,
     LoginComponent,
     MarketplaceComponent,
     NestedInputComponent,
     GraphComponent,
     HeaderComponent,
     HiddenHeaderComponent,
-    NewExecutableComponent
+    NewExecutableComponent,
+    SettingsComponent,
+    UserTokenModalComponent
   ],
   imports: [
     RouterModule.forRoot(appRoutes,{ enableTracing: true }),

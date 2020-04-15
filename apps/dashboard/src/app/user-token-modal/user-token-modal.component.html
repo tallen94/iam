@@ -1,0 +1,21 @@
+<div class="user-token-modal">
+  <div class="user-token-dialog card">
+    <div class="card-body">
+      <div class="header">
+        <h5 class="card-title">New User Token</h5>
+        <p>Record this <b>TokenId</b> and <b>TokenSecret</b>. You will not be able to retrieve the secret again.</p>
+      </div>
+      <div class="token-id">
+        <label>TokenId</label>
+        <div>{{token.tokenId}}</div>
+      </div>
+      <div class="token-secret">
+        <label>TokenSecret</label>
+        <div>{{token.tokenSecret}}</div>
+      </div>
+      <div>
+        <button class="btn btn-primary" (click)="done()">Done</button>
+      </div>
+    </div>
+  </div>
+</div>

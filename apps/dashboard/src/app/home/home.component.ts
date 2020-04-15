@@ -24,7 +24,6 @@ export class HomeComponent implements OnInit {
 
   ngOnInit() {
     this.iam.getExecutables(this.iam.getUser().username, "function").subscribe((data) => {
-      console.log(data)
       this.columns["function"]["list"] = data;
     })
     this.iam.getExecutables(this.iam.getUser().username, "query").subscribe((data) => {

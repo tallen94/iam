@@ -6,7 +6,9 @@
       <!-- <button routerLink="/admin" type="button" class="btn btn-primary button-bottom">Admin</button>
       <button routerLink="/marketplace" type="button" class="btn btn-primary button-bottom">Marketplace</button> -->
   </div>
-  <div class="group-right">
+  <div class="group-right" *ngIf="iam.getUser() !== undefined">
+    <button (click)="home()" type="button" class="btn button-bottom"><i class="fa fa-home"></i></button>
+    <button (click)="settings()" type="button" class="btn button-bottom"><i class="fa fa-cog"></i></button>
     <button (click)="logout()" type="button" class="btn button-bottom"><i class="fa fa-sign-out"></i></button>
   </div>
 </div>
