@@ -1,25 +1,23 @@
-.wrapper {
-  width: 800px;
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 24px;
-  position: relative;
-}
-
-.setting-section {
-  margin-bottom: 64px;
-}
-
-.no-tokens {
-  font-size: 1.5em;
+.section {
+  margin-top: 64px;
 }
 
 .group {
   margin-top: 32px;
 }
 
+.group-row {
+  border-bottom: 1px solid rgb(230, 230, 230);
+  margin-bottom: 16px;
+}
+
 .inline-input {
   display: inline-block;
+  margin-left: 4px;
+}
+
+.card {
+  padding: 16px;
 }
 
 .inline-input label {
@@ -30,15 +28,23 @@
 
 .col1 {
   margin-left: 16px;
-  width: 500px;
+  width: 200px;
+}
+
+.col2 {
+  width: 100px;
+}
+
+.col3 {
+  margin-left: 32px;
 }
 
 .delete-button {
   background-color: white;
   color: #dc3545;
   font-weight: bold;
-  font-size: 20px;
-  padding: 10px !important;
+  font-size: 15px;
+  padding: 8px !important;
   line-height: .75em;
 }
 
@@ -57,8 +63,19 @@
   color: #28a745;
 }
 
-.action-buttons {
-  position: absolute;
-  top: 4px;
-  right: 4px;
+.section {
+  width: 850px;
+  margin-right: auto;
+}
+
+.visibility {
+  margin-right: 24px;
+}
+
+.privilege {
+  margin-right: 24px;
+}
+
+.privilege span {
+  margin: 4px;
 }

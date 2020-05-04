@@ -17,9 +17,19 @@ export class ApiPaths {
   public static DELETE_EXECUTABLE = "/executable/:username/:exe/:name"
   public static SEARCH_EXECUTABLES = "/search";
 
+  // Cluster
+  public static ADD_CLUSTER = "/cluster"
+  public static GET_CLUSTER = "/cluster"
+  public static GET_CLUSTER_FOR_USER = "/cluster/user"
+  public static DELETE_CLUSTER = "/cluster"
+
   // Authorization
-  public static GET_AUTHORIZATION = "/authorization/get"
-  public static ADD_AUTHORIZATION = "/authorization/add"
+  public static GET_AUTHORIZATION = "/authorization"
+  public static ADD_AUTHORIZATION = "/authorization"
+  public static DELETE_AUTHORIZATION = "/authorization"
+  public static GET_AUTHORIZATION_FOR_RESOURCE = "/authorization/resource"
+  public static ADD_AUTHORIZATION_PRIVILEGE = "/authorization/privilege"
+  public static DELETE_AUTHORIZATION_PRIVILEGE = "/authorization/privilege"
 
   // Authentication
   public static ADD_USER_PASSWORD =       "/authentication/user/password"

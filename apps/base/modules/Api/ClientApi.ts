@@ -15,6 +15,34 @@ export class ClientApi {
 
   private init(): void {
 
+    this.serverCommunicator.post(ApiPaths.ADD_CLUSTER, (req: any, res: any) => {
+      this.clientManager.addCluster(req.body)
+      .then((result) => {
+        res.status(200).send(result)
+      })
+    })
+
+    this.serverCommunicator.get(ApiPaths.GET_CLUSTER, (req: any, res: any) => {
+      this.clientManager.getCluster(req.query.username, req.query.name)
+      .then((result) => {
+        res.status(200).send(result)
+      })
+    })
+
+    this.serverCommunicator.get(ApiPaths.GET_CLUSTER_FOR_USER, (req: any, res: any) => {
+      this.clientManager.getClusterForUser(req.query.username)
+      .then((result) => {
+        res.status(200).send(result)
+      })
+    })
+
+    this.serverCommunicator.delete(ApiPaths.DELETE_CLUSTER, (req: any, res: any) => {
+      this.clientManager.deleteCluster(req.query.username, req.query.name)
+      .then((result) => {
+        res.status(200).send(result)
+      })
+    })
+
     /**
      * Adds an executable to be executed on the node.
      *
@@ -152,6 +180,56 @@ export class ClientApi {
 
     this.serverCommunicator.delete(ApiPaths.DELETE_USER_TOKEN, (req: any, res: any) => {
       this.clientManager.deleteUserToken(req.query.tokenId, req.headers.sessiontoken)
+      .then((result) => {
+        res.status(200).send(result)
+      })
+    })
+
+    this.serverCommunicator.post(ApiPaths.ADD_AUTHORIZATION, (req: any, res: any) => {
+      const resource_from = req.body.resource_from;
+      const resource_to = req.body.resource_to;
+      const visibility = req.body.visibility;
+
+      this.clientManager.addAuthorization(resource_from, resource_to, visibility)
+      .then((result) => {
+        res.status(200).send(result)
+      })
+    })
+
+    this.serverCommunicator.post(ApiPaths.ADD_AUTHORIZATION_PRIVILEGE, (req: any, res: any) => {
+      const resource_from = req.body.resource_from;
+      const resource_to = req.body.resource_to;
+      const privilege = req.body.privilege;
+
+      this.clientManager.addAuthorizationPrivilege(resource_from, resource_to, privilege)
+      .then((result) => {
+        res.status(200).send(result)
+      })
+    })
+
+    this.serverCommunicator.delete(ApiPaths.DELETE_AUTHORIZATION_PRIVILEGE, (req: any, res: any) => {
+      const resource_from = req.query.resource_from;
+      const resource_to = req.query.resource_to;
+      const privilege = req.query.privilege;
+
+      this.clientManager.deleteAuthorizationPrivilege(resource_from, resource_to, privilege)
+      .then((result) => {
+        res.status(200).send(result)
+      })
+    })
+
+    this.serverCommunicator.get(ApiPaths.GET_AUTHORIZATION_FOR_RESOURCE, (req: any, res: any) => {
+      this.clientManager.getAuthorizationForResource(req.query.resource)
+      .then((result) => {
+        res.status(200).send(result)
+      })
+    })
+
+    this.serverCommunicator.delete(ApiPaths.DELETE_AUTHORIZATION, (req: any, res: any) => {
+      const resource_from = req.query.resource_from;
+      const resource_to = req.query.resource_to;
+
+      this.clientManager.deleteAuthorization(resource_from, resource_to)
       .then((result) => {
         res.status(200).send(result)
       })

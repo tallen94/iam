@@ -71,6 +71,42 @@ export class Iam {
     return this.client.delete(ApiPaths.DELETE_USER_TOKEN, {tokenId: tokenId}, {}, {sessiontoken: this.token})
   }
 
+  public addAuthorization(resource_from: string, resource_to: string, visibility: string) {
+    return this.client.post(ApiPaths.ADD_AUTHORIZATION, {resource_from: resource_from, resource_to: resource_to, visibility: visibility})
+  }
+
+  public addAuthorizationPrivilege(resource_from: string, resource_to: string, privilege: string) {
+    return this.client.post(ApiPaths.ADD_AUTHORIZATION_PRIVILEGE, {resource_from: resource_from, resource_to: resource_to, privilege: privilege})
+  }
+
+  public deleteAuthorizationPrivilege(resource_from: string, resource_to: string, privilege: string) {
+    return this.client.delete(ApiPaths.DELETE_AUTHORIZATION_PRIVILEGE, {resource_from: resource_from, resource_to: resource_to, privilege: privilege})
+  }
+
+  public getAuthorizationForResource(resource: string) {
+    return this.client.get(ApiPaths.GET_AUTHORIZATION_FOR_RESOURCE, {}, {resource: resource})
+  }
+
+  public deleteAuthorization(resource_from: string, resource_to: string) {
+    return this.client.delete(ApiPaths.DELETE_AUTHORIZATION, {resource_from: resource_from, resource_to: resource_to})
+  }
+
+  public addCluster(data: any) {
+    return this.client.post(ApiPaths.ADD_CLUSTER, data)
+  }
+
+  public getCluster(username: string, name: string) {
+    return this.client.get(ApiPaths.GET_CLUSTER, {}, {username: username, name: name})
+  }
+
+  public getClusterForUser(username: string) {
+    return this.client.get(ApiPaths.GET_CLUSTER_FOR_USER, {}, {username: username})
+  }
+
+  public deleteCluster(username: string, name: string) {
+    return this.client.delete(ApiPaths.DELETE_CLUSTER, {username: username, name: name})
+  }
+
   public addExecutable(data: any) {
     return this.client.post(ApiPaths.ADD_EXECUTABLE, data, {}, {sessiontoken: this.token})
   }

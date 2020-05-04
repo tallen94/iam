@@ -1,33 +1,39 @@
 <div class="full row">
-  <div class="tokens">
-    <div class="tokens-header">
-      <div class="tokens-header-title">
+  <div class="wrapper">
+    <div class="header">
+      <div class="header-title">
         <h3>User Tokens</h3>
       </div>
-      <div class="add-token-button">
+      <div class="header-subtext">
+        User tokens identify yourself to IAM.
+      </div>
+      <div class="add-button">
         <button class="btn btn-success" (click)="addToken()">Add Token</button>
       </div>
     </div>
 
-    <div class="tokens-group">
-      <div class="no-tokens" *ngIf="tokens.length === 0">
+    <div class="group">
+      <div class="no-tokens" *ngIf="data.tokens.length === 0">
         <div>You have no user tokens.</div>
         <div>Click <b>Add Token</b> to create one and make api calls to your executables.</div>
       </div>
-      <div class="token-row" *ngFor="let token of tokens; let i = index;">
+      <div class="row" *ngFor="let token of data.tokens; let i = index;">
         <div class="inline-input">
           <button class="btn btn-danger delete-button" (click)="deleteToken(i)">x</button>
         </div>
-        <div class="inline-input token-id">
+        <div class="inline-input col1">
           <label>TokenId</label>
           <p>{{token.tokenId}}</p>
         </div>
-        <div class="inline-input token-secret">
+        <div class="inline-input col2">
           <label>TokenSecret</label>
           <p>******</p>
         </div>
       </div>
     </div>
+
+
+    <trust-list [resource]="getResource()" (trustUpdated)="receiveTrustUpdated($event)"></trust-list>
   </div>
 </div>
 

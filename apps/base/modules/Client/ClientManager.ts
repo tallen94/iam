@@ -1,15 +1,36 @@
 import { Client } from "./Client";
 import { AuthenticationClient } from "./AuthenticationClient";
 import { UserClient } from "./UserClient";
+import { AuthorizationClient } from "./AuthorizationClient";
+import { ClusterClient } from "./ClusterClient";
+import * as Lodash from "lodash";
 
 export class ClientManager {
 
   constructor(
     private routerClient: Client,
     private authenticationClient: AuthenticationClient,
-    private userClient: UserClient
+    private userClient: UserClient,
+    private authorizationClient: AuthorizationClient,
+    private clusterClient: ClusterClient
   ) {
 
+  }
+
+  public addCluster(data: any) {
+    return this.clusterClient.addCluster(data)
+  }
+
+  public getCluster(username: string, name: string) {
+    return this.clusterClient.getCluster(username, name)
+  }
+
+  public getClusterForUser(username: string) {
+    return this.clusterClient.getClustersForUser(username)
+  }
+
+  public deleteCluster(username: string, name: string) {
+    return this.clusterClient.deleteCluster(username, name)
   }
 
   public addExecutable(data: any) {
@@ -85,5 +106,25 @@ export class ClientManager {
 
   public deleteUserToken(tokenId: string, sessionToken: string) {
     return this.authenticationClient.deleteUserToken(tokenId, sessionToken)
-  } 
+  }
+
+  public addAuthorization(resource_from: string, resource_to: string, visibility: string) {
+    return this.authorizationClient.addAuthorization(resource_from, resource_to, visibility)
+  }
+
+  public addAuthorizationPrivilege(resource_from: string, resource_to: string, privilege: string) {
+    return this.authorizationClient.addAuthorizationPrivilege(resource_from, resource_to, privilege)
+  }
+
+  public deleteAuthorizationPrivilege(resource_from: string, resource_to: string, privilege: string) {
+    return this.authorizationClient.deleteAuthorizationPrivilege(resource_from, resource_to, privilege)
+  }
+
+  public getAuthorizationForResource(resource: string) {
+    return this.authorizationClient.getAuthorizationForResource(resource)
+  }
+
+  public deleteAuthorization(resource_from: string, resource_to: string) {
+    return this.authorizationClient.deleteAuthorization(resource_from, resource_to)
+  }
 }

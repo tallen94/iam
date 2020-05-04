@@ -6,12 +6,28 @@ export class AuthorizationClient {
   constructor(
     private clientCommunicator: ClientCommunicator
   ) {}
-
-  public getAuthorization(username: string, action: string, resource: string): Promise<any> {
-    return this.clientCommunicator.post(ApiPaths.GET_AUTHORIZATION, {action: action, resource: resource, username: username})
+  
+  public addAuthorization(resource_from: string, resource_to: string, visibility: string) {
+    return this.clientCommunicator.post(ApiPaths.ADD_AUTHORIZATION, {resource_from: resource_from, resource_to: resource_to, visibility: visibility})
   }
 
-  public addAuthorization(requestor: string, username: string, action: string, resource: string): Promise<any> {
-    return this.clientCommunicator.post(ApiPaths.ADD_AUTHORIZATION, {requestor: requestor, username: username, action: action, resource: resource})
+  public addAuthorizationPrivilege(resource_from: string, resource_to: string, privilege: string) {
+    return this.clientCommunicator.post(ApiPaths.ADD_AUTHORIZATION_PRIVILEGE, {resource_from: resource_from, resource_to: resource_to, privilege: privilege})
+  }
+
+  public deleteAuthorizationPrivilege(resource_from: string, resource_to: string, privilege: string) {
+    return this.clientCommunicator.delete(ApiPaths.DELETE_AUTHORIZATION_PRIVILEGE, {resource_from: resource_from, resource_to: resource_to, privilege: privilege})
+  }
+
+  public getAuthorization(resource_from: string, resource_to: string, privilege: string) {
+    return this.clientCommunicator.get(ApiPaths.GET_AUTHORIZATION, {resource_from: resource_from, resource_to: resource_to, privilege: privilege})
+  }
+
+  public deleteAuthorization(resource_from: string, resource_to: string) {
+    return this.clientCommunicator.delete(ApiPaths.DELETE_AUTHORIZATION, {resource_from: resource_from, resource_to: resource_to})
+  }
+
+  public getAuthorizationForResource(resource: string) {
+    return this.clientCommunicator.get(ApiPaths.GET_AUTHORIZATION_FOR_RESOURCE, {resource: resource})
   }
 }

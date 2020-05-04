@@ -30,6 +30,9 @@ import { HiddenHeaderComponent } from './hidden-header/hidden-header.component';
 import { NewExecutableComponent } from './new-executable/new-executable.component';
 import { SettingsComponent } from './settings/settings.component';
 import { UserTokenModalComponent } from './user-token-modal/user-token-modal.component';
+import { AddTrustModalComponent } from './add-trust-modal/add-trust-modal.component';
+import { ClusterComponent } from './cluster/cluster.component';
+import { TrustListComponent } from './trust-list/trust-list.component';
 
 const appRoutes: Routes = [
   { path: "login", component: LoginComponent },
@@ -58,7 +61,10 @@ const appRoutes: Routes = [
     HiddenHeaderComponent,
     NewExecutableComponent,
     SettingsComponent,
-    UserTokenModalComponent
+    UserTokenModalComponent,
+    AddTrustModalComponent,
+    ClusterComponent,
+    TrustListComponent
   ],
   imports: [
     RouterModule.forRoot(appRoutes,{ enableTracing: true }),

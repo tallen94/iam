@@ -24,17 +24,34 @@ CREATE DATABASE /*!32312 IF NOT EXISTS*/ `iam` /*!40100 DEFAULT CHARACTER SET la
 USE `iam`;
 
 --
--- Table structure for table `authorization`
+-- Table structure for table `authorization_visibility`
 --
 
-DROP TABLE IF EXISTS `authorization`;
+DROP TABLE IF EXISTS `authorization_visibility`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `authorization` (
-  `username` varchar(50) NOT NULL,
-  `rule` varchar(255) NOT NULL,
-  KEY `username` (`username`,`rule`),
-  KEY `username_2` (`username`)
+CREATE TABLE `authorization_visibility` (
+  `resource_from` varchar(50) NOT NULL,
+  `resource_to` varchar(255) NOT NULL,
+  `visibility` varchar(10) NOT NULL,
+  KEY `get_idx` (`resource_from`,`resource_to`),
+  KEY `resource_to` (`resource_to`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `authorization_privileges`
+--
+
+DROP TABLE IF EXISTS `authorization_privilege`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `authorization_privilege` (
+  `resource_from` varchar(50) NOT NULL,
+  `resource_to` varchar(255) NOT NULL,
+  `privilege` varchar(10) NOT NULL,
+  KEY `get_idx` (`resource_from`,`resource_to`),
+  KEY `resource_to` (`resource_to`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -48,9 +65,30 @@ DROP TABLE IF EXISTS `cluster`;
 CREATE TABLE `cluster` (
   `name` varchar(100) NOT NULL,
   `username` varchar(50) NOT NULL,
+  `description` varchar(1024) NOT NULL,
   KEY `username` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `environment`
+--
+
+DROP TABLE IF EXISTS `environment`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `executable` (
+  `name` varchar(255) NOT NULL,
+  `description` text,
+  `username` varchar(50) NOT NULL,
+  `cluster` varchar(255) NOT NULL,
+  `cpu` int not null,
+  `cpu_unit` varchar(4) not null,
+  `memory` int not null,
+  `memory_unit` varchar(4) not null,
+  KEY `get_idx` (`name`, `username`, `cluster`)
+  KEY `username` (`username`)
+) ENGINE=InnoDB AUTO_INCREMENT=372 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Table structure for table `executable`
@@ -60,7 +98,6 @@ DROP TABLE IF EXISTS `executable`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `executable` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `data` varchar(1024) NOT NULL,
   `description` text,
@@ -71,7 +108,8 @@ CREATE TABLE `executable` (
   `username` varchar(50) DEFAULT NULL,
   `environment` varchar(255) DEFAULT NULL,
   `visibility` varchar(10) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  KEY `get_idx` (`name`, `username`, `exe`),
+  KEY `username` (`username`, `exe`)
 ) ENGINE=InnoDB AUTO_INCREMENT=372 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

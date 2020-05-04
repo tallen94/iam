@@ -31,6 +31,9 @@ import { ClientApi } from "./ClientApi";
 import { ClientManager } from "../Client/ClientManager";
 import { Client } from "../Client/Client";
 import { UserClient } from "../Client/UserClient";
+import { ClusterManager } from "../Cluster/ClusterManager";
+import { ClusterApi } from "./ClusterApi";
+import { ClusterClient } from "../Client/ClusterClient";
 
 export class ApiFactory {
 
@@ -48,7 +51,9 @@ export class ApiFactory {
     const routerClient: Client = new Client(new ClientCommunicator(clientConfig.routerHost, parseInt(clientConfig.routerPort)))
     const userClient: UserClient = new UserClient(new ClientCommunicator(clientConfig.userHost, parseInt(clientConfig.userPort)))
     const authenticationClient: AuthenticationClient = new AuthenticationClient(new ClientCommunicator(clientConfig.authHost, parseInt(clientConfig.authPort)))
-    const clientManager: ClientManager = new ClientManager(routerClient, authenticationClient, userClient)
+    const authorizationClient: AuthorizationClient = new AuthorizationClient(new ClientCommunicator(clientConfig.authHost, parseInt(clientConfig.authPort)))
+    const clusterClient: ClusterClient = new ClusterClient(new ClientCommunicator(clientConfig.userHost, parseInt(clientConfig.userPort)))
+    const clientManager: ClientManager = new ClientManager(routerClient, authenticationClient, userClient, authorizationClient, clusterClient)
     new StatusApi(serverCommunicator);
     new ClientApi(serverCommunicator, clientManager)
     new DashboardApi(fileSystem, serverCommunicator);
@@ -65,8 +70,10 @@ export class ApiFactory {
     };
     const databaseCommunicator: DatabaseCommunicator = this.constructDatabaseCommunicator(dbconfig)
     const userManager: UserManager = new UserManager(databaseCommunicator)
+    const clusterManager: ClusterManager = new ClusterManager(databaseCommunicator)
     new StatusApi(serverCommunicator);
     new UserApi(serverCommunicator, userManager)
+    new ClusterApi(serverCommunicator, clusterManager)
   }
 
   // Internal service for routing executable requests

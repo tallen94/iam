@@ -30,5 +30,10 @@
       (emitNewNode)="receiveEmitNewNode($event)"
       (emitNewEdge)="receiveEmitNewEdge($event)"
       (emitDeleteEditing)="receiveDeleteEditing($event)"></graph>
+    <cluster
+      class="lower-full"
+      *ngIf="data && data.exe == 'cluster'"
+      [(data)]="data"
+      (authorizationUpdated)="receiveUpdateData($event)"></cluster>
   </div>
 </div>

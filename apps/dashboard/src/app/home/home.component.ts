@@ -35,6 +35,122 @@ export class HomeComponent implements OnInit {
     this.iam.getExecutables(this.iam.getUser().username, "environment").subscribe((data) => {
       this.columns["environment"]["list"] = data
     })
+    this.iam.getClusterForUser(this.iam.getUser().username).subscribe((data) => {
+      this.columns["cluster"]["list"] = data
+      console.log(data)
+    })
+    // this.columns["cluster"]["list"] = [{
+    //   name: "MachineLearningCluster",
+    //   username: "trevor",
+    //   exe: "cluster",
+    //   description: "This is a cluster created by the machine learning team and has a bunch of cool ML related stuff. I use this in my marketing and fraud clusters",
+    //   trusts: [{
+    //     requestor: this.iam.getUser().username,
+    //     requestor_type: "user",
+    //     visibility: "write",
+    //     privileges: [{name: "execute", value: true}]
+    //   },{
+    //     requestor: "JoeBob (MLE)",
+    //     requestor_type: "user",
+    //     visibility: "write",
+    //     privileges: [{name: "execute", value: true}]
+    //   },{
+    //     requestor: "Marketing Cluster",
+    //     requestor_type: "cluster",
+    //     visibility: "none",
+    //     privileges: [{name: "execute", value: true}]
+    //   },{
+    //     requestor: "Fraud Cluster",
+    //     requestor_type: "cluster",
+    //     visibility: "none",
+    //     privileges: [{name: "execute", value: true}]
+    //   }]
+    // },{
+    //   name: "MarketingCluster",
+    //   username: "trevor",
+    //   exe: "cluster",
+    //   description: "This is a cluster created by me for the marketing team to do marketing stuff.",
+    //   trusts: [{
+    //     requestor: this.iam.getUser().username,
+    //     requestor_type: "user",
+    //     visibility: "write",
+    //     privileges: [{name: "execute", value: true}]
+    //   },{
+    //     requestor: "MarketingTeamUser1",
+    //     requestor_type: "user",
+    //     visibility: "write",
+    //     privileges: [{name: "execute", value: true}]
+    //   }]
+    // },{
+    //   name: "FraudCluster",
+    //   username: "trevor",
+    //   exe: "cluster",
+    //   description: "This is a cluster created by me for the fraud team to catch fraud.",
+    //   trusts: [{
+    //     requestor: this.iam.getUser().username,
+    //     requestor_type: "user",
+    //     visibility: "write",
+    //     privileges: [{name: "execute", value: true}]
+    //   },{
+    //     requestor: "FraudTeamUser1",
+    //     requestor_type: "user",
+    //     visibility: "write",
+    //     privileges: [{name: "execute", value: true}]
+    //   }]
+    // },{
+    //   name: "RobinhoodCluster",
+    //   username: "Robinhood",
+    //   exe: "cluster",
+    //   description: "This is a cluster created by some person that extended the Robinhood API.",
+    //   trusts: [{
+    //     requestor: "Robinhood",
+    //     requestor_type: "user",
+    //     visibility: "write",
+    //     privileges: [{name: "execute", value: true}]
+    //   },{
+    //     requestor: this.iam.getUser().username,
+    //     requestor_type: "user",
+    //     visibility: "read",
+    //     privileges: [{name: "execute", value: false}]
+    //   },{
+    //     requestor: "Stock Broker Cluster",
+    //     requestor_type: "cluster",
+    //     visibility: "none",
+    //     privileges: [{name: "execute", value: true}]
+    //   }]
+    // },{
+    //   name: "StockBrokerCluster",
+    //   username: "trevor",
+    //   exe: "cluster",
+    //   description: "I use this cluster to build a stock broker.",
+    //   trusts: [{
+    //     requestor: this.iam.getUser().username,
+    //     requestor_type: "user",
+    //     visibility: "write",
+    //     privileges: [{name: "execute", value: true}]
+    //   }]
+    // },{
+    //   name: "TheFrancisFriesCluster",
+    //   username: "FrancisFries",
+    //   exe: "cluster",
+    //   description: "A cluster created by Francis Fries",
+    //   trusts: [{
+    //     requestor: this.iam.getUser().username,
+    //     requestor_type: "user",
+    //     visibility: "write",
+    //     privileges: [{name: "execute", value: true}]
+    //   },{
+    //     requestor: "FrancisFries",
+    //     requestor_type: "user",
+    //     visibility: "write",
+    //     privileges: [{name: "execute", value: true}]
+    //   },{
+    //     requestor: "MarketingTeamUser1",
+    //     requestor_type: "user",
+    //     visibility: "read",
+    //     privileges: [{name: "execute", value: false}]
+    //   }]
+    // }]
     // this.iam.getExecutables(this.iam.getUser().username, "pool").subscribe((data) => {
     //   this.columns["pool"]["list"] = data
     // })
@@ -58,6 +174,10 @@ export class HomeComponent implements OnInit {
         title: 'environment',
         list: []
       },
+      cluster: {
+        title: 'cluster',
+        list: []
+      }
       // pool: {
       //   title: 'pool',
       //   list: []
@@ -66,12 +186,14 @@ export class HomeComponent implements OnInit {
   }
 
   public select(exe: string, selection: any) {
-    this.data = null;
-    this.iam.getExecutable(selection.username, exe, selection.name)
-    .subscribe((result) => {
-      this.data = result;
-      this.data.id = this.data.exe == "graph" ? "0" : "1";
-    })
+    this.data = selection;
+    this.data.exe = exe;
+
+    // this.iam.getExecutable(selection.username, exe, selection.name)
+    // .subscribe((result) => {
+    //   this.data = result;
+    //   this.data.id = this.data.exe == "graph" ? "0" : "1";
+    // })
   }
 
   public values(obj: any) {

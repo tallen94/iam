@@ -1,0 +1,32 @@
+.card {
+  padding: 16px;
+  position: relative;
+}
+
+.username {
+  color: #007bff;
+  font-weight: 600;
+  font-size: 1.25em;
+}
+
+.exe {
+  color: #28a745;
+  font-weight: 600;
+  font-size: 1.25em;
+}
+
+.name {
+  font-weight: 300;
+  font-size: 1.5em;
+}
+
+.inline-input {
+  display: inline-block;
+}
+
+.action-buttons {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+}
+

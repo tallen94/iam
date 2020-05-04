@@ -1,0 +1,17 @@
+<div class="add-trust-modal">
+  <div class="add-trust-dialog card">
+    <div class="card-body">
+      <div class="card-row header">
+        <h5 class="card-title">Authorize New Resource</h5>
+        <p>Search for resources by name to add them as an authorized resource.</p>
+      </div>
+      <div class="card-row search">
+        <input type="text" placeholder="Find Resource" [(ngModel)]="resource_from"/>
+      </div>
+      <div>
+        <button class="btn btn-primary" (click)="done()" [disabled]="resource_from == undefined || resource_from == ''">Done</button>
+        <button class="btn btn-danger" (click)="cancel()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>

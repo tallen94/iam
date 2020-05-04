@@ -92,4 +92,15 @@ export class InitData {
       visibility: "private"
     }
   }
+
+  cluster(id: number, name: string) {
+    return {
+      id: id,
+      username: this.iam.getUser().username, 
+      exe: "cluster",
+      name: name,
+      description: "This is a cluster",
+      authorization: []
+    }
+  }
 }

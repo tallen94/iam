@@ -1,0 +1,36 @@
+<div class="card">
+  <div class="card-title">
+    <div class="inline-input exe">
+      {{data.exe}}
+    </div>
+    <div class="inline-input username">
+      .{{data.username}}
+    </div>
+    <div class="inline-input name">
+      .{{data.name}}
+    </div>
+  </div>
+
+  <div class="card-body">
+    <div>
+      <label class="nested-title" *ngIf="editing || (data.description && data.description != '')">Description</label>
+      <div *ngIf="editing" class="text-editor" ace-editor
+        [(text)]="data.description"
+        [mode]="'markdown'" 
+        [theme]="'eclipse'"
+        [options]="options"
+        [readOnly]="false"
+        [autoUpdateContent]="true" 
+        [durationBeforeCallback]="500"></div>
+      <p *ngIf="!editing && data.description && data.description != ''" class="card-text">{{data.description}}</p>
+    </div>
+  
+    <trust-list [resource]="getResource()" (trustUpdated)="receiveTrustUpdated($event)"></trust-list>
+  </div>
+
+  <div class="action-buttons">
+    <button class="btn-sm btn-secondary"  *ngIf="editing" (click)="save()">save</button>
+    <button class="btn-sm btn-danger"  *ngIf="editing" (click)="cancelEdit()">cancel</button>
+    <button class="btn-sm btn-secondary" *ngIf="!editing" (click)="triggerEdit()">edit</button>
+  </div>  
+</div>
