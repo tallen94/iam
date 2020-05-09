@@ -38,6 +38,23 @@
   background-color: #f6f8fa;
 }
 
+.upper {
+  padding: 2px;
+  background-color: transparent;
+  height: 40px;
+}
+
+.lower {
+  position: absolute;
+  top: 42px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: 0;
+  padding: 0 !important;
+  background-color: #f6f8fa;
+}
+
 .list-section {
   overflow-y: scroll;
   height: 100%;

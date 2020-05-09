@@ -13,7 +13,14 @@
   </div>
 
   <div class="list-section col-sm-10" *ngIf="data">
-    <app-editor *ngIf="data" [data]="data"></app-editor>
+    <div class="upper">
+      <button class="btn btn-danger" (click)="delete()">Delete</button>
+      <button class="btn btn-primary" (click)="backwards()"><-</button>
+      <button class="btn btn-primary" (click)="forwards()">-></button>
+    </div>
+    <div class="lower">
+      <app-editor *ngIf="data" [data]="data"></app-editor>
+    </div>
   </div>
 </div>
 

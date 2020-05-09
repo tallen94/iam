@@ -84,13 +84,6 @@ export class EditorComponent implements OnInit {
     this.editing = []
   }
 
-  public delete() {
-    this.iam.deleteExecutable(this.data.username, this.data.exe, this.data.name)
-    .subscribe((response) => {
-      this.data = undefined;
-    });
-  }
-
   private initData(id: string, exe: string, name: string) {
     return new InitData(this.iam)[exe](id, name);
   }

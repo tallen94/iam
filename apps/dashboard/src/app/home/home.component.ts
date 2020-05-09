@@ -1,8 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { Iam } from '../iam/iam';
 import * as Lodash from "lodash";
 import { Router } from '@angular/router';
 import { InitData } from '../iam/init-data';
+
+export enum KEY_CODE {
+  RIGHT_ARROW = 39,
+  LEFT_ARROW = 37
+}
 
 @Component({
   selector: 'app-home',
@@ -16,6 +21,8 @@ export class HomeComponent implements OnInit {
   public showNewDialog: boolean = false;
   public searchText: string = "";
   public showAll: boolean = false;
+  private backHistory: any[] = [];
+  private forwardHistory: any[] = [];
 
   constructor(iam: Iam, private router: Router) {
     this.iam = iam;
@@ -185,15 +192,60 @@ export class HomeComponent implements OnInit {
     };
   }
 
+  @HostListener('window:keyup', ['$event'])
+  keyEvent(event: KeyboardEvent) {
+
+    if (event.keyCode === KEY_CODE.RIGHT_ARROW) {
+      this.forwards();
+    }
+
+    if (event.keyCode === KEY_CODE.LEFT_ARROW) {
+      this.backwards();
+    }
+  }
+
   public select(exe: string, selection: any) {
     this.data = selection;
     this.data.exe = exe;
 
+    if (this.backHistory.length > 0) {
+      const last = this.backHistory[this.backHistory.length - 1]
+      if (last.name !== this.data.name || last.exe !== this.data.exe || last.username !== this.data.username) {
+        this.backHistory.push(this.data)
+      }
+    } else {
+      this.backHistory.push(this.data)
+    }
+
+    if (this.backHistory.length > 10) {
+      this.backHistory.shift()
+    }
     // this.iam.getExecutable(selection.username, exe, selection.name)
     // .subscribe((result) => {
     //   this.data = result;
     //   this.data.id = this.data.exe == "graph" ? "0" : "1";
     // })
+  }
+
+  public backwards() {
+    if (this.backHistory.length > 1) {
+      this.forwardHistory.push(this.backHistory.pop())
+      this.data = this.backHistory[this.backHistory.length - 1]
+    }
+    if (this.forwardHistory.length > 10) {
+      this.forwardHistory.shift()
+    }
+    
+  }
+
+  public forwards() {
+    if (this.forwardHistory.length > 0) {
+      this.backHistory.push(this.forwardHistory.pop())
+      this.data = this.backHistory[this.backHistory.length - 1]
+    }
+    if (this.backHistory.length > 10) {
+      this.backHistory.shift()
+    }
   }
 
   public values(obj: any) {
@@ -210,6 +262,10 @@ export class HomeComponent implements OnInit {
     this.showNewDialog = false;
     this.data = this.initData("0", data.exe, data.name)
     this.columns[data.exe].list.push(this.data)
+    this.backHistory.push(this.data)
+    if (this.backHistory.length > 10) {
+      this.backHistory.shift()
+    }
   }
 
   public receiveCancelCreateExecutable() {
@@ -236,6 +292,13 @@ export class HomeComponent implements OnInit {
 
   private initData(id: string, exe: string, name: string) {
     return new InitData(this.iam)[exe](id, name);
+  }
+
+  public delete() {
+    this.iam.deleteExecutable(this.data.username, this.data.exe, this.data.name)
+    .subscribe((response) => {
+      this.data = undefined;
+    });
   }
 
 }
