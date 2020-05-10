@@ -1,0 +1,135 @@
+<div class="card">
+  <div class="card-title">
+    <div class="inline-input exe">
+      environment
+    </div>
+    <div class="inline-input username">
+      .{{data.username}}
+    </div>
+    <div class="inline-input cluster">
+      .{{data.cluster}}
+    </div>
+    <div class="inline-input name">
+      .{{data.name}}
+    </div>
+  </div>
+
+  <div class="card-body">
+    <div>
+      <label class="nested-title" *ngIf="editing || (data.description && data.description != '')">Description</label>
+      <div *ngIf="editing" class="text-editor" ace-editor
+        [(text)]="data.description"
+        [mode]="'markdown'" 
+        [theme]="'eclipse'"
+        [options]="options"
+        [readOnly]="false"
+        [autoUpdateContent]="true" 
+        [durationBeforeCallback]="500"></div>
+      <p *ngIf="!editing && data.description && data.description != ''" class="card-text">{{data.description}}</p>
+    </div>
+
+    <div class="inline-input right-space">
+      <label *ngIf="editing || (!editing && !isEmpty(data.data.type))">Type</label>
+      <div *ngIf="editing">
+        <select class="form-control" [(ngModel)]="data.data.type">
+          <option>executor</option>
+          <option>yaml</option>
+        </select>
+      </div>
+      <p *ngIf="!editing">{{data.data.type}}</p>
+    </div>
+
+    <div class="inline-input right-space">
+      <label *ngIf="editing || (!editing && !isEmpty(data.data.imageRepo))">Image Repo</label>
+      <input 
+        class="form-control"
+        size="{{inputSize('imageRepo')}}"
+        *ngIf="editing" 
+        type="text" 
+        [(ngModel)]="data.data.imageRepo"
+        placeholder="imageRepo">
+      <p *ngIf="!editing">{{data.data.imageRepo}}</p>
+    </div>
+
+    <div>
+      <label class="nested-title" *ngIf="editing || (!editing && !isEmpty(data.image))">Image</label>
+      <div>
+        <button class="btn-sm btn-primary" (click)="buildImage()">build</button>
+      </div>
+      <div *ngIf="editing" class="text-editor" ace-editor
+        [(text)]="data.image"
+        [mode]="'mysql'" 
+        [theme]="'eclipse'"
+        [options]="options"
+        [readOnly]="false"></div>
+      <div class="markdown" *ngIf="!editing">
+        <ngx-md [data]="getCodeMarkdown('docker', data.image)" ></ngx-md>
+      </div>
+    </div>
+
+    <div *ngIf="data.data.type == 'executor'">
+      <label class="nested-title">Resource Limits</label>
+      <div>
+        <button class="btn-sm btn-primary" (click)="applyKubernetes()">apply</button>
+      </div>
+
+      <div class="inline-input right-space">
+        <label *ngIf="editing || (!editing && !isEmpty(data.data.replicas))">Replicas</label>
+        <input 
+          class="form-control"
+          size="{{inputSize('replicas')}}"
+          *ngIf="editing" 
+          type="text" 
+          [(ngModel)]="data.data.replicas"
+          placeholder="replicas">
+        <p *ngIf="!editing">{{data.data.replicas}}</p>
+      </div>
+
+      <div class="inline-input right-space">
+        <label *ngIf="editing || (!editing && !isEmpty(data.data.cpu))">Cpu</label>
+        <input 
+          class="form-control"
+          size="{{inputSize('cpu')}}"
+          *ngIf="editing" 
+          type="text" 
+          [(ngModel)]="data.data.cpu"
+          placeholder="CPU">
+        <p *ngIf="!editing">{{data.data.cpu}}</p>
+      </div>
+
+      <div class="inline-input right-space">
+        <label *ngIf="editing || (!editing && !isEmpty(data.data.memory))">Memory</label>
+        <input 
+          class="form-control"
+          size="{{inputSize('memory')}}"
+          *ngIf="editing" 
+          type="text" 
+          [(ngModel)]="data.data.memory"
+          placeholder="MEM">
+        <p *ngIf="!editing">{{data.data.memory}}</p>
+      </div>
+    </div>
+
+    <div *ngIf="data.data.type == 'yaml'">
+      <label class="nested-title" *ngIf="editing || (!editing && !isEmpty(data.kubernetes))">Kubernetes</label>
+      <div>
+        <button class="btn-sm btn-primary" (click)="applyKubernetes()">apply</button>
+      </div>
+      <div *ngIf="editing" class="text-editor" ace-editor
+        [(text)]="data.kubernetes"
+        [mode]="'yaml'" 
+        [theme]="'eclipse'"
+        [options]="options"
+        [readOnly]="false"></div>
+      <div class="markdown" *ngIf="!editing">
+        <ngx-md [data]="getCodeMarkdown('yaml', data.kubernetes)" ></ngx-md>
+      </div>
+    </div>
+  </div>
+
+  <div class="action-buttons">
+    <button class="btn-sm btn-secondary"  *ngIf="editing" (click)="save()">save</button>
+    <button class="btn-sm btn-danger"  *ngIf="editing" (click)="cancelEdit()">cancel</button>
+    <button class="btn-sm btn-secondary" *ngIf="!editing" (click)="triggerEdit()">edit</button>
+  </div>  
+</div>

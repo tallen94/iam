@@ -107,6 +107,26 @@ export class Iam {
     return this.client.delete(ApiPaths.DELETE_CLUSTER, {username: username, name: name})
   }
 
+  public addEnvironment(data: any) {
+    return this.client.post(ApiPaths.ADD_ENVIRONMENT, data)
+  }
+
+  public getEnvironment(username: string, name: string, cluster: string) {
+    return this.client.get(ApiPaths.GET_ENVIRONMENT, {}, {username: username, name: name, cluster: cluster})
+  }
+
+  public getEnvironmentForUser(username: string) {
+    return this.client.get(ApiPaths.GET_ENVIRONMENT_FOR_USER, {}, {username: username})
+  }
+
+  public getEnvironmentForCluster(username: string, cluster: string) {
+    return this.client.get(ApiPaths.GET_ENVIRONMENT_FOR_CLUSTER, {}, {username: username, cluster: cluster})
+  }
+
+  public deleteEnvironment(username: string, name: string, cluster: string) {
+    return this.client.delete(ApiPaths.DELETE_CLUSTER, {username: username, name: name, cluster: cluster})
+  }
+
   public addExecutable(data: any) {
     return this.client.post(ApiPaths.ADD_EXECUTABLE, data, {}, {sessiontoken: this.token})
   }

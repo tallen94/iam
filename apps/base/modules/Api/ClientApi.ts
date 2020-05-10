@@ -15,6 +15,7 @@ export class ClientApi {
 
   private init(): void {
 
+    // Clusters
     this.serverCommunicator.post(ApiPaths.ADD_CLUSTER, (req: any, res: any) => {
       this.clientManager.addCluster(req.body)
       .then((result) => {
@@ -38,6 +39,42 @@ export class ClientApi {
 
     this.serverCommunicator.delete(ApiPaths.DELETE_CLUSTER, (req: any, res: any) => {
       this.clientManager.deleteCluster(req.query.username, req.query.name)
+      .then((result) => {
+        res.status(200).send(result)
+      })
+    })
+
+    // Environments
+    this.serverCommunicator.post(ApiPaths.ADD_ENVIRONMENT, (req: any, res: any) => {
+      this.clientManager.addEnvironment(req.body)
+      .then((result) => {
+        res.status(200).send(result)
+      })
+    })
+
+    this.serverCommunicator.get(ApiPaths.GET_ENVIRONMENT, (req: any, res: any) => {
+      this.clientManager.getEnvironment(req.query.username, req.query.name, req.query.cluster)
+      .then((result) => {
+        res.status(200).send(result)
+      })
+    })
+
+    this.serverCommunicator.get(ApiPaths.GET_ENVIRONMENT_FOR_USER, (req: any, res: any) => {
+      this.clientManager.getEnvironmentForUser(req.query.username)
+      .then((result) => {
+        res.status(200).send(result)
+      })
+    })
+
+    this.serverCommunicator.get(ApiPaths.GET_ENVIRONMENT_FOR_CLUSTER, (req: any, res: any) => {
+      this.clientManager.getEnvironmentForCluster(req.query.username, req.query.cluster)
+      .then((result) => {
+        res.status(200).send(result)
+      })
+    })
+
+    this.serverCommunicator.delete(ApiPaths.DELETE_ENVIRONMENT, (req: any, res: any) => {
+      this.clientManager.deleteEnvironment(req.query.username, req.query.name, req.query.cluster)
       .then((result) => {
         res.status(200).send(result)
       })

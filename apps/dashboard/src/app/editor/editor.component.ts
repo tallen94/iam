@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { Iam } from "../iam/iam";
 import * as Lodash from "lodash";
@@ -11,6 +11,7 @@ import { InitData } from '../iam/init-data';
 })
 export class EditorComponent implements OnInit {
   @Input() data: any;
+  @Output() emitCreateNewExecutable: EventEmitter<any> = new EventEmitter();
   editing: any[] = [];
   hidden: any[] = [];
   running: any;
@@ -57,6 +58,10 @@ export class EditorComponent implements OnInit {
 
   public receiveUpdateData(data: any) {
     this.data = data
+  }
+
+  public receiveAddEnvironmentEvent() {
+    this.emitCreateNewExecutable.emit({exe: "environment", name: "NewEnvironment"})
   }
 
   public receiveDeleteEditing(linksEditing: any) {

@@ -40,13 +40,12 @@ setupPassword() {
 applyConfig() {
    echo [...Initializing config...]
    kubectl apply -f kubernetes/secrets/dbconfig.yaml
-   kubectl apply -f kubernetes/secrets/dbconfig.yaml --namespace=$NAMESPACE
 
-   kubectl apply -f kubernetes/secrets/dockerconfig.yaml --namespace=$NAMESPACE
-   kubectl apply -f kubernetes/secrets/clustertoken.yaml --namespace=$NAMESPACE
-   kubectl apply -f kubernetes/serviceaccounts/admin.yaml --namespace=$NAMESPACE
+   kubectl apply -f kubernetes/secrets/dockerconfig.yaml
+   kubectl apply -f kubernetes/secrets/clustertoken.yaml
+   kubectl apply -f kubernetes/serviceaccounts/admin.yaml
    echo [...Init...]
-   ./kubernetes/update.sh $PROVIDER $NAMESPACE
+   ./kubernetes/update.sh $PROVIDER
    echo IAM is ready to use.
 }
 
@@ -69,13 +68,6 @@ loginDocker() {
    --docker-server=https://index.docker.io/v1/ \
    --docker-username="$DOCKER_USERNAME" \
    --docker-password="$DOCKER_PASSWORD" \
-   --docker-email="$DOCKER_EMAIL" \
-   --namespace=$NAMESPACE
-
-   kubectl create secret docker-registry regcred \
-   --docker-server=https://index.docker.io/v1/ \
-   --docker-username="$DOCKER_USERNAME" \
-   --docker-password="$DOCKER_PASSWORD" \
    --docker-email="$DOCKER_EMAIL"
    echo "$DOCKER_PASSWORD" | docker login -u $DOCKER_USERNAME --password-stdin
    if [ "$?" = "1" ]; then exit 1 
@@ -83,9 +75,6 @@ loginDocker() {
 }
 
 # Main
-printf "Namespace: "
-read NAMESPACE 
-
 loginDocker
 
 echo Configure your IAM by creating a password for the database

@@ -44,17 +44,10 @@ spec:
           value: "5000"
         - name: "ENVIRONMENT"
           value: "environment-builder"
-          
-        # CLUSTER SECRET TOKEN
-        - name: CLUSTER_TOKEN
-          valueFrom:
-            secretKeyRef:
-              name: clustertoken
-              key: token
 
         # FS CONFIG
         - name: FS_HOST
-          value: "filesystem.admin"
+          value: "filesystem.default"
         - name: FS_PORT
           value: "80"
 
@@ -168,17 +161,10 @@ spec:
           value: "5000"
         - name: "ENVIRONMENT"
           value: "environment-builder"
-          
-        # CLUSTER SECRET TOKEN
-        - name: CLUSTER_TOKEN
-          valueFrom:
-            secretKeyRef:
-              name: clustertoken
-              key: token
 
         # FS CONFIG
         - name: FS_HOST
-          value: "filesystem.admin"
+          value: "filesystem.default"
         - name: FS_PORT
           value: "80"
 

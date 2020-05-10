@@ -3,7 +3,7 @@ import { AuthenticationClient } from "./AuthenticationClient";
 import { UserClient } from "./UserClient";
 import { AuthorizationClient } from "./AuthorizationClient";
 import { ClusterClient } from "./ClusterClient";
-import * as Lodash from "lodash";
+import { EnvironmentClient } from "./EnvironmentClient";
 
 export class ClientManager {
 
@@ -12,7 +12,8 @@ export class ClientManager {
     private authenticationClient: AuthenticationClient,
     private userClient: UserClient,
     private authorizationClient: AuthorizationClient,
-    private clusterClient: ClusterClient
+    private clusterClient: ClusterClient,
+    private environmentClient: EnvironmentClient
   ) {
 
   }
@@ -31,6 +32,26 @@ export class ClientManager {
 
   public deleteCluster(username: string, name: string) {
     return this.clusterClient.deleteCluster(username, name)
+  }
+
+  public addEnvironment(data: any) {
+    return this.environmentClient.addEnvironment(data)
+  }
+
+  public getEnvironment(username: string, name: string, cluster: string) {
+    return this.environmentClient.getEnvironment(username, name, cluster)
+  }
+
+  public getEnvironmentForUser(username: string) {
+    return this.environmentClient.getEnvironmentForUser(username)
+  }
+
+  public getEnvironmentForCluster(username: string, cluster: string) {
+    return this.environmentClient.getEnvironmentForCluster(username, cluster)
+  }
+
+  public deleteEnvironment(username: string, name: string, cluster: string) {
+    return this.environmentClient.deleteEnvironment(username, name, cluster)
   }
 
   public addExecutable(data: any) {

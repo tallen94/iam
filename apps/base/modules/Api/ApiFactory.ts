@@ -34,6 +34,8 @@ import { UserClient } from "../Client/UserClient";
 import { ClusterManager } from "../Cluster/ClusterManager";
 import { ClusterApi } from "./ClusterApi";
 import { ClusterClient } from "../Client/ClusterClient";
+import { EnvironmentApi } from "./EnvironmentApi";
+import { EnvironmentClient } from "../Client/EnvironmentClient";
 
 export class ApiFactory {
 
@@ -53,7 +55,8 @@ export class ApiFactory {
     const authenticationClient: AuthenticationClient = new AuthenticationClient(new ClientCommunicator(clientConfig.authHost, parseInt(clientConfig.authPort)))
     const authorizationClient: AuthorizationClient = new AuthorizationClient(new ClientCommunicator(clientConfig.authHost, parseInt(clientConfig.authPort)))
     const clusterClient: ClusterClient = new ClusterClient(new ClientCommunicator(clientConfig.userHost, parseInt(clientConfig.userPort)))
-    const clientManager: ClientManager = new ClientManager(routerClient, authenticationClient, userClient, authorizationClient, clusterClient)
+    const environmentClient: EnvironmentClient = new EnvironmentClient(new ClientCommunicator(clientConfig.userHost, parseInt(clientConfig.userPort)))
+    const clientManager: ClientManager = new ClientManager(routerClient, authenticationClient, userClient, authorizationClient, clusterClient, environmentClient)
     new StatusApi(serverCommunicator);
     new ClientApi(serverCommunicator, clientManager)
     new DashboardApi(fileSystem, serverCommunicator);
@@ -68,12 +71,19 @@ export class ApiFactory {
       port: process.env.DB_PORT || process.argv[8],
       database: process.env.DB_NAME || process.argv[9]
     };
+    const fsconfig = {
+      host: process.env.FS_HOST || process.argv[10],
+      port: process.env.FS_PORT || process.argv[11]
+    }
     const databaseCommunicator: DatabaseCommunicator = this.constructDatabaseCommunicator(dbconfig)
+    const fileSystemCommunicator: FileSystemCommunicator = this.constructFileSystemCommunicator(fsconfig)
     const userManager: UserManager = new UserManager(databaseCommunicator)
     const clusterManager: ClusterManager = new ClusterManager(databaseCommunicator)
+    const environmentManager: EnvironmentManager = new EnvironmentManager(fileSystem, fileSystemCommunicator, databaseCommunicator)
     new StatusApi(serverCommunicator);
     new UserApi(serverCommunicator, userManager)
     new ClusterApi(serverCommunicator, clusterManager)
+    new EnvironmentApi(serverCommunicator, environmentManager)
   }
 
   // Internal service for routing executable requests

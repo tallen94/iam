@@ -37,8 +37,6 @@ export class Executor {
         return this.database.addQuery(data);
       case "graph":
         return this.graphExecutor.addGraph(data);
-      case "environment":
-        return this.environmentManager.addEnvironment(data);
       // case "job":
       //   return this.jobRunner.addJob(data);
       // case "pool":
@@ -53,8 +51,6 @@ export class Executor {
         return this.shell.getProgram(username, name)
       case "query":
         return this.database.getQuery(username, name)
-      case "environment":
-        return this.environmentManager.getEnvironment(username, name)
       case "graph":
         return this.graphExecutor.getGraph(username, name)
         .then((graph) => {
@@ -86,8 +82,6 @@ export class Executor {
         return this.shell.deleteProgram(username, name)
       case "query":
         return this.database.deleteQuery(username, name)
-      case "environment":
-        return this.environmentManager.deleteEnvironment(username, name)
       case "graph":
         return this.graphExecutor.deleteGraph(username, name)
     }

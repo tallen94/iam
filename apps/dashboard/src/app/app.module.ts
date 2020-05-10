@@ -33,6 +33,7 @@ import { UserTokenModalComponent } from './user-token-modal/user-token-modal.com
 import { AddTrustModalComponent } from './add-trust-modal/add-trust-modal.component';
 import { ClusterComponent } from './cluster/cluster.component';
 import { TrustListComponent } from './trust-list/trust-list.component';
+import { EnvironmentComponent } from './environment/environment.component';
 
 const appRoutes: Routes = [
   { path: "login", component: LoginComponent },
@@ -64,7 +65,8 @@ const appRoutes: Routes = [
     UserTokenModalComponent,
     AddTrustModalComponent,
     ClusterComponent,
-    TrustListComponent
+    TrustListComponent,
+    EnvironmentComponent
   ],
   imports: [
     RouterModule.forRoot(appRoutes,{ enableTracing: true }),

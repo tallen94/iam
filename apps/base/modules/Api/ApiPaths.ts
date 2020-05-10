@@ -23,6 +23,13 @@ export class ApiPaths {
   public static GET_CLUSTER_FOR_USER = "/cluster/user"
   public static DELETE_CLUSTER = "/cluster"
 
+  // Environment
+  public static ADD_ENVIRONMENT = "/environment"
+  public static GET_ENVIRONMENT = "/environment"
+  public static GET_ENVIRONMENT_FOR_USER = "/environment/user"
+  public static GET_ENVIRONMENT_FOR_CLUSTER = "/environment/cluster"
+  public static DELETE_ENVIRONMENT = "/environment"
+
   // Authorization
   public static GET_AUTHORIZATION = "/authorization"
   public static ADD_AUTHORIZATION = "/authorization"

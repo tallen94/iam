@@ -14,38 +14,24 @@ export class EnvironmentManager {
   ) { }
 
   public addEnvironment(data: any) {
-    const envData = JSON.stringify({
-      imageRepo: data.imageRepo,
-      replicas: data.replicas,
-      memory: data.memory,
-      cpu: data.cpu,
-      type: data.type
-    })
-    return this.getEnvironment(data.username, data.name)
+    const envData = JSON.stringify(data.data)
+    return this.getEnvironment(data.username, data.name, data.cluster)
     .then((result) => {
       if (result == undefined) {
-        return this.databaseCommunicator.execute(Queries.ADD_EXECUTABLE, {
+        return this.databaseCommunicator.execute(Queries.ADD_ENVIRONMENT, {
           username: data.username, 
           name: data.name,
-          uuid: uuid.v4(),
-          exe: data.exe,
           data: envData,
-          input: data.input,
-          output: data.output,
-          description: data.description,
-          environment: data.environment,
-          visibility: data.visibility
+          cluster: data.cluster,
+          description: data.description
         })
       }
-      return this.databaseCommunicator.execute(Queries.UPDATE_EXECUTABLE, { 
+      return this.databaseCommunicator.execute(Queries.UPDATE_ENVIRONMENT, { 
+        username: data.username, 
         name: data.name,
-        exe: data.exe,
         data: envData,
-        input: data.input,
-        output: data.output,
-        description: data.description,
-        environment: data.environment,
-        visibility: data.visibility
+        cluster: data.cluster,
+        description: data.description
       })
     }).then(() => {
       let promise;
@@ -70,8 +56,8 @@ export class EnvironmentManager {
     })
   }
 
-  public getEnvironment(username: string, name: string) {
-    return this.databaseCommunicator.execute(Queries.GET_EXE_BY_TYPE_NAME, { username: username, name: name, exe: "environment" })
+  public getEnvironment(username: string, name: string, cluster: string) {
+    return this.databaseCommunicator.execute(Queries.GET_ENVIRONMENT, { username: username, name: name, cluster: cluster })
     .then((result: any[]) => {
       if (result.length > 0) {
         const item = result[0];
@@ -79,17 +65,9 @@ export class EnvironmentManager {
         const ret = {
           username: item.username,
           name: item.name,
-          exe: item.exe,
-          replicas: data.replicas,
-          cpu: data.cpu,
-          memory: data.memory,
-          imageRepo: data.imageRepo,
-          type: data.type,
-          input: item.input,
-          output: item.output,
+          cluster: item.cluster,
+          data: data,
           description: item.description,
-          environment: item.environment,
-          visibility: item.visibility
         }
         return Promise.all([
           this.fileSystemCommunicator.getFile(username + "/images", item.name),
@@ -104,8 +82,48 @@ export class EnvironmentManager {
     })
   }
 
-  public deleteEnvironment(username: string, name: string) {
-    return this.databaseCommunicator.execute(Queries.DELETE_EXECUTABLE, {username: username, name: name, exe: "environment"})
+  public getEnvironmentForUser(username: string) {
+    return this.databaseCommunicator.execute(Queries.GET_ENVIRONMENT_FOR_USER, {username: username})
+    .then((results) => {
+      return Promise.all(Lodash.map(results, (item) => {
+        const data = JSON.parse(item.data);
+        const ret = {
+          username: item.username,
+          name: item.name,
+          cluster: item.cluster,
+          data: data,
+          description: item.description,
+        }
+        return Promise.all([
+          this.fileSystemCommunicator.getFile(username + "/images", item.name),
+          this.fileSystemCommunicator.getFile(username + "/kubernetes", item.name)
+        ]).then((result) => {
+          ret["image"] = result[0];
+          ret["kubernetes"] = result[1]
+          return ret;
+        })
+      }))
+    })
+  }
+
+  public getEnvironmentsForCluster(cluster: string, username: string) {
+    return this.databaseCommunicator.execute(Queries.GET_ENVIRONMENTS_FOR_CLUSTER, {cluster: cluster, username: username})
+    .then((results) => {
+      return Promise.all(Lodash.map(results, (item) => {
+        const data = JSON.parse(item.data);
+        return {
+          username: item.username,
+          name: item.name,
+          cluster: item.cluster,
+          data: data,
+          description: item.description,
+        }
+      }))
+    })
+  }
+
+  public deleteEnvironment(username: string, name: string, cluster: string) {
+    return this.databaseCommunicator.execute(Queries.DELETE_ENVIRONMENT, {username: username, name: name, cluster: cluster})
     .then((result) => {
       return Promise.all([
         this.fileSystemCommunicator.deleteFile(username + "/images", name),

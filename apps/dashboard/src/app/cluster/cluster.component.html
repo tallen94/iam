@@ -24,6 +24,32 @@
         [durationBeforeCallback]="500"></div>
       <p *ngIf="!editing && data.description && data.description != ''" class="card-text">{{data.description}}</p>
     </div>
+
+    <div class="environment-list">
+      <h3>Environments</h3>
+      <div class="add-button">
+        <button class="btn btn-success" (click)="addEnvironment()">Add Environment</button>
+      </div>
+      <div class="environment" *ngFor="let env of environments;">
+        <div class="inline-input col1">
+          <label>Name</label>
+          <p>{{env.name}}</p>
+        </div>
+        <div class="inline-input col2">
+          <label>Replicas</label>
+          <p>{{env.data.replicas}}</p>
+        </div>
+        <div class="inline-input col3">
+          <label>CPU</label>
+          <p>{{env.data.cpu}}</p>
+        </div>
+        <div class="inline-input col4">
+          <label>Memory</label>
+          <p>{{env.data.memory}}</p>
+        </div>
+      </div>
+
+    </div>
   
     <trust-list [resource]="getResource()" (trustUpdated)="receiveTrustUpdated($event)"></trust-list>
   </div>

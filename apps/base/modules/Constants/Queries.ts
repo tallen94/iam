@@ -10,9 +10,12 @@ export class Queries {
   public static DELETE_EXECUTABLE = "delete from executable where username={username} and exe={exe} and name={name};"
 
   // Environment
-  public static ADD_ENVIRONMENT = "insert into environment(name, username, description, cluster, cpu, cpu_unit, memory, memory_unit) values ({name}, {username}, {description}, {cluster}, {cpu}, {cpu_unit}, {memory}, {memory_unit});"
+  public static ADD_ENVIRONMENT = "insert into environment(name, username, description, cluster, data) values ({name}, {username}, {description}, {cluster}, {data});"
+  public static UPDATE_ENVIRONMENT = "update environment set description={description}, data={data} where name={name} and username={username} and cluster={cluster}"
   public static GET_ENVIRONMENT = "select * from environment where name={name} and username={username} and cluster={cluster}"
   public static GET_ENVIRONMENT_FOR_USER = "select * from environment where username={username}"
+  public static GET_ENVIRONMENTS_FOR_CLUSTER = "select * from environment where cluster={cluster} and username={username}"
+  public static DELETE_ENVIRONMENT = "delete from environment where name={name} and username={username} and cluster={cluster}"
 
   // Cluster 
   public static ADD_CLUSTER = "insert into cluster(name, username, description) values({name}, {username}, {description});"

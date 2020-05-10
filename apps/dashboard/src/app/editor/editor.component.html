@@ -1,7 +1,7 @@
 <div class="full">
   <div class="lower">
     <nested-input 
-      *ngIf="data" 
+      *ngIf="data && (data.exe === 'function' || data.exe === 'query' || data.exe === 'graph')" 
       [ngClass]="{'left': data.exe == 'graph' || running != undefined, 'lower-full': data.exe != 'graph' || running == undefined}" 
       [(data)]="data" 
       [editing]="editing"
@@ -31,6 +31,11 @@
       class="lower-full"
       *ngIf="data && data.exe == 'cluster'"
       [(data)]="data"
-      (authorizationUpdated)="receiveUpdateData($event)"></cluster>
+      (authorizationUpdated)="receiveUpdateData($event)"
+      (addEnvironmentEvent)="receiveAddEnvironmentEvent()"></cluster>
+    <environment
+      class="lower-full"
+      *ngIf="data && data.exe == 'environment'"
+      [(data)]="data"></environment>
   </div>
 </div>

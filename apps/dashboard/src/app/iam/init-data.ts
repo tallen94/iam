@@ -60,18 +60,17 @@ export class InitData {
       username: this.iam.getUser().username,
       exe: "environment",
       name: name,
+      cluster: "FirstCluster",
       description: "This is an environment.",
-      input: '{"tag":"icanplayguitar94/iam:' + name + '"}',
-      output: "",
       image: "FROM icanplayguitar94/iam:base-latest",
       kubernetes: "",
-      environment: "environment-builder",
-      replicas: 1,
-      imageRepo: "icanplayguitar94/iam",
-      cpu: "500Mi",
-      memory: "500MB",
-      type: "executor",
-      visibility: "private"
+      data: {
+        replicas: 1,
+        imageRepo: "icanplayguitar94/iam",
+        cpu: "500Mi",
+        memory: "500MB",
+        type: "executor"
+      }
     }
   }
 

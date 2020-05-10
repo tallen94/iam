@@ -49,7 +49,7 @@ spec:
 
         # FS CONFIG
         - name: FS_HOST
-          value: "filesystem.admin"
+          value: "filesystem.default"
         - name: FS_PORT
           value: "80"
 

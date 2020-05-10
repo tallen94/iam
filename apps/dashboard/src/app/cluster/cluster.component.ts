@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Iam } from '../iam/iam';
+import { InitData } from '../iam/init-data';
 
 @Component({
   selector: 'cluster',
@@ -8,8 +9,10 @@ import { Iam } from '../iam/iam';
 })
 export class ClusterComponent implements OnInit {
 
-  @Input() data: any;
+  private _data: any;
   @Output() authorizationUpdated: EventEmitter<any> = new EventEmitter();
+  @Output() addEnvironmentEvent: EventEmitter<any> = new EventEmitter();
+  public environments: any[] = [];
   public editing: boolean = false;
   private prevData: any = {};
   private options = {
@@ -23,6 +26,20 @@ export class ClusterComponent implements OnInit {
 
   ngOnInit() {
     this.prevData = JSON.parse(JSON.stringify(this.data))
+  }
+
+  @Input()
+  set data(data: any) {
+    this._data = data
+    this.iam.getEnvironmentForCluster(this.data.username, this.data.name)
+    .subscribe((results: any[]) => {
+      console.log(results)
+      this.environments = results;
+    })
+  }
+
+  get data() {
+    return this._data;
   }
 
   getResource() {
@@ -49,5 +66,9 @@ export class ClusterComponent implements OnInit {
   receiveTrustUpdated(authorizationList: any[]) {
     this.data.authorization = authorizationList
     this.authorizationUpdated.emit(this.data)
+  }
+
+  addEnvironment() {
+    this.addEnvironmentEvent.emit()
   }
 }

@@ -24,7 +24,7 @@
     "executor": "node dist/server.js executor '/home/treovor/git/iam/local' 5000 iam password iam-local 30002 iam iam-local 30003 base",
     "client": "node dist/server.js client '/home/treovor/git/iam/local' 5000 localhost 5001 localhost 5002 localhost 5003",
     "router": "node dist/server.js router '/home/treovor/git/iam/local' 5001 iam password iam-local 30002 iam",
-    "user": "node dist/server.js user '/home/treovor/git/iam/local' 5002 iam password iam-local 30002 iam",
+    "user": "node dist/server.js user '/home/treovor/git/iam/local' 5002 iam password iam-local 30002 iam iam-local 30003",
     "auth": "node dist/server.js auth '/home/treovor/git/iam/local' 5003 iam password iam-local 30002 iam"
   },
   "author": "Trevor Allen",

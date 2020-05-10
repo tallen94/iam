@@ -40,17 +40,10 @@ spec:
           value: "executor"
         - name: SERVER_PORT
           value: "5000"
-          
-        # CLUSTER SECRET TOKEN
-        - name: CLUSTER_TOKEN
-          valueFrom:
-            secretKeyRef:
-              name: clustertoken
-              key: token
 
         # FS CONFIG
         - name: FS_HOST
-          value: "filesystem.admin"
+          value: "filesystem.default"
         - name: FS_PORT
           value: "80"
 
@@ -147,17 +140,10 @@ spec:
           value: "executor"
         - name: SERVER_PORT
           value: "5000"
-          
-        # CLUSTER SECRET TOKEN
-        - name: CLUSTER_TOKEN
-          valueFrom:
-            secretKeyRef:
-              name: clustertoken
-              key: token
 
         # FS CONFIG
         - name: FS_HOST
-          value: "filesystem.admin"
+          value: "filesystem.default"
         - name: FS_PORT
           value: "80"
 
