@@ -27,6 +27,7 @@
 
     <div class="environment-list">
       <h3>Environments</h3>
+      <p>Environments define resources for running executables.</p>
       <div class="add-button">
         <button class="btn btn-success" (click)="addEnvironment()">Add Environment</button>
       </div>
@@ -36,16 +37,23 @@
           <p>{{env.name}}</p>
         </div>
         <div class="inline-input col2">
+          <label>Type</label>
+          <p>{{env.data.type}}</p>
+        </div>
+        <div class="inline-input col2">
           <label>Replicas</label>
           <p>{{env.data.replicas}}</p>
         </div>
-        <div class="inline-input col3">
+        <div class="inline-input col2">
           <label>CPU</label>
           <p>{{env.data.cpu}}</p>
         </div>
-        <div class="inline-input col4">
+        <div class="inline-input col2">
           <label>Memory</label>
           <p>{{env.data.memory}}</p>
+        </div>
+        <div class="inline-input col5">
+          <button class="btn-sm btn-primary" (click)="selectEnvironment(env)"><i class="fa fa-pencil"></i></button>
         </div>
       </div>
 
@@ -59,4 +67,11 @@
     <button class="btn-sm btn-danger"  *ngIf="editing" (click)="cancelEdit()">cancel</button>
     <button class="btn-sm btn-secondary" *ngIf="!editing" (click)="triggerEdit()">edit</button>
   </div>  
+</div>
+
+<div *ngIf="newEnvironment">
+  <new-resource-modal 
+    [type]="'environment'"
+    (newResourceMoalDone)="receiveNewResourceModalDone($event)"
+    (newResourceModalCancel)="receiveNewResourceModalCancel()"></new-resource-modal>
 </div>

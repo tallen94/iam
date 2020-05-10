@@ -19,7 +19,11 @@
       <button class="btn btn-primary" (click)="forwards()">-></button>
     </div>
     <div class="lower">
-      <app-editor *ngIf="data" [data]="data" (emitCreateNewExecutable)="receiveCreateExecutable($event)"></app-editor>
+      <app-editor 
+        *ngIf="data" 
+        [data]="data" 
+        (emitCreateNewExecutable)="receiveCreateExecutable($event)"
+        (emitSelectExecutable)="receieveSelectExecutable($event)"></app-editor>
     </div>
   </div>
 </div>

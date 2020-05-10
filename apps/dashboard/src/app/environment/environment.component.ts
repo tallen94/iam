@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Iam } from '../iam/iam';
 
 @Component({
@@ -9,6 +9,12 @@ import { Iam } from '../iam/iam';
 export class EnvironmentComponent implements OnInit {
 
   @Input() data: any;
+  @Output() newResourceEvent: EventEmitter<any> = new EventEmitter();
+  @Output() selectResourceEvent: EventEmitter<any> = new EventEmitter();
+  public newResource: string;
+  public functions: any[];
+  public queries: any[];
+  public graphs: any[];
   public editing: boolean = false;
   private prevData: any = {};
   private options = {
@@ -58,6 +64,24 @@ export class EnvironmentComponent implements OnInit {
       return this.data[key].length
     }
     return 8;
+  }
+
+  receiveNewResourceModalDone(value: any) {
+    this.newResourceEvent.emit(value)
+    this.newResource = undefined;
+  }
+
+  receiveNewResourceModalCancel() {
+    this.newResource = undefined;
+  }
+
+  addResource(exe: string) {
+    this.newResource = exe;
+  }
+
+  selectResource(exe: string, value: any) {
+    value.exe = exe;
+    this.selectResourceEvent.emit(value)
   }
 
   applyKubernetes() {

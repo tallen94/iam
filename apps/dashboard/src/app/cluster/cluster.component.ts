@@ -12,6 +12,8 @@ export class ClusterComponent implements OnInit {
   private _data: any;
   @Output() authorizationUpdated: EventEmitter<any> = new EventEmitter();
   @Output() addEnvironmentEvent: EventEmitter<any> = new EventEmitter();
+  @Output() emitSelectExecutable: EventEmitter<any> = new EventEmitter();
+  public newEnvironment: boolean = false;
   public environments: any[] = [];
   public editing: boolean = false;
   private prevData: any = {};
@@ -33,7 +35,6 @@ export class ClusterComponent implements OnInit {
     this._data = data
     this.iam.getEnvironmentForCluster(this.data.username, this.data.name)
     .subscribe((results: any[]) => {
-      console.log(results)
       this.environments = results;
     })
   }
@@ -68,7 +69,21 @@ export class ClusterComponent implements OnInit {
     this.authorizationUpdated.emit(this.data)
   }
 
+  receiveNewResourceModalDone(value: any) {
+    this.addEnvironmentEvent.emit(value)
+    this.newEnvironment = false;
+  }
+
+  receiveNewResourceModalCancel() {
+    this.newEnvironment = false;
+  }
+
   addEnvironment() {
-    this.addEnvironmentEvent.emit()
+    this.newEnvironment = true;
+  }
+
+  selectEnvironment(value: any) {
+    value.exe = "environment"
+    this.emitSelectExecutable.emit(value)
   }
 }

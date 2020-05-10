@@ -12,6 +12,7 @@ import { InitData } from '../iam/init-data';
 export class EditorComponent implements OnInit {
   @Input() data: any;
   @Output() emitCreateNewExecutable: EventEmitter<any> = new EventEmitter();
+  @Output() emitSelectExecutable: EventEmitter<any> = new EventEmitter();
   editing: any[] = [];
   hidden: any[] = [];
   running: any;
@@ -60,8 +61,12 @@ export class EditorComponent implements OnInit {
     this.data = data
   }
 
-  public receiveAddEnvironmentEvent() {
-    this.emitCreateNewExecutable.emit({exe: "environment", name: "NewEnvironment"})
+  public receiveAddEnvironmentEvent(value: any) {
+    this.emitCreateNewExecutable.emit({exe: "environment", name: value.name})
+  }
+
+  public receiveNewResourceEvent(value: any) {
+    this.emitCreateNewExecutable.emit(value)
   }
 
   public receiveDeleteEditing(linksEditing: any) {
@@ -87,6 +92,10 @@ export class EditorComponent implements OnInit {
     this.data.graph.nodes = [...this.data.graph.nodes];
     this.data.graph.edges = [...this.data.graph.edges];
     this.editing = []
+  }
+
+  public receiveSelectExecutable(value: any) {
+    this.emitSelectExecutable.emit(value)
   }
 
   private initData(id: string, exe: string, name: string) {

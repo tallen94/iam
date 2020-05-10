@@ -111,13 +111,21 @@ export class EnvironmentManager {
     .then((results) => {
       return Promise.all(Lodash.map(results, (item) => {
         const data = JSON.parse(item.data);
-        return {
+        const ret = {
           username: item.username,
           name: item.name,
           cluster: item.cluster,
           data: data,
           description: item.description,
         }
+        return Promise.all([
+          this.fileSystemCommunicator.getFile(username + "/images", item.name),
+          this.fileSystemCommunicator.getFile(username + "/kubernetes", item.name)
+        ]).then((result) => {
+          ret["image"] = result[0];
+          ret["kubernetes"] = result[1]
+          return ret;
+        })
       }))
     })
   }

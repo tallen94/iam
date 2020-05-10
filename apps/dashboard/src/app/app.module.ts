@@ -34,6 +34,7 @@ import { AddTrustModalComponent } from './add-trust-modal/add-trust-modal.compon
 import { ClusterComponent } from './cluster/cluster.component';
 import { TrustListComponent } from './trust-list/trust-list.component';
 import { EnvironmentComponent } from './environment/environment.component';
+import { NewResourceModalComponent } from './new-resource-modal/new-resource-modal.component';
 
 const appRoutes: Routes = [
   { path: "login", component: LoginComponent },
@@ -66,7 +67,8 @@ const appRoutes: Routes = [
     AddTrustModalComponent,
     ClusterComponent,
     TrustListComponent,
-    EnvironmentComponent
+    EnvironmentComponent,
+    NewResourceModalComponent
   ],
   imports: [
     RouterModule.forRoot(appRoutes,{ enableTracing: true }),

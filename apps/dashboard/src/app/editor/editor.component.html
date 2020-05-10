@@ -32,10 +32,13 @@
       *ngIf="data && data.exe == 'cluster'"
       [(data)]="data"
       (authorizationUpdated)="receiveUpdateData($event)"
-      (addEnvironmentEvent)="receiveAddEnvironmentEvent()"></cluster>
+      (addEnvironmentEvent)="receiveAddEnvironmentEvent($event)"
+      (emitSelectExecutable)="receiveSelectExecutable($event)"></cluster>
     <environment
       class="lower-full"
       *ngIf="data && data.exe == 'environment'"
-      [(data)]="data"></environment>
+      [(data)]="data"
+      (newResourceEvent)="receiveNewResourceEvent($event)"
+      (selectResourceEvent)="receiveSelectExecutable($event)"></environment>
   </div>
 </div>

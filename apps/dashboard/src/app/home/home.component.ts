@@ -107,6 +107,11 @@ export class HomeComponent implements OnInit {
     // })
   }
 
+  public receieveSelectExecutable(value: any) {
+    console.log(value)
+    this.select(value.exe, value)
+  }
+
   public backwards() {
     if (this.backHistory.length > 1) {
       this.forwardHistory.push(this.backHistory.pop())

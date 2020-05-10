@@ -131,5 +131,63 @@
     <button class="btn-sm btn-secondary"  *ngIf="editing" (click)="save()">save</button>
     <button class="btn-sm btn-danger"  *ngIf="editing" (click)="cancelEdit()">cancel</button>
     <button class="btn-sm btn-secondary" *ngIf="!editing" (click)="triggerEdit()">edit</button>
-  </div>  
+  </div>
+  
+  <div class="resource-list">
+    <h3>Functions</h3>
+    <p>Functions are pieces of code to run.</p>
+    <div class="add-button">
+      <button class="btn btn-success" (click)="addResource('function')">Add Function</button>
+    </div>
+    <div class="resource" *ngFor="let function of functions;">
+      <div class="inline-input col1">
+        <label>Name</label>
+        <p>{{function.name}}</p>
+      </div>
+      <div class="inline-input col5">
+        <button class="btn-sm btn-primary" (click)="selectResource('function', function)"><i class="fa fa-pencil"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="resource-list">
+    <h3>Queries</h3>
+    <p>Queries modify data</p>
+    <div class="add-button">
+      <button class="btn btn-success" (click)="addResource('query')">Add Query</button>
+    </div>
+    <div class="resource" *ngFor="let query of queries;">
+      <div class="inline-input col1">
+        <label>Name</label>
+        <p>{{query.name}}</p>
+      </div>
+      <div class="inline-input col5">
+        <button class="btn-sm btn-primary" (click)="selectResource('query', query)"><i class="fa fa-pencil"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="resource-list">
+    <h3>Graphs</h3>
+    <p>Graphs are execution plans of functions and queries.</p>
+    <div class="add-button">
+      <button class="btn btn-success" (click)="addResource('graph')">Add Graph</button>
+    </div>
+    <div class="resource" *ngFor="let graph of graphs;">
+      <div class="inline-input col1">
+        <label>Name</label>
+        <p>{{graph.name}}</p>
+      </div>
+      <div class="inline-input col5">
+        <button class="btn-sm btn-primary" (click)="selectResource('graph', graph)"><i class="fa fa-pencil"></i></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="newResource">
+  <new-resource-modal 
+    [type]="newResource"
+    (newResourceMoalDone)="receiveNewResourceModalDone($event)"
+    (newResourceModalCancel)="receiveNewResourceModalCancel()"></new-resource-modal>
 </div>

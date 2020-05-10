@@ -16,7 +16,7 @@
 }
 
 .cluster {
-  color: #28a745;
+  color: #dc3545;
   font-weight: 600;
   font-size: 1.25em;
 }
@@ -55,4 +55,40 @@ label {
   color: rgb(160, 160, 160);
   font-size: 15px;
   text-transform: capitalize;
+}
+
+.inline-input label {
+  font-weight: bold;
+  color: rgb(160, 160, 160);
+  font-size: 15px;
+}
+
+.resource-list {
+  width: 850px;
+  position: relative;
+  margin-top: 54px;
+}
+
+.add-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.add-button button {
+  background-color: white;
+  color: #28a745;
+}
+
+.resource .col1 {
+  width: 150px;
+}
+
+.resource .col2 {
+  width: 80px;
+  margin-left: 16px;
+}
+
+.resource .col5 {
+  margin-left: 64px;
 }
