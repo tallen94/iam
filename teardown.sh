@@ -35,9 +35,9 @@ echo Deleting kube base..
 kubectl delete deployment base --namespace=$NAMESPACE
 kubectl delete service base --namespace=$NAMESPACE
 
-echo Deleting kube environment-builder
-kubectl delete deployment environment-builder --namespace=$NAMESPACE
-kubectl delete service environment-builder --namespace=$NAMESPACE
+echo Deleting kube builder
+kubectl delete deployment builder --namespace=$NAMESPACE
+kubectl delete service builder --namespace=$NAMESPACE
 
 echo Deleting kube secrets...
 kubectl delete secret regcred --namespace=$NAMESPACE

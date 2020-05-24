@@ -127,6 +127,18 @@ export class Iam {
     return this.client.delete(ApiPaths.DELETE_CLUSTER, {username: username, name: name, cluster: cluster})
   }
 
+  public buildImage(username: string, name: string, cluster: string) {
+    return this.client.post(ApiPaths.BUILD_IMAGE, {username: username, name: name, cluster: cluster})
+  }
+
+  public startEnvironment(username: string, name: string, cluster: string) {
+    return this.client.post(ApiPaths.START_ENVIRONMENT, {username: username, name: name, cluster: cluster})
+  }
+
+  public stopEnvironment(username: string, name: string, cluster: string) {
+    return this.client.post(ApiPaths.STOP_ENVIRONMENT, {username: username, name: name, cluster: cluster})
+  }
+
   public addExecutable(data: any) {
     return this.client.post(ApiPaths.ADD_EXECUTABLE, data, {}, {sessiontoken: this.token})
   }

@@ -11,12 +11,12 @@ export class ShellCommunicator {
   
   public exec(file: string, command: string, args: string, data: any): Promise<any> {
     const tmpName = uuid.v4()
-    return this.fileSystem.put("programs", tmpName, file)
+    return this.fileSystem.put("run", tmpName, file)
     .then((err: any) => {
       if (err) {
         return err;
       }
-      const path = this.fileSystem.path("programs/" + tmpName);
+      const path = this.fileSystem.path("run/" + tmpName);
       let run = command + " " + path;
       if (args != "") {
         const replacedArgs = this.replace(args, data);
@@ -24,12 +24,14 @@ export class ShellCommunicator {
       }
       return this._exec(run, JSON.stringify(data))
       .then((result: any) => {
-        this.fileSystem.delete("programs/" + tmpName)
+        this.fileSystem.delete("run/" + tmpName)
         try {
           return JSON.parse(result);
         } catch {
           return result;
         }
+      }).catch((result) => {
+        return {err: result}
       });
     })
   }
@@ -81,6 +83,9 @@ export class ShellCommunicator {
       });
 
       cp.on("close", (code, signal) => {
+        if (code !== 0) {
+          reject(out)
+        }
         resolve(out);
       });
     });

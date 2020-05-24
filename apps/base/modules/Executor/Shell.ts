@@ -34,18 +34,19 @@ export class Shell {
         })
       }
       return this.databaseCommunicator.execute(Queries.UPDATE_EXECUTABLE, { 
+        username: data.username,
         name: data.name,
         exe: data.exe,
+        environment: data.environment,
         data: programData,
         input: data.input,
         output: data.output,
         description: data.description,
-        environment: data.environment,
         visibility: data.visibility
       })
     }).then(() => {
       return Promise.all([
-        this.fileSystemCommunicator.putFile(data.username + "/programs", {
+        this.fileSystemCommunicator.putFile("programs", {
           name: data.name,
           file: data.text
         })
@@ -71,7 +72,7 @@ export class Shell {
           environment: item.environment,
           visibility: item.visibility
         };
-        return this.fileSystemCommunicator.getFile(username + "/programs", name)
+        return this.fileSystemCommunicator.getFile("programs", name)
         .then((file) => {
           ret["text"] = file
           return ret
@@ -84,7 +85,7 @@ export class Shell {
   public deleteProgram(username: string, name: string) {
     return this.databaseCommunicator.execute(Queries.DELETE_EXECUTABLE, {username: username, name: name, exe: "function"})
     .then((result) => {
-      return this.fileSystemCommunicator.deleteFile(username + "/programs", name)
+      return this.fileSystemCommunicator.deleteFile("programs", name)
     })
   }
 

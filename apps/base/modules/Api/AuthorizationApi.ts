@@ -20,7 +20,6 @@ export class AuthorizationApi {
       const resource_from = req.body.resource_from
       const resource_to = req.body.resource_to
       const visibility = req.body.visibility
-      console.log(req.body)
       return this.authorization.addAuthorizationVisibility(resource_from, resource_to, visibility)
       .then(() => {
         res.status(200).send()
@@ -53,7 +52,6 @@ export class AuthorizationApi {
       // Check if user is allowed to add authorizations
       // add authorization
       const resource = req.query.resource
-      console.log(resource)
       this.authorization.getAuthorizationVisibilityForResource(resource)
       .then((visibilities: any[]) => {
         return Promise.all(Lodash.map(visibilities, (item) => {

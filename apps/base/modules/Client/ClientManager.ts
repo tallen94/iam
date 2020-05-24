@@ -54,6 +54,18 @@ export class ClientManager {
     return this.environmentClient.deleteEnvironment(username, name, cluster)
   }
 
+  public buildImage(username: string, name: string, cluster: string) {
+    return this.environmentClient.buildImage(username, name, cluster)
+  }
+
+  public startEnvironment(username: string, name: string, cluster: string) {
+    return this.environmentClient.startEnvironment(username, name, cluster)
+  }
+
+  public stopEnvironment(username: string, name: string, cluster: string) {
+    return this.environmentClient.stopEnvironment(username, name, cluster)
+  }
+
   public addExecutable(data: any) {
     return this.routerClient.addExecutable(data)
   }

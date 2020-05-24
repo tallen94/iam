@@ -29,6 +29,9 @@ export class ApiPaths {
   public static GET_ENVIRONMENT_FOR_USER = "/environment/user"
   public static GET_ENVIRONMENT_FOR_CLUSTER = "/environment/cluster"
   public static DELETE_ENVIRONMENT = "/environment"
+  public static BUILD_IMAGE = "/environment/image/build"
+  public static START_ENVIRONMENT = "/environment/start"
+  public static STOP_ENVIRONMENT = "/environment/stop"
 
   // Authorization
   public static GET_AUTHORIZATION = "/authorization"

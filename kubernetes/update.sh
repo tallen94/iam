@@ -9,4 +9,4 @@ kubectl apply -f kubernetes/apps/$PROVIDER/auth.yaml
 kubectl apply -f kubernetes/apps/$PROVIDER/user.yaml
 kubectl apply -f kubernetes/apps/$PROVIDER/database.yaml
 kubectl apply -f kubernetes/apps/$PROVIDER/filesystem.yaml
-# kubectl apply -f kubernetes/apps/$PROVIDER/environment-builder.yaml
+kubectl apply -f kubernetes/apps/$PROVIDER/builder.yaml

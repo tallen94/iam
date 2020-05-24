@@ -3,13 +3,61 @@
     <div class="sidebar-row search">
       <input class="form-control search-input" type="text" [(ngModel)]="searchText" placeholder="search" (ngModelChange)="searching($event)"/>
     </div>
-    <div class="sidebar-row" *ngFor="let col of values(columns)">
-      <div class="sidebar-row-title" (click)="hide(col.title)">{{col.title}} ({{col.list.length}})</div>
-      <ul class="sidebar-row-subrows" *ngIf="col.hidden || showAll">
-        <li class="sidebar-row-subrow" *ngFor="let item of filter(columns[col.title].list)" (click)="select(col.title, item)">{{item.name}}</li>
+
+    <div *ngIf="clusters">
+      <div class="sidebar-row-title" (click)="showGroup('clusters')">
+        Clusters ({{clusters.length}}) 
+        <button class="btn add-button" (click)="newResource('cluster')"><i class="fa fa-plus"></i></button>
+      </div>
+      <p *ngIf="clusters.length == 0">A cluster is a group of environments, each with custom resource definitions. Click the <b>+</b> to add a new cluster.</p>
+      <ul *ngIf="show === 'clusters' || showAll" class="sidebar-row-subrows">
+        <li class="sidebar-row-subrow" *ngFor="let item of filter(clusters)" (click)="select('cluster', item)">{{item.name}}</li>
       </ul>
     </div>
-    <div class="sidebar-row-button"><button class="sidebar-row btn btn-success" (click)="newExecutable()">new</button></div>
+
+    <div *ngIf="environments && clusters && clusters.length > 0">
+      <div class="sidebar-row-title" (click)="showGroup('environments')">
+        Environments ({{environments.length}})
+        <button class="btn add-button" (click)="newResource('environment')"><i class="fa fa-plus"></i></button>
+      </div>
+      <p *ngIf="environments.length == 0">Environments are places to run executables. Click the <b>+</b> to add a new environment.</p>
+      <ul *ngIf="show === 'environments' || showAll" class="sidebar-row-subrows">
+        <li class="sidebar-row-subrow" *ngFor="let item of filter(environments)" (click)="select('environment', item)">{{item.name}}</li>
+      </ul>
+    </div>
+
+    <div *ngIf="functions && environments && environments.length > 0">
+      <div class="sidebar-row-title" (click)="showGroup('functions')">
+        Functions ({{functions.length}}) 
+        <button class="btn add-button" (click)="newResource('function')"><i class="fa fa-plus"></i></button>
+      </div>
+      <p *ngIf="functions.length == 0">Add a function to run some code. Click the <b>+</b> to add a new function.</p>
+      <ul *ngIf="show === 'functions'" class="sidebar-row-subrows">
+        <li class="sidebar-row-subrow" *ngFor="let item of filter(functions)" (click)="select('function', item)">{{item.name}}</li>
+      </ul>
+    </div>
+
+    <div *ngIf="queries && environments && environments.length > 0">
+      <div class="sidebar-row-title" (click)="showGroup('queries')">
+        Queries ({{queries.length}})
+        <button class="btn add-button" (click)="newResource('query')"><i class="fa fa-plus"></i></button>
+      </div>
+      <p *ngIf="queries.length == 0">Build a query to get some data. Click the <b>+</b> to add a new query.</p>
+      <ul *ngIf="show === 'queries' || showAll" class="sidebar-row-subrows">
+        <li class="sidebar-row-subrow" *ngFor="let item of filter(queries)" (click)="select('query', item)">{{item.name}}</li>
+      </ul>
+    </div>
+
+    <div *ngIf="graphs && environments && queries && functions && environments.length > 0 && (functions.length > 1 || queries.length > 1 || (functions.length > 0 && queries.length > 0))">
+      <div class="sidebar-row-title" (click)="showGroup('graphs')">
+        Graphs ({{graphs.length}})
+        <button class="btn add-button" (click)="newResource('graph')"><i class="fa fa-plus"></i></button>
+      </div>
+      <p *ngIf="graphs.length == 0">Run a sequence of functions and queries with a graph. Click the <b>+</b> to add a new graph.</p>
+      <ul *ngIf="show === 'graphs' || showAll" class="sidebar-row-subrows">
+        <li class="sidebar-row-subrow" *ngFor="let item of filter(graphs)" (click)="select('graph', item)">{{item.name}}</li>
+      </ul>
+    </div>
   </div>
 
   <div class="list-section col-sm-10" *ngIf="data">
@@ -22,16 +70,20 @@
       <app-editor 
         *ngIf="data" 
         [data]="data" 
-        (emitCreateNewExecutable)="receiveCreateExecutable($event)"
+        [environmentOptions]="environments"
+        (emitCreateNewExecutable)="receiveNewResourceModalDone($event)"
         (emitSelectExecutable)="receieveSelectExecutable($event)"></app-editor>
     </div>
   </div>
 </div>
 
 <div *ngIf="showNewDialog">
-  <app-new-executable 
-    (emitCreateExecutable)="receiveCreateExecutable($event)"
-    (emitCancelCreateExecutable)="receiveCancelCreateExecutable()"
-  ></app-new-executable>
+  <new-resource-modal
+    [type]="showNewDialog" 
+    [clusterOptions]="clusters"
+    [environmentOptions]="environments"
+    [data]="undefined"
+    (newResourceMoalDone)="receiveNewResourceModalDone($event)"
+    (newResourceModalCancel)="receiveNewResourceModalCancel()"></new-resource-modal>
 </div>
 

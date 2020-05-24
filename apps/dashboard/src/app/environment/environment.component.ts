@@ -16,6 +16,7 @@ export class EnvironmentComponent implements OnInit {
   public queries: any[];
   public graphs: any[];
   public editing: boolean = false;
+  public buildingImage: boolean = false;
   private prevData: any = {};
   private options = {
     maxLines: 32,
@@ -27,7 +28,17 @@ export class EnvironmentComponent implements OnInit {
   constructor(private iam: Iam) { }
 
   ngOnInit() {
+    console.log(this.data)
     this.prevData = JSON.parse(JSON.stringify(this.data))
+    this.iam.getExecutables(this.iam.getUser().username, "function").subscribe((data: any[]) => {
+      this.functions = data;
+    })
+    this.iam.getExecutables(this.iam.getUser().username, "query").subscribe((data: any[]) => {
+      this.queries = data;
+    })
+    this.iam.getExecutables(this.iam.getUser().username, "graph").subscribe((data: any[]) => {
+      this.graphs = data;
+    })
   }
 
   save() {
@@ -84,18 +95,32 @@ export class EnvironmentComponent implements OnInit {
     this.selectResourceEvent.emit(value)
   }
 
-  applyKubernetes() {
-    // this.iam.runExecutable("admin", "function", "kubectl-apply", { file: this.data.name })
-    // .subscribe((result) => {
-    //   console.log(result)
-    // })
+  startEnvironment() {
+    this.iam.startEnvironment(this.data.username, this.data.name, this.data.cluster)
+    .subscribe((result: any) => {
+      if (result.state) {
+        this.data.state = result.state;
+      }
+    })
+  }
+
+  stopEnvironment() {
+    this.iam.stopEnvironment(this.data.username, this.data.name, this.data.cluster)
+    .subscribe((result: any) => {
+      if (result.state) {
+        this.data.state = result.state;
+      } 
+    })
   }
 
   buildImage() {
-    // const tag = this.data.imageRepo + ":" + this.data.name;
-    // this.iam.runExecutable("admin", "function", "build-image", { tag: tag, image: this.data.name})
-    // .subscribe((result) => {
-    //   console.log(result)
-    // })
+    this.buildingImage = true;
+    this.iam.buildImage(this.data.username, this.data.name, this.data.cluster)
+    .subscribe((result: any) => {
+      this.buildingImage = false;
+      if (result.environment) {
+        this.data = result.environment;
+      }
+    })
   }
 }

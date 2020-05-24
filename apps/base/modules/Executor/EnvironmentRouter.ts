@@ -3,11 +3,13 @@ import { Client } from "../Client/Client";
 import { DatabaseCommunicator } from "../Communicator/DatabaseCommunicator";
 import * as Lodash from "lodash";
 import { Queries } from "../Constants/Queries";
+import { Executor } from "./Executor";
 
 export class EnvironmentRouter {
 
   constructor(
-    private databaseCommunicator: DatabaseCommunicator
+    private databaseCommunicator: DatabaseCommunicator,
+    private executor: Executor
   ) {}
 
   public addExecutable(data: any) {
@@ -17,10 +19,7 @@ export class EnvironmentRouter {
         return this.addRoute(data.username, data.name, data.exe, data.environment)
       }
     }).then(() => {
-      const host = data.environment + "." + data.username
-      const clientCommunicator: ClientCommunicator = new ClientCommunicator(host, 80)
-      const client: Client = new Client(clientCommunicator);
-      return client.addExecutable(data);
+      return this.executor.addExecutable(data);
     })
   }
  
@@ -29,10 +28,7 @@ export class EnvironmentRouter {
     .then((results: any[]) => {
       if (results.length > 0) {
         const route = results[0]
-        const host = route.environment + "." + route.username
-        const clientCommunicator: ClientCommunicator = new ClientCommunicator(host, 80)
-        const client: Client = new Client(clientCommunicator);
-        return client.getExecutable(route.username, route.exe, route.name);
+        return this.executor.getExecutable(route.username, route.name, route.exe);
       }
     })
   }
@@ -41,10 +37,16 @@ export class EnvironmentRouter {
     return this.getUserRoutes(username, exe)
     .then((results: any[]) => {
       return Promise.all(Lodash.map(results, (route) => {
-        const host = route.environment + "." + route.username
-        const clientCommunicator: ClientCommunicator = new ClientCommunicator(host, 80)
-        const client: Client = new Client(clientCommunicator);
-        return client.getExecutable(route.username, route.exe, route.name);
+        return this.executor.getExecutable(route.username, route.name, route.exe);
+      }))
+    })
+  }
+
+  public getExecutablesForEnvironment(username: string, exe: string, environment: string) {
+    return this.getEnvironmentRoutes(username, exe, environment)
+    .then((results: any[]) => {
+      return Promise.all(Lodash.map(results, (route) => {
+        return this.executor.getExecutable(route.username, route.name, route.exe);
       }))
     })
   }
@@ -54,10 +56,7 @@ export class EnvironmentRouter {
     .then((results: any[]) => {
       if (results.length > 0) {
         const route = results[0]
-        const host = route.environment + "." + route.username
-        const clientCommunicator: ClientCommunicator = new ClientCommunicator(host, 80)
-        const client: Client = new Client(clientCommunicator);
-        return client.deleteExecutable(route.username, route.exe, route.name)
+        return this.executor.deleteExecutable(route.username, route.exe, route.name)
         .then(() => {
           return this.deleteRoute(route.username, route.exe, route.name)
         });
@@ -88,6 +87,10 @@ export class EnvironmentRouter {
 
   private getUserRoutes(username: string, exe: string) {
     return this.databaseCommunicator.execute(Queries.GET_ROUTES_FOR_USER, {username: username, exe: exe})
+  }
+
+  private getEnvironmentRoutes(username: string, exe: string, environment: string) {
+    return this.databaseCommunicator.execute(Queries.GET_ROUTES_FOR_ENVIRONMENT, {username: username, exe: exe, environment: environment})
   }
 
   private deleteRoute(username: string, exe: string, name: string) {

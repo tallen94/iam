@@ -13,8 +13,8 @@ kubectl delete deployment user
 kubectl delete service user
 kubectl delete deployment filesystem
 kubectl delete service filesystem
-# kubectl delete deployment environment-builder
-# kubectl delete service environment-builder
+kubectl delete deployment builder
+kubectl delete service builder
 
 # Database
 # kubectl delete pod mysqldatabase --namespace=$NAMESPACE

@@ -41,6 +41,12 @@ spec:
         - name: SERVER_PORT
           value: "5000"
 
+        # FS CONFIG
+        - name: FS_HOST
+          value: "filesystem.default"
+        - name: FS_PORT
+          value: "80"
+
         ## DB CONFIG
         - name: DB_HOST
           value: "mysqldatabase.default"
@@ -124,6 +130,12 @@ spec:
         - name: SERVER_PORT
           value: "5000"
 
+        # FS CONFIG
+        - name: FS_HOST
+          value: "filesystem.default"
+        - name: FS_PORT
+          value: "80"
+          
         ## DB CONFIG
         - name: DB_HOST
           value: "mysqldatabase.default"

@@ -70,6 +70,7 @@ export class ClusterComponent implements OnInit {
   }
 
   receiveNewResourceModalDone(value: any) {
+    value.cluster = this.data.name
     this.addEnvironmentEvent.emit(value)
     this.newEnvironment = false;
   }

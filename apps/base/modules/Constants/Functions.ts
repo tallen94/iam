@@ -7,8 +7,7 @@ export class Functions {
   + "cat $IMAGE | docker build --rm --no-cache -t $TAG -\n"
   + "docker push $TAG\n"
 
-  public static BUILD_KUBERNETES = "#!/bin/bash\n"
-  + "KUBERNETES=$1\n"
-  + "USERNAME=$2\n"
-  + "kubectl apply -f $KUBERNETES --namespace=$USERNAME"
+  public static KUBECTL_APPLY = "kubectl apply -f $1"
+  public static KUBECTL_DELETE = "kubectl delete -f $1"
+
 }

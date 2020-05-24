@@ -8,6 +8,8 @@ export class UserManager {
   } 
 
   public addUser(username: string, email: string) {
+    username = username.toLowerCase()
+    email = email.toLowerCase()
     return this.databaseCommunicator.execute(Queries.ADD_USER, {username: username, email: email})
     .then((result: any) => {
         return { success: result.affectedRows == 1 && result.warningCount == 0 }

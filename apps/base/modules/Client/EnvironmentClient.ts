@@ -26,4 +26,16 @@ export class EnvironmentClient {
   public deleteEnvironment(username: string, name: string, cluster: string) {
     return this.clientCommunicator.delete(ApiPaths.DELETE_ENVIRONMENT, {username: username, name: name, cluster: cluster})
   }
+
+  public buildImage(username: string, name: string, cluster: string) {
+    return this.clientCommunicator.post(ApiPaths.BUILD_IMAGE, {username: username, name: name, cluster: cluster})
+  }
+
+  public startEnvironment(username: string, name: string, cluster: string) {
+    return this.clientCommunicator.post(ApiPaths.START_ENVIRONMENT, {username: username, name: name, cluster: cluster})
+  }
+
+  public stopEnvironment(username: string, name: string, cluster: string) {
+    return this.clientCommunicator.post(ApiPaths.STOP_ENVIRONMENT, {username: username, name: name, cluster: cluster})
+  }
 }

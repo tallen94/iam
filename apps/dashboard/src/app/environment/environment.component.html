@@ -27,8 +27,16 @@
         [durationBeforeCallback]="500"></div>
       <p *ngIf="!editing && data.description && data.description != ''" class="card-text">{{data.description}}</p>
     </div>
+    <div>
+      <label class="nested-title">State</label>
+      <p class="environment-state">{{data.state}}</p>
+      <div>
+        <button class="btn-sm btn-primary" (click)="startEnvironment()">start</button>
+        <button class="btn-sm btn-danger" (click)="stopEnvironment()">stop</button>
+      </div>
+    </div>
 
-    <div class="inline-input right-space">
+    <!-- <div class="inline-input right-space">
       <label *ngIf="editing || (!editing && !isEmpty(data.data.type))">Type</label>
       <div *ngIf="editing">
         <select class="form-control" [(ngModel)]="data.data.type">
@@ -49,12 +57,13 @@
         [(ngModel)]="data.data.imageRepo"
         placeholder="imageRepo">
       <p *ngIf="!editing">{{data.data.imageRepo}}</p>
-    </div>
+    </div> -->
 
     <div>
       <label class="nested-title" *ngIf="editing || (!editing && !isEmpty(data.image))">Image</label>
       <div>
         <button class="btn-sm btn-primary" (click)="buildImage()">build</button>
+        <span *ngIf="buildingImage">Building...</span>
       </div>
       <div *ngIf="editing" class="text-editor" ace-editor
         [(text)]="data.image"
@@ -70,43 +79,41 @@
     <div *ngIf="data.data.type == 'executor'">
       <label class="nested-title">Resource Limits</label>
       <div>
-        <button class="btn-sm btn-primary" (click)="applyKubernetes()">apply</button>
-      </div>
-
-      <div class="inline-input right-space">
-        <label *ngIf="editing || (!editing && !isEmpty(data.data.replicas))">Replicas</label>
-        <input 
-          class="form-control"
-          size="{{inputSize('replicas')}}"
-          *ngIf="editing" 
-          type="text" 
-          [(ngModel)]="data.data.replicas"
-          placeholder="replicas">
-        <p *ngIf="!editing">{{data.data.replicas}}</p>
-      </div>
-
-      <div class="inline-input right-space">
-        <label *ngIf="editing || (!editing && !isEmpty(data.data.cpu))">Cpu</label>
-        <input 
-          class="form-control"
-          size="{{inputSize('cpu')}}"
-          *ngIf="editing" 
-          type="text" 
-          [(ngModel)]="data.data.cpu"
-          placeholder="CPU">
-        <p *ngIf="!editing">{{data.data.cpu}}</p>
-      </div>
-
-      <div class="inline-input right-space">
-        <label *ngIf="editing || (!editing && !isEmpty(data.data.memory))">Memory</label>
-        <input 
-          class="form-control"
-          size="{{inputSize('memory')}}"
-          *ngIf="editing" 
-          type="text" 
-          [(ngModel)]="data.data.memory"
-          placeholder="MEM">
-        <p *ngIf="!editing">{{data.data.memory}}</p>
+        <div class="inline-input right-space">
+          <label *ngIf="editing || (!editing && !isEmpty(data.data.replicas))">Replicas</label>
+          <input 
+            class="form-control"
+            size="{{inputSize('replicas')}}"
+            *ngIf="editing" 
+            type="text" 
+            [(ngModel)]="data.data.replicas"
+            placeholder="replicas">
+          <p *ngIf="!editing">{{data.data.replicas}}</p>
+        </div>
+  
+        <div class="inline-input right-space">
+          <label *ngIf="editing || (!editing && !isEmpty(data.data.cpu))">Cpu</label>
+          <input 
+            class="form-control"
+            size="{{inputSize('cpu')}}"
+            *ngIf="editing" 
+            type="text" 
+            [(ngModel)]="data.data.cpu"
+            placeholder="CPU">
+          <p *ngIf="!editing">{{data.data.cpu}}</p>
+        </div>
+  
+        <div class="inline-input right-space">
+          <label *ngIf="editing || (!editing && !isEmpty(data.data.memory))">Memory</label>
+          <input 
+            class="form-control"
+            size="{{inputSize('memory')}}"
+            *ngIf="editing" 
+            type="text" 
+            [(ngModel)]="data.data.memory"
+            placeholder="MEM">
+          <p *ngIf="!editing">{{data.data.memory}}</p>
+        </div>
       </div>
     </div>
 
@@ -133,53 +140,55 @@
     <button class="btn-sm btn-secondary" *ngIf="!editing" (click)="triggerEdit()">edit</button>
   </div>
   
-  <div class="resource-list">
-    <h3>Functions</h3>
-    <p>Functions are pieces of code to run.</p>
-    <div class="add-button">
-      <button class="btn btn-success" (click)="addResource('function')">Add Function</button>
-    </div>
-    <div class="resource" *ngFor="let function of functions;">
-      <div class="inline-input col1">
-        <label>Name</label>
-        <p>{{function.name}}</p>
+  <div *ngIf="data.data.type === 'executor'">
+    <div class="resource-list">
+      <h3>Functions</h3>
+      <p>Functions are pieces of code to run.</p>
+      <div class="add-button">
+        <button class="btn btn-success" (click)="addResource('function')">Add Function</button>
       </div>
-      <div class="inline-input col5">
-        <button class="btn-sm btn-primary" (click)="selectResource('function', function)"><i class="fa fa-pencil"></i></button>
-      </div>
-    </div>
-  </div>
-
-  <div class="resource-list">
-    <h3>Queries</h3>
-    <p>Queries modify data</p>
-    <div class="add-button">
-      <button class="btn btn-success" (click)="addResource('query')">Add Query</button>
-    </div>
-    <div class="resource" *ngFor="let query of queries;">
-      <div class="inline-input col1">
-        <label>Name</label>
-        <p>{{query.name}}</p>
-      </div>
-      <div class="inline-input col5">
-        <button class="btn-sm btn-primary" (click)="selectResource('query', query)"><i class="fa fa-pencil"></i></button>
+      <div class="resource" *ngFor="let function of functions;">
+        <div class="inline-input col1">
+          <label>Name</label>
+          <p>{{function.name}}</p>
+        </div>
+        <div class="inline-input col5">
+          <button class="btn-sm btn-primary" (click)="selectResource('function', function)"><i class="fa fa-pencil"></i></button>
+        </div>
       </div>
     </div>
-  </div>
-
-  <div class="resource-list">
-    <h3>Graphs</h3>
-    <p>Graphs are execution plans of functions and queries.</p>
-    <div class="add-button">
-      <button class="btn btn-success" (click)="addResource('graph')">Add Graph</button>
-    </div>
-    <div class="resource" *ngFor="let graph of graphs;">
-      <div class="inline-input col1">
-        <label>Name</label>
-        <p>{{graph.name}}</p>
+  
+    <div class="resource-list">
+      <h3>Queries</h3>
+      <p>Queries modify data</p>
+      <div class="add-button">
+        <button class="btn btn-success" (click)="addResource('query')">Add Query</button>
       </div>
-      <div class="inline-input col5">
-        <button class="btn-sm btn-primary" (click)="selectResource('graph', graph)"><i class="fa fa-pencil"></i></button>
+      <div class="resource" *ngFor="let query of queries;">
+        <div class="inline-input col1">
+          <label>Name</label>
+          <p>{{query.name}}</p>
+        </div>
+        <div class="inline-input col5">
+          <button class="btn-sm btn-primary" (click)="selectResource('query', query)"><i class="fa fa-pencil"></i></button>
+        </div>
+      </div>
+    </div>
+  
+    <div class="resource-list">
+      <h3>Graphs</h3>
+      <p>Graphs are execution plans of functions and queries.</p>
+      <div class="add-button">
+        <button class="btn btn-success" (click)="addResource('graph')">Add Graph</button>
+      </div>
+      <div class="resource" *ngFor="let graph of graphs;">
+        <div class="inline-input col1">
+          <label>Name</label>
+          <p>{{graph.name}}</p>
+        </div>
+        <div class="inline-input col5">
+          <button class="btn-sm btn-primary" (click)="selectResource('graph', graph)"><i class="fa fa-pencil"></i></button>
+        </div>
       </div>
     </div>
   </div>
@@ -188,6 +197,9 @@
 <div *ngIf="newResource">
   <new-resource-modal 
     [type]="newResource"
+    [clusterOptions]="[]"
+    [environmentOptions]="[]"
+    [data]="{environment: data.name}"
     (newResourceMoalDone)="receiveNewResourceModalDone($event)"
     (newResourceModalCancel)="receiveNewResourceModalCancel()"></new-resource-modal>
 </div>

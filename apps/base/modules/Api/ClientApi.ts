@@ -80,6 +80,27 @@ export class ClientApi {
       })
     })
 
+    this.serverCommunicator.post(ApiPaths.BUILD_IMAGE, (req: any, res: any) => {
+      this.clientManager.buildImage(req.body.username, req.body.name, req.body.cluster)
+      .then((result) => {
+        res.status(200).send(result)
+      })
+    })
+
+    this.serverCommunicator.post(ApiPaths.START_ENVIRONMENT, (req: any, res: any) => {
+      this.clientManager.startEnvironment(req.body.username, req.body.name, req.body.cluster)
+      .then((result) => {
+        res.status(200).send(result)
+      })
+    })
+
+    this.serverCommunicator.post(ApiPaths.STOP_ENVIRONMENT, (req: any, res: any) => {
+      this.clientManager.stopEnvironment(req.body.username, req.body.name, req.body.cluster)
+      .then((result) => {
+        res.status(200).send(result)
+      })
+    })
+
     /**
      * Adds an executable to be executed on the node.
      *

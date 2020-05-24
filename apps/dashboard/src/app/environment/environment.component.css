@@ -26,6 +26,11 @@
   font-size: 1.5em;
 }
 
+.environment-state {
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
 .inline-input {
   display: inline-block;
 }
@@ -43,6 +48,7 @@
 .nested-title {
   color: #007bff;
   margin-top: 8px;
+  font-size: 1.2em;
 }
 
 .text-editor {

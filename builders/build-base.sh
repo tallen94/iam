@@ -28,5 +28,5 @@ bash kubernetes/templates/user.sh $TAG $PROVIDER
 bash images/templates/client.sh $TAG
 bash builders/build-client.sh $VERSION $PUSH $PROVIDER -prod
 
-bash images/templates/environment-builder.sh $TAG
-bash builders/build-environment-builder.sh $VERSION $PUSH $PROVIDER
+bash images/templates/builder.sh $TAG
+bash builders/build-builder.sh $VERSION $PUSH $PROVIDER

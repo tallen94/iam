@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { NewEnvironmentModalComponent } from './new-environment-modal.component';
+import { NewResourceModalComponent } from './new-resource-modal.component';
 
 describe('NewEnvironmentModalComponent', () => {
-  let component: NewEnvironmentModalComponent;
-  let fixture: ComponentFixture<NewEnvironmentModalComponent>;
+  let component: NewResourceModalComponent;
+  let fixture: ComponentFixture<NewResourceModalComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ NewEnvironmentModalComponent ]
+      declarations: [ NewResourceModalComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(NewEnvironmentModalComponent);
+    fixture = TestBed.createComponent(NewResourceModalComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

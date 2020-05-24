@@ -1,7 +1,7 @@
 #!/bin/bash
 TAG=$1
 
-cat > images/environment-builder/Dockerfile <<EOF
+cat > images/builder/Dockerfile <<EOF
 FROM $TAG
 
 RUN apt-get update

@@ -15,56 +15,64 @@ export enum KEY_CODE {
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
-  public columns: any;
+
+  public clusters: any[];
+  public environments: any[];
+  public functions: any[];
+  public queries: any[];
+  public graphs: any[];
+
   public iam: Iam;
   public data: any;
-  public showNewDialog: boolean = false;
+  public showNewDialog: string;
   public searchText: string = "";
   public showAll: boolean = false;
+  public show: string = "";
   private backHistory: any[] = [];
   private forwardHistory: any[] = [];
 
   constructor(iam: Iam, private router: Router) {
     this.iam = iam;
-    this.columns = this.initColumns();
   }
 
   ngOnInit() {
-    this.iam.getExecutables(this.iam.getUser().username, "function").subscribe((data) => {
-      this.columns["function"]["list"] = data;
+    this.iam.getExecutables(this.iam.getUser().username, "function").subscribe((data: any[]) => {
+      this.functions = data;
     })
-    this.iam.getExecutables(this.iam.getUser().username, "query").subscribe((data) => {
-      this.columns["query"]["list"] = data;
+    this.iam.getExecutables(this.iam.getUser().username, "query").subscribe((data: any[]) => {
+      this.queries = data;
     })
-    this.iam.getExecutables(this.iam.getUser().username, "graph").subscribe((data) => {
-      this.columns["graph"]["list"] = data;
+    this.iam.getExecutables(this.iam.getUser().username, "graph").subscribe((data: any[]) => {
+      this.graphs = data;
     })
-    this.iam.getEnvironmentForUser(this.iam.getUser().username).subscribe((data) => {
-      this.columns["environment"]["list"] = data
+    this.iam.getEnvironmentForUser(this.iam.getUser().username).subscribe((data: any[]) => {
+      console.log(data)
+      this.environments = data
     })
-    this.iam.getClusterForUser(this.iam.getUser().username).subscribe((data) => {
-      this.columns["cluster"]["list"] = data
+    this.iam.getClusterForUser(this.iam.getUser().username)
+    .subscribe((data: any[]) => {
+      this.clusters = data
     })
   }
 
   private initColumns() {
     return { 
-      function: {
-        title: 'function',
-        list: []
-      }, 
-      query: {
-        title: 'query',
-        list: []
-      },
-      graph: {
-        title: 'graph',
-        list: []
-      },
-      environment: {
-        title: 'environment',
-        list: []
-      },
+      // function: {
+      //   title: 'function',
+      //   list: []
+      // }, 
+      // query: {
+      //   title: 'query',
+      //   list: []
+      // },
+      // graph: {
+      //   title: 'graph',
+      //   list: []
+      // },
+      // environment: {
+      //   title: 'environment',
+      //   list: []
+      // },
       cluster: {
         title: 'cluster',
         list: []
@@ -108,7 +116,6 @@ export class HomeComponent implements OnInit {
   }
 
   public receieveSelectExecutable(value: any) {
-    console.log(value)
     this.select(value.exe, value)
   }
 
@@ -139,32 +146,45 @@ export class HomeComponent implements OnInit {
     })
   }
 
-  public newExecutable() {
-    this.showNewDialog = true;
+  public newResource(value: string) {
+    this.showNewDialog = value;
   }
 
-  public receiveCreateExecutable(data: any) {
-    this.showNewDialog = false;
-    this.data = this.initData("0", data.exe, data.name)
-    this.columns[data.exe].list.push(this.data)
+  public receiveNewResourceModalDone(data: any) {
+    this.showNewDialog = undefined;
+    this.data = new InitData(this.iam)[data.exe]("0", data);
+    switch (data.exe) {
+      case "cluster":
+        this.clusters.push(this.data)
+        break;
+      case "environment":
+        this.environments.push(this.data)
+        break;
+      case "function":
+        this.functions.push(this.data)
+        break;
+      case "query":
+        this.queries.push(this.data)
+        break;
+      case "graph":
+        this.graphs.push(this.data)
+        break;
+    }
+
     this.backHistory.push(this.data)
     if (this.backHistory.length > 10) {
       this.backHistory.shift()
     }
   }
 
-  public receiveCancelCreateExecutable() {
-    this.showNewDialog = false;
+  public receiveNewResourceModalCancel() {
+    this.showNewDialog = undefined;
   }
 
   public filter(values: any[]) {
     return Lodash.orderBy(Lodash.filter(values, (item) => {
       return item.name.includes(this.searchText)
     }), ["name"]);
-  }
-
-  public hide(title: string) {
-    this.columns[title].hidden = !this.columns[title].hidden
   }
 
   public searching(value: string) {
@@ -175,8 +195,8 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  private initData(id: string, exe: string, name: string) {
-    return new InitData(this.iam)[exe](id, name);
+  public getNewData() {
+    return {};
   }
 
   public delete() {
@@ -184,6 +204,10 @@ export class HomeComponent implements OnInit {
     .subscribe((response) => {
       this.data = undefined;
     });
+  }
+
+  public showGroup(group: string) {
+    this.show = group;
   }
 
 }

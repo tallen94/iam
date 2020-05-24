@@ -4,26 +4,26 @@ PROVIDER=$2
 
 if [ $PROVIDER = "minikube" ] 
 then
-cat > kubernetes/apps/minikube/environment-builder.yaml <<EOF
+cat > kubernetes/apps/minikube/builder.yaml <<EOF
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
-  name: environment-builder
+  name: builder
 spec:
   selector:
     matchLabels:
-      app: environment-builder
+      app: builder
   replicas: 1 # tells deployment to run 2 pods matching the template
   template:
     metadata:
       labels:
-        app: environment-builder
+        app: builder
     spec:
-      serviceAccountName: admin-service-account
+      serviceAccountName: builder-service-account
       imagePullSecrets:
       - name: regcred
       containers:
-      - name: environment-builder
+      - name: builder
         image: $TAG
         imagePullPolicy: IfNotPresent
         ports:
@@ -39,11 +39,11 @@ spec:
         - name: HOME
           value: "/usr/home/iam"
         - name: TYPE 
-          value: "executor"
+          value: "builder"
         - name: SERVER_PORT
           value: "5000"
         - name: "ENVIRONMENT"
-          value: "environment-builder"
+          value: "builder"
 
         # FS CONFIG
         - name: FS_HOST
@@ -99,10 +99,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: environment-builder
+  name: builder
 spec:
   selector:
-    app: environment-builder
+    app: builder
   ports:
     - protocol: TCP
       port: 80
@@ -112,28 +112,28 @@ fi
 
 if [ $PROVIDER = "eks" ] 
 then
-cat > kubernetes/apps/eks/environment-builder.yaml <<EOF
+cat > kubernetes/apps/eks/builder.yaml <<EOF
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
-  name: environment-builder
+  name: builder
 spec:
   selector:
     matchLabels:
-      app: environment-builder
+      app: builder
   replicas: 1 # tells deployment to run 2 pods matching the template
   template:
     metadata:
       labels:
-        app: environment-builder
+        app: builder
     spec:
-      serviceAccountName: admin-service-account
+      serviceAccountName: builder-service-account
       imagePullSecrets:
       - name: regcred
       nodeSelector:
         type: ng-1
       containers:
-      - name: environment-builder
+      - name: builder
         image: $TAG
         imagePullPolicy: IfNotPresent
         ports:
@@ -156,11 +156,11 @@ spec:
         - name: HOME
           value: "/usr/home/iam"
         - name: TYPE 
-          value: "executor"
+          value: "builder"
         - name: SERVER_PORT
           value: "5000"
         - name: "ENVIRONMENT"
-          value: "environment-builder"
+          value: "builder"
 
         # FS CONFIG
         - name: FS_HOST
@@ -223,10 +223,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: environment-builder
+  name: builder
 spec:
   selector:
-    app: environment-builder
+    app: builder
   ports:
     - protocol: TCP
       port: 80

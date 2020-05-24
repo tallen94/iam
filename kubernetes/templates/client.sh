@@ -55,6 +55,11 @@ spec:
           value: "auth.default"
         - name: AUTH_PORT
           value: "80"
+
+        - name: BUILDER_HOST
+          value: "builder.default"
+        - name: BUILDER_PORT
+          value: "80"
 ---
 apiVersion: v1
 kind: Service
@@ -135,6 +140,11 @@ spec:
         - name: AUTH_HOST
           value: "auth.default"
         - name: AUTH_PORT
+          value: "80"
+
+        - name: BUILDER_HOST
+          value: "builder.default"
+        - name: BUILDER_PORT
           value: "80"
 
 ---

@@ -1,6 +1,5 @@
 import { Function } from "./Function";
 import { Query } from "./Query";
-import { Environment } from "./Environment";
 import { Graph } from "./Graph";
 import { ShellCommunicator } from "../Communicator/ShellCommunicator";
 import { FileSystem } from "../FileSystem/FileSystem";
@@ -48,17 +47,6 @@ export class ExecutableFactory {
       graphData.nodes,
       graphData.edges,
       graphData.foreach
-    )
-  }
-
-  environment(data: any): Environment {
-    return new Environment(
-      data.username,
-      data.name,
-      data.image,
-      data.kubernetes,
-      this.shell,
-      this.fileSystem
     )
   }
 }

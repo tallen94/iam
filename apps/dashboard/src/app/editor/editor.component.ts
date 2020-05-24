@@ -11,6 +11,7 @@ import { InitData } from '../iam/init-data';
 })
 export class EditorComponent implements OnInit {
   @Input() data: any;
+  @Input() environmentOptions: string[]
   @Output() emitCreateNewExecutable: EventEmitter<any> = new EventEmitter();
   @Output() emitSelectExecutable: EventEmitter<any> = new EventEmitter();
   editing: any[] = [];
@@ -47,9 +48,14 @@ export class EditorComponent implements OnInit {
   }
 
   public receiveEmitNewNode(data: any) {
-    const newNode = this.initData(data.id, data.exe, "New" + data.exe);
-    this.data.graph.nodes.push(newNode)
-    this.data.graph.nodes = [...this.data.graph.nodes]
+    this.iam.getExecutable(this.iam.getUser().username, data.exe, data.name)
+    .subscribe((result) => {
+      if (result == undefined) {
+        result = this.initData(data);
+      }
+      this.data.graph.nodes.push(result)
+      this.data.graph.nodes = [...this.data.graph.nodes]
+    })
   }
 
   public receiveEmitNewEdge(edge: any) {
@@ -62,7 +68,7 @@ export class EditorComponent implements OnInit {
   }
 
   public receiveAddEnvironmentEvent(value: any) {
-    this.emitCreateNewExecutable.emit({exe: "environment", name: value.name})
+    this.emitCreateNewExecutable.emit(value)
   }
 
   public receiveNewResourceEvent(value: any) {
@@ -98,8 +104,8 @@ export class EditorComponent implements OnInit {
     this.emitSelectExecutable.emit(value)
   }
 
-  private initData(id: string, exe: string, name: string) {
-    return new InitData(this.iam)[exe](id, name);
+  private initData(data: any) {
+    return new InitData(this.iam)[data.exe](data.id, data);
   }
 
   private addHidden(values: any[]) {

@@ -6,12 +6,12 @@ export class Queries {
   public static SEARCH_EXECUTABLES = "select * from executable where name LIKE {searchText}"
   public static ADD_EXECUTABLE = "INSERT INTO executable(username, uuid, name, data, exe, input, output, description, environment,visibility)"
                                 + " VALUES ({username},{uuid},{name},{data},{exe},{input},{output},{description},{environment},{visibility})"
-  public static UPDATE_EXECUTABLE = "UPDATE executable SET data={data}, input={input}, output={output}, description={description}, environment={environment}, visibility={visibility} WHERE exe={exe} AND name={name} AND username={username};"
+  public static UPDATE_EXECUTABLE = "UPDATE executable SET data={data}, input={input}, output={output}, description={description}, visibility={visibility} WHERE exe={exe} AND name={name} AND username={username} AND environment={environment};"
   public static DELETE_EXECUTABLE = "delete from executable where username={username} and exe={exe} and name={name};"
 
   // Environment
-  public static ADD_ENVIRONMENT = "insert into environment(name, username, description, cluster, data) values ({name}, {username}, {description}, {cluster}, {data});"
-  public static UPDATE_ENVIRONMENT = "update environment set description={description}, data={data} where name={name} and username={username} and cluster={cluster}"
+  public static ADD_ENVIRONMENT = "insert into environment(name, username, description, cluster, data, state) values ({name}, {username}, {description}, {cluster}, {data}, {state});"
+  public static UPDATE_ENVIRONMENT = "update environment set description={description}, data={data}, state={state} where name={name} and username={username} and cluster={cluster}"
   public static GET_ENVIRONMENT = "select * from environment where name={name} and username={username} and cluster={cluster}"
   public static GET_ENVIRONMENT_FOR_USER = "select * from environment where username={username}"
   public static GET_ENVIRONMENTS_FOR_CLUSTER = "select * from environment where cluster={cluster} and username={username}"
@@ -25,8 +25,9 @@ export class Queries {
   public static DELETE_CLUSTER = "delete from cluster where username={username} and name={name};"
 
   // Route
-  public static GET_ROUTE = "select * from route where username={username} and name = {name} and exe={exe};"
+  public static GET_ROUTE = "select * from route where username={username} and name={name} and exe={exe};"
   public static GET_ROUTES_FOR_USER = "select * from route where username={username} and exe={exe};"
+  public static GET_ROUTES_FOR_ENVIRONMENT = "select * from route where username={username} and exe={exe} and environment={environment};"
   public static SEARCH_ROUTES = "select * from route where name like {searchText}"
   public static ADD_ROUTE = "insert into route (username, name, exe, environment) values({username},{name},{exe},{environment});"
   public static DELETE_ROUTE = "delete from route where username={username} and name={name} and exe={exe}"

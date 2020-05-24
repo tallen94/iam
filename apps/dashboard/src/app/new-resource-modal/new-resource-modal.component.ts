@@ -8,18 +8,24 @@ import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 export class NewResourceModalComponent implements OnInit {
 
   @Input() type: string;
+  @Input() clusterOptions: string[]
+  @Input() environmentOptions: string[]
+  @Input() data: any;
   @Output() newResourceMoalDone: EventEmitter<any> = new EventEmitter();
   @Output() newResourceModalCancel: EventEmitter<any> = new EventEmitter();
-  public data: any = {};
 
   constructor() { }
 
   ngOnInit() {
+    if (this.data == undefined) {
+      this.data = {}
+    }
   }
 
   done() {
     this.data.exe = this.type;
     this.newResourceMoalDone.emit(this.data)
+    this.data = {}
   }
 
   cancel() {

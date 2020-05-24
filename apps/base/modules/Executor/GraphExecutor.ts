@@ -25,6 +25,7 @@ export class GraphExecutor {
         })
       }
       return this.databaseCommunicator.execute(Queries.UPDATE_EXECUTABLE, { 
+        username: data.username,
         name: data.name,
         exe: data.exe,
         data: trimmedData,

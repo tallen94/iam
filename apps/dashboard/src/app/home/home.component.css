@@ -25,6 +25,7 @@
   font-weight: bold;
   color: #0366d6;
   font-size: 1.25em;
+  position: relative;
 }
 
 .full {
@@ -97,8 +98,14 @@
   text-align: center;
 }
 
-button {
-  margin-right: 2px;
+.add-button {
+  background-color: white;
+  color: #0366d6;
+  position: absolute;
+  right:0;
+  top: 0;
+  bottom: 0;
+  width: 40px;
 }
 
 .sidebar-row-subrows {

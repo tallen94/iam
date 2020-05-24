@@ -46,13 +46,13 @@ There are 5 images that can be built:
 - base
 - filesystem
 - dashboard
-- environment-builder
+- builder
 
 ### Building Locally
 There is a build script to build apps locally to deploy to `minikube`
 
 `bash build.sh <image_name> <tag> <push>`
-- `<image_name>`: dependencies | base | filesystem | dashbaord | environment-builder | database
+- `<image_name>`: dependencies | base | filesystem | dashbaord | builder | database
 - `<tag>`: anystring
 - `<push>`: "push" or "no-push" to push docker image to docker hub
 - `<provider>`: minikube | eks

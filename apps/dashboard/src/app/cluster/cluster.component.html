@@ -72,6 +72,9 @@
 <div *ngIf="newEnvironment">
   <new-resource-modal 
     [type]="'environment'"
+    [clusterOptions]="[]"
+    [environmentOptions]="[]"
+    [data]="{cluster: data.name}"
     (newResourceMoalDone)="receiveNewResourceModalDone($event)"
     (newResourceModalCancel)="receiveNewResourceModalCancel()"></new-resource-modal>
 </div>

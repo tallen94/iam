@@ -48,7 +48,7 @@ export class NestedInputComponent implements OnInit {
   }
 
   isHidden() {
-    return !(this.data.id !== undefined && Lodash.indexOf(this.hidden, this.data.id) != -1);
+    return (this.data.id !== undefined && Lodash.indexOf(this.hidden, this.data.id) != -1);
   }
 
   isEditing() {
@@ -56,7 +56,7 @@ export class NestedInputComponent implements OnInit {
   }
 
   triggerShow() {
-    if (!this.isHidden()) {
+    if (this.isHidden()) {
       this.hidden = Lodash.filter(this.hidden, (item) => item !== this.data.id)
     } else {
       this.hidden.push(this.data.id)
