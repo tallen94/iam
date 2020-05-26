@@ -39,11 +39,13 @@ setupPassword() {
 
 applyConfig() {
    echo [...Initializing config...]
-   kubectl apply -f kubernetes/secrets/dbconfig.yaml --namespace=$NAMESPACE
-   kubectl apply -f kubernetes/secrets/dockerconfig.yaml --namespace=$NAMESPACE
-   kubectl apply -f kubernetes/serviceaccounts/deployment.yaml --namespace=$NAMESPACE
+   kubectl apply -f kubernetes/secrets/dbconfig.yaml
+
+   kubectl apply -f kubernetes/secrets/dockerconfig.yaml
+   kubectl apply -f kubernetes/secrets/clustertoken.yaml
+   kubectl apply -f kubernetes/serviceaccounts/admin.yaml
    echo [...Init...]
-   ./kubernetes/update.sh $PROVIDER $NAMESPACE
+   ./kubernetes/update.sh $PROVIDER
    echo IAM is ready to use.
 }
 
@@ -66,17 +68,13 @@ loginDocker() {
    --docker-server=https://index.docker.io/v1/ \
    --docker-username="$DOCKER_USERNAME" \
    --docker-password="$DOCKER_PASSWORD" \
-   --docker-email="$DOCKER_EMAIL" \
-   --namespace=$NAMESPACE
+   --docker-email="$DOCKER_EMAIL"
    echo "$DOCKER_PASSWORD" | docker login -u $DOCKER_USERNAME --password-stdin
    if [ "$?" = "1" ]; then exit 1 
    fi
 }
 
 # Main
-printf "Namespace: "
-read NAMESPACE 
-
 loginDocker
 
 echo Configure your IAM by creating a password for the database
@@ -107,6 +105,17 @@ type: Opaque
 data:
   user: $(echo -ne $DOCKER_USERNAME | base64)
   password: $(echo -ne $DOCKER_PASSWORD | base64)
+EOF
+
+touch kubernetes/secrets/clustertoken.yaml
+cat > kubernetes/secrets/clustertoken.yaml <<EOF
+apiVersion: v1
+kind: Secret
+metadata:
+  name: clustertoken
+type: Opaque
+data:
+  token: $(openssl rand -base64 24 | base64 | base64)
 EOF
 
 printf "Provider (minikube|eks):"

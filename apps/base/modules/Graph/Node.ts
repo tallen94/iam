@@ -12,18 +12,18 @@ export class Node {
     private step: Step
   ) {}
 
-  public execute(data?: any) {
+  public execute(data: any, token: string) {
     if (this.parents.length == 1) {
       this.promise = this.parents[0].getPromise().then((result) => {
-        return this.step.execute(result, false);
+        return this.step.execute(result, token);
       });
     } else if (this.parents.length > 1) {
       this.promise = Promise.all(Lodash.map(this.parents, (parent) => parent.getPromise()))
       .then((results) => {
-        return this.step.execute(results, false);
+        return this.step.execute(results, token);
       });
     } else {
-      this.promise = this.step.execute(data, false);
+      this.promise = this.step.execute(data, token);
     }
   }
 

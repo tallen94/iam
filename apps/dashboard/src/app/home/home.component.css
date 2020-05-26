@@ -25,11 +25,29 @@
   font-weight: bold;
   color: #0366d6;
   font-size: 1.25em;
+  position: relative;
 }
 
 .full {
   position: absolute;
   top: 64px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: 0;
+  padding: 0 !important;
+  background-color: #f6f8fa;
+}
+
+.upper {
+  padding: 2px;
+  background-color: transparent;
+  height: 40px;
+}
+
+.lower {
+  position: absolute;
+  top: 42px;
   left: 0;
   right: 0;
   bottom: 0;
@@ -80,8 +98,14 @@
   text-align: center;
 }
 
-button {
-  margin-right: 2px;
+.add-button {
+  background-color: white;
+  color: #0366d6;
+  position: absolute;
+  right:0;
+  top: 0;
+  bottom: 0;
+  width: 40px;
 }
 
 .sidebar-row-subrows {

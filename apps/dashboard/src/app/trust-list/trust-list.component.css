@@ -1,0 +1,81 @@
+.section {
+  margin-top: 64px;
+}
+
+.group {
+  margin-top: 32px;
+}
+
+.group-row {
+  border-bottom: 1px solid rgb(230, 230, 230);
+  margin-bottom: 16px;
+}
+
+.inline-input {
+  display: inline-block;
+  margin-left: 4px;
+}
+
+.card {
+  padding: 16px;
+}
+
+.inline-input label {
+  font-weight: bold;
+  color: rgb(160, 160, 160);
+  font-size: 15px;
+}
+
+.col1 {
+  margin-left: 16px;
+  width: 200px;
+}
+
+.col2 {
+  width: 100px;
+}
+
+.col3 {
+  margin-left: 32px;
+}
+
+.delete-button {
+  background-color: white;
+  color: #dc3545;
+  font-weight: bold;
+  font-size: 15px;
+  padding: 8px !important;
+  line-height: .75em;
+}
+
+.header {
+  position: relative;
+}
+
+.add-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.add-button button {
+  background-color: white;
+  color: #28a745;
+}
+
+.section {
+  width: 850px;
+  margin-right: auto;
+}
+
+.visibility {
+  margin-right: 24px;
+}
+
+.privilege {
+  margin-right: 24px;
+}
+
+.privilege span {
+  margin: 4px;
+}

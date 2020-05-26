@@ -1,10 +1,7 @@
 <div class="full">
-  <div class="upper">
-    <button class="btn btn-danger" (click)="delete()">Delete</button>
-  </div>
   <div class="lower">
     <nested-input 
-      *ngIf="data" 
+      *ngIf="data && (data.exe === 'function' || data.exe === 'query' || data.exe === 'graph')" 
       [ngClass]="{'left': data.exe == 'graph' || running != undefined, 'lower-full': data.exe != 'graph' || running == undefined}" 
       [(data)]="data" 
       [editing]="editing"
@@ -26,9 +23,23 @@
       [links]="data.graph.edges"
       [editing]="editing"
       [edgesEditing]="[]"
+      [environmentOptions]="environmentOptions"
       (emitEditing)="receiveEmitEditing($event)"
       (emitNewNode)="receiveEmitNewNode($event)"
       (emitNewEdge)="receiveEmitNewEdge($event)"
       (emitDeleteEditing)="receiveDeleteEditing($event)"></graph>
+    <cluster
+      class="lower-full"
+      *ngIf="data && data.exe == 'cluster'"
+      [(data)]="data"
+      (authorizationUpdated)="receiveUpdateData($event)"
+      (addEnvironmentEvent)="receiveAddEnvironmentEvent($event)"
+      (emitSelectExecutable)="receiveSelectExecutable($event)"></cluster>
+    <environment
+      class="lower-full"
+      *ngIf="data && data.exe == 'environment'"
+      [(data)]="data"
+      (newResourceEvent)="receiveNewResourceEvent($event)"
+      (selectResourceEvent)="receiveSelectExecutable($event)"></environment>
   </div>
 </div>

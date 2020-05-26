@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
-  selector: 'app-new-executable',
+  selector: 'new-executable',
   templateUrl: './new-executable.component.html',
   styleUrls: ['./new-executable.component.css']
 })

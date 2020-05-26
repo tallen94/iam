@@ -4,83 +4,85 @@ export class InitData {
 
   constructor(private iam: Iam) { }
 
-  query(id: string, name: string) {
+  query(id: string, data: any) {
     return {
       id: id,
       username: this.iam.getUser().username,
       exe: "query",
-      name: name,
+      name: data.name,
       description: "This is a mysql query. These are used to get data or save data.",
       input: "",
       output: "",
       text: "",
-      environment: "base",
+      environment: data.environment,
+      cluster: data.cluster,
       visibility: "private"
     }
   }
 
-  function(id: string, name: string) {
+  function(id: string, data: any) {
     return {
       id: id,
       username: this.iam.getUser().username,
       exe: "function",
-      name: name,
+      name: data.name,
       description: "This is a python program. I require input from stdin and I write my output to stdout.",
       input: '{"value":"example"}',
       output: '{"value":"example"}',
       args: "",
       command: "python",
       text: "import json\n\nargs = raw_input()\ndata = json.loads(args)\nout={}\nprint json.dumps(out)",
-      environment: "base",
+      environment: data.environment,
+      cluster: data.cluster,
       visibility: "private"
     }
   }
 
-  graph(id: string, name: string) {
+  graph(id: string, data: any) {
     return {
       id: id,
       username: this.iam.getUser().username,
       exe: "graph",
-      name: name,
+      name: data.name,
       description: "",
       input: '',
       output: '',
-      environment: "base",
+      environment: data.environment,
       graph: {
-        nodes: [new InitData(this.iam)["function"]("1", "NewFunction")],
+        nodes: [],
         edges: []
       },
       visibility: "private"
     }
   }
 
-  environment(id: number, name: string) {
+  environment(id: number, data: any) {
     return {
       id: id,
       username: this.iam.getUser().username,
       exe: "environment",
-      name: name,
+      name: data.name,
+      cluster: data.cluster,
       description: "This is an environment.",
-      input: '{"tag":"icanplayguitar94/iam:' + name + '"}',
-      output: "",
       image: "FROM icanplayguitar94/iam:base-latest",
       kubernetes: "",
-      environment: "environment-builder",
-      replicas: 1,
-      imageRepo: "icanplayguitar94/iam",
-      cpu: "500Mi",
-      memory: "500MB",
-      type: "executor",
-      visibility: "private"
+      state: "STOPPED",
+      data: {
+        replicas: 1,
+        imageRepo: "icanplayguitar94/iam",
+        cpu: "500m",
+        memory: "500Mi",
+        type: "executor"
+      }
     }
   }
 
-  pool(id: number, name: string) {
+  pool(id: number, data: any) {
     return {
       id: id,
       username: this.iam.getUser().username,
       exe: "pool",
-      name: name,
+      name: data.name,
       environment: "base",
       description: "This is pool.",
       input: "",
@@ -90,6 +92,17 @@ export class InitData {
       executableUsername: "",
       size: 0,
       visibility: "private"
+    }
+  }
+
+  cluster(id: number, data: any) {
+    return {
+      id: id,
+      username: this.iam.getUser().username, 
+      exe: "cluster",
+      name: data.name,
+      description: "This is a cluster",
+      authorization: []
     }
   }
 }

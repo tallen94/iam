@@ -1,0 +1,84 @@
+<div class="card">
+  <div class="card-title">
+    <div class="inline-input exe">
+      [cluster]
+    </div>
+    <div class="inline-input username">
+      {{data.username}}
+    </div>
+    <div class="inline-input name">
+      .{{data.name}}
+    </div>
+  </div>
+
+  <div class="card-body">
+    <div>
+      <label class="nested-title" *ngIf="editing || (data.description && data.description != '')">Description</label>
+      <div *ngIf="editing" class="text-editor" ace-editor
+        [(text)]="data.description"
+        [mode]="'markdown'" 
+        [theme]="'eclipse'"
+        [options]="options"
+        [readOnly]="false"
+        [autoUpdateContent]="true" 
+        [durationBeforeCallback]="500"></div>
+      <p *ngIf="!editing && data.description && data.description != ''" class="card-text">{{data.description}}</p>
+    </div>
+
+    <div class="environment-list">
+      <h3>Environments</h3>
+      <p>Environments define resources for running executables.</p>
+      <div class="add-button">
+        <button class="btn btn-success" (click)="addEnvironment()">Add Environment</button>
+      </div>
+      <div class="environment" *ngFor="let env of environments;">
+        <div class="inline-input col1">
+          <label>Name</label>
+          <p>{{env.name}}</p>
+        </div>
+        <div class="inline-input col2">
+          <label>Type</label>
+          <p>{{env.state}}</p>
+        </div>
+        <div class="inline-input col2">
+          <label>Type</label>
+          <p>{{env.data.type}}</p>
+        </div>
+        <div class="inline-input col2">
+          <label>Replicas</label>
+          <p>{{env.data.replicas}}</p>
+        </div>
+        <div class="inline-input col2">
+          <label>CPU</label>
+          <p>{{env.data.cpu}}</p>
+        </div>
+        <div class="inline-input col2">
+          <label>Memory</label>
+          <p>{{env.data.memory}}</p>
+        </div>
+        <div class="inline-input col5">
+          <button class="btn-sm btn-primary" (click)="selectEnvironment(env)"><i class="fa fa-pencil"></i></button>
+        </div>
+      </div>
+
+    </div>
+  
+    <trust-list [resource]="getResource()" (trustUpdated)="receiveTrustUpdated($event)"></trust-list>
+  </div>
+
+  <div class="action-buttons">
+    <button class="btn-sm btn-secondary"  *ngIf="editing" (click)="save()">save</button>
+    <button class="btn-sm btn-danger"  *ngIf="editing" (click)="cancelEdit()">cancel</button>
+    <button class="btn-sm btn-secondary" *ngIf="!editing" (click)="triggerEdit()">edit</button>
+  </div>  
+</div>
+
+<div *ngIf="newEnvironment">
+  <new-resource-modal 
+    [type]="'environment'"
+    [clusterOptions]="[]"
+    [environmentOptions]="[]"
+    [data]="{cluster: data.name}"
+    (newResourceMoalDone)="receiveNewResourceModalDone($event)"
+    (newResourceModalCancel)="receiveNewResourceModalCancel()"></new-resource-modal>
+</div>

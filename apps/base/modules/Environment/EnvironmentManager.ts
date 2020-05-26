@@ -1,102 +1,82 @@
-import { Database } from "../modules";
 import { FileSystemCommunicator } from "../Communicator/FileSystemCommunicator";
 import Lodash from "lodash";
-import uuid from "uuid";
 import { FileSystem } from "../FileSystem/FileSystem";
-import { Shell } from "../Executor/Shell";
-import { Authorization } from "../Auth/Authorization";
+import { DatabaseCommunicator } from "../Communicator/DatabaseCommunicator";
+import { Queries } from "../Constants/Queries";
+import { ShellCommunicator } from "../Communicator/ShellCommunicator";
+import { Functions } from "../Constants/Functions";
+import uuid from "uuid";
+import { Templates } from "../Constants/Templates";
 
 export class EnvironmentManager {
 
   constructor(
     private fileSystem: FileSystem,
-    private shell: Shell,
-    private database: Database,
     private fileSystemCommunicator: FileSystemCommunicator,
-    private authorization: Authorization,
+    private databaseCommunicator: DatabaseCommunicator,
+    private shellCommunicator: ShellCommunicator
   ) { }
 
   public addEnvironment(data: any) {
-    const envData = JSON.stringify({
-      imageRepo: data.imageRepo,
-      replicas: data.replicas,
-      memory: data.memory,
-      cpu: data.cpu,
-      type: data.type
-    })
-    return this.getEnvironment(data.username, data.name)
+    const envData = JSON.stringify(data.data)
+    return this.getEnvironment(data.username, data.name, data.cluster)
     .then((result) => {
       if (result == undefined) {
-        return this.database.runQuery("admin", "add-exe", {
+        return this.databaseCommunicator.execute(Queries.ADD_ENVIRONMENT, {
           username: data.username, 
           name: data.name,
-          uuid: uuid.v4(),
-          exe: data.exe,
           data: envData,
-          input: data.input,
-          output: data.output,
+          cluster: data.cluster,
           description: data.description,
-          environment: data.environment,
-          visibility: data.visibility
-        }, "")
+          state: data.state
+        })
       }
-      return this.database.runQuery("admin", "update-exe", { 
+      return this.databaseCommunicator.execute(Queries.UPDATE_ENVIRONMENT, { 
+        username: data.username, 
         name: data.name,
-        exe: data.exe,
         data: envData,
-        input: data.input,
-        output: data.output,
+        cluster: data.cluster,
         description: data.description,
-        environment: data.environment,
-        visibility: data.visibility
-      }, "")
+        state: data.state
+      })
     }).then(() => {
-      let promise;
-      if (data.type == "executor") {
-        promise = this.kubernetesTemplate(data)
+      let kubernetes;
+      if (data.data.type == "executor") {
+        kubernetes = this.kubernetesTemplate(data, data.data)
       } else {
-        promise = Promise.resolve(data.kubernetes)
+        kubernetes = data.kubernetes
       }
 
       return Promise.all([
-        this.fileSystemCommunicator.putFile(data.username + "/images", {
-          name: data.name,
+        this.fileSystemCommunicator.putFile("images", {
+          name: this.environmentFullName(data.username, data.cluster, data.name),
           file: data.image
         }),
-        promise.then((kubernetes) => {
-          return this.fileSystemCommunicator.putFile(data.username + "/kubernetes", {
-            name: data.name,
-            file: kubernetes
-          })
+        this.fileSystemCommunicator.putFile("kubernetes", {
+          name: this.environmentFullName(data.username, data.cluster, data.name),
+          file: kubernetes
         }) 
       ])
     })
   }
 
-  public getEnvironment(username: string, name: string) {
-    return this.database.runQuery("admin", "get-exe-by-type-name", { username: username, name: name, exe: "environment" }, "")
-    .then((result) => {
+  public getEnvironment(username: string, name: string, cluster: string) {
+    return this.databaseCommunicator.execute(Queries.GET_ENVIRONMENT, { username: username, name: name, cluster: cluster })
+    .then((result: any[]) => {
       if (result.length > 0) {
         const item = result[0];
         const data = JSON.parse(item.data);
         const ret = {
           username: item.username,
           name: item.name,
-          exe: item.exe,
-          replicas: data.replicas,
-          cpu: data.cpu,
-          memory: data.memory,
-          imageRepo: data.imageRepo,
-          type: data.type,
-          input: item.input,
-          output: item.output,
+          cluster: item.cluster,
+          data: data,
           description: item.description,
-          environment: item.environment,
-          visibility: item.visibility
+          state: item.state
         }
         return Promise.all([
-          this.fileSystemCommunicator.getFile(username + "/images", item.name),
-          this.fileSystemCommunicator.getFile(username + "/kubernetes", item.name)
+          this.fileSystemCommunicator.getFile("images", this.environmentFullName(item.username, item.cluster, item.name)),
+          this.fileSystemCommunicator.getFile("kubernetes", this.environmentFullName(item.username, item.cluster, item.name))
         ]).then((result) => {
           ret["image"] = result[0];
           ret["kubernetes"] = result[1]
@@ -107,47 +87,148 @@ export class EnvironmentManager {
     })
   }
 
-  public getEnvironments(username: string) {
-    return this.database.runQuery("admin", "get-exe-for-user", { exe: "environment", username: username }, "")
+  public getEnvironmentForUser(username: string) {
+    return this.databaseCommunicator.execute(Queries.GET_ENVIRONMENT_FOR_USER, {username: username})
     .then((results) => {
-      return Lodash.map(results, (result) => {
-        return {
-          username: result.username,
-          name: result.name,
-          description: result.description
+      return Promise.all(Lodash.map(results, (item) => {
+        const data = JSON.parse(item.data);
+        const ret = {
+          username: item.username,
+          name: item.name,
+          cluster: item.cluster,
+          data: data,
+          description: item.description,
+          state: item.state
         }
-      })
+        return Promise.all([
+          this.fileSystemCommunicator.getFile("images", this.environmentFullName(item.username, item.cluster, item.name)),
+          this.fileSystemCommunicator.getFile("kubernetes", this.environmentFullName(item.username, item.cluster, item.name))
+        ]).then((result) => {
+          ret["image"] = result[0];
+          ret["kubernetes"] = result[1]
+          return ret;
+        })
+      }))
     })
   }
 
-  public runEnvironment(username: string, name: string, data: any, token: string) {
-    // Only users can create environments under their own account
-    return this.getEnvironment(username, name)
+  public getEnvironmentsForCluster(cluster: string, username: string) {
+    return this.databaseCommunicator.execute(Queries.GET_ENVIRONMENTS_FOR_CLUSTER, {cluster: cluster, username: username})
+    .then((results) => {
+      return Promise.all(Lodash.map(results, (item) => {
+        const data = JSON.parse(item.data);
+        const ret = {
+          username: item.username,
+          name: item.name,
+          cluster: item.cluster,
+          data: data,
+          description: item.description,
+          state: item.state
+        }
+        return Promise.all([
+          this.fileSystemCommunicator.getFile("images", this.environmentFullName(item.username, item.cluster, item.name)),
+          this.fileSystemCommunicator.getFile("kubernetes", this.environmentFullName(item.username, item.cluster, item.name))
+        ]).then((result) => {
+          ret["image"] = result[0];
+          ret["kubernetes"] = result[1]
+          return ret;
+        })
+      }))
+    })
+  }
+
+  public deleteEnvironment(username: string, name: string, cluster: string) {
+    return this.databaseCommunicator.execute(Queries.DELETE_ENVIRONMENT, {username: username, name: name, cluster: cluster})
+    .then((result) => {
+      return Promise.all([
+        this.fileSystemCommunicator.deleteFile("images", this.environmentFullName(username, cluster, name)),
+        this.fileSystemCommunicator.deleteFile("kubernetes", this.environmentFullName(username, cluster, name)),
+      ])
+    })
+  }
+
+  public buildImage(username: string, name: string, cluster: string) {
+    // Get environment
+    return this.getEnvironment(username, name, cluster)
     .then((environment) => {
-      return this.authorization.validateUserToken(environment.username, token, this.database, () => {
-        // need to have separate build environment in each namespace, that can all reference the same admin build function
-        return this.shell.runProgram(username, "build-environment", {tag: data.tag, image: name, username: username}, token)
-        .then((result) => {
-          return result;
+    // Gen image tag
+      const imageUid = uuid.v4()
+      const imageTag = environment.data.imageRepo + ":" + imageUid
+      // Write img file to run dir
+      return this.fileSystem.put("run", imageUid, environment.image)
+      .then(() => {
+        // build image
+        return this.shellCommunicator.exec(Functions.BUILD_IMAGE, "bash", "{tag} {image}", { 
+          tag: imageTag, 
+          image: this.fileSystem.path("run/" + imageUid)
+        })
+      }).then((result) => {
+        if (result.err) {
+          return { result: result.err, environment: environment }
+        }
+
+        environment.data.imageTag = imageTag
+        // save environment
+        return this.addEnvironment(environment).then(() => {
+          // delete run file
+          return this.fileSystem.delete(this.fileSystem.path("run/" + imageUid))
+        }).then(() => {
+          return { result: result, environment: environment }
         })
       })
     })
-    
   }
 
-  public getImageFile(username: string, filename: string) {
-    return this.fileSystemCommunicator.getFile(username + "/images", filename);
-  }
-
-  public getKubernetesFile(username: string, filename: string) {
-    return this.fileSystemCommunicator.getFile(username + "/kubernetes", filename);
-  }
-
-  private kubernetesTemplate(data: any) {
-    return this.fileSystemCommunicator.getFile(data.username + "/templates/kubernetes", "executor.yaml")
-    .then((file: string) => {
-      return this.replace(file, data)
+  public startEnvironment(username: string, name: string, cluster: string) {
+    return this.getEnvironment(username, name, cluster)
+    .then((environment) => {
+      const fileUid = uuid.v4()
+      return this.fileSystem.put("run", fileUid, environment.kubernetes)
+      .then(() => {
+        return this.shellCommunicator.exec(Functions.KUBECTL_APPLY, "bash", "{file}", {
+          file: this.fileSystem.path("run/" + fileUid)
+        })
+      }).then((result) => {
+        if (result.err) {
+          return { result: result.err, state: environment.state }
+        }
+        environment.state = 'RUNNING'
+        return this.addEnvironment(environment)
+        .then((result) => {
+          return this.fileSystem.delete(this.fileSystem.path("run/" + fileUid))
+        }).then(() => {
+          return { result: result, state: environment.state }
+        })
+      })
     })
+  }
+
+  public stopEnvironment(username: string, name: string, cluster: string) {
+    return this.getEnvironment(username, name, cluster)
+    .then((environment) => {
+      const fileUid = uuid.v4()
+      return this.fileSystem.put("run", fileUid, environment.kubernetes)
+      .then(() => {
+        return this.shellCommunicator.exec(Functions.KUBECTL_DELETE, "bash", "{file}", {
+          file: this.fileSystem.path("run/" + fileUid)
+        })
+      }).then((result) => {
+        if (result.err) {
+          return { result: result.err, state: environment.state }
+        }
+        environment.state = 'STOPPED'
+        return this.addEnvironment(environment)
+        .then((result) => {
+          return this.fileSystem.delete(this.fileSystem.path("run/" + fileUid))
+        }).then(() => {
+          return { result: result, state: environment.state }
+        })
+      })
+    })
+  }
+
+  private kubernetesTemplate(data: any, otherData: any) {
+    return this.replace(this.replace(Templates.EXECUTOR, data), otherData)
   }
 
   private replace(s: string, data: any): string {
@@ -158,5 +239,9 @@ export class EnvironmentManager {
       s = s.replace(re, value);
     });
     return s;
+  }
+
+  private environmentFullName(username: string, cluster: string, name: string) {
+    return [username, cluster, name].join("-")
   }
 }
