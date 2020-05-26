@@ -121,4 +121,10 @@ EOF
 printf "Provider (minikube|eks):"
 read PROVIDER
 
+if [ $PROVIDER = "minikube" ]
+then
+mkdir kubernetes/apps/minikube
+fi
+
+
 applyConfig

@@ -1,6 +1,7 @@
 #!/bin/bash
 TAG=$1
 PROVIDER=$2
+touch kubernetes/apps/$PROVIDER/builder.yaml
 
 if [ $PROVIDER = "minikube" ] 
 then

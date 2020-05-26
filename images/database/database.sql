@@ -138,10 +138,12 @@ DROP TABLE IF EXISTS `route`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `route` (
   `username` varchar(50) NOT NULL,
+  `cluster` varchar(50) NOT NULL,
+  `environment` varchar(50) NOT NULL,
   `name` varchar(50) NOT NULL,
   `exe` varchar(50) NOT NULL,
   `route` varchar(50) NOT NULL,
-  KEY `username` (`username`,`name`,`exe`),
+  KEY `username` (`username`,`name`,`exe`,`cluster`,`environment`),
   KEY `username_2` (`username`,`exe`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
