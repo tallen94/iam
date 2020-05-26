@@ -1,24 +1,24 @@
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
-  name: iam-router
+  name: router
 spec:
   selector:
     matchLabels:
-      app: iam-router
+      app: router
   replicas: 1 # tells deployment to run 2 pods matching the template
   template:
     metadata:
       labels:
-        app: iam-router
+        app: router
     spec:
       imagePullSecrets:
       - name: regcred
       nodeSelector:
         type: ng-1
       containers:
-      - name: iam-router
-        image: icanplayguitar94/iam:router-c05c3929a712e211f06112e8bb6e68bc41d8fb9f
+      - name: router
+        image: icanplayguitar94/iam:base-minikube
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
@@ -50,7 +50,7 @@ spec:
           value: "filesystem.default"
         - name: FS_PORT
           value: "80"
-
+          
         ## DB CONFIG
         - name: DB_HOST
           value: "mysqldatabase.default"
@@ -73,13 +73,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: iam-router
-  annotations:
-    service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: "4000"
+  name: router
 spec:
   selector:
-    app: iam-router
-  type: LoadBalancer
+    app: router
   ports:
     - protocol: TCP
       port: 80
