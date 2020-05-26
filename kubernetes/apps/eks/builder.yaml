@@ -12,14 +12,14 @@ spec:
       labels:
         app: builder
     spec:
-      serviceAccountName: api-service-account
+      serviceAccountName: builder-service-account
       imagePullSecrets:
       - name: regcred
       nodeSelector:
         type: ng-1
       containers:
       - name: builder
-        image: icanplayguitar94/iam:builder-c05c3929a712e211f06112e8bb6e68bc41d8fb9f
+        image: icanplayguitar94/iam:builder-3ce97149499f41c19f2f93e6740d01f80724afb2
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
