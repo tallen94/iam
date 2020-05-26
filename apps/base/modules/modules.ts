@@ -1,8 +1,8 @@
 export * from "./Api/StatusApi";
 export * from "./Communicator/ServerCommunicator";
-export * from "./Executor/Client";
+export * from "./Client/Client";
 
-export * from "./Executor/Client";
+export * from "./Client/Client";
 export * from "./Communicator/ClientCommunicator";
 export * from "./Executor/Shell";
 export * from "./Communicator/ShellCommunicator";

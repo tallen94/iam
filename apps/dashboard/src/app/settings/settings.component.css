@@ -1,0 +1,64 @@
+.wrapper {
+  width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 24px;
+  position: relative;
+}
+
+.setting-section {
+  margin-bottom: 64px;
+}
+
+.no-tokens {
+  font-size: 1.5em;
+}
+
+.group {
+  margin-top: 32px;
+}
+
+.inline-input {
+  display: inline-block;
+}
+
+.inline-input label {
+  font-weight: bold;
+  color: rgb(160, 160, 160);
+  font-size: 15px;
+}
+
+.col1 {
+  margin-left: 16px;
+  width: 500px;
+}
+
+.delete-button {
+  background-color: white;
+  color: #dc3545;
+  font-weight: bold;
+  font-size: 20px;
+  padding: 10px !important;
+  line-height: .75em;
+}
+
+.header {
+  position: relative;
+}
+
+.add-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.add-button button {
+  background-color: white;
+  color: #28a745;
+}
+
+.action-buttons {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+}

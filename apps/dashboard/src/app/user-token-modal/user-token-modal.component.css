@@ -1,0 +1,26 @@
+.user-token-modal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,.5);
+}
+
+.user-token-dialog {
+  margin-top: 32px;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.token-id, .token-secret {
+  padding: 10px;
+  background-color: rgb(240, 240, 240);
+  margin-bottom: 16px;
+}
+
+.token-id label, .token-secret label {
+  color: rgb(160, 160, 160);
+  font-weight: bold;
+}

@@ -18,7 +18,7 @@ spec:
         type: ng-1
       containers:
       - name: base
-        image: icanplayguitar94/iam:base-3f71461731cf36ed6744cb07ee939b7c828abf05
+        image: icanplayguitar94/iam:base-c05c3929a712e211f06112e8bb6e68bc41d8fb9f
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
@@ -49,13 +49,13 @@ spec:
 
         # FS CONFIG
         - name: FS_HOST
-          value: "iam-filesystem.admin"
+          value: "filesystem.default"
         - name: FS_PORT
           value: "80"
 
         ## DB CONFIG
         - name: DB_HOST
-          value: "mysqldatabase.admin"
+          value: "mysqldatabase.default"
         - name: DB_USER
           valueFrom:
             secretKeyRef:

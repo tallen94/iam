@@ -1,0 +1,65 @@
+<div class="section">
+  <div class="header">
+    <div class="header-title">
+      <h3>Authorization</h3>
+    </div>
+    <div class="header-subtext">
+      Authorization identifes what visibility and privileges are available to resources on <b>{{resource}}</b>
+    </div>
+    <div class="add-button">
+      <button class="btn btn-success" (click)="addAuthorization()">Add Authorization</button>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="group-row" *ngFor="let authorization of data; let authIndex = index;">
+      <div class="inline-input">
+        <button class="btn btn-danger delete-button" (click)="deleteAuthorization(authorization, authIndex)">x</button>
+      </div>
+
+      <div class="inline-input col1">
+        <label>From</label>
+        <p>{{authorization.resource_from}}</p>
+      </div>
+
+      <div class="inline-input col3">
+        <label>Visibility</label>
+
+        <div class="visibility-options">
+          <div class="visibility inline-input">
+            <span>none</span>
+            <input type="radio" name="{{authorization.resource_from}}visibility" value="none" [checked]="authorization.visibility == 'none'" (change)="visibilityChange(authorization, $event)">
+          </div>
+
+          <div class="visibility inline-input">
+            <span>read</span>
+            <input type="radio" name="{{authorization.resource_from}}visibility" value="read" [checked]="authorization.visibility == 'read'" (change)="visibilityChange(authorization, $event)">
+          </div>
+
+          <div class="visibility inline-input">
+            <span>write</span>
+            <input type="radio" name="{{authorization.resource_from}}visibility" value="write" [checked]="authorization.visibility == 'write'" (change)="visibilityChange(authorization, $event)">
+          </div>
+        </div>
+      </div>
+
+      <div class="inline-input col4">
+        <label>Privileges</label>
+        <div class="privileges">
+          <div class="privilege inline-input" *ngFor="let p of privileges">
+            <span class="privilege-name">{{p}}</span>
+            <input type="checkbox" [checked]="privilegesContains(authorization, p)" (change)="privilegeChange(authorization, p)">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="newAuthorization">
+  <add-trust-modal
+    [resource]="resource"
+    (emitDone)="receiveNewAuthorizationDone($event)"
+    (emitCancel)="receiveNewAuthorizationCancel()">
+  </add-trust-modal>
+</div>

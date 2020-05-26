@@ -1,96 +1,116 @@
 import Lodash from "lodash";
 import { ProgramStep } from "./ProgramStep";
-import { QueryStep } from "./QueryStep";
 import { Duplex } from "stream";
-import { Shell } from "../Executor/Shell";
-import { Database } from "../Executor/Database";
-import * as UUID from "uuid";
+import * as uuid from "uuid";
 import { Executor } from "../Executor/Executor";
-import { Client } from "../Executor/Client";
+import { Client } from "../Client/Client";
+import { ExecutableFactory } from "../Executable/ExecutableFactory";
+import { Query } from "../Executable/Query";
 
 export class StepListManager {
-  constructor(private shell: Shell, private database: Database, private executor: Executor) {
+  constructor(private executor: Executor, private executableFactory: ExecutableFactory) {
   }
 
   // ADD
   public addStepList(data: any) {
-    const trimmedData = this.trimStepJson(data);
-    return this.getStepList(data.username, data.name, data.exe)
-    .then((result) => {
-      if (result == undefined) {
-        return this.database.runQuery("admin", "add-exe", {
-          username: data.username,
-          name: data.name,
-          uuid: UUID.v4(),
-          exe: data.exe,
-          data: JSON.stringify(trimmedData.steps || trimmedData.step),
-          input: data.input,
-          output: data.output,
-          userId: data.userId,
-          description: data.description,
-          visibility: data.visibility
-        }, "");
-      } else {
-        return this.database.runQuery("admin", "update-exe", {
-          name: data.name,
-          exe: data.exe,
-          data: JSON.stringify(trimmedData.steps || trimmedData.step),
-          input: data.input,
-          output: data.output,
-          userId: data.userId,
-          description: data.description,
-          visibility: data.visibility
-        }, "");
-      }
-    });
+    // const trimmedData = this.trimStepJson(data);
+    // return this.getStepList(data.username, data.name, data.exe)
+    // .then((result) => {
+    //   if (result == undefined) {
+    //     return this.executableFactory.query({
+    //       username: "admin", 
+    //       name: "add-exe"
+    //     }).then((query: Query) => {
+    //       return query.run({
+    //         username: data.username, 
+    //         name: data.name,
+    //         uuid: uuid.v4(),
+    //         exe: data.exe,
+    //         data: trimmedData,
+    //         input: data.input,
+    //         output: data.output,
+    //         description: data.description,
+    //         environment: data.environment,
+    //         visibility: data.visibility
+    //       })
+    //     })
+    //   }
+    //   return this.executableFactory.query({
+    //     username: "admin", 
+    //     name: "update-exe"
+    //   }).then((query: Query) => {
+    //     return query.run({ 
+    //       name: data.name,
+    //       exe: data.exe,
+    //       data: trimmedData,
+    //       input: data.input,
+    //       output: data.output,
+    //       description: data.description,
+    //       environment: data.environment,
+    //       visibility: data.visibility
+    //     })
+    //   })
+    // });
   }
 
   // GET ONE SYNC
   public getStepList(username, name: string, exe: string) {
-    return this.database.runQuery("admin", "get-exe-by-type-name", {exe: exe, name: name, username: username}, "")
-    .then((result) => {
-      if (result.length > 0) {
-        const item = result[0];
-        const data = JSON.parse(item.data);
-        const ret = {
-          username: item.username,
-          name: item.name,
-          exe: item.exe,
-          data: data,
-          input: item.input,
-          description: item.description,
-          visibility: item.visibility
-        };
-        return ret;
-      }
-      return Promise.resolve(undefined);
-    });
+    // return this.executableFactory.query({
+    //   username: "admin", 
+    //   name: "get-exe-by-type-name"
+    // }).then((query: Query) => {
+    //   return query.run({ username: username, name: name, exe: "steplist" })
+    // }).then((result) => {
+    //   if (result.length > 0) {
+    //     const item = result[0];
+    //     const data = JSON.parse(item.data);
+    //     const ret = {
+    //       username: item.username,
+    //       name: item.name,
+    //       exe: item.exe,
+    //       data: data,
+    //       input: item.input,
+    //       description: item.description,
+    //       visibility: item.visibility
+    //     };
+    //     return ret;
+    //   }
+    //   return Promise.resolve(undefined);
+    // });
   }
 
   // GET ALL SYNC
   public getStepLists(username: string, exe: string) {
-    return this.database.runQuery("admin", "get-exe-for-user", {exe: exe, username: username}, "")
-    .then((data) => {
-      return Promise.all(Lodash.map(data, (item) => {
-        return this.database.runQuery("admin", "search-steplists", {query: "%name\":\"" + item.name + "\"%"}, "")
-        .then((results) => {
-          return {
-            username: item.username,
-            name: item.name,
-            description: item.description,
-            steplists: results
-          };
-        });
-      }));
-    });
+    // return this.executableFactory.query({
+    //   username: "admin", 
+    //   name: "get-exe-for-user"
+    // }).then((query: Query) => {
+    //   return query.run({ exe: "steplist", username: username })
+    // }).then((data) => {
+    //   return Promise.all(Lodash.map(data, (item) => {
+    //     return this.executableFactory.query({
+    //       username: "admin", 
+    //       name: "search-steplists"
+    //     }).then((query: Query) => {
+    //       return query.run({query: "%name\":\"" + item.name + "\"%"})
+    //     }).then((results) => {
+    //       return {
+    //         username: item.username,
+    //         name: item.name,
+    //         description: item.description,
+    //         steplists: results
+    //       };
+    //     });
+    //   }));
+    // });
   }
 
   public runStepList(username: string, name: string, exe: string, data: any) {
-    return this.executor.getExecutable(username, name, exe)
-    .then((stepList) => {
-      const step = this.stepJsonToStep(stepList);
-      return step.execute(data);
-    });
+    // return this.executor.getExecutable(username, name, exe)
+    // .then((stepList) => {
+    //   const step = this.stepJsonToStep(stepList);
+    //   return step.execute(data, "");
+    // });
   }
 
   public spawn(name: string): Duplex {
@@ -100,12 +120,7 @@ export class StepListManager {
   }
 
   public stepJsonToStep(stepJson, client?: Client) {
-    switch (stepJson.exe) {
-      case "function":
-        return new ProgramStep(stepJson.username, stepJson.name, this.shell, client, stepJson.foreach);
-      case "query":
-        return new QueryStep(stepJson.username, stepJson.name, this.database, client, stepJson.foreach);
-    }
+    return new ProgramStep(stepJson.username, stepJson.cluster, stepJson.environment, stepJson.name, client, stepJson.exe, stepJson.foreach);
   }
 
   private trimStepJson(data: any) {

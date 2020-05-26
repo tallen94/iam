@@ -1,24 +1,24 @@
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
-  name: iam-filesystem
+  name: filesystem
 spec:
   selector:
     matchLabels:
-      app: iam-filesystem
+      app: filesystem
   replicas: 1 # tells deployment to run 2 pods matching the template
   template:
     metadata:
       labels:
-        app: iam-filesystem
+        app: filesystem
     spec:
       imagePullSecrets:
       - name: regcred
       nodeSelector:
         type: ng-1
       containers:
-      - name: iam-filesystem
-        image: icanplayguitar94/iam:base-3f71461731cf36ed6744cb07ee939b7c828abf05
+      - name: filesystem
+        image: icanplayguitar94/iam:base-c05c3929a712e211f06112e8bb6e68bc41d8fb9f
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
@@ -47,13 +47,13 @@ spec:
 
         # FS CONFIG
         - name: FS_HOST
-          value: "iam-filesystem.admin"
+          value: "filesystem.default"
         - name: FS_PORT
           value: "80"
 
         ## DB CONFIG
         - name: DB_HOST
-          value: "mysqldatabase.admin"
+          value: "mysqldatabase.default"
         - name: DB_USER
           valueFrom:
             secretKeyRef:
@@ -84,10 +84,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: iam-filesystem
+  name: filesystem
 spec:
   selector:
-    app: iam-filesystem
+    app: filesystem
   ports:
     - protocol: TCP
       port: 80

@@ -1,0 +1,68 @@
+.card {
+  padding: 16px;
+  position: relative;
+}
+
+.username {
+  color: #007bff;
+  font-weight: 600;
+  font-size: 1.25em;
+}
+
+.exe {
+  color: #28a745;
+  font-weight: 600;
+  font-size: 1.25em;
+  margin-right: 16px;
+}
+
+.name {
+  font-weight: 300;
+  font-size: 1.5em;
+}
+
+.inline-input {
+  display: inline-block;
+}
+
+.action-buttons {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+}
+
+.inline-input label {
+  font-weight: bold;
+  color: rgb(160, 160, 160);
+  font-size: 15px;
+}
+
+.environment-list {
+  width: 850px;
+  position: relative;
+  margin-top: 54px;
+}
+
+.add-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.add-button button {
+  background-color: white;
+  color: #28a745;
+}
+
+.environment .col1 {
+  width: 150px;
+}
+
+.environment .col2 {
+  width: 80px;
+  margin-left: 16px;
+}
+
+.environment .col5 {
+  margin-left: 64px;
+}

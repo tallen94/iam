@@ -27,7 +27,7 @@ export class DatabaseCommunicator {
     });
   }
 
-  public execute(query: string, params: any) {
+  public execute(query: string, params: any): Promise<any> {
     const preparedQuery = this.prepareQuery(query, params);
     return new Promise((resolve, reject) => {
       this.db.query(preparedQuery.query, preparedQuery.data, (err: MysqlError, data: any) => {

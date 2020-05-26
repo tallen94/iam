@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { Iam } from "../iam/iam";
 import * as Lodash from "lodash";
@@ -10,7 +10,10 @@ import { InitData } from '../iam/init-data';
   styleUrls: ['./editor.component.css']
 })
 export class EditorComponent implements OnInit {
-  @Input() data: any;
+  _data: any;
+  @Input() environmentOptions: string[]
+  @Output() emitCreateNewExecutable: EventEmitter<any> = new EventEmitter();
+  @Output() emitSelectExecutable: EventEmitter<any> = new EventEmitter();
   editing: any[] = [];
   hidden: any[] = [];
   running: any;
@@ -23,6 +26,16 @@ export class EditorComponent implements OnInit {
 
   ngOnInit() {
     this.hidden.push(this.data.id)
+  }
+
+  @Input()
+  set data(value: any) {
+    this.running = undefined;
+    this._data = value;
+  }
+
+  get data() {
+    return this._data
   }
   
   public keys(obj: any) {
@@ -45,9 +58,14 @@ export class EditorComponent implements OnInit {
   }
 
   public receiveEmitNewNode(data: any) {
-    const newNode = this.initData(data.id, data.exe, "New" + data.exe);
-    this.data.graph.nodes.push(newNode)
-    this.data.graph.nodes = [...this.data.graph.nodes]
+    this.iam.getExecutable(this.iam.getUser().username, data.cluster, data.environment, data.exe, data.name)
+    .subscribe((result) => {
+      if (result == undefined) {
+        result = this.initData(data);
+      }
+      this.data.graph.nodes.push(result)
+      this.data.graph.nodes = [...this.data.graph.nodes]
+    })
   }
 
   public receiveEmitNewEdge(edge: any) {
@@ -57,6 +75,14 @@ export class EditorComponent implements OnInit {
 
   public receiveUpdateData(data: any) {
     this.data = data
+  }
+
+  public receiveAddEnvironmentEvent(value: any) {
+    this.emitCreateNewExecutable.emit(value)
+  }
+
+  public receiveNewResourceEvent(value: any) {
+    this.emitCreateNewExecutable.emit(value)
   }
 
   public receiveDeleteEditing(linksEditing: any) {
@@ -84,15 +110,12 @@ export class EditorComponent implements OnInit {
     this.editing = []
   }
 
-  public delete() {
-    this.iam.runExecutable("admin", "query", "delete-exe", this.data)
-    .subscribe((response) => {
-      this.data = undefined;
-    });
+  public receiveSelectExecutable(value: any) {
+    this.emitSelectExecutable.emit(value)
   }
 
-  private initData(id: string, exe: string, name: string) {
-    return new InitData(this.iam)[exe](id, name);
+  private initData(data: any) {
+    return new InitData(this.iam)[data.exe](data.id, data);
   }
 
   private addHidden(values: any[]) {

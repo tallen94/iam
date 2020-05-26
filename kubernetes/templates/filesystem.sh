@@ -8,21 +8,21 @@ cat > kubernetes/apps/minikube/filesystem.yaml <<EOF
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
-  name: iam-filesystem
+  name: filesystem
 spec:
   selector:
     matchLabels:
-      app: iam-filesystem
+      app: filesystem
   replicas: 1 # tells deployment to run 2 pods matching the template
   template:
     metadata:
       labels:
-        app: iam-filesystem
+        app: filesystem
     spec:
       imagePullSecrets:
       - name: regcred
       containers:
-      - name: iam-filesystem
+      - name: filesystem
         image: $TAG
         imagePullPolicy: IfNotPresent
         ports:
@@ -43,13 +43,13 @@ spec:
 
         # FS CONFIG
         - name: FS_HOST
-          value: "iam-filesystem.admin"
+          value: "filesystem.default"
         - name: FS_PORT
           value: "80"
 
         ## DB CONFIG
         - name: DB_HOST
-          value: "mysqldatabase.admin"
+          value: "mysqldatabase.default"
         - name: DB_USER
           valueFrom:
             secretKeyRef:
@@ -78,10 +78,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: iam-filesystem
+  name: filesystem
 spec:
   selector:
-    app: iam-filesystem
+    app: filesystem
   type: NodePort
   ports:
     - protocol: TCP
@@ -97,23 +97,23 @@ cat > kubernetes/apps/eks/filesystem.yaml <<EOF
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
-  name: iam-filesystem
+  name: filesystem
 spec:
   selector:
     matchLabels:
-      app: iam-filesystem
+      app: filesystem
   replicas: 1 # tells deployment to run 2 pods matching the template
   template:
     metadata:
       labels:
-        app: iam-filesystem
+        app: filesystem
     spec:
       imagePullSecrets:
       - name: regcred
       nodeSelector:
         type: ng-1
       containers:
-      - name: iam-filesystem
+      - name: filesystem
         image: $TAG
         imagePullPolicy: IfNotPresent
         ports:
@@ -143,13 +143,13 @@ spec:
 
         # FS CONFIG
         - name: FS_HOST
-          value: "iam-filesystem.admin"
+          value: "filesystem.default"
         - name: FS_PORT
           value: "80"
 
         ## DB CONFIG
         - name: DB_HOST
-          value: "mysqldatabase.admin"
+          value: "mysqldatabase.default"
         - name: DB_USER
           valueFrom:
             secretKeyRef:
@@ -180,10 +180,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: iam-filesystem
+  name: filesystem
 spec:
   selector:
-    app: iam-filesystem
+    app: filesystem
   ports:
     - protocol: TCP
       port: 80

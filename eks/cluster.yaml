@@ -295,7 +295,7 @@ Resources:
             rm -r /mnt/iam/database/lost+found
             
             # Clone filesystem
-            git clone https://github.com/tallen94/iam-filesystem.git /mnt/iam/filesystem
+            git clone https://github.com/tallen94/filesystem.git /mnt/iam/filesystem
             
             # Install kubectl
             apt-get update

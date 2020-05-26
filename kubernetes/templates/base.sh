@@ -46,13 +46,13 @@ spec:
 
         # FS CONFIG
         - name: FS_HOST
-          value: "iam-filesystem.admin"
+          value: "filesystem.default"
         - name: FS_PORT
           value: "80"
 
         ## DB CONFIG
         - name: DB_HOST
-          value: "mysqldatabase.admin"
+          value: "mysqldatabase.default"
         - name: DB_USER
           valueFrom:
             secretKeyRef:
@@ -137,13 +137,13 @@ spec:
 
         # FS CONFIG
         - name: FS_HOST
-          value: "iam-filesystem.admin"
+          value: "filesystem.default"
         - name: FS_PORT
           value: "80"
 
         ## DB CONFIG
         - name: DB_HOST
-          value: "mysqldatabase.admin"
+          value: "mysqldatabase.default"
         - name: DB_USER
           valueFrom:
             secretKeyRef:

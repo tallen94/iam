@@ -1,0 +1,36 @@
+<div class="new-executable">
+  <div class="new-executable-dialog card">
+    <div class="card-body">
+      <h5 class="card-title">New {{type}}</h5>
+      <div class="form-group">
+        <label>Name</label>
+        <input 
+          class="form-control"
+          type="text" 
+          [(ngModel)]="data.name"
+          placeholder="Name">
+      </div>
+
+      <div *ngIf="type === 'environment' || type === 'function' || type === 'query' || type === 'graph'" class="form-group">
+        <label>Cluster</label>
+        <select *ngIf="clusterOptions.length > 0" class="form-control" [(ngModel)]="data.cluster">
+          <option *ngFor="let option of clusterOptions">{{option.name}}</option>
+        </select>
+        <p *ngIf="clusterOptions.length === 0">{{data.cluster}}</p>
+      </div>
+
+      <div *ngIf="type === 'function' || type === 'query' || type === 'graph'" class="form-group">
+        <label>Environment</label>
+        <select *ngIf="environmentOptions.length > 0" class="form-control" [(ngModel)]="data.environment">
+          <option *ngFor="let option of environmentOptions">{{option.name}}</option>
+        </select>
+        <p *ngIf="environmentOptions.length === 0">{{data.environment}}</p>
+      </div>
+
+      <div class="action-buttons">
+        <button class="btn btn-success" (click)="done()" [disabled]="data.name == undefined || data.name == '' || (type === 'environment' && (data.cluster == undefined  || data.cluster == '')) || ((type == 'function' || type == 'query' || type == 'graph') && (data.environment == undefined || data.environment == ''))">Create</button>
+        <button class="btn btn-outline-danger" (click)="cancel()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>

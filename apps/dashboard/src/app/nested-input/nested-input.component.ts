@@ -48,7 +48,7 @@ export class NestedInputComponent implements OnInit {
   }
 
   isHidden() {
-    return !(this.data.id !== undefined && Lodash.indexOf(this.hidden, this.data.id) != -1);
+    return (this.data.id !== undefined && Lodash.indexOf(this.hidden, this.data.id) != -1);
   }
 
   isEditing() {
@@ -56,7 +56,7 @@ export class NestedInputComponent implements OnInit {
   }
 
   triggerShow() {
-    if (!this.isHidden()) {
+    if (this.isHidden()) {
       this.hidden = Lodash.filter(this.hidden, (item) => item !== this.data.id)
     } else {
       this.hidden.push(this.data.id)
@@ -147,25 +147,10 @@ export class NestedInputComponent implements OnInit {
     return str === undefined || str === '';
   }
 
-  applyKubernetes() {
-    this.iam.runExecutable("admin", "function", "kubectl-apply", { file: this.data.name })
-    .subscribe((result) => {
-      console.log(result)
-    })
-  }
-
-  buildImage() {
-    const tag = this.data.imageRepo + ":" + this.data.name;
-    this.iam.runExecutable("admin", "function", "build-image", { tag: tag, image: this.data.name})
-    .subscribe((result) => {
-      console.log(result)
-    })
-  }
-
   applyPool() {
-    this.iam.runExecutable("admin", "graph", "update-env-pool", [{svc: this.data.environment}, {username: this.data.username, name: this.data.name}])
-    .subscribe((result) => {
-      console.log(result)
-    })
+    // this.iam.runExecutable("admin", "graph", "update-env-pool", [{svc: this.data.environment}, {username: this.data.username, name: this.data.name}])
+    // .subscribe((result) => {
+    //   console.log(result)
+    // })
   }
 } 

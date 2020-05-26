@@ -1,171 +1,75 @@
-import { Database } from "./Database";
 import * as Lodash from "lodash";
-import { Node } from "../Graph/Node";
-import { DirectedGraph } from "../Graph/DirectedGraph";
-import * as UUID from "uuid";
-import { ClientCommunicator } from "../Communicator/ClientCommunicator";
-import { Client } from "./Client";
-import { ProgramStep } from "../Step/ProgramStep";
-import { QueryStep } from "../Step/QueryStep";
-import { Shell } from "./Shell";
-import { Authorization } from "../Auth/Authorization";
+import * as uuid from "uuid";
+import { DatabaseCommunicator } from "../Communicator/DatabaseCommunicator";
+import { Queries } from "../Constants/Queries";
 
 export class GraphExecutor {
 
-  constructor(
-    private database: Database,
-    private shell: Shell,
-    private authorization: Authorization) { }
+  constructor(private databaseCommunicator: DatabaseCommunicator) { }
 
   public addGraph(data: any) {
-    const trimmedData = this.trimData(data.graph);
-    return this.getGraph(data.username, data.name).then((result) => {
+    const trimmedData = JSON.stringify(this.trimData(data.graph));
+    return this.getGraph(data.username, data.cluster, data.environment, data.name).then((result) => {
       if (result == undefined) {
-        return this.database.runQuery("admin", "add-exe", {
-          username: data.username,
+        return this.databaseCommunicator.execute(Queries.ADD_EXECUTABLE, {
+          username: data.username, 
           name: data.name,
-          uuid: UUID.v4(),
+          uuid: uuid.v4(),
           exe: data.exe,
-          data: JSON.stringify(trimmedData),
-          input: data.input,
-          output: data.output,
-          userId: data.userId,
-          description: data.description,
-          environment: data.environment,
-          visibility: data.visibility
-        }, "");
-      } else {
-        return this.database.runQuery("admin", "update-exe", {
-          name: data.name,
-          exe: data.exe,
-          data: JSON.stringify(trimmedData),
+          data: trimmedData,
           input: data.input,
           output: data.output,
           description: data.description,
           environment: data.environment,
+          cluster: data.cluster,
           visibility: data.visibility
-        }, "");
+        })
       }
+      return this.databaseCommunicator.execute(Queries.UPDATE_EXECUTABLE, { 
+        username: data.username,
+        name: data.name,
+        exe: data.exe,
+        data: trimmedData,
+        input: data.input,
+        output: data.output,
+        description: data.description,
+        environment: data.environment,
+        cluster: data.cluster,
+        visibility: data.visibility
+      })
     });
   }
 
-  public getGraph(username: string, name: string) {
-    return this.database.runQuery("admin", "get-exe-by-type-name", { username: username, name: name, exe: "graph"}, "")
-    .then((result) => {
+  public getGraph(username: string, cluster: string, environment: string, name: string) {
+    return this.databaseCommunicator.execute(Queries.GET_EXE, {
+      username: username, 
+      cluster: cluster, 
+      environment: environment, 
+      name: name, 
+      exe: 'graph'
+    }).then((result: any[]) => {
       if (result.length > 0) {
         const item = result[0];
-        item.data = JSON.parse(item.data);
-        return item;
+        const data = JSON.parse(item.data);
+        return {
+          username: item.username,
+          name: item.name,
+          exe: item.exe,
+          description: item.description,
+          input: item.input,
+          output: item.output,
+          graph: data,
+          environment: item.environment,
+          cluster: item.cluster,
+          visibility: item.visibility
+        }
       }
       return Promise.resolve(undefined);
     });
   }
 
-  public getGraphs(username: string) {
-    return this.database.runQuery("admin", "get-exe-for-user", {exe: "graph", username: username}, "")
-    .then((data) => {
-      return Promise.all(Lodash.map(data, (item) => {
-        return {
-          username: item.username,
-          name: item.name,
-          description: item.description
-        };
-      }));
-    });
-  }
-
-  public runGraph(username: string, name: string, data: any, token: string) {
-    return this.getGraph(username, name)
-    .then((graph) => {
-      if (graph.visibility == "private") {
-        return this.authorization.validateUserToken(graph.username, token, this.database, () => {
-          return graph;
-        })
-      }
-      return graph;
-    })
-    .then((graph) => {
-      const graphData = graph.data;
-      return this.buildGraph(graphData.nodes, graphData.edges)
-      .then((graph) => {
-        if (graphData.foreach) {
-          const numThreads = 2;
-          const threads = [];
-          const results = [];
-
-          for (let index = 0; index < data.length; index++) {
-            if (threads.length < numThreads) {
-              threads.push(Promise.resolve().then(() => {
-                return graph.execute(data[index])
-                .then((result: any) => {
-                  results.push(result);
-                })
-              }))
-            } else {
-              threads[index % numThreads] = threads[index % numThreads]
-              .then(() => {
-                return graph.execute(data[index])
-                .then((result: any) => {
-                  results.push(result);
-                })
-              })
-            }
-          }
-          return Promise.all(threads).then(() => {
-            return results;
-          })
-        }
-        return graph.execute(data);
-      });
-    });
-  }
-
-  private getSteps(nodes: any[]) {
-    return Promise.all(Lodash.map(nodes, (node) => {
-      switch (node.exe) {
-        case "function":
-          return this.shell.getProgram(node.username, node.name)
-        case "query":
-          return this.database.getQuery(node.username, node.name);
-      }
-    }).map((nodePromise, index) => {
-      return nodePromise.then((node) => {
-        node.foreach = nodes[index].foreach
-        return this.database.runQuery("admin", "get-exe-environment", {username: node.username, exe: node.exe, name: node.name}, "")
-        .then((results) => {
-          if (results.length > 0) {
-            const environment = results[0]
-            const host = environment.name + "." + node.username
-            const clientCommunicator: ClientCommunicator = new ClientCommunicator(host, 80)
-            const client = new Client(clientCommunicator);
-            return this.stepJsonToStep(node, client);
-          }
-        })
-      });
-    }));
-  }
-
-  private buildGraph(nodes: any[], edges: any[]) {
-    return this.getSteps(nodes)
-    .then((steps) => {
-      const indexedNodes = {}
-      Lodash.each(steps, (step, i) => {
-        const node = new Node([], [], step)
-        indexedNodes[nodes[i].id] = node;
-      });
-
-      Lodash.each(edges, (edge) => {
-        const source = edge.source;
-        const target = edge.target;
-        if (indexedNodes[target] != undefined) {
-          indexedNodes[target].addParent(indexedNodes[source]);
-        }
-        if (indexedNodes[source] != undefined) {
-          indexedNodes[source].addChild(indexedNodes[target]);
-        }
-      });
-      return new DirectedGraph(Lodash.values(indexedNodes));
-    });
+  public deleteGraph(username: string, cluster: string, environment: string, name: string) {
+    return this.databaseCommunicator.execute(Queries.DELETE_EXECUTABLE, {username: username, cluster: cluster, environment: environment, name: name, exe: "graph"})
   }
 
   private trimData(data: any) {
@@ -186,14 +90,5 @@ export class GraphExecutor {
       };
     });
     return data;
-  }
-
-  public stepJsonToStep(stepJson, client?: Client) {
-    switch (stepJson.exe) {
-      case "function":
-        return new ProgramStep(stepJson.username, stepJson.name, this.shell, client, stepJson.foreach);
-      case "query":
-        return new QueryStep(stepJson.username, stepJson.name, this.database, client, stepJson.foreach);
-    }
   }
 }

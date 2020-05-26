@@ -19,7 +19,7 @@ export class ClientPool {
   }
 
   public runExecutable(username: string, exe: string, name: string, data: any, threads: number) {
-    return this.each(this.getNClients(threads), (thread: Client) => { return thread.runExecutable(username, exe, name, data, ""); });
+    // return this.each(this.getNClients(threads), (thread: Client) => { return thread.runExecutable(username, exe, name, data, ""); });
   }
 
   public addClient(client: Client): void {

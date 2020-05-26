@@ -37,7 +37,7 @@ The executor is used to run the functions and queries
 
 `PORT`: 5000
 
-`FS_HOST`: url for the filesystem, `iam-filesystem`
+`FS_HOST`: url for the filesystem, `filesystem`
 
 `FS_PORT`: port for the filesystem, `80`
 
@@ -59,7 +59,7 @@ Master takes requrests and distributes to the executors.
 
 `PORT`: 5000
 
-`FS_HOST`: url for the filesystem, `iam-filesystem`
+`FS_HOST`: url for the filesystem, `filesystem`
 
 `FS_PORT`: port for the filesystem, `80`
 

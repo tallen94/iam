@@ -11,8 +11,10 @@ import * as Lodash from "lodash";
 export class GraphComponent implements OnInit {
   public _nodes: any;
   public _links: any;
+  public newNodeType: string;
   @Input() editing: any[];
   @Input() edgesEditing: any[];
+  @Input() environmentOptions: string[]
   @Output() emitEditing: EventEmitter<any> = new EventEmitter();
   @Output() emitNewNode: EventEmitter<any> = new EventEmitter();
   @Output() emitNewEdge: EventEmitter<any> = new EventEmitter();
@@ -32,6 +34,7 @@ export class GraphComponent implements OnInit {
   @Input()
   set nodes(data: any) {
     this._nodes = this.getNodes(data)
+    console.log(this._nodes)
   }
 
   get nodes() {
@@ -105,16 +108,7 @@ export class GraphComponent implements OnInit {
   }
 
   newNode(exe: string) {
-    const newNodeId = "" + (parseInt(this.maxId(this._nodes).id) + 1);
-    this.emitNewNode.emit({ id: newNodeId, exe: exe });
-    
-    if (this.editing.length == 1) {
-      const newEdge = { source: this.editing[0], target: newNodeId }
-      this.emitNewEdge.emit(newEdge);
-    }
-    this.editing.push(newNodeId)
-    this.editing = [...this.editing]
-    this.emitEditing.emit(this.editing)
+    this.newNodeType = exe;
   }
 
   maxId(nodes: any[]) {
@@ -124,5 +118,28 @@ export class GraphComponent implements OnInit {
   deleteEditing() {
     this.emitDeleteEditing.emit(this.edgesEditing);
     this.edgesEditing = []
+  }
+  
+  getNewData() {
+    return {}
+  }
+
+  receiveNewResourceModalDone(data: any) {
+    const newNodeId = this._nodes.length == 0 ? 1 : (parseInt(this.maxId(this._nodes).id) + 1);
+    data.id = "" + newNodeId
+    this.emitNewNode.emit(data);
+    
+    if (this.editing.length == 1) {
+      const newEdge = { source: this.editing[0], target: newNodeId }
+      this.emitNewEdge.emit(newEdge);
+    }
+    this.editing.push(newNodeId)
+    this.editing = [...this.editing]
+    this.emitEditing.emit(this.editing)
+    this.newNodeType = undefined;
+  }
+
+  receiveNewResourceModalCancel() {
+    this.newNodeType = undefined;
   }
 }

@@ -67,7 +67,7 @@ export class RunComponent implements OnInit {
       this.time = this.dhms(this.diff);
     });
 
-    this.iam.runExecutable(this._running.username, this._running.exe, this._running.name, this.requestData)
+    this.iam.runExecutable(this._running.username, this._running.cluster, this._running.environment, this._running.exe, this._running.name, this.requestData)
     .subscribe((response: any) => {
       this.timer.unsubscribe()
       const json =  this.isJsonString(response.result);

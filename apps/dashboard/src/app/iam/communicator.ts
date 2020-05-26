@@ -27,6 +27,12 @@ export class ClientCommunicator {
     return this.http.post(absUrl, data, opts);
   }
 
+  public delete(url: string, data?: any, params?: any, headers?: any) {
+    const absUrl = this.getAbsoluteUrl(url, params)
+    const opts = { headers: headers, params: data }
+    return this.http.delete(absUrl, opts)
+  }
+
   private replace(s: string, data: any): string {
     Lodash.each(data, (value, key) => {
       s = s.replace(":" + key, value);

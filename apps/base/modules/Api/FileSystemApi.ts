@@ -1,6 +1,5 @@
 import { ServerCommunicator } from "../Communicator/ServerCommunicator";
 import { FileSystem } from "../FileSystem/FileSystem";
-import * as FS from "fs";
 import * as Lodash from "lodash";
 
 export class FileSystemApi {

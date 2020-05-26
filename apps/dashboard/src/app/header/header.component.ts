@@ -38,30 +38,30 @@ export class HeaderComponent implements OnInit {
   }
 
   public clickSearchResult(result) {
-    this.iam.getExecutable(result.username, result.exe, result.name)
-    .subscribe((data) => {
-      this.searchResults = []
-      this.emitUpdateData.emit(data);
-    })
+    // this.iam.getExecutable(result.username, result.exe, result.name)
+    // .subscribe((data) => {
+    //   this.searchResults = []
+    //   this.emitUpdateData.emit(data);
+    // })
   }
   
   public exeOnChange(value) {
     switch (value) {
       case "query":
         if (this.data.name === "" && value !== this.prevExe)  {
-          this.emitUpdateData.emit(new InitData(this.iam).query(this.data.id, "NewQuery"))
+          this.emitUpdateData.emit(new InitData(this.iam).query(this.data.id, { name: "NewQuery" }))
           this.prevExe = value;
         }
         break
       case "function":
         if (this.data.name === "" && value !== this.prevExe)  {
-          this.emitUpdateData.emit(new InitData(this.iam).function(this.data.id, "NewFunction"))
+          this.emitUpdateData.emit(new InitData(this.iam).function(this.data.id, { name: "NewFunction" }))
           this.prevExe = value;
         }
         break;
       case "graph": 
         if (this.data.name === "" && value !== this.prevExe)  {
-          this.emitUpdateData.emit(new InitData(this.iam).graph("0", "NewGraph"))
+          this.emitUpdateData.emit(new InitData(this.iam).graph("0", { name: "NewGraph" }))
           this.prevExe = value;
         }
         break;
