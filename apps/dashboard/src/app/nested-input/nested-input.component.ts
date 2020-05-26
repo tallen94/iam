@@ -148,9 +148,9 @@ export class NestedInputComponent implements OnInit {
   }
 
   applyPool() {
-    this.iam.runExecutable("admin", "graph", "update-env-pool", [{svc: this.data.environment}, {username: this.data.username, name: this.data.name}])
-    .subscribe((result) => {
-      console.log(result)
-    })
+    // this.iam.runExecutable("admin", "graph", "update-env-pool", [{svc: this.data.environment}, {username: this.data.username, name: this.data.name}])
+    // .subscribe((result) => {
+    //   console.log(result)
+    // })
   }
 } 

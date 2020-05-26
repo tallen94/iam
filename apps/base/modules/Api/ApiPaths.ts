@@ -11,10 +11,10 @@ export class ApiPaths {
 
   // EXECUTABLE
   public static ADD_EXECUTABLE = "/executable";
-  public static GET_EXECUTABLE = "/executable/:username/:exe/:name";
+  public static GET_EXECUTABLE = "/executable/:username/:cluster/:environment/:exe/:name";
   public static GET_EXECUTABLES = "/executable/:username/:exe";
-  public static RUN_EXECUTABLE = "/executable/:username/:exe/:name/run";
-  public static DELETE_EXECUTABLE = "/executable/:username/:exe/:name"
+  public static RUN_EXECUTABLE = "/executable/:username/:cluster/:environment/:exe/:name/run";
+  public static DELETE_EXECUTABLE = "/executable/:username/:cluster/:environment/:exe/:name"
   public static SEARCH_EXECUTABLES = "/search";
 
   // Cluster

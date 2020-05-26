@@ -10,7 +10,7 @@ import { InitData } from '../iam/init-data';
   styleUrls: ['./editor.component.css']
 })
 export class EditorComponent implements OnInit {
-  @Input() data: any;
+  _data: any;
   @Input() environmentOptions: string[]
   @Output() emitCreateNewExecutable: EventEmitter<any> = new EventEmitter();
   @Output() emitSelectExecutable: EventEmitter<any> = new EventEmitter();
@@ -26,6 +26,16 @@ export class EditorComponent implements OnInit {
 
   ngOnInit() {
     this.hidden.push(this.data.id)
+  }
+
+  @Input()
+  set data(value: any) {
+    this.running = undefined;
+    this._data = value;
+  }
+
+  get data() {
+    return this._data
   }
   
   public keys(obj: any) {
@@ -48,7 +58,7 @@ export class EditorComponent implements OnInit {
   }
 
   public receiveEmitNewNode(data: any) {
-    this.iam.getExecutable(this.iam.getUser().username, data.exe, data.name)
+    this.iam.getExecutable(this.iam.getUser().username, data.cluster, data.environment, data.exe, data.name)
     .subscribe((result) => {
       if (result == undefined) {
         result = this.initData(data);

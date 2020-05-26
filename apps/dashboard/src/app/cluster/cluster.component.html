@@ -1,10 +1,10 @@
 <div class="card">
   <div class="card-title">
     <div class="inline-input exe">
-      {{data.exe}}
+      [cluster]
     </div>
     <div class="inline-input username">
-      .{{data.username}}
+      {{data.username}}
     </div>
     <div class="inline-input name">
       .{{data.name}}
@@ -35,6 +35,10 @@
         <div class="inline-input col1">
           <label>Name</label>
           <p>{{env.name}}</p>
+        </div>
+        <div class="inline-input col2">
+          <label>Type</label>
+          <p>{{env.state}}</p>
         </div>
         <div class="inline-input col2">
           <label>Type</label>

@@ -1,12 +1,12 @@
 export class Queries {
   
   // Executable
-  public static GET_EXE_BY_TYPE_NAME ="select * from executable where name={name} and username={username} and exe={exe}"
+  public static GET_EXE ="select * from executable where username={username} and cluster={cluster} and environment={environment} and name={name}  and exe={exe}"
   public static GET_EXE_FOR_USER = "select * from executable where username={username} and exe={exe}"
   public static SEARCH_EXECUTABLES = "select * from executable where name LIKE {searchText}"
-  public static ADD_EXECUTABLE = "INSERT INTO executable(username, uuid, name, data, exe, input, output, description, environment,visibility)"
-                                + " VALUES ({username},{uuid},{name},{data},{exe},{input},{output},{description},{environment},{visibility})"
-  public static UPDATE_EXECUTABLE = "UPDATE executable SET data={data}, input={input}, output={output}, description={description}, visibility={visibility} WHERE exe={exe} AND name={name} AND username={username} AND environment={environment};"
+  public static ADD_EXECUTABLE = "INSERT INTO executable(username, uuid, name, data, exe, input, output, description, environment, cluster, visibility)"
+                                + " VALUES ({username},{uuid},{name},{data},{exe},{input},{output},{description},{environment},{cluster},{visibility})"
+  public static UPDATE_EXECUTABLE = "UPDATE executable SET data={data}, input={input}, output={output}, description={description}, visibility={visibility} WHERE exe={exe} AND name={name} AND username={username} AND environment={environment} AND cluster={cluster};"
   public static DELETE_EXECUTABLE = "delete from executable where username={username} and exe={exe} and name={name};"
 
   // Environment
@@ -25,12 +25,11 @@ export class Queries {
   public static DELETE_CLUSTER = "delete from cluster where username={username} and name={name};"
 
   // Route
-  public static GET_ROUTE = "select * from route where username={username} and name={name} and exe={exe};"
+  public static GET_ROUTE = "select * from route where username={username} and cluster={cluster} and environment={environment} and name={name} and exe={exe};"
   public static GET_ROUTES_FOR_USER = "select * from route where username={username} and exe={exe};"
-  public static GET_ROUTES_FOR_ENVIRONMENT = "select * from route where username={username} and exe={exe} and environment={environment};"
   public static SEARCH_ROUTES = "select * from route where name like {searchText}"
-  public static ADD_ROUTE = "insert into route (username, name, exe, environment) values({username},{name},{exe},{environment});"
-  public static DELETE_ROUTE = "delete from route where username={username} and name={name} and exe={exe}"
+  public static ADD_ROUTE = "insert into route (username, cluster, environment, name, exe, route) values({username},{cluster},{environment},{name},{exe},{route});"
+  public static DELETE_ROUTE = "delete from route where username={username} and cluster={cluster} and environment={environment} and name={name} and exe={exe}"
 
   // Authorization Visibility
   public static ADD_AUTHORIZATION_VISIBILITY = "insert into authorization_visibility (resource_from, resource_to, visibility) values ({resource_from}, {resource_to}, {visibility})"

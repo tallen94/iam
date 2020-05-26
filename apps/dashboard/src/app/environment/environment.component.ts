@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Iam } from '../iam/iam';
+import * as Lodash from 'lodash';
 
 @Component({
   selector: 'environment',
@@ -8,7 +9,7 @@ import { Iam } from '../iam/iam';
 })
 export class EnvironmentComponent implements OnInit {
 
-  @Input() data: any;
+  _data: any;
   @Output() newResourceEvent: EventEmitter<any> = new EventEmitter();
   @Output() selectResourceEvent: EventEmitter<any> = new EventEmitter();
   public newResource: string;
@@ -27,18 +28,27 @@ export class EnvironmentComponent implements OnInit {
 
   constructor(private iam: Iam) { }
 
-  ngOnInit() {
-    console.log(this.data)
+  @Input() 
+  set data(value: any) {
+    this._data = value;
     this.prevData = JSON.parse(JSON.stringify(this.data))
-    this.iam.getExecutables(this.iam.getUser().username, "function").subscribe((data: any[]) => {
-      this.functions = data;
+    this.iam.getExecutables(this.iam.getUser().username, "function").subscribe((result: any[]) => {
+      this.functions = Lodash.filter(result, (item) => item.cluster === this.data.cluster && item.environment === this.data.name);
     })
-    this.iam.getExecutables(this.iam.getUser().username, "query").subscribe((data: any[]) => {
-      this.queries = data;
+    this.iam.getExecutables(this.iam.getUser().username, "query").subscribe((result: any[]) => {
+      this.queries = Lodash.filter(result, (item) => item.cluster === this.data.cluster && item.environment === this.data.name);
     })
-    this.iam.getExecutables(this.iam.getUser().username, "graph").subscribe((data: any[]) => {
-      this.graphs = data;
+    this.iam.getExecutables(this.iam.getUser().username, "graph").subscribe((result: any[]) => {
+      this.graphs = Lodash.filter(result, (item) => item.cluster === this.data.cluster && item.environment === this.data.name);
     })
+  }
+
+  get data() {
+    return this._data;
+  }
+
+
+  ngOnInit() {
   }
 
   save() {

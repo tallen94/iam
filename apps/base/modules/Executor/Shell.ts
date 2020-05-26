@@ -17,7 +17,7 @@ export class Shell {
 
   public addProgram(data: any): Promise<any> {
     const programData = JSON.stringify({ command: data.command, args: data.args });
-    return this.getProgram(data.username, data.name)
+    return this.getProgram(data.username, data.cluster, data.environment, data.name)
     .then((result) => {
       if (result == undefined) {
         return this.databaseCommunicator.execute(Queries.ADD_EXECUTABLE, {
@@ -30,6 +30,7 @@ export class Shell {
           output: data.output,
           description: data.description,
           environment: data.environment,
+          cluster: data.cluster,
           visibility: data.visibility
         })
       }
@@ -38,6 +39,7 @@ export class Shell {
         name: data.name,
         exe: data.exe,
         environment: data.environment,
+        cluster: data.cluster,
         data: programData,
         input: data.input,
         output: data.output,
@@ -54,9 +56,14 @@ export class Shell {
     })
   }
 
-  public getProgram(username: string, name: string) {
-    return this.databaseCommunicator.execute(Queries.GET_EXE_BY_TYPE_NAME, { username: username, name: name, exe: "function" })
-    .then((result: any[]) => {
+  public getProgram(username: string, cluster: string, environment: string, name: string) {
+    return this.databaseCommunicator.execute(Queries.GET_EXE, { 
+      username: username, 
+      cluster: cluster, 
+      environment: environment, 
+      name: name, 
+      exe: "function" 
+    }).then((result: any[]) => {
       if (result.length > 0) {
         const item = result[0];
         const data = JSON.parse(item.data);
@@ -70,6 +77,7 @@ export class Shell {
           args: data.args,
           command: data.command,
           environment: item.environment,
+          cluster: item.cluster,
           visibility: item.visibility
         };
         return this.fileSystemCommunicator.getFile("programs", name)
@@ -82,8 +90,8 @@ export class Shell {
     });
   }
 
-  public deleteProgram(username: string, name: string) {
-    return this.databaseCommunicator.execute(Queries.DELETE_EXECUTABLE, {username: username, name: name, exe: "function"})
+  public deleteProgram(username: string, cluster: string, environment: string, name: string) {
+    return this.databaseCommunicator.execute(Queries.DELETE_EXECUTABLE, {username: username, cluster: cluster, environment: environment, name: name, exe: "function"})
     .then((result) => {
       return this.fileSystemCommunicator.deleteFile("programs", name)
     })

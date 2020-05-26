@@ -15,6 +15,7 @@ export class InitData {
       output: "",
       text: "",
       environment: data.environment,
+      cluster: data.cluster,
       visibility: "private"
     }
   }
@@ -32,6 +33,7 @@ export class InitData {
       command: "python",
       text: "import json\n\nargs = raw_input()\ndata = json.loads(args)\nout={}\nprint json.dumps(out)",
       environment: data.environment,
+      cluster: data.cluster,
       visibility: "private"
     }
   }

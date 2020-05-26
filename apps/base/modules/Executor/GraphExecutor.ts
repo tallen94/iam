@@ -9,7 +9,7 @@ export class GraphExecutor {
 
   public addGraph(data: any) {
     const trimmedData = JSON.stringify(this.trimData(data.graph));
-    return this.getGraph(data.username, data.name).then((result) => {
+    return this.getGraph(data.username, data.cluster, data.environment, data.name).then((result) => {
       if (result == undefined) {
         return this.databaseCommunicator.execute(Queries.ADD_EXECUTABLE, {
           username: data.username, 
@@ -21,6 +21,7 @@ export class GraphExecutor {
           output: data.output,
           description: data.description,
           environment: data.environment,
+          cluster: data.cluster,
           visibility: data.visibility
         })
       }
@@ -33,14 +34,20 @@ export class GraphExecutor {
         output: data.output,
         description: data.description,
         environment: data.environment,
+        cluster: data.cluster,
         visibility: data.visibility
       })
     });
   }
 
-  public getGraph(username: string, name: string) {
-    return this.databaseCommunicator.execute(Queries.GET_EXE_BY_TYPE_NAME, {username: username, name: name, exe: 'graph'})
-    .then((result: any[]) => {
+  public getGraph(username: string, cluster: string, environment: string, name: string) {
+    return this.databaseCommunicator.execute(Queries.GET_EXE, {
+      username: username, 
+      cluster: cluster, 
+      environment: environment, 
+      name: name, 
+      exe: 'graph'
+    }).then((result: any[]) => {
       if (result.length > 0) {
         const item = result[0];
         const data = JSON.parse(item.data);
@@ -53,6 +60,7 @@ export class GraphExecutor {
           output: item.output,
           graph: data,
           environment: item.environment,
+          cluster: item.cluster,
           visibility: item.visibility
         }
       }
@@ -60,8 +68,8 @@ export class GraphExecutor {
     });
   }
 
-  public deleteGraph(username: string, name: string) {
-    return this.databaseCommunicator.execute(Queries.DELETE_EXECUTABLE, {username: username, name: name, exe: "graph"})
+  public deleteGraph(username: string, cluster: string, environment: string, name: string) {
+    return this.databaseCommunicator.execute(Queries.DELETE_EXECUTABLE, {username: username, cluster: cluster, environment: environment, name: name, exe: "graph"})
   }
 
   private trimData(data: any) {

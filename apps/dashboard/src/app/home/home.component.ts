@@ -46,7 +46,6 @@ export class HomeComponent implements OnInit {
       this.graphs = data;
     })
     this.iam.getEnvironmentForUser(this.iam.getUser().username).subscribe((data: any[]) => {
-      console.log(data)
       this.environments = data
     })
     this.iam.getClusterForUser(this.iam.getUser().username)
@@ -83,16 +82,17 @@ export class HomeComponent implements OnInit {
   @HostListener('window:keyup', ['$event'])
   keyEvent(event: KeyboardEvent) {
 
-    if (event.keyCode === KEY_CODE.RIGHT_ARROW) {
-      this.forwards();
-    }
+    // if (event.keyCode === KEY_CODE.RIGHT_ARROW) {
+    //   this.forwards();
+    // }
 
-    if (event.keyCode === KEY_CODE.LEFT_ARROW) {
-      this.backwards();
-    }
+    // if (event.keyCode === KEY_CODE.LEFT_ARROW) {
+    //   this.backwards();
+    // }
   }
 
   public select(exe: string, selection: any) {
+    console.log(selection)
     this.data = selection;
     this.data.exe = exe;
 
@@ -200,10 +200,10 @@ export class HomeComponent implements OnInit {
   }
 
   public delete() {
-    this.iam.deleteExecutable(this.data.username, this.data.exe, this.data.name)
-    .subscribe((response) => {
-      this.data = undefined;
-    });
+    // this.iam.deleteExecutable(this.data.username, this.data.exe, this.data.name)
+    // .subscribe((response) => {
+    //   this.data = undefined;
+    // });
   }
 
   public showGroup(group: string) {

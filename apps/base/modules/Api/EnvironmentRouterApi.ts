@@ -32,14 +32,16 @@ export class EnvironmentRouterApi {
     /**
      * Get an executable
      *
-     * path: /executable/:username/:exe/:name
+     * path: /executable/:username/:cluster/:environment/:exe/:name
      * method: GET
      */
     this.serverCommunicator.get(ApiPaths.GET_EXECUTABLE, (req: any, res: any) => {
       const username = req.params.username;
+      const cluster = req.params.cluster;
+      const environment = req.params.environment;
       const exe = req.params.exe;
       const name = req.params.name;
-      this.router.getExecutable(username, name, exe).then((result) => {
+      this.router.getExecutable(username, cluster, environment, name, exe).then((result) => {
         res.status(200).send(result);
       });
     });
@@ -62,14 +64,16 @@ export class EnvironmentRouterApi {
     /**
      * Delete executables
      *
-     * path: /executable/:username/:exe/:name
+     * path: /executable/:username/:cluster/:environment/:exe/:name
      * method: DELETE
      */
     this.serverCommunicator.delete(ApiPaths.DELETE_EXECUTABLE, (req: any, res: any) => {
       const exe = req.params.exe;
       const username = req.params.username;
+      const cluster = req.params.cluster;
+      const environment = req.params.environment;
       const name = req.params.name;
-      this.router.deleteExecutable(username, exe, name)
+      this.router.deleteExecutable(username, cluster, environment, exe, name)
       .then((results) => {
         res.status(200).send(results);
       });
@@ -92,16 +96,18 @@ export class EnvironmentRouterApi {
     /**
      * Execute an executable.
      *
-     * path: /master/:username/:exe/:name/run
+     * path: /master/:username/:cluster/:environment/:exe/:name/run
      * method: POST
      */
     this.serverCommunicator.post(ApiPaths.RUN_EXECUTABLE, (req: any, resp: any) => {
       const username = req.params.username;
+      const cluster = req.params.cluster;
+      const environment = req.params.environment;
       const name = req.params.name;
       const exe = req.params.exe;
       const data = req.body;
       const token = req.headers.token;
-      this.router.runExecutable(exe, username, name, data, token)
+      this.router.runExecutable(exe, username, cluster, environment, name, data, token)
       .then((result: any) => {
         resp.status(200).send(result);
       });

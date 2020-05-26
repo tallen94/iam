@@ -45,14 +45,14 @@ export class Executor {
     }
   }
 
-  public getExecutable(username: string, name: string, exe: string): Promise<any> {
+  public getExecutable(username: string, cluster: string, environment: string, name: string, exe: string): Promise<any> {
     switch (exe) {
       case "function":
-        return this.shell.getProgram(username, name)
+        return this.shell.getProgram(username, cluster, environment, name)
       case "query":
-        return this.database.getQuery(username, name)
+        return this.database.getQuery(username, cluster, environment, name)
       case "graph":
-        return this.graphExecutor.getGraph(username, name)
+        return this.graphExecutor.getGraph(username, cluster, environment, name)
         .then((graph) => {
           return this.hydrateExecutables(graph.graph.nodes)
           .then((nodes) => {
@@ -76,19 +76,19 @@ export class Executor {
     });
   }
 
-  public deleteExecutable(username: string, exe: string, name: string) {
+  public deleteExecutable(username: string, cluster: string, environment: string, exe: string, name: string) {
     switch (exe) {
       case "function":
-        return this.shell.deleteProgram(username, name)
+        return this.shell.deleteProgram(username, cluster, environment, name)
       case "query":
-        return this.database.deleteQuery(username, name)
+        return this.database.deleteQuery(username, cluster, environment, name)
       case "graph":
-        return this.graphExecutor.deleteGraph(username, name)
+        return this.graphExecutor.deleteGraph(username, cluster, environment, name)
     }
   }
 
-  public runExecutable(username: string, name: string, exe: string, data: any, token: string) {
-    return this.getExecutable(username, name, exe)
+  public runExecutable(username: string, cluster: string, environment: string, name: string, exe: string, data: any, token: string) {
+    return this.getExecutable(username, cluster, environment, name, exe)
     .then((executable: any) => {
       return this.executableFactory[exe](executable).run(data)
     })
@@ -122,7 +122,7 @@ export class Executor {
 
   private hydrateExecutables(nodes: any[]) {
     return Promise.all(Lodash.map(nodes, (node) => {
-      return this.getExecutable(node.username, node.name, node.exe)
+      return this.getExecutable(node.username, node.cluster, node.environment, node.name, node.exe)
       .then((exe) => {
         return Object.assign(node, exe);
       });

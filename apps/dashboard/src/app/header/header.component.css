@@ -29,10 +29,17 @@ label {
   color: #28a745;
   font-weight: 600;
   font-size: 1.25em;
+  margin-right: 16px;
 }
 
 .environment {
   color: #dc3545;
+  font-weight: 600;
+  font-size: 1.25em;
+}
+
+.cluster {
+  color: #28a745;
   font-weight: 600;
   font-size: 1.25em;
 }

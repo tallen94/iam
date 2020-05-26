@@ -70,20 +70,20 @@ export class ClientManager {
     return this.routerClient.addExecutable(data)
   }
 
-  public getExecutable(username: string, exe: string, name: string) {
-    return this.routerClient.getExecutable(username, exe, name);
+  public getExecutable(username: string, cluster: string, environment: string, exe: string, name: string) {
+    return this.routerClient.getExecutable(username, cluster, environment, exe, name);
   }
 
   public getExecutables(username: string, exe: string) {
     return this.routerClient.getExecutables(username, exe);
   }
 
-  public deleteExecutable(username: string, exe: string, name: string) {
-    return this.routerClient.deleteExecutable(username, exe, name)
+  public deleteExecutable(username: string, cluster: string, environment: string, exe: string, name: string) {
+    return this.routerClient.deleteExecutable(username, cluster, environment, exe, name)
   }
 
-  public runExecutable(username: string, exe: string, name: string, data: any, token: string) {
-    return this.routerClient.runExecutable(username, exe, name, data, token);
+  public runExecutable(username: string, cluster: string, environment: string, exe: string, name: string, data: any, token: string) {
+    return this.routerClient.runExecutable(username, cluster, environment, exe, name, data, token);
   }
 
   public searchExecutables(searchText: string) {

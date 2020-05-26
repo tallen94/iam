@@ -14,7 +14,7 @@ export class Database {
   }
 
   public addQuery(data: any): Promise<any> {
-    return this.getQuery(data.username, data.name)
+    return this.getQuery(data.username, data.cluster, data.environment, data.name)
     .then((result) => {
       if (result == undefined) {
         return this.databaseCommunicator.execute(Queries.ADD_EXECUTABLE, {
@@ -27,6 +27,7 @@ export class Database {
           output: data.output,
           description: data.description,
           environment: data.environment,
+          cluster: data.cluster,
           visibility: data.visibility
         })
       }
@@ -39,6 +40,7 @@ export class Database {
         output: data.output,
         description: data.description,
         environment: data.environment,
+        cluster: data.cluster,
         visibility: data.visibility
       })
     }).then(() => {
@@ -51,9 +53,14 @@ export class Database {
     });
   }
 
-  public getQuery(username: string, name: string) {
-    return this.databaseCommunicator.execute(Queries.GET_EXE_BY_TYPE_NAME, {name: name, username: username, exe: 'query'})
-    .then((result: any) => {
+  public getQuery(username: string, cluster: string, environment: string, name: string) {
+    return this.databaseCommunicator.execute(Queries.GET_EXE, {
+      username: username, 
+      cluster: cluster, 
+      environment: environment, 
+      name: name, 
+      exe: 'query'
+    }).then((result: any) => {
       if (result.length > 0) {
         const item = result[0];
         const ret = {
@@ -64,6 +71,7 @@ export class Database {
           input: item.input,
           output: item.output,
           environment: item.environment,
+          cluster: item.cluster,
           visibility: item.visibility
         };
         return this.fileSystemCommunicator.getFile(username + "/queries", name)
@@ -76,8 +84,8 @@ export class Database {
     });
   }
 
-  public deleteQuery(username: string, name: string) {
-    return this.databaseCommunicator.execute(Queries.DELETE_EXECUTABLE, {username: username, name: name, exe: "query"})
+  public deleteQuery(username: string, cluster: string, environment: string, name: string) {
+    return this.databaseCommunicator.execute(Queries.DELETE_EXECUTABLE, {username: username, cluster: cluster, environment: environment, name: name, exe: "query"})
     .then((result) => {
       return this.fileSystemCommunicator.deleteFile(username + "/queries", name)
     })

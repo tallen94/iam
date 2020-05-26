@@ -39,26 +39,26 @@ export class PoolManager {
   }
 
   private initPool(pool: any) {
-    pool.data = JSON.parse(pool.data)
-    return this.shell.getProgram(pool.data.username, pool.data.name)
-    .then((result: any) => {
-      return this.fileSystem.put("programs", pool.data.name, result.text)
-      .then((err: any) => {
-        return result;
-      })
-    }).then((program: any) => {
-      const key = program.username + "." + program.name + "." + program.exe
-      this.pools[key] = []
+    // pool.data = JSON.parse(pool.data)
+    // return this.shell.getProgram(pool.data.username, pool.data.name)
+    // .then((result: any) => {
+    //   return this.fileSystem.put("programs", pool.data.name, result.text)
+    //   .then((err: any) => {
+    //     return result;
+    //   })
+    // }).then((program: any) => {
+    //   const key = program.username + "." + program.name + "." + program.exe
+    //   this.pools[key] = []
 
-      for (let i = 0; i < pool.data.poolSize; i++) {
-        const droplet = new Droplet(
-          this.shell.getShellCommunicator(), 
-          program,
-          this.fileSystem) 
-        droplet.activate({})
-        this.pools[key].push(droplet)
-      }
-    })
+    //   for (let i = 0; i < pool.data.poolSize; i++) {
+    //     const droplet = new Droplet(
+    //       this.shell.getShellCommunicator(), 
+    //       program,
+    //       this.fileSystem) 
+    //     droplet.activate({})
+    //     this.pools[key].push(droplet)
+    //   }
+    // })
   }
 
   public hasPool(username: string, name: string, exe: string) {

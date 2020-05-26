@@ -143,20 +143,20 @@ export class Iam {
     return this.client.post(ApiPaths.ADD_EXECUTABLE, data, {}, {sessiontoken: this.token})
   }
 
-  public getExecutable(username: string, exe: string, name: string) {
-    return this.client.get(ApiPaths.GET_EXECUTABLE, {username: username, name: name, exe: exe}, {}, {sessiontoken: this.token});
+  public getExecutable(username: string, cluster: string, environment: string, exe: string, name: string) {
+    return this.client.get(ApiPaths.GET_EXECUTABLE, {username: username, cluster: cluster, environment: environment, name: name, exe: exe}, {}, {sessiontoken: this.token});
   }
 
   public getExecutables(username: string, exe: string) {
     return this.client.get(ApiPaths.GET_EXECUTABLES, {username: username, exe: exe}, {}, {sessiontoken: this.token});
   }
 
-  public deleteExecutable(username: string, exe: string, name: string) {
-    return this.client.delete(ApiPaths.DELETE_EXECUTABLE, {}, {username: username, exe: exe, name: name}, {sessiontoken: this.token})
+  public deleteExecutable(username: string, cluster: string, environment: string, exe: string, name: string) {
+    return this.client.delete(ApiPaths.DELETE_EXECUTABLE, {}, {username: username, cluster: cluster, environment: environment, exe: exe, name: name}, {sessiontoken: this.token})
   }
 
-  public runExecutable(username: string, exe: string, name: string, data: any) {
-    return this.client.post(ApiPaths.RUN_EXECUTABLE, data, {username: username, exe: exe, name: name}, {sessiontoken: this.token});
+  public runExecutable(username: string, cluster: string, environment: string, exe: string, name: string, data: any) {
+    return this.client.post(ApiPaths.RUN_EXECUTABLE, data, {username: username, cluster: cluster, environment: environment, exe: exe, name: name}, {sessiontoken: this.token});
   }
 
   public searchExecutables(searchText: string) {

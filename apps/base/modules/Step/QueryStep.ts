@@ -6,6 +6,8 @@ export class QueryStep implements Step {
 
   constructor(
     private username: string,
+    private cluster: string,
+    private environment: string,
     private name: string,
     private client: Client,
     private foreach?: boolean) { }
@@ -19,7 +21,7 @@ export class QueryStep implements Step {
       for (let index = 0; index < data.length; index++) {
         if (threads.length < numThreads) {
           threads.push(Promise.resolve().then(() => {
-            return this.client.runExecutable(this.username, "query", this.name, data[index], token)
+            return this.client.runExecutable(this.username, this.cluster, this.environment, "query", this.name, data[index], token)
             .then((result: any) => {
               results.push(result.result);
             })
@@ -27,7 +29,7 @@ export class QueryStep implements Step {
         } else {
           threads[index % numThreads] = threads[index % numThreads]
           .then(() => {
-            return this.client.runExecutable(this.username, "query", this.name, data[index], token)
+            return this.client.runExecutable(this.username, this.cluster, this.environment, "query", this.name, data[index], token)
             .then((result: any) => {
               results.push(result.result);
             })
@@ -38,7 +40,7 @@ export class QueryStep implements Step {
         return results;
       })
     }
-    return this.client.runExecutable(this.username, "query", this.name, data, token)
+    return this.client.runExecutable(this.username, this.cluster, this.environment, "query", this.name, data, token)
     .then((result: any) => {
       return result.result;
     });

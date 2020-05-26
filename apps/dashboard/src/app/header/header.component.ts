@@ -38,11 +38,11 @@ export class HeaderComponent implements OnInit {
   }
 
   public clickSearchResult(result) {
-    this.iam.getExecutable(result.username, result.exe, result.name)
-    .subscribe((data) => {
-      this.searchResults = []
-      this.emitUpdateData.emit(data);
-    })
+    // this.iam.getExecutable(result.username, result.exe, result.name)
+    // .subscribe((data) => {
+    //   this.searchResults = []
+    //   this.emitUpdateData.emit(data);
+    // })
   }
   
   public exeOnChange(value) {

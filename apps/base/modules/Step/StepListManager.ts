@@ -106,11 +106,11 @@ export class StepListManager {
   }
 
   public runStepList(username: string, name: string, exe: string, data: any) {
-    return this.executor.getExecutable(username, name, exe)
-    .then((stepList) => {
-      const step = this.stepJsonToStep(stepList);
-      return step.execute(data, "");
-    });
+    // return this.executor.getExecutable(username, name, exe)
+    // .then((stepList) => {
+    //   const step = this.stepJsonToStep(stepList);
+    //   return step.execute(data, "");
+    // });
   }
 
   public spawn(name: string): Duplex {
@@ -120,7 +120,7 @@ export class StepListManager {
   }
 
   public stepJsonToStep(stepJson, client?: Client) {
-    return new ProgramStep(stepJson.username, stepJson.name, client, stepJson.exe, stepJson.foreach);
+    return new ProgramStep(stepJson.username, stepJson.cluster, stepJson.environment, stepJson.name, client, stepJson.exe, stepJson.foreach);
   }
 
   private trimStepJson(data: any) {

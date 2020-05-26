@@ -6,6 +6,7 @@ import { Queries } from "../Constants/Queries";
 import { ShellCommunicator } from "../Communicator/ShellCommunicator";
 import { Functions } from "../Constants/Functions";
 import uuid from "uuid";
+import { Templates } from "../Constants/Templates";
 
 export class EnvironmentManager {
 
@@ -39,11 +40,11 @@ export class EnvironmentManager {
         state: data.state
       })
     }).then(() => {
-      let promise;
+      let kubernetes;
       if (data.data.type == "executor") {
-        promise = this.kubernetesTemplate(data, data.data)
+        kubernetes = this.kubernetesTemplate(data, data.data)
       } else {
-        promise = Promise.resolve(data.kubernetes)
+        kubernetes = data.kubernetes
       }
 
       return Promise.all([
@@ -51,11 +52,9 @@ export class EnvironmentManager {
           name: this.environmentFullName(data.username, data.cluster, data.name),
           file: data.image
         }),
-        promise.then((kubernetes) => {
-          return this.fileSystemCommunicator.putFile("kubernetes", {
-            name: this.environmentFullName(data.username, data.cluster, data.name),
-            file: kubernetes
-          })
+        this.fileSystemCommunicator.putFile("kubernetes", {
+          name: this.environmentFullName(data.username, data.cluster, data.name),
+          file: kubernetes
         }) 
       ])
     })
@@ -229,10 +228,7 @@ export class EnvironmentManager {
   }
 
   private kubernetesTemplate(data: any, otherData: any) {
-    return this.fileSystemCommunicator.getFile("templates", "executor.yaml")
-    .then((file: string) => {
-      return this.replace(this.replace(file, data), otherData)
-    })
+    return this.replace(this.replace(Templates.EXECUTOR, data), otherData)
   }
 
   private replace(s: string, data: any): string {

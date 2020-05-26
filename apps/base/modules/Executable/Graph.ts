@@ -95,10 +95,10 @@ export class Graph implements Executable {
 
   private getSteps(nodes: any[]) {
     return Promise.all(Lodash.map(nodes, (node) => {
-      const host = "iam-router.default"
+      const host = "router.default"
       const clientCommunicator: ClientCommunicator = new ClientCommunicator(host, 80)
       const client = new Client(clientCommunicator);
-      return new ProgramStep(node.username, node.name, client, node.exe, node.foreach);
+      return new ProgramStep(node.username, node.cluster, node.environment, node.name, client, node.exe, node.foreach);
     }))
   }
 }

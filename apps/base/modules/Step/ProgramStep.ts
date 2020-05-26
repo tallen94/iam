@@ -6,6 +6,8 @@ export class ProgramStep implements Step {
 
   constructor(
     private username: string,
+    private cluster: string,
+    private environment: string,
     private name: string,
     private client: Client,
     private exe: string,
@@ -20,7 +22,7 @@ export class ProgramStep implements Step {
       for (let index = 0; index < data.length; index++) {
         if (threads.length < numThreads) {
           threads.push(Promise.resolve().then(() => {
-            return this.client.runExecutable(this.username, this.exe, this.name, data[index], token)
+            return this.client.runExecutable(this.username, this.cluster, this.environment, this.exe, this.name, data[index], token)
             .then((result: any) => {
               results.push(result.result);
             })
@@ -28,7 +30,7 @@ export class ProgramStep implements Step {
         } else {
           threads[index % numThreads] = threads[index % numThreads]
           .then(() => {
-            return this.client.runExecutable(this.username, this.exe, this.name, data[index], token)
+            return this.client.runExecutable(this.username, this.cluster, this.environment, this.exe, this.name, data[index], token)
             .then((result: any) => {
               results.push(result.result);
             })
@@ -39,7 +41,7 @@ export class ProgramStep implements Step {
         return results;
       })
     }
-    return this.client.runExecutable(this.username, this.exe, this.name, data, token)
+    return this.client.runExecutable(this.username, this.cluster, this.environment, this.exe, this.name, data, token)
     .then((result: any) => {
       return result.result;
     });
