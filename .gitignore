@@ -22,7 +22,7 @@ apps/dashboard/dist
 
 notes
 designs
-database
+db
 local
 
 kubernetes/secrets

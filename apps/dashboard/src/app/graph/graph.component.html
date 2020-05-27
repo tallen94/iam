@@ -1,16 +1,15 @@
 <div class="graph">
-    <div *ngIf="_nodes.length > 0">
-
-        <ngx-graph
-          layout="dagre"
-          [layoutSettings]="layoutSettings"
-          [draggingEnabled]="false"
-          [links]="_links"
-          [nodes]="_nodes"
-          [zoomToFit$]="zoomToFit$"
-          [center$]="center$"
-          [zoomSpeed]=".05"
-        >
+    <div class="graph" *ngIf="_nodes.length > 0">
+      <ngx-graph
+        layout="dagre"
+        [layoutSettings]="layoutSettings"
+        [draggingEnabled]="false"
+        [links]="_links"
+        [nodes]="_nodes"
+        [zoomToFit$]="zoomToFit$"
+        [center$]="center$"
+        [zoomSpeed]=".05"
+      >
 
         <ng-template #defsTemplate>
           <svg:marker id="arrow" viewBox="0 -5 10 10" refX="8" refY="0" markerWidth="4" markerHeight="4" orient="auto">
@@ -61,9 +60,9 @@
 <div *ngIf="newNodeType">
   <new-resource-modal 
     [type]="newNodeType"
-    [clusterOptions]="[]"
+    [clusterOptions]="clusterOptions"
     [environmentOptions]="environmentOptions"
-    [data]="undefined"
+    [data]="{environment: environment, cluster: cluster}"
     (newResourceMoalDone)="receiveNewResourceModalDone($event)"
     (newResourceModalCancel)="receiveNewResourceModalCancel()"></new-resource-modal>
 </div>

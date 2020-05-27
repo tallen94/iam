@@ -39,14 +39,13 @@ export class ExecutableFactory {
   }
 
   graph(data: any): Graph {
-    const graphData = data.data
     return new Graph(
       data.username,
       data.name,
       data.visibility,
-      graphData.nodes,
-      graphData.edges,
-      graphData.foreach
+      data.graph.nodes,
+      data.graph.edges,
+      data.graph.foreach
     )
   }
 }

@@ -43,7 +43,7 @@ applyConfig() {
 
    kubectl apply -f kubernetes/secrets/dockerconfig.yaml
    kubectl apply -f kubernetes/secrets/clustertoken.yaml
-   kubectl apply -f kubernetes/serviceaccounts/admin.yaml
+   kubectl apply -f kubernetes/serviceaccounts/builder.yaml
    echo [...Init...]
    ./kubernetes/update.sh $PROVIDER
    echo IAM is ready to use.
@@ -120,5 +120,11 @@ EOF
 
 printf "Provider (minikube|eks):"
 read PROVIDER
+
+if [ $PROVIDER = "minikube" ]
+then
+mkdir kubernetes/apps/minikube
+fi
+
 
 applyConfig

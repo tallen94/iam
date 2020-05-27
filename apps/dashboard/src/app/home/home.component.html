@@ -70,6 +70,7 @@
       <app-editor 
         *ngIf="data" 
         [data]="data" 
+        [clusterOptions]="clusters"
         [environmentOptions]="environments"
         (emitCreateNewExecutable)="receiveNewResourceModalDone($event)"
         (emitSelectExecutable)="receieveSelectExecutable($event)"></app-editor>

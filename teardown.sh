@@ -23,29 +23,22 @@ echo Deleting kube database setup...
 kubectl delete pod mysqldatabase
 kubectl delete service mysqldatabase
 
-kubectl delete secret regcred
-kubectl delete secret dbconfig
-
 ## NAMESPACED APPS
 echo Deleting kube filesystem setup..
-kubectl delete deployment filesystem --namespace=$NAMESPACE
-kubectl delete service filesystem --namespace=$NAMESPACE
-
-echo Deleting kube base..
-kubectl delete deployment base --namespace=$NAMESPACE
-kubectl delete service base --namespace=$NAMESPACE
+kubectl delete deployment filesystem
+kubectl delete service filesystem
 
 echo Deleting kube builder
-kubectl delete deployment builder --namespace=$NAMESPACE
-kubectl delete service builder --namespace=$NAMESPACE
+kubectl delete deployment builder
+kubectl delete service builder
 
 echo Deleting kube secrets...
-kubectl delete secret regcred --namespace=$NAMESPACE
-kubectl delete secret dbconfig --namespace=$NAMESPACE
-kubectl delete secret dockerconfig --namespace=$NAMESPACE
-kubectl delete secret clustertoken --namespace=$NAMESPACE
+kubectl delete secret regcred
+kubectl delete secret dbconfig
+kubectl delete secret dockerconfig
+kubectl delete secret clustertoken
 
 echo Deleting kube service accounts
-kubectl delete serviceaccount admin-service-account --namespace=$NAMESPACE
-kubectl delete clusterrole admin-cluster-role --namespace=$NAMESPACE
-kubectl delete clusterrolebinding admin-cluster-role-binding --namespace=$NAMESPACE
+kubectl delete serviceaccount builder-service-account
+kubectl delete clusterrole builder-cluster-role
+kubectl delete clusterrolebinding builder-cluster-role-binding

@@ -2,6 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Subject } from 'rxjs';
 
 import * as Lodash from "lodash";
+import { ThrowStmt } from '@angular/compiler';
 
 @Component({
   selector: 'graph',
@@ -9,11 +10,15 @@ import * as Lodash from "lodash";
   styleUrls: ['./graph.component.css']
 })
 export class GraphComponent implements OnInit {
+
   public _nodes: any;
   public _links: any;
   public newNodeType: string;
+  @Input() environment: string;
+  @Input() cluster: string;
   @Input() editing: any[];
   @Input() edgesEditing: any[];
+  @Input() clusterOptions: string[];
   @Input() environmentOptions: string[]
   @Output() emitEditing: EventEmitter<any> = new EventEmitter();
   @Output() emitNewNode: EventEmitter<any> = new EventEmitter();
@@ -34,7 +39,6 @@ export class GraphComponent implements OnInit {
   @Input()
   set nodes(data: any) {
     this._nodes = this.getNodes(data)
-    console.log(this._nodes)
   }
 
   get nodes() {
@@ -96,7 +100,7 @@ export class GraphComponent implements OnInit {
 
   getNodes(nodes: any[]) {
     return Lodash.map(nodes, (node) => {
-      return { id: "" + node.id, label: node.name, exe: node.exe }
+      return { id: node.id, label: node.name, exe: node.exe }
     })
   }
 
@@ -125,8 +129,8 @@ export class GraphComponent implements OnInit {
   }
 
   receiveNewResourceModalDone(data: any) {
-    const newNodeId = this._nodes.length == 0 ? 1 : (parseInt(this.maxId(this._nodes).id) + 1);
-    data.id = "" + newNodeId
+    const newNodeId = "" + (this._nodes.length == 0 ? 1 : (parseInt(this.maxId(this._nodes).id) + 1));
+    data.id = newNodeId
     this.emitNewNode.emit(data);
     
     if (this.editing.length == 1) {

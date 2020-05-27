@@ -18,7 +18,7 @@ spec:
         type: ng-1
       containers:
       - name: user
-        image: icanplayguitar94/iam:base-minikube
+        image: icanplayguitar94/iam:base-f5dab041eaa6d0f25840a6f10297671306c75170
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
