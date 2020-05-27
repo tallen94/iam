@@ -11,6 +11,7 @@ import { InitData } from '../iam/init-data';
 })
 export class EditorComponent implements OnInit {
   _data: any;
+  @Input() clusterOptions: string[]
   @Input() environmentOptions: string[]
   @Output() emitCreateNewExecutable: EventEmitter<any> = new EventEmitter();
   @Output() emitSelectExecutable: EventEmitter<any> = new EventEmitter();
@@ -59,10 +60,11 @@ export class EditorComponent implements OnInit {
 
   public receiveEmitNewNode(data: any) {
     this.iam.getExecutable(this.iam.getUser().username, data.cluster, data.environment, data.exe, data.name)
-    .subscribe((result) => {
+    .subscribe((result: any) => {
       if (result == undefined) {
         result = this.initData(data);
       }
+      result.id = data.id
       this.data.graph.nodes.push(result)
       this.data.graph.nodes = [...this.data.graph.nodes]
     })

@@ -79,7 +79,9 @@ export class GraphExecutor {
         name: node.name,
         exe: node.exe,
         username: node.username,
-        foreach: node.foreach
+        foreach: node.foreach,
+        cluster: node.cluster,
+        environment: node.environment
       };
     });
 

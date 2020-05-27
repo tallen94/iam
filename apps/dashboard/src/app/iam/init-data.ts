@@ -48,6 +48,7 @@ export class InitData {
       input: '',
       output: '',
       environment: data.environment,
+      cluster: data.cluster,
       graph: {
         nodes: [],
         edges: []

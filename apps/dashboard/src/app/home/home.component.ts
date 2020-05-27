@@ -92,7 +92,6 @@ export class HomeComponent implements OnInit {
   }
 
   public select(exe: string, selection: any) {
-    console.log(selection)
     this.data = selection;
     this.data.exe = exe;
 
