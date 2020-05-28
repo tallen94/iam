@@ -65,16 +65,29 @@ export class InitData {
       name: data.name,
       cluster: data.cluster,
       description: "This is an environment.",
-      image: "FROM icanplayguitar94/iam:base-latest",
       kubernetes: "",
       state: "STOPPED",
       data: {
         replicas: 1,
-        imageRepo: "icanplayguitar94/iam",
         cpu: "500m",
         memory: "500Mi",
         type: "executor"
       }
+    }
+  }
+
+  image(id: string, data: any) {
+    return {
+      id: id,
+      username: this.iam.getUser().username,
+      exe: "image",
+      name: data.name,
+      description: "This is an image. These are used to create sets of dependencies.",
+      input: "",
+      output: "",
+      imageRepo: "icanplayguitar94/iam",
+      imageTag: "",
+      image: "FROM icanplayguitar94/iam:base-latest",
     }
   }
 

@@ -30,10 +30,6 @@
     <div>
       <label class="nested-title">State</label>
       <p class="environment-state">{{data.state}}</p>
-      <div>
-        <button class="btn-sm btn-primary" (click)="startEnvironment()">start</button>
-        <button class="btn-sm btn-danger" (click)="stopEnvironment()">stop</button>
-      </div>
     </div>
 
     <!-- <div class="inline-input right-space">
@@ -60,20 +56,15 @@
     </div> -->
 
     <div>
-      <label class="nested-title" *ngIf="editing || (!editing && !isEmpty(data.image))">Image</label>
-      <div>
-        <button class="btn-sm btn-primary" (click)="buildImage()">build</button>
-        <span *ngIf="buildingImage">Building...</span>
-      </div>
-      <div *ngIf="editing" class="text-editor" ace-editor
-        [(text)]="data.image"
-        [mode]="'mysql'" 
-        [theme]="'eclipse'"
-        [options]="options"
-        [readOnly]="false"></div>
-      <div class="markdown" *ngIf="!editing">
-        <ngx-md [data]="getCodeMarkdown('docker', data.image)" ></ngx-md>
-      </div>
+      <label *ngIf="editing || (!editing && !isEmpty(data.data.imageTag))">ImageTag</label>
+      <input 
+        class="form-control"
+        size="{{inputSize('imageTag')}}"
+        *ngIf="editing" 
+        type="text" 
+        [(ngModel)]="data.data.imageTag"
+        placeholder="imageTag">
+      <p *ngIf="!editing">{{data.data.imageTag}}</p>
     </div>
 
     <div *ngIf="data.data.type == 'executor'">
@@ -138,9 +129,11 @@
     <button class="btn-sm btn-secondary"  *ngIf="editing" (click)="save()">save</button>
     <button class="btn-sm btn-danger"  *ngIf="editing" (click)="cancelEdit()">cancel</button>
     <button class="btn-sm btn-secondary" *ngIf="!editing" (click)="triggerEdit()">edit</button>
+    <button class="btn-sm btn-success" (click)="startEnvironment()">start</button>
+    <button class="btn-sm btn-danger" (click)="stopEnvironment()">stop</button>
   </div>
   
-  <div *ngIf="data.data.type === 'executor'">
+  <!-- <div *ngIf="data.data.type === 'executor'">
     <div class="resource-list">
       <h3>Functions</h3>
       <p>Functions are pieces of code to run.</p>
@@ -191,7 +184,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> -->
 </div>
 
 <div *ngIf="newResource">

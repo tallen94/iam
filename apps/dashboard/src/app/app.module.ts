@@ -1,6 +1,6 @@
 import { BrowserModule } from "@angular/platform-browser";
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { NgModule } from "@angular/core";
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from "@angular/core";
 import { HttpClientModule } from "@angular/common/http"; 
 import { RouterModule, Routes } from "@angular/router";
 import { FormsModule } from '@angular/forms';
@@ -9,7 +9,8 @@ import { NgxMdModule } from 'ngx-md';
 import { NgxGraphModule } from '@swimlane/ngx-graph';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { ɵROUTER_PROVIDERS } from '@angular/router';
-import {LocationStrategy, HashLocationStrategy} from '@angular/common';
+import {LocationStrategy, HashLocationStrategy,} from '@angular/common';
+import { NgxSpinnerModule } from "ngx-spinner";  
 
 
 import { AppRoutingModule } from "./app-routing.module";
@@ -35,6 +36,7 @@ import { ClusterComponent } from './cluster/cluster.component';
 import { TrustListComponent } from './trust-list/trust-list.component';
 import { EnvironmentComponent } from './environment/environment.component';
 import { NewResourceModalComponent } from './new-resource-modal/new-resource-modal.component';
+import { ImageComponent } from './image/image.component';
 
 const appRoutes: Routes = [
   { path: "login", component: LoginComponent },
@@ -68,7 +70,8 @@ const appRoutes: Routes = [
     ClusterComponent,
     TrustListComponent,
     EnvironmentComponent,
-    NewResourceModalComponent
+    NewResourceModalComponent,
+    ImageComponent
   ],
   imports: [
     RouterModule.forRoot(appRoutes,{ enableTracing: true }),
@@ -80,15 +83,17 @@ const appRoutes: Routes = [
     NgxGraphModule,
     NgxChartsModule,
     FormsModule,
-    AppRoutingModule
+    AppRoutingModule,
+    NgxSpinnerModule
   ],
   providers: [
     Iam,
     [{ provide: "HTTP_INTERCEPTORS", useClass: TimeoutInterceptor, multi: true }],
     [{ provide: "DEFAULT_TIMEOUT", useValue: 9999999 }],
     [{provide: LocationStrategy, useClass: HashLocationStrategy}],
-    ɵROUTER_PROVIDERS,
+    ɵROUTER_PROVIDERS
   ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

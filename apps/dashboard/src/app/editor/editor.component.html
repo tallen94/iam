@@ -1,7 +1,7 @@
 <div class="full">
   <div class="lower">
     <nested-input 
-      *ngIf="data && (data.exe === 'function' || data.exe === 'query' || data.exe === 'graph')" 
+      *ngIf="data && (data.exe === 'function' || data.exe === 'query' || data.exe === 'graph' || data.exe === 'image')" 
       [ngClass]="{'left': data.exe == 'graph' || running != undefined, 'lower-full': data.exe != 'graph' || running == undefined}" 
       [(data)]="data" 
       [editing]="editing"
@@ -44,5 +44,9 @@
       [(data)]="data"
       (newResourceEvent)="receiveNewResourceEvent($event)"
       (selectResourceEvent)="receiveSelectExecutable($event)"></environment>
+    <image
+      class="lower-full"
+      *ngIf="data && data.exe == 'image'"
+      [(data)]="data"></image>
   </div>
 </div>
