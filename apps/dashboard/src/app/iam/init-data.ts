@@ -83,8 +83,6 @@ export class InitData {
       exe: "image",
       name: data.name,
       description: "This is an image. These are used to create sets of dependencies.",
-      input: "",
-      output: "",
       imageRepo: "icanplayguitar94/iam",
       imageTag: "",
       image: "FROM icanplayguitar94/iam:base-latest",

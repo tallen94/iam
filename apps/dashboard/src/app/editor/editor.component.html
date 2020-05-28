@@ -1,7 +1,7 @@
 <div class="full">
   <div class="lower">
     <nested-input 
-      *ngIf="data && (data.exe === 'function' || data.exe === 'query' || data.exe === 'graph' || data.exe === 'image')" 
+      *ngIf="data && (data.exe === 'function' || data.exe === 'query' || data.exe === 'graph')" 
       [ngClass]="{'left': data.exe == 'graph' || running != undefined, 'lower-full': data.exe != 'graph' || running == undefined}" 
       [(data)]="data" 
       [editing]="editing"
