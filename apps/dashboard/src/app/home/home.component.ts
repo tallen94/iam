@@ -18,6 +18,7 @@ export class HomeComponent implements OnInit {
 
   public clusters: any[];
   public environments: any[];
+  public images: any[];
   public functions: any[];
   public queries: any[];
   public graphs: any[];
@@ -44,6 +45,9 @@ export class HomeComponent implements OnInit {
     })
     this.iam.getExecutables(this.iam.getUser().username, "graph").subscribe((data: any[]) => {
       this.graphs = data;
+    })
+    this.iam.getImageForUser(this.iam.getUser().username).subscribe((data: any[]) => {
+      this.images = data;
     })
     this.iam.getEnvironmentForUser(this.iam.getUser().username).subscribe((data: any[]) => {
       this.environments = data
@@ -168,6 +172,8 @@ export class HomeComponent implements OnInit {
       case "graph":
         this.graphs.push(this.data)
         break;
+      case "image":
+        this.images.push(this.data)
     }
 
     this.backHistory.push(this.data)

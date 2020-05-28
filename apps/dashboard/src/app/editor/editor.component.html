@@ -44,5 +44,9 @@
       [(data)]="data"
       (newResourceEvent)="receiveNewResourceEvent($event)"
       (selectResourceEvent)="receiveSelectExecutable($event)"></environment>
+    <image
+      class="lower-full"
+      *ngIf="data && data.exe == 'image'"
+      [(data)]="data"></image>
   </div>
 </div>

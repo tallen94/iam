@@ -26,6 +26,17 @@
       </ul>
     </div>
 
+    <div *ngIf="images && clusters && clusters.length > 0">
+      <div class="sidebar-row-title" (click)="showGroup('images')">
+        Images ({{images.length}})
+        <button class="btn add-button" (click)="newResource('image')"><i class="fa fa-plus"></i></button>
+      </div>
+      <p *ngIf="images.length == 0">Images are dependency configurations. Click the <b>+</b> to add a new image.</p>
+      <ul *ngIf="show === 'images' || showAll" class="sidebar-row-subrows">
+        <li class="sidebar-row-subrow" *ngFor="let item of filter(images)" (click)="select('image', item)">{{item.name}}</li>
+      </ul>
+    </div>
+
     <div *ngIf="functions && environments && environments.length > 0">
       <div class="sidebar-row-title" (click)="showGroup('functions')">
         Functions ({{functions.length}}) 
