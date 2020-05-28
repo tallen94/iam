@@ -47,21 +47,12 @@ export class EnvironmentApi {
       })
     })
 
-    this.serverCommunicator.post(ApiPaths.BUILD_IMAGE, (req: any, res: any) => {
-      this.environmentManager.buildImage(req.body.username, req.body.name, req.body.cluster)
-      .then((result) => {
-        res.status(200).send(result)
-      })
-    })
-
-
     this.serverCommunicator.post(ApiPaths.START_ENVIRONMENT, (req: any, res: any) => {
       this.environmentManager.startEnvironment(req.body.username, req.body.name, req.body.cluster)
       .then((result) => {
         res.status(200).send(result)
       })
     })
-
 
     this.serverCommunicator.post(ApiPaths.STOP_ENVIRONMENT, (req: any, res: any) => {
       this.environmentManager.stopEnvironment(req.body.username, req.body.name, req.body.cluster)

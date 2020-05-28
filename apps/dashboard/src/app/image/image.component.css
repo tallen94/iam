@@ -1,0 +1,120 @@
+.card {
+  padding: 16px;
+  position: relative;
+}
+
+.username {
+  color: #007bff;
+  font-weight: 600;
+  font-size: 1.25em;
+}
+
+.exe {
+  color: #28a745;
+  font-weight: 600;
+  font-size: 1.25em;
+  margin-right: 16px;
+}
+
+.cluster {
+  color: #dc3545;
+  font-weight: 600;
+  font-size: 1.25em;
+}
+
+.name {
+  font-weight: 300;
+  font-size: 1.5em;
+}
+
+.environment-state {
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+.inline-input {
+  display: inline-block;
+}
+
+.right-space {
+  margin-right: 8px;
+}
+
+.action-buttons {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+}
+
+.nested-title {
+  color: #007bff;
+  margin-top: 8px;
+  font-size: 1.2em;
+}
+
+.text-editor {
+  width: 100%;
+  border-radius: 4px;
+  margin-top: 8px;
+}
+
+label {
+  color: rgb(160, 160, 160);
+  font-size: 15px;
+  text-transform: capitalize;
+}
+
+.inline-input label {
+  font-weight: bold;
+  color: rgb(160, 160, 160);
+  font-size: 15px;
+}
+
+.resource-list {
+  width: 850px;
+  position: relative;
+  margin-top: 54px;
+}
+
+.add-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.add-button button {
+  background-color: white;
+  color: #28a745;
+}
+
+.resource .col1 {
+  width: 150px;
+}
+
+.resource .col2 {
+  width: 80px;
+  margin-left: 16px;
+}
+
+.resource .col5 {
+  margin-left: 64px;
+}
+
+.building {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0,0,0,.80);
+  color: white;
+}
+
+.building-spinner {
+  height: 200px;
+  width: 200px;
+  margin-top: 64px;
+  margin-right: auto;
+  margin-left: auto;
+  background-color: transparent;
+}

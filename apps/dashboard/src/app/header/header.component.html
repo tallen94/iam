@@ -1,4 +1,4 @@
-<div class="inline-input exe">
+<div *ngIf="data.exe" class="inline-input exe">
   <div *ngIf="editing">
     <select class="form-control" [(ngModel)]="data.exe">
       <option>function</option>
@@ -22,7 +22,7 @@
   <p *ngIf="!editing" >{{data.username}}</p>
 </div>
 
-<div class="inline-input cluster">
+<div *ngIf="data.cluster" class="inline-input cluster">
   <input 
     class="form-control"
     size="{{inputSize('cluster')}}"
@@ -33,7 +33,7 @@
   <p *ngIf="!editing" >.{{data.cluster}}</p>
 </div>
 
-<div class="inline-input environment">
+<div *ngIf="data.environment" class="inline-input environment">
   <input 
     class="form-control"
     size="{{inputSize('environment')}}"

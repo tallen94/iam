@@ -9,6 +9,14 @@ export class Queries {
   public static UPDATE_EXECUTABLE = "UPDATE executable SET data={data}, input={input}, output={output}, description={description}, visibility={visibility} WHERE exe={exe} AND name={name} AND username={username} AND environment={environment} AND cluster={cluster};"
   public static DELETE_EXECUTABLE = "delete from executable where username={username} and exe={exe} and name={name};"
 
+
+  // Image
+  public static ADD_IMAGE = "insert into image(username, name, imageRepo, imageTag, description) values ({username}, {name}, {imageRepo}, {imageTag}, {description})"
+  public static UPDATE_IMAGE = "update image set imageRepo={imageRepo}, imageTag={imageTag}, description={description} where username={username} and name={name}"
+  public static GET_IMAGE_FOR_USER = "select * from image where username={username}"
+  public static GET_IMAGE = "select * from image where username={username} and name={name}"
+  public static DELETE_IMAGE = "delete from image where username={username} and name={name}"
+
   // Environment
   public static ADD_ENVIRONMENT = "insert into environment(name, username, description, cluster, data, state) values ({name}, {username}, {description}, {cluster}, {data}, {state});"
   public static UPDATE_ENVIRONMENT = "update environment set description={description}, data={data}, state={state} where name={name} and username={username} and cluster={cluster}"

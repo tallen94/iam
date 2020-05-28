@@ -4,6 +4,7 @@ import { UserClient } from "./UserClient";
 import { AuthorizationClient } from "./AuthorizationClient";
 import { ClusterClient } from "./ClusterClient";
 import { EnvironmentClient } from "./EnvironmentClient";
+import { ImageClient } from "./ImageClient";
 
 export class ClientManager {
 
@@ -13,7 +14,8 @@ export class ClientManager {
     private userClient: UserClient,
     private authorizationClient: AuthorizationClient,
     private clusterClient: ClusterClient,
-    private environmentClient: EnvironmentClient
+    private environmentClient: EnvironmentClient,
+    private imageClient: ImageClient
   ) {
 
   }
@@ -54,8 +56,24 @@ export class ClientManager {
     return this.environmentClient.deleteEnvironment(username, name, cluster)
   }
 
-  public buildImage(username: string, name: string, cluster: string) {
-    return this.environmentClient.buildImage(username, name, cluster)
+  public addImage(data: any) {
+    return this.imageClient.addImage(data)
+  }
+
+  public getImage(username: string, name: string) {
+    return this.imageClient.getImage(username, name)
+  }
+
+  public getImageForUser(username: string) {
+    return this.imageClient.getImageForUser(username)
+  }
+
+  public deleteImage(username: string, name: string) {
+    return this.imageClient.deleteImage(username, name)
+  }
+
+  public buildImage(username: string, name: string) {
+    return this.imageClient.buildImage(username, name)
   }
 
   public startEnvironment(username: string, name: string, cluster: string) {

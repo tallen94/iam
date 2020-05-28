@@ -1,0 +1,77 @@
+<div class="card">
+  <div class="card-title">
+    <div class="inline-input exe">
+      [image]
+    </div>
+    <div class="inline-input username">
+      {{data.username}}
+    </div>
+    <div class="inline-input name">
+      .{{data.name}}
+    </div>
+  </div>
+
+  <div class="card-body">
+    <div>
+      <label class="nested-title" *ngIf="editing || (data.description && data.description != '')">Description</label>
+      <div *ngIf="editing" class="text-editor" ace-editor
+        [(text)]="data.description"
+        [mode]="'markdown'" 
+        [theme]="'eclipse'"
+        [options]="options"
+        [readOnly]="false"
+        [autoUpdateContent]="true" 
+        [durationBeforeCallback]="500"></div>
+      <p *ngIf="!editing && data.description && data.description != ''" class="card-text">{{data.description}}</p>
+    </div>
+
+    <div>
+      <label *ngIf="editing || (!editing && !isEmpty(data.imageRepo))">Image Repo</label>
+      <input 
+        class="form-control"
+        size="{{inputSize('imageRepo')}}"
+        *ngIf="editing" 
+        type="text" 
+        [(ngModel)]="data.imageRepo"
+        placeholder="imageRepo">
+      <p *ngIf="!editing">{{data.imageRepo}}</p>
+    </div>
+
+    <div>
+      <label>ImageTag</label>
+      <p>{{data.imageTag}}</p>
+    </div>
+
+    <div>
+      <label class="nested-title" *ngIf="editing || (!editing && !isEmpty(data.image))">Image</label>
+      <div *ngIf="editing" class="text-editor" ace-editor
+        [(text)]="data.image"
+        [mode]="'mysql'" 
+        [theme]="'eclipse'"
+        [options]="options"
+        [readOnly]="false"></div>
+      <div class="markdown" *ngIf="!editing">
+        <ngx-md [data]="getCodeMarkdown('docker', data.image)" ></ngx-md>
+      </div>
+
+      <div class="markdown" *ngIf="buildResult">
+        <ngx-md [data]="getCodeMarkdown('docker', buildResult)" ></ngx-md>
+      </div>
+    </div>
+  </div>
+
+  <div class="action-buttons">
+    <button class="btn-sm btn-secondary"  *ngIf="editing" (click)="save()">save</button>
+    <button class="btn-sm btn-danger"  *ngIf="editing" (click)="cancelEdit()">cancel</button>
+    <button class="btn-sm btn-secondary" *ngIf="!editing" (click)="triggerEdit()">edit</button>
+    <button class="btn-sm btn-primary" (click)="buildImage()">build</button>
+  </div>
+</div>
+
+<div *ngIf="buildingImage" class="building">
+  <div class="building-spinner">
+    <ngx-spinner bdColor="rgba(51, 51, 51, 0.8)" size="default" type="ball-spin-clockwise">  
+      <p style="color: white">Building</p>  
+    </ngx-spinner>
+  </div>
+</div>

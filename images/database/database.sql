@@ -89,6 +89,23 @@ CREATE TABLE `environment` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
+-- Table structure for table `image`
+--
+
+DROP TABLE IF EXISTS `image`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `image` (
+  `username` varchar(50) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `description` text,
+  `imageRepo` varchar(255) NOT NULL,
+  `imageTag` varchar(1024) NOT NULL,
+  KEY `get_idx` (`name`, `username`),
+  KEY `username` (`username`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
 -- Table structure for table `executable`
 --
 

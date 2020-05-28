@@ -35,6 +35,9 @@ import { ClusterApi } from "./ClusterApi";
 import { ClusterClient } from "../Client/ClusterClient";
 import { EnvironmentApi } from "./EnvironmentApi";
 import { EnvironmentClient } from "../Client/EnvironmentClient";
+import { ImageManager } from "../Image/ImageManager";
+import { ImageApi } from "./ImageApi"
+import { ImageClient } from "../Client/ImageClient";
 
 export class ApiFactory {
 
@@ -57,7 +60,8 @@ export class ApiFactory {
     const authorizationClient: AuthorizationClient = new AuthorizationClient(new ClientCommunicator(clientConfig.authHost, parseInt(clientConfig.authPort)))
     const clusterClient: ClusterClient = new ClusterClient(new ClientCommunicator(clientConfig.userHost, parseInt(clientConfig.userPort)))
     const environmentClient: EnvironmentClient = new EnvironmentClient(new ClientCommunicator(clientConfig.builderHost, parseInt(clientConfig.builderPort)))
-    const clientManager: ClientManager = new ClientManager(routerClient, authenticationClient, userClient, authorizationClient, clusterClient, environmentClient)
+    const imageClient: ImageClient = new ImageClient(new ClientCommunicator(clientConfig.builderHost, parseInt(clientConfig.builderPort)))
+    const clientManager: ClientManager = new ClientManager(routerClient, authenticationClient, userClient, authorizationClient, clusterClient, environmentClient, imageClient)
     new ClientApi(serverCommunicator, clientManager)
     new DashboardApi(fileSystem, serverCommunicator);
   }
@@ -114,6 +118,8 @@ export class ApiFactory {
     const fileSystemCommunicator: FileSystemCommunicator = this.constructFileSystemCommunicator(fsconfig)
     const shellCommunicator: ShellCommunicator = new ShellCommunicator(fileSystem)
     const environmentManager: EnvironmentManager = new EnvironmentManager(fileSystem, fileSystemCommunicator, databaseCommunicator, shellCommunicator)
+    const imageManager: ImageManager = new ImageManager(fileSystem, fileSystemCommunicator, databaseCommunicator, shellCommunicator)
+    new ImageApi(serverCommunicator, imageManager)
     new EnvironmentApi(serverCommunicator, environmentManager)
   }
 

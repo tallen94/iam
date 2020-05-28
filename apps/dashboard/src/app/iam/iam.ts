@@ -127,8 +127,24 @@ export class Iam {
     return this.client.delete(ApiPaths.DELETE_CLUSTER, {username: username, name: name, cluster: cluster})
   }
 
-  public buildImage(username: string, name: string, cluster: string) {
-    return this.client.post(ApiPaths.BUILD_IMAGE, {username: username, name: name, cluster: cluster})
+  public addImage(data: any) {
+    return this.client.post(ApiPaths.ADD_IMAGE, data)
+  }
+
+  public getImage(username: string, name: string) {
+    return this.client.get(ApiPaths.GET_IMAGE, {}, {username: username, name: name})
+  }
+
+  public getImageForUser(username: string) {
+    return this.client.get(ApiPaths.GET_IMAGE_FOR_USER, {}, {username: username})
+  }
+
+  public deleteImage(username: string, name: string) {
+    return this.client.delete(ApiPaths.DELETE_IMAGE, {username: username, name: name})
+  }
+
+  public buildImage(username: string, name: string) {
+    return this.client.post(ApiPaths.BUILD_IMAGE, {username: username, name: name})
   }
 
   public startEnvironment(username: string, name: string, cluster: string) {

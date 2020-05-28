@@ -122,15 +122,4 @@ export class EnvironmentComponent implements OnInit {
       } 
     })
   }
-
-  buildImage() {
-    this.buildingImage = true;
-    this.iam.buildImage(this.data.username, this.data.name, this.data.cluster)
-    .subscribe((result: any) => {
-      this.buildingImage = false;
-      if (result.environment) {
-        this.data = result.environment;
-      }
-    })
-  }
 }

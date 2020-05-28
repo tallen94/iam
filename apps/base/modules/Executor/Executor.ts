@@ -11,6 +11,7 @@ import { DatabaseCommunicator } from "../Communicator/DatabaseCommunicator";
 import { Queries } from "../Constants/Queries";
 import { ExecutableFactory } from "../Executable/ExecutableFactory";
 import { AuthorizationClient } from "../Client/AuthorizationClient";
+import { ImageManager } from "../Image/ImageManager";
 
 export class Executor {
 

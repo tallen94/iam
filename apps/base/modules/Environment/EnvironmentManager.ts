@@ -47,16 +47,10 @@ export class EnvironmentManager {
         kubernetes = data.kubernetes
       }
 
-      return Promise.all([
-        this.fileSystemCommunicator.putFile("images", {
-          name: this.environmentFullName(data.username, data.cluster, data.name),
-          file: data.image
-        }),
-        this.fileSystemCommunicator.putFile("kubernetes", {
-          name: this.environmentFullName(data.username, data.cluster, data.name),
-          file: kubernetes
-        }) 
-      ])
+      return this.fileSystemCommunicator.putFile("kubernetes", {
+        name: this.environmentFullName(data.username, data.cluster, data.name),
+        file: kubernetes
+      }) 
     })
   }
 
@@ -74,12 +68,9 @@ export class EnvironmentManager {
           description: item.description,
           state: item.state
         }
-        return Promise.all([
-          this.fileSystemCommunicator.getFile("images", this.environmentFullName(item.username, item.cluster, item.name)),
-          this.fileSystemCommunicator.getFile("kubernetes", this.environmentFullName(item.username, item.cluster, item.name))
-        ]).then((result) => {
-          ret["image"] = result[0];
-          ret["kubernetes"] = result[1]
+        return this.fileSystemCommunicator.getFile("kubernetes", this.environmentFullName(item.username, item.cluster, item.name))
+        .then((result) => {
+          ret["kubernetes"] = result
           return ret;
         })
       }
@@ -100,12 +91,9 @@ export class EnvironmentManager {
           description: item.description,
           state: item.state
         }
-        return Promise.all([
-          this.fileSystemCommunicator.getFile("images", this.environmentFullName(item.username, item.cluster, item.name)),
-          this.fileSystemCommunicator.getFile("kubernetes", this.environmentFullName(item.username, item.cluster, item.name))
-        ]).then((result) => {
-          ret["image"] = result[0];
-          ret["kubernetes"] = result[1]
+        return this.fileSystemCommunicator.getFile("kubernetes", this.environmentFullName(item.username, item.cluster, item.name))
+        .then((result) => {
+          ret["kubernetes"] = result
           return ret;
         })
       }))
@@ -125,12 +113,9 @@ export class EnvironmentManager {
           description: item.description,
           state: item.state
         }
-        return Promise.all([
-          this.fileSystemCommunicator.getFile("images", this.environmentFullName(item.username, item.cluster, item.name)),
-          this.fileSystemCommunicator.getFile("kubernetes", this.environmentFullName(item.username, item.cluster, item.name))
-        ]).then((result) => {
-          ret["image"] = result[0];
-          ret["kubernetes"] = result[1]
+        return this.fileSystemCommunicator.getFile("kubernetes", this.environmentFullName(item.username, item.cluster, item.name))
+        .then((result) => {
+          ret["kubernetes"] = result
           return ret;
         })
       }))
@@ -140,42 +125,7 @@ export class EnvironmentManager {
   public deleteEnvironment(username: string, name: string, cluster: string) {
     return this.databaseCommunicator.execute(Queries.DELETE_ENVIRONMENT, {username: username, name: name, cluster: cluster})
     .then((result) => {
-      return Promise.all([
-        this.fileSystemCommunicator.deleteFile("images", this.environmentFullName(username, cluster, name)),
-        this.fileSystemCommunicator.deleteFile("kubernetes", this.environmentFullName(username, cluster, name)),
-      ])
-    })
-  }
-
-  public buildImage(username: string, name: string, cluster: string) {
-    // Get environment
-    return this.getEnvironment(username, name, cluster)
-    .then((environment) => {
-    // Gen image tag
-      const imageUid = uuid.v4()
-      const imageTag = environment.data.imageRepo + ":" + imageUid
-      // Write img file to run dir
-      return this.fileSystem.put("run", imageUid, environment.image)
-      .then(() => {
-        // build image
-        return this.shellCommunicator.exec(Functions.BUILD_IMAGE, "bash", "{tag} {image}", { 
-          tag: imageTag, 
-          image: this.fileSystem.path("run/" + imageUid)
-        })
-      }).then((result) => {
-        if (result.err) {
-          return { result: result.err, environment: environment }
-        }
-
-        environment.data.imageTag = imageTag
-        // save environment
-        return this.addEnvironment(environment).then(() => {
-          // delete run file
-          return this.fileSystem.delete(this.fileSystem.path("run/" + imageUid))
-        }).then(() => {
-          return { result: result, environment: environment }
-        })
-      })
+      return this.fileSystemCommunicator.deleteFile("kubernetes", this.environmentFullName(username, cluster, name))
     })
   }
 

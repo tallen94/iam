@@ -80,13 +80,6 @@ export class ClientApi {
       })
     })
 
-    this.serverCommunicator.post(ApiPaths.BUILD_IMAGE, (req: any, res: any) => {
-      this.clientManager.buildImage(req.body.username, req.body.name, req.body.cluster)
-      .then((result) => {
-        res.status(200).send(result)
-      })
-    })
-
     this.serverCommunicator.post(ApiPaths.START_ENVIRONMENT, (req: any, res: any) => {
       this.clientManager.startEnvironment(req.body.username, req.body.name, req.body.cluster)
       .then((result) => {
@@ -96,6 +89,41 @@ export class ClientApi {
 
     this.serverCommunicator.post(ApiPaths.STOP_ENVIRONMENT, (req: any, res: any) => {
       this.clientManager.stopEnvironment(req.body.username, req.body.name, req.body.cluster)
+      .then((result) => {
+        res.status(200).send(result)
+      })
+    })
+
+    this.serverCommunicator.post(ApiPaths.ADD_IMAGE, (req: any, res: any) => {
+      this.clientManager.addImage(req.body)
+      .then((result) => {
+        res.status(200).send(result)
+      })
+    })
+
+    this.serverCommunicator.get(ApiPaths.GET_IMAGE, (req: any, res: any) => {
+      this.clientManager.getImage(req.query.username, req.query.name)
+      .then((result) => {
+        res.status(200).send(result)
+      })
+    })
+
+    this.serverCommunicator.get(ApiPaths.GET_IMAGE_FOR_USER, (req: any, res: any) => {
+      this.clientManager.getImageForUser(req.query.username)
+      .then((result) => {
+        res.status(200).send(result)
+      })
+    })
+
+    this.serverCommunicator.delete(ApiPaths.DELETE_IMAGE, (req: any, res: any) => {
+      this.clientManager.deleteImage(req.query.username, req.query.name)
+      .then((result) => {
+        res.status(200).send(result)
+      })
+    })
+
+    this.serverCommunicator.post(ApiPaths.BUILD_IMAGE, (req: any, res: any) => {
+      this.clientManager.buildImage(req.body.username, req.body.name)
       .then((result) => {
         res.status(200).send(result)
       })
