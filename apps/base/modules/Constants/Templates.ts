@@ -85,6 +85,171 @@ spec:
       port: 80
       targetPort: 5000
   `
+
+  public static EXECUTOR_NODEPORT = `
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: {username}-{cluster}-{name}
+spec:
+  selector:
+    matchLabels:
+      app: {username}-{cluster}-{name}
+  replicas: {replicas} # tells deployment to run 2 pods matching the template
+  template:
+    metadata:
+      labels:
+        app: {username}-{cluster}-{name}
+    spec:
+      imagePullSecrets:
+      - name: regcred
+      containers:
+      - name: {username}-{cluster}-{name}
+        image: {imageTag}
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: {applicationPort}
+        
+        resources:
+          requests:
+            memory: "{memory}"
+            cpu: "{cpu}"
+          limits:
+            memory: "{memory}"
+            cpu: "{cpu}"
+
+        env:
+        - name: HOME
+          value: "/usr/home/iam"
+        - name: TYPE 
+          value: "executor"
+        - name: SERVER_PORT
+          value: "5000"
+        - name: "ENVIRONMENT"
+          value: "{name}"
+
+        # FS CONFIG
+        - name: FS_HOST
+          value: "filesystem"
+        - name: FS_PORT
+          value: "80"
+
+        ## DB CONFIG
+        - name: DB_HOST
+          value: "mysqldatabase.default"
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: dbconfig
+              key: user
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: dbconfig
+              key: password
+        - name: DB_NAME
+          valueFrom:
+            secretKeyRef:
+              name: dbconfig
+              key: db_name
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {username}-{cluster}-{name}
+spec:
+  selector:
+    app: {username}-{cluster}-{name}
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: {applicationPort}
+      nodePort: {nodePort}
+  `
+  
+
+  public static EXECUTOR_LOADBALANCER = `
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: {username}-{cluster}-{name}
+spec:
+  selector:
+    matchLabels:
+      app: {username}-{cluster}-{name}
+  replicas: {replicas} # tells deployment to run 2 pods matching the template
+  template:
+    metadata:
+      labels:
+        app: {username}-{cluster}-{name}
+    spec:
+      imagePullSecrets:
+      - name: regcred
+      containers:
+      - name: {username}-{cluster}-{name}
+        image: {imageTag}
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: {applicationPort}
+        
+        resources:
+          requests:
+            memory: "{memory}"
+            cpu: "{cpu}"
+          limits:
+            memory: "{memory}"
+            cpu: "{cpu}"
+
+        env:
+        - name: HOME
+          value: "/usr/home/iam"
+        - name: TYPE 
+          value: "executor"
+        - name: SERVER_PORT
+          value: "5000"
+        - name: "ENVIRONMENT"
+          value: "{name}"
+
+        # FS CONFIG
+        - name: FS_HOST
+          value: "filesystem"
+        - name: FS_PORT
+          value: "80"
+
+        ## DB CONFIG
+        - name: DB_HOST
+          value: "mysqldatabase.default"
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: dbconfig
+              key: user
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: dbconfig
+              key: password
+        - name: DB_NAME
+          valueFrom:
+            secretKeyRef:
+              name: dbconfig
+              key: db_name
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {username}-{cluster}-{name}
+spec:
+  selector:
+    app: {username}-{cluster}-{name}
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: {applicationPort}
+  `
+
   public static DATABASE = `
 apiVersion: v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Pod

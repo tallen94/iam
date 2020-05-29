@@ -31,6 +31,12 @@
   right: 4px;
 }
 
+.nested-title {
+  color: #007bff;
+  margin-top: 8px;
+  font-size: 1.2em;
+}
+
 .inline-input label {
   font-weight: bold;
   color: rgb(160, 160, 160);
