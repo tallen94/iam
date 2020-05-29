@@ -42,7 +42,12 @@ export class EnvironmentManager {
     }).then(() => {
       let kubernetes;
       if (data.data.type == "executor") {
-        kubernetes = this.kubernetesTemplate(data, data.data)
+        const templateOptions = {
+          "Executor": Templates.EXECUTOR,
+          "NodePort": Templates.EXECUTOR_NODEPORT,
+          "LoadBalancer": Templates.EXECUTOR_LOADBALANCER
+        }
+        kubernetes = this.kubernetesTemplate(data, data.data, templateOptions[data.data.serviceType])
       } else {
         kubernetes = data.kubernetes
       }
@@ -177,8 +182,8 @@ export class EnvironmentManager {
     })
   }
 
-  private kubernetesTemplate(data: any, otherData: any) {
-    return this.replace(this.replace(Templates.EXECUTOR, data), otherData)
+  private kubernetesTemplate(data: any, otherData: any, template: string) {
+    return this.replace(this.replace(template, data), otherData)
   }
 
   private replace(s: string, data: any): string {
