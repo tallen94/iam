@@ -199,6 +199,14 @@ export class Iam {
     return this.client.post(ApiPaths.TRANSFORM_DATASET, {username: username, cluster: cluster, environment: environment, name: name, functionData: functionData})
   }
 
+  public readDataset(username: string, cluster: string, environment: string, name: string, tag: string, limit: number) {
+    return this.client.get(ApiPaths.READ_DATASET, {}, {username: username, cluster: cluster, environment: environment, name: name, tag: tag, limit: limit})
+  }
+
+  public deleteDatasetTag(username: string, cluster: string, environment: string, name: string, tag: string) {
+    return this.client.delete(ApiPaths.DELETE_DATASET_TAG, {username: username, cluster: cluster, environment: environment, name: name, tag: tag})
+  }
+
   public getHost() {
     return this.client.getHost();
   }

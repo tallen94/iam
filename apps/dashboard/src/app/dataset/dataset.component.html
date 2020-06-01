@@ -34,8 +34,11 @@
     </div>
 
     <div>
-      <label class="nested-title">Tag</label>
-      <p>{{data.tag}}</p>
+      <label class="nested-title">Tags</label>
+      <div *ngFor="let tag of data.tag" class="tag-row">
+        <button class="btn btn-outline-primary inline-input right-space tag-button" (click)="selectDataPreviewTag(tag)">{{tag}}</button>
+        <button class="btn btn-danger delete-button" (click)="deleteDatasetTag(tag)">x</button>
+      </div>
     </div>
 
     <div>
@@ -85,6 +88,19 @@
           [(ngModel)]="data.query.name"
           placeholder="name">
         <p *ngIf="!editing" >{{data.query.name}}</p>
+      </div>
+    </div>
+
+    <div class="data-preview" *ngIf="dataPreview">
+      <label class="nested-title">Data Preview</label>
+      <p>{{dataPreviewTag}}</p>
+      <div class="data-preview-columns">
+        <div class="inline-input right-space" *ngFor="let col of dataPreviewColumns">{{col}}</div>
+      </div>
+      <div class="data-preview-rows">
+        <div class="data-preview-row" *ngFor="let row of dataPreview">
+          <div class="inline-input right-space" *ngFor="let col of dataPreviewColumns">{{row[col]}}</div>
+        </div>
       </div>
     </div>
   </div>

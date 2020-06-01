@@ -26,4 +26,12 @@ export class DataClient {
   transformDataset(username: string, cluster: string, environment: string, name: string, functionData: any) {
     return this.clientCommunicator.post(ApiPaths.TRANSFORM_DATASET, {username: username, cluster: cluster, environment: environment, name: name, functionData: functionData})
   }
+
+  readDataset(username: string, cluster: string, environment: string, name: string, tag: string, limit: number) {
+    return this.clientCommunicator.get(ApiPaths.READ_DATASET, {username: username, cluster: cluster, environment: environment, name: name, tag: tag, limit: limit})
+  }
+
+  deleteDatasetTag(username: string, cluster: string, environment: string, name: string, tag: string) {
+    return this.clientCommunicator.delete(ApiPaths.DELETE_DATASET_TAG, {username: username, cluster: cluster, environment: environment, name: name, tag: tag})
+  }
 }

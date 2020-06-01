@@ -200,4 +200,12 @@ export class ClientManager {
   public transformDataset(username: string, cluster: string, environment: string, name: string, functionData: any) {
     return this.dataClient.transformDataset(username, cluster, environment, name, functionData)
   }
+
+  public readDataset(username: string, cluster: string, environment: string, name: string, tag: string, limit: number) {
+    return this.dataClient.readDataset(username, cluster, environment, name, tag, limit)
+  }
+
+  public deleteDatasetTag(username: string, cluster: string, environment: string, name: string, tag: string) {
+    return this.dataClient.deleteDatasetTag(username, cluster, environment, name, tag)
+  }
 }

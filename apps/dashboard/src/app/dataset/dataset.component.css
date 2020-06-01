@@ -124,3 +124,40 @@ label {
   margin-left: auto;
   background-color: transparent;
 }
+
+.data-preview-rows {
+  max-height: 300px;
+  overflow-y: scroll;
+}
+
+.data-preview-columns div {
+  color: rgb(160, 160, 160);
+  font-size: 15px;
+  text-transform: capitalize;
+  width: 300px;
+}
+
+.delete-button {
+  background-color: white;
+  color: #dc3545;
+  font-weight: bold;
+  font-size: 15px;
+  padding: 8px !important;
+  line-height: .75em;
+}
+
+.data-preview-row {
+  border-bottom: 1px solid rgb(230, 230, 230);
+}
+
+.data-preview-row div {
+  width: 300px;
+}
+
+.tag-row {
+  margin-bottom: 8px;
+}
+
+.tag-row .tag-button{
+  width: 400px;
+}

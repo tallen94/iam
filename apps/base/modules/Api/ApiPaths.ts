@@ -39,6 +39,8 @@ export class ApiPaths {
   public static GET_DATASET_FOR_USER = "/dataset/user"
   public static LOAD_DATASET = "/dataset/load"
   public static TRANSFORM_DATASET = "/dataset/transform"
+  public static READ_DATASET = "/dataset/read"
+  public static DELETE_DATASET_TAG = "/dataset"
 
   // Image
   public static ADD_IMAGE = "/image"

@@ -3,6 +3,8 @@ import * as Lodash from "lodash";
 import { DatabaseCommunicator } from "../Communicator/DatabaseCommunicator";
 import { Queries } from "../Constants/Queries";
 import { Client } from "../Client/Client";
+import { ClientCommunicator } from "../Communicator/ClientCommunicator";
+import { FileSystemCommunicator } from "../Communicator/FileSystemCommunicator";
 
 export class DataManager {
 
@@ -22,7 +24,7 @@ export class DataManager {
           environment: data.environment,
           description: data.description,
           query: queryData,
-          tag: ""
+          tag: JSON.stringify([])
         })
       }
       return this.databaseCommunicator.execute(Queries.UPDATE_DATASET, {
@@ -32,7 +34,7 @@ export class DataManager {
         environment: data.environment,
         description: data.description,
         query: queryData,
-        tag: data.tag
+        tag: JSON.stringify(data.tag)
       })
     })
   }
@@ -43,6 +45,7 @@ export class DataManager {
       if (result.length > 0) {
         const item = result[0];
         item.query = JSON.parse(item.query)
+        item.tag = JSON.parse(item.tag)
         return item
       }
       return undefined
@@ -54,6 +57,7 @@ export class DataManager {
     .then((results: any[]) => {
       return Promise.all(Lodash.map(results, (item) => {
         item.query = JSON.parse(item.query)
+        item.tag = JSON.parse(item.tag)
         return item
       }))
     })
@@ -71,7 +75,64 @@ export class DataManager {
       }
       return this.environmentRouterClient.runExecutable(dataset.query.username, dataset.query.cluster, dataset.query.environment, "query", dataset.query.name, {loadData: loadData}, "")
       .then((result: any) => {
-        dataset.tag = result.result.tag
+        dataset.tag.push(result.result.tag)
+        return this.addDataset(dataset)
+      }).then((result) => {
+        return dataset
+      })
+    })
+  }
+
+  public readDataset(username: string, cluster: string, environment: string, name: string, tag: string, limit: number) {
+    return this.getDataset(username, cluster, environment, name)
+    .then((dataset: any) => {
+      return this.environmentClient.getEndpoints(username, environment, cluster)
+      .then((endpoints) => {
+        const subset = endpoints["subsets"][0]
+        const port = subset["ports"][0]["port"]
+        const addresses = subset["addresses"]
+
+        return Promise.all(Lodash.map(addresses, (addr) => {
+          const host = addr["ip"]
+          const client = new ClientCommunicator(host, port)
+          const fsCommunicator = new FileSystemCommunicator(client)
+          const folder = ["data", username, cluster, environment, dataset.name, tag].join("/")
+          return fsCommunicator.getFile(folder, "dataset")
+        })).then((results) => {
+          let merged = []
+          let i = 0;
+          while (merged.length < limit && i < results.length) {
+            merged = merged.concat(results[i])
+            i++;
+          }
+          return merged.slice(0, limit)
+        })
+      })
+    })
+  }
+
+  public deleteDatasetTag(username: string, cluster: string, environment: string, name: string, tag: string) {
+    return this.getDataset(username, cluster, environment, name)
+    .then((dataset: any) => {
+      return this.environmentClient.getEndpoints(username, environment, cluster)
+      .then((endpoints) => {
+        const subset = endpoints["subsets"][0]
+        const port = subset["ports"][0]["port"]
+        const addresses = subset["addresses"]
+
+        return Promise.all(Lodash.map(addresses, (addr) => {
+          const host = addr["ip"]
+          const client = new ClientCommunicator(host, port)
+          const fsCommunicator = new FileSystemCommunicator(client)
+          const tagPath = ["data", username, cluster, environment, dataset.name, tag].join("/")
+          const folderPath = ["data", username, cluster, environment, dataset.name].join("/")
+          return fsCommunicator.deleteFile(tagPath, "dataset")
+          .then((result) => {
+            return fsCommunicator.deleteFile(folderPath, tag)
+          })
+        }))
+      }).then((result: any) => {
+        dataset.tag = Lodash.filter(dataset.tag, (item) => item !== tag)
         return this.addDataset(dataset)
       }).then((result) => {
         return dataset
