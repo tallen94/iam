@@ -11,7 +11,7 @@ spec:
     type: ng-1
   containers:
   - name: mysqldatabase
-    image: icanplayguitar94/iam:database-0.0.11
+    image: icanplayguitar94/iam:database-0.0.15
     imagePullPolicy: IfNotPresent
     ports:
     - containerPort: 3306
