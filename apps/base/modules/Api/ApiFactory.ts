@@ -38,6 +38,9 @@ import { EnvironmentClient } from "../Client/EnvironmentClient";
 import { ImageManager } from "../Image/ImageManager";
 import { ImageApi } from "./ImageApi"
 import { ImageClient } from "../Client/ImageClient";
+import { DataClient } from "../Client/DataClient";
+import { DataApi } from "./DataApi";
+import { DataManager } from "../Data/DataManager";
 
 export class ApiFactory {
 
@@ -61,7 +64,8 @@ export class ApiFactory {
     const clusterClient: ClusterClient = new ClusterClient(new ClientCommunicator(clientConfig.userHost, parseInt(clientConfig.userPort)))
     const environmentClient: EnvironmentClient = new EnvironmentClient(new ClientCommunicator(clientConfig.builderHost, parseInt(clientConfig.builderPort)))
     const imageClient: ImageClient = new ImageClient(new ClientCommunicator(clientConfig.builderHost, parseInt(clientConfig.builderPort)))
-    const clientManager: ClientManager = new ClientManager(routerClient, authenticationClient, userClient, authorizationClient, clusterClient, environmentClient, imageClient)
+    const dataClient: DataClient = new DataClient(new ClientCommunicator(clientConfig.routerHost, parseInt(clientConfig.routerPort)))
+    const clientManager: ClientManager = new ClientManager(routerClient, authenticationClient, userClient, authorizationClient, clusterClient, environmentClient, imageClient, dataClient)
     new ClientApi(serverCommunicator, clientManager)
     new DashboardApi(fileSystem, serverCommunicator);
   }
@@ -95,11 +99,19 @@ export class ApiFactory {
       host: process.env.FS_HOST || process.argv[10],
       port: process.env.FS_PORT || process.argv[11]
     }
+    const envConfig = {
+      host: process.env.BUILDER_HOST || process.argv[12],
+      port: process.env.BUILDER_PORT || process.argv[13]
+    }
     const databaseCommunicator: DatabaseCommunicator = this.constructDatabaseCommunicator(dbconfig)
     const environment = process.env.ENVIRONMENT || process.argv[12] || "base"
-    const executor: Executor = this.constructExecutor(dbconfig, fsconfig, fileSystem, environment)
+    const executor: Executor = this.constructExecutor(dbconfig, fsconfig, fileSystem, environment, envConfig)
     const router: EnvironmentRouter = new EnvironmentRouter(databaseCommunicator, executor);
+    const environmentClient: EnvironmentClient = new EnvironmentClient(new ClientCommunicator(envConfig.host, parseInt(envConfig.port)))
+    const environmentRouterClient: Client = new Client(new ClientCommunicator("router.default", 80))
+    const dataManager = new DataManager(databaseCommunicator, environmentClient, environmentRouterClient)
     new EnvironmentRouterApi(router, serverCommunicator);
+    new DataApi(serverCommunicator, dataManager)
   }
 
   builder(fileSystem: FileSystem, serverCommunicator: ServerCommunicator) {
@@ -152,8 +164,12 @@ export class ApiFactory {
       host: process.env.FS_HOST || process.argv[10],
       port: process.env.FS_PORT || process.argv[11]
     };
+    const envConfig = {
+      host: process.env.BUILDER_HOST || process.argv[12],
+      port: process.env.BUILDER_PORT || process.argv[13]
+    }
     const environment = process.env.ENVIRONMENT || process.argv[12] || "base"
-    const executor: Executor = this.constructExecutor(dbconfig, fsconfig, fileSystem, environment)
+    const executor: Executor = this.constructExecutor(dbconfig, fsconfig, fileSystem, environment, envConfig)
     new ExecutableApi(executor, serverCommunicator);
     new FileSystemApi(fileSystem, serverCommunicator);
   }
@@ -171,14 +187,18 @@ export class ApiFactory {
       host: process.env.FS_HOST || process.argv[10],
       port: process.env.FS_PORT || process.argv[11]
     };
+    const envConfig = {
+      host: process.env.BUILDER_HOST || process.argv[12],
+      port: process.env.BUILDER_PORT || process.argv[13]
+    }
     const environment = process.env.ENVIRONMENT || process.argv[12] || "base"
-    const executor: Executor = this.constructExecutor(dbconfig, fsconfig, fileSystem, environment)
-    const executableFactory: ExecutableFactory = this.constructExecutableFactory(dbconfig, fileSystem)
+    const executor: Executor = this.constructExecutor(dbconfig, fsconfig, fileSystem, environment, envConfig)
+    const executableFactory: ExecutableFactory = this.constructExecutableFactory(dbconfig, fileSystem, envConfig)
     new JobRunner(executor, executableFactory);
   }
 
-  private constructExecutor(dbconfig: any, fsConfig: any, fileSystem: FileSystem, environment: string) {
-    const executableFactory: ExecutableFactory = this.constructExecutableFactory(dbconfig, fileSystem)
+  private constructExecutor(dbconfig: any, fsConfig: any, fileSystem: FileSystem, environment: string, envConfig: any) {
+    const executableFactory: ExecutableFactory = this.constructExecutableFactory(dbconfig, fileSystem, envConfig)
     const fileSystemCommunicator: FileSystemCommunicator = this.constructFileSystemCommunicator(fsConfig)
     const databaseCommunicator: DatabaseCommunicator = this.constructDatabaseCommunicator(dbconfig)
     const authClientCommunicator: ClientCommunicator = new ClientCommunicator("auth.default", 80)
@@ -191,10 +211,11 @@ export class ApiFactory {
     return new Executor(database, shell, environmentManager, graphExecutor, poolManager, executableFactory, databaseCommunicator, authorizationClient);
   }
 
-  private constructExecutableFactory(dbconfig: any, fileSystem: FileSystem) {
+  private constructExecutableFactory(dbconfig: any, fileSystem: FileSystem, envConfig: any) {
     const databaseCommunicator: DatabaseCommunicator = this.constructDatabaseCommunicator(dbconfig);
     const fileSystemFactory: FileSystemFactory = new FileSystemFactory();
-    return new ExecutableFactory(fileSystemFactory, fileSystem, new ShellCommunicator(fileSystem), databaseCommunicator);
+    const environmentClient = new EnvironmentClient(new ClientCommunicator(envConfig.host, envConfig.port))
+    return new ExecutableFactory(fileSystemFactory, fileSystem, new ShellCommunicator(fileSystem), databaseCommunicator, environmentClient);
   }
 
   private constructDatabase(databaseCommunicator: DatabaseCommunicator, fileSystemCommunicator: FileSystemCommunicator) {

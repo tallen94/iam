@@ -47,6 +47,12 @@ spec:
           value: "filesystem.default"
         - name: FS_PORT
           value: "80"
+          
+        # BUILDER CONFIG
+        - name: BUILDER_HOST
+          value: "builder.default"
+        - name: BUILDER_PORT
+          value: "80"
 
         ## DB CONFIG
         - name: DB_HOST
@@ -135,6 +141,12 @@ spec:
         - name: FS_HOST
           value: "filesystem.default"
         - name: FS_PORT
+          value: "80"
+          
+        # BUILDER CONFIG
+        - name: BUILDER_HOST
+          value: "builder.default"
+        - name: BUILDER_PORT
           value: "80"
           
         ## DB CONFIG

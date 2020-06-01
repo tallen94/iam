@@ -1,0 +1,122 @@
+<div class="card">
+  <div class="card-title">
+    <div class="inline-input exe">
+      [dataset]
+    </div>
+    <div class="inline-input username">
+      {{data.username}}
+    </div>
+    <div class="inline-input cluster">
+      .{{data.cluster}}
+    </div>
+    <div class="inline-input environment">
+      .{{data.environment}}
+    </div>
+    <div class="inline-input name">
+      .{{data.name}}
+    </div>
+  </div>
+
+  <div class="card-body">
+    <div>
+      <label class="nested-title" *ngIf="editing || (data.description && data.description != '')">Description</label>
+      <div *ngIf="editing" class="text-editor" ace-editor
+        [(text)]="data.description"
+        [mode]="'markdown'" 
+        [theme]="'eclipse'"
+        [options]="options"
+        [readOnly]="false"
+        [autoUpdateContent]="true" 
+        [durationBeforeCallback]="500"></div>
+      <div class="markdown"  *ngIf="!editing && data.description && data.description != ''">
+        <ngx-md [data]="data.description" ></ngx-md>
+      </div>
+    </div>
+
+    <div>
+      <label class="nested-title">Tags</label>
+      <div *ngFor="let tag of data.tag" class="tag-row">
+        <button class="btn btn-outline-primary inline-input right-space tag-button" (click)="selectDataPreviewTag(tag)">{{tag}}</button>
+        <button class="btn btn-danger delete-button" (click)="deleteDatasetTag(tag)">x</button>
+      </div>
+    </div>
+
+    <div>
+      <div>
+        <label class="nested-title" >Query</label>
+      </div>
+      <div class="inline-input right-space">
+        <label>Username</label>
+        <input 
+          class="form-control"
+          size="{{inputSize('username')}}"
+          *ngIf="editing" 
+          type="text" 
+          [(ngModel)]="data.query.username"
+          placeholder="name">
+        <p *ngIf="!editing" >{{data.query.username}}</p>
+      </div>
+      <div class="inline-input right-space">
+        <label>Cluster</label>
+        <input 
+          class="form-control"
+          size="{{inputSize('cluster')}}"
+          *ngIf="editing" 
+          type="text" 
+          [(ngModel)]="data.query.cluster"
+          placeholder="name">
+        <p *ngIf="!editing" >{{data.query.cluster}}</p>
+      </div>
+      <div class="inline-input right-space">
+        <label>Environment</label>
+        <input 
+          class="form-control"
+          size="{{inputSize('environment')}}"
+          *ngIf="editing" 
+          type="text" 
+          [(ngModel)]="data.query.environment"
+          placeholder="name">
+        <p *ngIf="!editing" >{{data.query.environment}}</p>
+      </div>
+      <div class="inline-input">
+        <label>Name</label>
+        <input 
+          class="form-control"
+          size="{{inputSize('name')}}"
+          *ngIf="editing" 
+          type="text" 
+          [(ngModel)]="data.query.name"
+          placeholder="name">
+        <p *ngIf="!editing" >{{data.query.name}}</p>
+      </div>
+    </div>
+
+    <div class="data-preview" *ngIf="dataPreview">
+      <label class="nested-title">Data Preview</label>
+      <p>{{dataPreviewTag}}</p>
+      <div class="data-preview-columns">
+        <div class="inline-input right-space" *ngFor="let col of dataPreviewColumns">{{col}}</div>
+      </div>
+      <div class="data-preview-rows">
+        <div class="data-preview-row" *ngFor="let row of dataPreview">
+          <div class="inline-input right-space" *ngFor="let col of dataPreviewColumns">{{row[col]}}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="action-buttons">
+    <button class="btn-sm btn-secondary"  *ngIf="editing" (click)="save()">save</button>
+    <button class="btn-sm btn-danger"  *ngIf="editing" (click)="cancelEdit()">cancel</button>
+    <button class="btn-sm btn-secondary" *ngIf="!editing" (click)="triggerEdit()">edit</button>
+    <button class="btn-sm btn-primary" (click)="loadDataset()">load</button>
+  </div>
+</div>
+
+<div *ngIf="loadingDataset" class="building">
+  <div class="building-spinner">
+    <ngx-spinner bdColor="rgba(51, 51, 51, 0.8)" size="default" type="ball-spin-clockwise">  
+      <p style="color: white; font-size: 2em;">Relax, I'll be done shortly</p>  
+    </ngx-spinner>
+  </div>
+</div>

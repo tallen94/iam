@@ -11,7 +11,7 @@
           placeholder="Name">
       </div>
 
-      <div *ngIf="type === 'environment' || type === 'function' || type === 'query' || type === 'graph'" class="form-group">
+      <div *ngIf="type === 'environment' || type === 'function' || type === 'query' || type === 'graph' || type === 'dataset'" class="form-group">
         <label>Cluster</label>
         <select *ngIf="clusterOptions.length > 0" class="form-control" [(ngModel)]="data.cluster">
           <option *ngFor="let option of clusterOptions">{{option.name}}</option>
@@ -19,7 +19,7 @@
         <p *ngIf="clusterOptions.length === 0">{{data.cluster}}</p>
       </div>
 
-      <div *ngIf="type === 'function' || type === 'query' || type === 'graph'" class="form-group">
+      <div *ngIf="type === 'function' || type === 'query' || type === 'graph' || type === 'dataset'" class="form-group">
         <label>Environment</label>
         <select *ngIf="environmentOptions.length > 0" class="form-control" [(ngModel)]="data.environment">
           <option *ngFor="let option of environmentOptions">{{option.name}}</option>
