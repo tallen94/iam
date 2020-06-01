@@ -101,9 +101,8 @@ CREATE TABLE `dataset` (
   `cluster` varchar(50) NOT NULL,
   `environment` varchar(50) NOT NULL,
   `query` text NOT NULL,
-  `transformation` text NOT NULL,
   `tag` varchar(64) NOT NULL,
-   `description` varchar(1024) NOT NULL,
+  `description` varchar(1024) NOT NULL,
   KEY `username` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
