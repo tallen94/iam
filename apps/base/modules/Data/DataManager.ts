@@ -98,11 +98,13 @@ export class DataManager {
           const fsCommunicator = new FileSystemCommunicator(client)
           const folder = ["data", username, cluster, environment, dataset.name, tag].join("/")
           return fsCommunicator.getFile(folder, "dataset")
-        })).then((results) => {
+        })).then((results: any[]) => {
           let merged = []
           let i = 0;
           while (merged.length < limit && i < results.length) {
-            merged = merged.concat(results[i])
+            if (results[i] != "invalid path") {
+              merged = merged.concat(results[i])
+            }
             i++;
           }
           return merged.slice(0, limit)

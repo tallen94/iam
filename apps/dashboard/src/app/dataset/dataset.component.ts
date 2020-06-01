@@ -100,12 +100,18 @@ export class DatasetComponent implements OnInit {
     this.iam.deleteDatasetTag(this.data.username, this.data.cluster, this.data.environment, this.data.name, value)
     .subscribe((result) => {
       this.data = result
-      this.dataPreviewTag = this.data.tag[this.data.tag.length - 1]
-      this.iam.readDataset(this.data.username, this.data.cluster, this.data.environment, this.data.name, this.dataPreviewTag, 5)
-      .subscribe((result) => {
-        this.dataPreview = result;
-        this.dataPreviewColumns = Object.keys(this.dataPreview[0])
-      })
+      if (this.data.tag.length > 0) {
+        this.dataPreviewTag = this.data.tag[this.data.tag.length - 1]
+        this.iam.readDataset(this.data.username, this.data.cluster, this.data.environment, this.data.name, this.dataPreviewTag, 5)
+        .subscribe((result) => {
+          this.dataPreview = result;
+          this.dataPreviewColumns = Object.keys(this.dataPreview[0])
+        })
+      } else {
+        this.dataPreviewTag = undefined
+        this.dataPreview = undefined
+        this.dataPreviewColumns = undefined
+      }
     })
   }
 
