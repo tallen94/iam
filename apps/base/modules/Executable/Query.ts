@@ -36,17 +36,16 @@ export class Query implements Executable {
       return this.database.execute(this.file, data)
     }
     const loadData = data.loadData
-    console.log(data)
     return Promise.all([
       this.database.execute(this.file, loadData.queryData),
       this.environmentClient.getEndpoints(loadData.username, loadData.environment, loadData.cluster)
     ]).then((results: any[]) => {
-      console.log(results)
       const queryResult = results[0]
       const endpoints = results[1]
       const subset = endpoints["subsets"][0]
       const port = subset["ports"][0]["port"]
       const addresses = subset["addresses"]
+      const tag = uuid.v4()
 
       // [1, 2, 3, 4, 5, 6, 7, 8]
       return Promise.all(Lodash.map(addresses, (addr, index) => {
@@ -57,13 +56,14 @@ export class Query implements Executable {
         const host = addr["ip"]
         const client = new ClientCommunicator(host, port)
         const fsCommunicator = new FileSystemCommunicator(client)
-        const path = ["data", loadData.username, loadData.cluster, loadData.environment, host, loadData.name].join("/")
-        const filUid = uuid.v4()
+        const path = ["data", loadData.username, loadData.cluster, loadData.environment, loadData.name, tag].join("/")
         return fsCommunicator.putFile(path, {
-          name: filUid,
+          name: "dataset",
           file: JSON.stringify(dataset)
         })
-      }))
+      })).then((result) => {
+        return { tag: tag }
+      })
     });
   }
 }

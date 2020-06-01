@@ -10,6 +10,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 export class DatasetComponent implements OnInit {
 
   @Input() data: any;
+  public query: any;
   public loadingDataset: boolean = false;
   public editing: boolean = false;
   private prevData: any = {}
@@ -61,7 +62,7 @@ export class DatasetComponent implements OnInit {
     this.spinnerService.show()
     this.iam.loadDataset(this.data.username, this.data.cluster, this.data.environment, this.data.name, this.data.query)
     .subscribe((result) => {
-      console.log(result)
+      this.data = result
       this.loadingDataset = false;
       this.spinnerService.hide()
     })
