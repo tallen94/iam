@@ -92,7 +92,9 @@
     [readOnly]="false"
     [autoUpdateContent]="true" 
     [durationBeforeCallback]="500"></div>
-  <p *ngIf="!editing && data.description && data.description != ''" class="card-text">{{data.description}}</p>
+    <div class="markdown"  *ngIf="!editing && data.description && data.description != ''">
+      <ngx-md [data]="data.description" ></ngx-md>
+    </div>
 </div>
 <!-- <div class="markdown" *ngIf="!editing">
   <ngx-md [data]="data.description"></ngx-md>

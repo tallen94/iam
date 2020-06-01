@@ -1,6 +1,6 @@
 export class Templates {
 
-  public static EXECUTOR = `
+  public static EXECUTOR_TEMPLATE = `
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
@@ -53,6 +53,12 @@ spec:
           value: "filesystem"
         - name: FS_PORT
           value: "80"
+        
+        # ROUTER CONFIG
+        - name: BUILDER_HOST
+          value: "builder.default"
+        - name: BUILDER_PORT
+          value: "80"
 
         ## DB CONFIG
         - name: DB_HOST
@@ -72,7 +78,12 @@ spec:
             secretKeyRef:
               name: dbconfig
               key: db_name
+      {storage}
 ---
+{service}
+  `
+
+  public static SERVICE = `
 apiVersion: v1
 kind: Service
 metadata:
@@ -83,8 +94,61 @@ spec:
   ports:
     - protocol: TCP
       port: 80
-      targetPort: 5000
+      targetPort: {applicationPort}
   `
+
+  public static NODEPORT_SERVICE = `
+apiVersion: v1
+kind: Service
+metadata:
+  name: {username}-{cluster}-{name}
+spec:
+  selector:
+    app: {username}-{cluster}-{name}
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: {applicationPort}
+      nodePort: {nodePort}
+  `
+
+  public static LOADBALANCER_SERVICE = `
+apiVersion: v1
+kind: Service
+metadata:
+  name: {username}-{cluster}-{name}
+spec:
+  selector:
+    app: {username}-{cluster}-{name}
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: {applicationPort}
+  `
+
+  public static LOCAL_VOLUME = `
+        volumeMounts:
+        - name: mount
+          mountPath: {mountPath}
+      volumes:
+      - name: mount
+        hostPath:
+          path: {hostPath}
+`
+  public static ELB_VOLUME = `
+        volumeMounts:
+        - mountPath: {mountPath}
+          name: ebs-volume
+          
+      volumes:
+      - name: ebs-volume
+        awsElasticBlockStore:
+          volumeID: {volumeId}
+          fsType: {fsType}
+  `
+
   public static DATABASE = `
 apiVersion: v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Pod

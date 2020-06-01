@@ -326,5 +326,54 @@ export class ClientApi {
         res.status(200).send(result)
       })
     })
+
+    this.serverCommunicator.post(ApiPaths.ADD_DATASET, (req: any, res: any) => {
+      this.clientManager.addDataset(req.body)
+      .then((result) => {
+        res.status(200).send(result)
+      })
+    })
+
+    this.serverCommunicator.get(ApiPaths.GET_DATASET, (req: any, res: any) => {
+      this.clientManager.getDataset(req.query.username, req.query.cluster, req.query.environment, req.query.name)
+      .then((result) => {
+        res.status(200).send(result)
+      })
+    })
+
+    this.serverCommunicator.get(ApiPaths.GET_DATASET_FOR_USER, (req: any, res: any) => {
+      this.clientManager.getDatasetForUser(req.query.username)
+      .then((result) => {
+        res.status(200).send(result)
+      })
+    })
+
+    this.serverCommunicator.post(ApiPaths.LOAD_DATASET, (req: any, res: any) => {
+      this.clientManager.loadDataset(req.body.username, req.body.cluster, req.body.environment, req.body.name, req.body.queryData)
+      .then((result) => {
+        res.status(200).send(result)
+      })
+    })
+
+    this.serverCommunicator.post(ApiPaths.TRANSFORM_DATASET, (req: any, res: any) => {
+      this.clientManager.transformDataset(req.body.username, req.body.cluster, req.body.environment, req.body.name, req.body.functionData)
+      .then((result) => {
+        res.status(200).send(result)
+      })
+    })
+
+    this.serverCommunicator.get(ApiPaths.READ_DATASET, (req: any, res: any) => {
+      this.clientManager.readDataset(req.query.username, req.query.cluster, req.query.environment, req.query.name, req.query.tag, req.query.limit)
+      .then((result) => {
+        res.status(200).send(result)
+      })
+    })
+
+    this.serverCommunicator.delete(ApiPaths.DELETE_DATASET_TAG, (req: any, res: any) => {
+      this.clientManager.deleteDatasetTag(req.query.username, req.query.cluster, req.query.environment, req.query.name, req.query.tag)
+      .then((result) => {
+        res.status(200).send(result)
+      })
+    })
   }
 }

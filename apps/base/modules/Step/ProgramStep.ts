@@ -1,5 +1,4 @@
 import { Step } from "./Step";
-import { Shell } from "../Executor/Shell";
 import { Client } from "../Client/Client";
 
 export class ProgramStep implements Step {
@@ -15,7 +14,7 @@ export class ProgramStep implements Step {
 
   public execute(data: any, token: string): Promise<any> {
     if (this.foreach) {
-      const numThreads = 2;
+      const numThreads = 3;
       const threads = [];
       const results = [];
 

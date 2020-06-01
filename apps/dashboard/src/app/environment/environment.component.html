@@ -25,7 +25,9 @@
         [readOnly]="false"
         [autoUpdateContent]="true" 
         [durationBeforeCallback]="500"></div>
-      <p *ngIf="!editing && data.description && data.description != ''" class="card-text">{{data.description}}</p>
+      <div class="markdown"  *ngIf="!editing && data.description && data.description != ''">
+        <ngx-md [data]="data.description" ></ngx-md>
+      </div>
     </div>
     <div>
       <label class="nested-title">State</label>
@@ -56,7 +58,7 @@
     </div> -->
 
     <div>
-      <label *ngIf="editing || (!editing && !isEmpty(data.data.imageTag))">ImageTag</label>
+      <label class="nested-title" *ngIf="editing || (!editing && !isEmpty(data.data.imageTag))">ImageTag</label>
       <input 
         class="form-control"
         size="{{inputSize('imageTag')}}"
@@ -123,7 +125,116 @@
         <ngx-md [data]="getCodeMarkdown('yaml', data.kubernetes)" ></ngx-md>
       </div>
     </div>
+
+    <div>
+      <div>
+        <label class="nested-title">Service Details</label>
+      </div>
+  
+      <div class="inline-input right-space">
+        <label>Service Type</label>
+        <div *ngIf="editing">
+          <select class="form-control" [(ngModel)]="data.data.serviceType">
+            <option>Executor</option>
+            <option>NodePort</option>
+            <option>LoadBalancer</option>
+          </select>
+        </div>
+        <p *ngIf="!editing">{{data.data.serviceType}}</p>
+      </div>
+  
+      <div class="inline-input">
+        <label>ApplicationPort</label>
+        <input 
+          class="form-control"
+          size="{{inputSize('nodePort')}}"
+          *ngIf="editing" 
+          type="text" 
+          [(ngModel)]="data.data.applicationPort"
+          placeholder="ApplicationPort">
+        <p *ngIf="!editing">{{data.data.applicationPort}}</p>
+      </div>
+  
+      <div class="inline-input" *ngIf="data.data.serviceType == 'NodePort'">
+        <label>NodePort</label>
+        <input 
+          class="form-control"
+          size="{{inputSize('nodePort')}}"
+          *ngIf="editing" 
+          type="text" 
+          [(ngModel)]="data.data.nodePort"
+          placeholder="NodePort">
+        <p *ngIf="!editing">{{data.data.nodePort}}</p>
+      </div>
+    </div>
+
+    <div>
+      <div>
+        <label class="nested-title">Storage Details</label>
+      </div>
+  
+      <div class="inline-input right-space">
+        <label>Storage Type</label>
+        <div *ngIf="editing">
+          <select class="form-control" [(ngModel)]="data.data.storageType">
+            <option>Local</option>
+            <option>AwsElb</option>
+          </select>
+        </div>
+        <p *ngIf="!editing">{{data.data.storageType}}</p>
+      </div>
+
+      <div class="inline-input right-space">
+        <label>MountPath</label>
+        <input 
+          class="form-control"
+          size="{{inputSize('mountPath')}}"
+          *ngIf="editing" 
+          type="text" 
+          [(ngModel)]="data.data.mountPath"
+          placeholder="MountPath">
+        <p *ngIf="!editing">{{data.data.mountPath}}</p>
+      </div>
+  
+      <div class="inline-input" *ngIf="data.data.storageType == 'Local'">
+        <label>HostPath</label>
+        <input 
+          class="form-control"
+          size="{{inputSize('hostPath')}}"
+          *ngIf="editing" 
+          type="text" 
+          [(ngModel)]="data.data.hostPath"
+          placeholder="HostPath">
+        <p *ngIf="!editing">{{data.data.hostPath}}</p>
+      </div>
+
+      <div class="inline-input" *ngIf="data.data.storageType == 'AwsElb'">
+        <label>VolumeId</label>
+        <input 
+          class="form-control"
+          size="{{inputSize('volumeId')}}"
+          *ngIf="editing" 
+          type="text" 
+          [(ngModel)]="data.data.volumeId"
+          placeholder="VolumeId">
+        <p *ngIf="!editing">{{data.data.volumeId}}</p>
+      </div>
+
+      <div class="inline-input" *ngIf="data.data.storageType == 'AwsElb'">
+        <label>FsType</label>
+        <input 
+          class="form-control"
+          size="{{inputSize('fsType')}}"
+          *ngIf="editing" 
+          type="text" 
+          [(ngModel)]="data.data.fsType"
+          placeholder="FsType">
+        <p *ngIf="!editing">{{data.data.fsType}}</p>
+      </div>
+    </div>
   </div>
+
+ 
 
   <div class="action-buttons">
     <button class="btn-sm btn-secondary"  *ngIf="editing" (click)="save()">save</button>

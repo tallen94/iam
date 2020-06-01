@@ -22,6 +22,7 @@ export class HomeComponent implements OnInit {
   public functions: any[];
   public queries: any[];
   public graphs: any[];
+  public datasets: any[];
 
   public iam: Iam;
   public data: any;
@@ -55,6 +56,9 @@ export class HomeComponent implements OnInit {
     this.iam.getClusterForUser(this.iam.getUser().username)
     .subscribe((data: any[]) => {
       this.clusters = data
+    })
+    this.iam.getDatasetForUser(this.iam.getUser().username).subscribe((data: any[]) => {
+      this.datasets = data
     })
   }
 
@@ -174,6 +178,8 @@ export class HomeComponent implements OnInit {
         break;
       case "image":
         this.images.push(this.data)
+      case "dataset":
+        this.datasets.push(this.data)
     }
 
     this.backHistory.push(this.data)

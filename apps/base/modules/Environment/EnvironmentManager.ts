@@ -42,7 +42,18 @@ export class EnvironmentManager {
     }).then(() => {
       let kubernetes;
       if (data.data.type == "executor") {
-        kubernetes = this.kubernetesTemplate(data, data.data)
+        const serviceOptions = {
+          "Executor": Templates.SERVICE,
+          "NodePort": Templates.NODEPORT_SERVICE,
+          "LoadBalancer": Templates.LOADBALANCER_SERVICE
+        }
+        const storageTypes = {
+          "Local": Templates.LOCAL_VOLUME,
+          "AwsElb": Templates.ELB_VOLUME
+        }
+        data.storage = this.kubernetesTemplate(data, data.data, storageTypes[data.data.storageType])
+        data.service = this.kubernetesTemplate(data, data.data, serviceOptions[data.data.serviceType])
+        kubernetes = this.kubernetesTemplate(data, data.data, Templates.EXECUTOR_TEMPLATE)
       } else {
         kubernetes = data.kubernetes
       }
@@ -177,8 +188,14 @@ export class EnvironmentManager {
     })
   }
 
-  private kubernetesTemplate(data: any, otherData: any) {
-    return this.replace(this.replace(Templates.EXECUTOR, data), otherData)
+  public getEndpoints(username: string, name: string, cluster: string) {
+    return this.shellCommunicator.exec(Functions.GET_ENDPOINTS, "bash", "{service}", {
+      service: this.environmentFullName(username, cluster, name)
+    })
+  }
+
+  private kubernetesTemplate(data: any, otherData: any, template: string) {
+    return this.replace(this.replace(template, data), otherData)
   }
 
   private replace(s: string, data: any): string {

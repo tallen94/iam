@@ -117,4 +117,19 @@ export class InitData {
       authorization: []
     }
   }
+
+  dataset(id: number, data: any) {
+    return {
+      id: id,
+      username: this.iam.getUser().username,
+      exe: "dataset",
+      name: data.name,
+      cluster: data.cluster,
+      environment: data.environment,
+      description: "this is a dataset",
+      tag: "",
+      query: {},
+      transform: {}
+    }
+  }
 }
