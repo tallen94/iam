@@ -89,6 +89,26 @@ CREATE TABLE `environment` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
+-- Table structure for table `dataset`
+--
+
+DROP TABLE IF EXISTS `dataset`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `dataset` (
+  `name` varchar(100) NOT NULL,
+  `username` varchar(50) NOT NULL,
+  `cluster` varchar(50) NOT NULL,
+  `environment` varchar(50) NOT NULL,
+  `query` text NOT NULL,
+  `transformation` text NOT NULL,
+  `tag` varchar(64) NOT NULL,
+   `description` varchar(1024) NOT NULL,
+  KEY `username` (`username`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `image`
 --
 

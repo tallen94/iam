@@ -179,6 +179,26 @@ export class Iam {
     return this.client.get(ApiPaths.SEARCH_EXECUTABLES, {}, {searchText: searchText}, {sessiontoken: this.token});
   }
 
+  public addDataset(data: any) {
+    return this.client.post(ApiPaths.ADD_DATASET, data)
+  }
+
+  public getDataset(username: string, cluster: string, environment: string, name: string) {
+    return this.client.get(ApiPaths.GET_DATASET, {}, {username: username, cluster: cluster, environment: environment, name: name})
+  }
+
+  public getDatasetForUser(username: string) {
+    return this.client.get(ApiPaths.GET_DATASET_FOR_USER, {}, {username: username})
+  }
+
+  public loadDataset(username: string, cluster: string, environment: string, name: string, queryData: any) {
+    return this.client.post(ApiPaths.LOAD_DATASET, {username: username, cluster: cluster, environment: environment, name: name, queryData: queryData})
+  }
+
+  public transformDataset(username: string, cluster: string, environment: string, name: string, functionData: any) {
+    return this.client.post(ApiPaths.TRANSFORM_DATASET, {username: username, cluster: cluster, environment: environment, name: name, functionData: functionData})
+  }
+
   public getHost() {
     return this.client.getHost();
   }

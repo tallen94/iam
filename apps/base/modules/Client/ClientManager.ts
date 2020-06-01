@@ -5,6 +5,7 @@ import { AuthorizationClient } from "./AuthorizationClient";
 import { ClusterClient } from "./ClusterClient";
 import { EnvironmentClient } from "./EnvironmentClient";
 import { ImageClient } from "./ImageClient";
+import { DataClient } from "./DataClient";
 
 export class ClientManager {
 
@@ -15,7 +16,8 @@ export class ClientManager {
     private authorizationClient: AuthorizationClient,
     private clusterClient: ClusterClient,
     private environmentClient: EnvironmentClient,
-    private imageClient: ImageClient
+    private imageClient: ImageClient,
+    private dataClient: DataClient
   ) {
 
   }
@@ -177,5 +179,25 @@ export class ClientManager {
 
   public deleteAuthorization(resource_from: string, resource_to: string) {
     return this.authorizationClient.deleteAuthorization(resource_from, resource_to)
+  }
+
+  public addDataset(data: any) {
+    return this.dataClient.addDataset(data)
+  }
+  
+  public getDataset(username: string, cluster: string, environment: string, name: string) {
+    return this.dataClient.getDataset(username, cluster, environment, name)
+  }
+
+  public getDatasetForUser(username: string) {
+    return this.dataClient.getDatasetForUser(username)
+  }
+
+  public loadDataset(username: string, cluster: string, environment: string, name: string, queryData: any) {
+    return this.dataClient.loadDataset(username, cluster, environment, name, queryData)
+  }
+
+  public transformDataset(username: string, cluster: string, environment: string, name: string, functionData: any) {
+    return this.dataClient.transformDataset(username, cluster, environment, name, functionData)
   }
 }

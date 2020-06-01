@@ -143,7 +143,7 @@
         <p *ngIf="!editing">{{data.data.serviceType}}</p>
       </div>
   
-      <div class="inline-input" *ngIf="data.data.serviceType !== 'Executor'">
+      <div class="inline-input">
         <label>ApplicationPort</label>
         <input 
           class="form-control"
@@ -165,6 +165,71 @@
           [(ngModel)]="data.data.nodePort"
           placeholder="NodePort">
         <p *ngIf="!editing">{{data.data.nodePort}}</p>
+      </div>
+    </div>
+
+    <div>
+      <div>
+        <label class="nested-title">Storage Details</label>
+      </div>
+  
+      <div class="inline-input right-space">
+        <label>Storage Type</label>
+        <div *ngIf="editing">
+          <select class="form-control" [(ngModel)]="data.data.storageType">
+            <option>Local</option>
+            <option>AwsElb</option>
+          </select>
+        </div>
+        <p *ngIf="!editing">{{data.data.storageType}}</p>
+      </div>
+
+      <div class="inline-input right-space">
+        <label>MountPath</label>
+        <input 
+          class="form-control"
+          size="{{inputSize('mountPath')}}"
+          *ngIf="editing" 
+          type="text" 
+          [(ngModel)]="data.data.mountPath"
+          placeholder="MountPath">
+        <p *ngIf="!editing">{{data.data.mountPath}}</p>
+      </div>
+  
+      <div class="inline-input" *ngIf="data.data.storageType == 'Local'">
+        <label>HostPath</label>
+        <input 
+          class="form-control"
+          size="{{inputSize('hostPath')}}"
+          *ngIf="editing" 
+          type="text" 
+          [(ngModel)]="data.data.hostPath"
+          placeholder="HostPath">
+        <p *ngIf="!editing">{{data.data.hostPath}}</p>
+      </div>
+
+      <div class="inline-input" *ngIf="data.data.storageType == 'AwsElb'">
+        <label>VolumeId</label>
+        <input 
+          class="form-control"
+          size="{{inputSize('volumeId')}}"
+          *ngIf="editing" 
+          type="text" 
+          [(ngModel)]="data.data.volumeId"
+          placeholder="VolumeId">
+        <p *ngIf="!editing">{{data.data.volumeId}}</p>
+      </div>
+
+      <div class="inline-input" *ngIf="data.data.storageType == 'AwsElb'">
+        <label>FsType</label>
+        <input 
+          class="form-control"
+          size="{{inputSize('fsType')}}"
+          *ngIf="editing" 
+          type="text" 
+          [(ngModel)]="data.data.fsType"
+          placeholder="FsType">
+        <p *ngIf="!editing">{{data.data.fsType}}</p>
       </div>
     </div>
   </div>

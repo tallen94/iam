@@ -1,2 +1,2 @@
-FROM icanplayguitar94/iam:base-96f1fadba4aa7cec13de2b75e34fec75568e41cd
+FROM icanplayguitar94/iam:base-minikube
 COPY ./src public/dist

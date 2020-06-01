@@ -37,6 +37,7 @@ import { TrustListComponent } from './trust-list/trust-list.component';
 import { EnvironmentComponent } from './environment/environment.component';
 import { NewResourceModalComponent } from './new-resource-modal/new-resource-modal.component';
 import { ImageComponent } from './image/image.component';
+import { DatasetComponent } from './dataset/dataset.component';
 
 const appRoutes: Routes = [
   { path: "login", component: LoginComponent },
@@ -71,7 +72,8 @@ const appRoutes: Routes = [
     TrustListComponent,
     EnvironmentComponent,
     NewResourceModalComponent,
-    ImageComponent
+    ImageComponent,
+    DatasetComponent
   ],
   imports: [
     RouterModule.forRoot(appRoutes,{ enableTracing: true }),

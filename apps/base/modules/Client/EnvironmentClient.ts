@@ -34,4 +34,8 @@ export class EnvironmentClient {
   public stopEnvironment(username: string, name: string, cluster: string) {
     return this.clientCommunicator.post(ApiPaths.STOP_ENVIRONMENT, {username: username, name: name, cluster: cluster})
   }
+
+  public getEndpoints(username: string, name: string, cluster: string) {
+    return this.clientCommunicator.get(ApiPaths.GET_ENDPOINTS, {username: username, name: name, cluster: cluster})
+  }
 }

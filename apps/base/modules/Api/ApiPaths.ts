@@ -31,6 +31,14 @@ export class ApiPaths {
   public static DELETE_ENVIRONMENT = "/environment"
   public static START_ENVIRONMENT = "/environment/start"
   public static STOP_ENVIRONMENT = "/environment/stop"
+  public static GET_ENDPOINTS = "/environment/endpoints"
+
+  // Dataset
+  public static ADD_DATASET = "/dataset"
+  public static GET_DATASET = "/dataset"
+  public static GET_DATASET_FOR_USER = "/dataset/user"
+  public static LOAD_DATASET = "/dataset/load"
+  public static TRANSFORM_DATASET = "/dataset/transform"
 
   // Image
   public static ADD_IMAGE = "/image"

@@ -10,5 +10,6 @@ export class Functions {
 
   public static KUBECTL_APPLY = "kubectl apply -f $1"
   public static KUBECTL_DELETE = "kubectl delete -f $1"
+  public static GET_ENDPOINTS = "kubectl get endpoints $1 -o json"
 
 }

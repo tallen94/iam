@@ -1,5 +1,10 @@
 import { Executable } from "./Executable";
 import { DatabaseCommunicator } from "../Communicator/DatabaseCommunicator";
+import { EnvironmentClient } from "../Client/EnvironmentClient";
+import * as Lodash from "lodash";
+import { ClientCommunicator } from "../Communicator/ClientCommunicator";
+import { FileSystemCommunicator } from "../Communicator/FileSystemCommunicator";
+import * as uuid from "uuid";
 
 export class Query implements Executable {
 
@@ -8,7 +13,8 @@ export class Query implements Executable {
     private name: string,
     private visibility: string,
     private file: string,
-    private database: DatabaseCommunicator
+    private database: DatabaseCommunicator,
+    private environmentClient: EnvironmentClient
   ) {
 
   }
@@ -26,6 +32,38 @@ export class Query implements Executable {
   }
 
   public run(data: any): Promise<any> {
-    return this.database.execute(this.file, data);
+    if (data.loadData == undefined) {
+      return this.database.execute(this.file, data)
+    }
+    const loadData = data.loadData
+    console.log(data)
+    return Promise.all([
+      this.database.execute(this.file, loadData.queryData),
+      this.environmentClient.getEndpoints(loadData.username, loadData.environment, loadData.cluster)
+    ]).then((results: any[]) => {
+      console.log(results)
+      const queryResult = results[0]
+      const endpoints = results[1]
+      const subset = endpoints["subsets"][0]
+      const port = subset["ports"][0]["port"]
+      const addresses = subset["addresses"]
+
+      // [1, 2, 3, 4, 5, 6, 7, 8]
+      return Promise.all(Lodash.map(addresses, (addr, index) => {
+        const val = (queryResult.length / addresses.length) 
+        const start = parseInt(index) * val
+        const end = (parseInt(index)+1) * val
+        const dataset = queryResult.slice(start, end)
+        const host = addr["ip"]
+        const client = new ClientCommunicator(host, port)
+        const fsCommunicator = new FileSystemCommunicator(client)
+        const path = ["data", loadData.username, loadData.cluster, loadData.environment, host, loadData.name].join("/")
+        const filUid = uuid.v4()
+        return fsCommunicator.putFile(path, {
+          name: filUid,
+          file: JSON.stringify(dataset)
+        })
+      }))
+    });
   }
 }

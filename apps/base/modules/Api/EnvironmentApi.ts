@@ -60,5 +60,12 @@ export class EnvironmentApi {
         res.status(200).send(result)
       })
     })
+
+    this.serverCommunicator.get(ApiPaths.GET_ENDPOINTS, (req: any, res: any) => {
+      this.environmentManager.getEndpoints(req.query.username, req.query.name, req.query.cluster)
+      .then((result) => {
+        res.status(200).send(result)
+      })
+    })
   }
 }

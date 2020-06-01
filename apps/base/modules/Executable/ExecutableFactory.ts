@@ -5,6 +5,7 @@ import { ShellCommunicator } from "../Communicator/ShellCommunicator";
 import { FileSystem } from "../FileSystem/FileSystem";
 import { DatabaseCommunicator } from "../Communicator/DatabaseCommunicator";
 import { FileSystemFactory } from "../FileSystem/FileSystemFactory";
+import { EnvironmentClient } from "../Client/EnvironmentClient";
 
 export class ExecutableFactory {
 
@@ -12,7 +13,8 @@ export class ExecutableFactory {
     private fileSystemFactory: FileSystemFactory,
     private fileSystem: FileSystem,
     private shell: ShellCommunicator,
-    private database: DatabaseCommunicator) {
+    private database: DatabaseCommunicator,
+    private environmentClient: EnvironmentClient) {
 
   }
 
@@ -34,7 +36,8 @@ export class ExecutableFactory {
       data.name,
       data.visibility,
       data.text,
-      this.database
+      this.database,
+      this.environmentClient
     )
   }
 
