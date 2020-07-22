@@ -50,6 +50,8 @@ Queries are SQL queries to communicate with the local database. Currently you ca
 It would be ideal to allow queries to specify what datasource they want, in the same way that functions can specify what `environment` they use.
 For now, you can use functions to hook up a mysql client library in python for example.
 
+![query](../screenshots/query.png)
+
 #### Graphs 
 Graphs are descriptions of the execution plan of a series of `functions` and `queries`. Steps can be linked in sequential and parallel patterns.
 
