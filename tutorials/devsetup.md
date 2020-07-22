@@ -36,9 +36,7 @@ Starting the proxy will allow us to access the application at `http://localhost`
 ### Using the Dasbhoard
 Navigate to dashboard at `http://localhost`
 
-The first thing to do is create an `admin` user.
-
-Create a user with username `admin`, email `admin` and generate a secure password.
+Create a user with username, email and generate a secure password.
 
 ## Images
 There are 5 images that can be built:

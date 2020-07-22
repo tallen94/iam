@@ -8,7 +8,7 @@ This goes over the setup for running IAM on an EKS cluster.
 All of the code to setup the cluster is in the `eks/` folder.
 
 ## AWS account
-You will need an AWS account with credentials configured, and a user that can create CloudWatch stacks and manage IAM permissions.
+You will need an AWS account with credentials configured, and a user that can create CloudFormation stacks and manage IAM permissions.
 
 ### Create permissions for AWS user
 run `./aws-user.sh` to create a role with all permissions necessary to spin up the cluster.
