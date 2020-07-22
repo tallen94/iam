@@ -48,7 +48,7 @@
       </ul>
     </div>
 
-    <!-- <div *ngIf="queries && environments && environments.length > 0">
+    <div *ngIf="queries && environments && environments.length > 0">
       <div class="sidebar-row-title" (click)="showGroup('queries')">
         Queries ({{queries.length}})
         <button class="btn add-button" (click)="newResource('query')"><i class="fa fa-plus"></i></button>
@@ -57,7 +57,7 @@
       <ul *ngIf="show === 'queries' || showAll" class="sidebar-row-subrows">
         <li class="sidebar-row-subrow" *ngFor="let item of filter(queries)" (click)="select('query', item)">{{item.name}}</li>
       </ul>
-    </div> -->
+    </div>
 
     <div *ngIf="graphs && environments && queries && functions && environments.length > 0 && (functions.length > 1 || queries.length > 1 || (functions.length > 0 && queries.length > 0))">
       <div class="sidebar-row-title" (click)="showGroup('graphs')">
