@@ -1,20 +1,7 @@
 # Introduction
 Iam is a limitless tool for developing highly scalable code
 
-This tutorial will introduce you to the main concepts. Once you feel comfortable with the information in this tutorial, move on to the next.
-
-### Executable
-Executables are the resources available on the cluster. You can:
-- Add and executable
-- Get and executable
-- Get a list of executables for a user
-- Run and executable
-
-These operations are available as the `Executable Api`
-- `/executable`
-- `/executable/:username/:exe/:name`
-- `/executable/:username/:exe`
-- `/executable/:username/:exe/:name/run`
+This tutorial will introduce you to the main concepts.
 
 #### Cluster
 Clusters are organizations of Environments.
@@ -34,6 +21,19 @@ Environments that extend the base image `icanplayguitar/iam:base-*`, and are of 
 Each `executable` must specify what environment it is run in. By default they run in the `base` environment. 
 
 ![environment](../screenshots/environment.png)
+
+### Executable
+Executables are the resources available on the cluster. You can:
+- Add and executable
+- Get and executable
+- Get a list of executables for a user
+- Run and executable
+
+These operations are available as the `Executable Api`
+- `/executable`
+- `/executable/:username/:exe/:name`
+- `/executable/:username/:exe`
+- `/executable/:username/:exe/:name/run`
 
 #### Function
 Functions are pieces of code. Functions require a command and code to run that takes input from stdin and outputs to stdout.
