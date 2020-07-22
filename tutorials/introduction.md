@@ -55,6 +55,8 @@ Graphs are descriptions of the execution plan of a series of `functions` and `qu
 
 Graphs are Directed Acyclic Graphs. They can have as many starting and ending nodes, with any edges as long as no cycles are created.
 
+![graph](../screenshots/graph.png)
+
 Nodes on a graph are indexed in topological sort order, with parallel nodes indexed by when they were added to the graph.
 
 There are a few different ways of specifying input into a graph. 
