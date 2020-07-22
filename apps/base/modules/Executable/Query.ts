@@ -37,7 +37,7 @@ export class Query implements Executable {
     }
     const loadData = data.loadData
     return Promise.all([
-      this.database.execute(this.file, loadData.queryData),
+      this.database.execute(this.file, loadData.executableData),
       this.environmentClient.getEndpoints(loadData.username, loadData.environment, loadData.cluster)
     ]).then((results: any[]) => {
       const queryResult = results[0]

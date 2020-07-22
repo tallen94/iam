@@ -33,8 +33,8 @@ export class Queries {
   public static DELETE_CLUSTER = "delete from cluster where username={username} and name={name};"
 
   // Dataset
-  public static ADD_DATASET = "insert into dataset(name, username, cluster, environment, description, query, tag) values ({name}, {username}, {cluster}, {environment}, {description}, {query}, {tag});"
-  public static UPDATE_DATASET = "update dataset set query={query}, description={description}, tag={tag} where username={username} and cluster={cluster} and environment={environment} and name={name}"
+  public static ADD_DATASET = "insert into dataset(name, username, cluster, environment, description, executable, tag) values ({name}, {username}, {cluster}, {environment}, {description}, {executable}, {tag});"
+  public static UPDATE_DATASET = "update dataset set executable={executable}, description={description}, tag={tag} where username={username} and cluster={cluster} and environment={environment} and name={name}"
   public static GET_DATASET = "select * from dataset where username={username} and cluster={cluster} and environment={environment} and name={name};"
   public static GET_DATASET_FOR_USER = "select * from dataset where username={username};"
 

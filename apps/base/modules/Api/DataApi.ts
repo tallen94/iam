@@ -34,7 +34,7 @@ export class DataApi {
     })
 
     this.serverCommunicator.post(ApiPaths.LOAD_DATASET, (req: any, res: any) => {
-      this.dataManager.loadDataset(req.body.username, req.body.cluster, req.body.environment, req.body.name, req.body.queryData)
+      this.dataManager.loadDataset(req.body.username, req.body.cluster, req.body.environment, req.body.name, req.body.executableData)
       .then((result) => {
         res.status(200).send(result)
       })

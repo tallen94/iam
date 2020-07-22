@@ -100,8 +100,8 @@ CREATE TABLE `dataset` (
   `username` varchar(50) NOT NULL,
   `cluster` varchar(50) NOT NULL,
   `environment` varchar(50) NOT NULL,
-  `query` text NOT NULL,
-  `tag` varchar(64) NOT NULL,
+  `executable` text NOT NULL,
+  `tag` text NOT NULL,
   `description` varchar(1024) NOT NULL,
   KEY `username` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

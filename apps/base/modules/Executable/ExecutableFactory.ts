@@ -26,7 +26,9 @@ export class ExecutableFactory {
       data.command,
       data.args,
       data.text,
-      this.shell
+      this.shell,
+      this.environmentClient,
+      this.fileSystem
     )
   }
 

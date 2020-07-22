@@ -128,7 +128,7 @@ export class InitData {
       environment: data.environment,
       description: "this is a dataset",
       tag: "",
-      query: {},
+      executable: {},
       transform: {}
     }
   }
