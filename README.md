@@ -14,3 +14,4 @@ An Iam cluster is deployed to Kubernetes for creating environments that comprise
 #### Tutorials
 Follow the [introduction](https://github.com/tallen94/iam/blob/master/tutorials/introduction.md) tutorial to learn about the main concepts of Iam.
 
+![function](screenshots/function.png)

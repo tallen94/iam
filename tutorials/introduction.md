@@ -1,7 +1,26 @@
 # Introduction
 Iam is a limitless tool for developing highly scalable code
 
-This tutorial will introduce you to the main concepts. Once you feel comfortable with the information in this tutorial, move on to the next.
+This tutorial will introduce you to the main concepts.
+
+#### Cluster
+Clusters are organizations of Environments.
+
+![cluster](../screenshots/cluster.png)
+
+#### Environments
+These are load balanced services for running executables. Environments allow configurable parameters to control:
+- Docker image reference
+- Service ports
+- Number of instances
+- CPU and Memory allocation per instance
+- Volume Storage
+
+Environments that extend the base image `icanplayguitar/iam:base-*`, and are of type `executor`, can be used to run any other `executable`.
+
+Each `executable` must specify what environment it is run in. By default they run in the `base` environment. 
+
+![environment](../screenshots/environment.png)
 
 ### Executable
 Executables are the resources available on the cluster. You can:
@@ -16,21 +35,6 @@ These operations are available as the `Executable Api`
 - `/executable/:username/:exe`
 - `/executable/:username/:exe/:name/run`
 
-#### Cluster
-Clusters are organizations of Environments.
-
-#### Environments
-These are load balanced services for running executables. Environments allow configurable parameters to control:
-- Docker image reference
-- Service ports
-- Number of instances
-- CPU and Memory allocation per instance
-- Volume Storage
-
-Environments that extend the base image `icanplayguitar/iam:base-*`, and are of type `executor`, can be used to run any other `executable`.
-
-Each `executable` must specify what environment it is run in. By default they run in the `base` environment. 
-
 #### Function
 Functions are pieces of code. Functions require a command and code to run that takes input from stdin and outputs to stdout.
 Once you write a function, it is immediately accessible via the `Executable Api`. 
@@ -38,6 +42,8 @@ Once you write a function, it is immediately accessible via the `Executable Api`
 When running a `function`, the POST request body is passed into the `stdin` pipe. All of the output into the `stdout` pipe will be returned in the response body of the api request. 
 
 If specifying an additional set of arguments in the `args` field, use `{key}` as a way to inject values from requests with a json body.
+
+![function](../screenshots/function-editing.png)
 
 #### Queries
 Queries are SQL queries to communicate with the local database. Currently you can only access the cluster database through native `queries`.
