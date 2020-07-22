@@ -19,7 +19,7 @@ These operations are available as the `Executable Api`
 #### Cluster
 Clusters are organizations of Environments.
 
-![cluster](screenshots/cluster.png)
+![cluster](../screenshots/cluster.png)
 
 #### Environments
 These are load balanced services for running executables. Environments allow configurable parameters to control:
@@ -33,7 +33,7 @@ Environments that extend the base image `icanplayguitar/iam:base-*`, and are of 
 
 Each `executable` must specify what environment it is run in. By default they run in the `base` environment. 
 
-![environment](screenshots/environment.png)
+![environment](../screenshots/environment.png)
 
 #### Function
 Functions are pieces of code. Functions require a command and code to run that takes input from stdin and outputs to stdout.
@@ -43,7 +43,7 @@ When running a `function`, the POST request body is passed into the `stdin` pipe
 
 If specifying an additional set of arguments in the `args` field, use `{key}` as a way to inject values from requests with a json body.
 
-![function](screenshots/function-editing.png)
+![function](../screenshots/function-editing.png)
 
 #### Queries
 Queries are SQL queries to communicate with the local database. Currently you can only access the cluster database through native `queries`.
