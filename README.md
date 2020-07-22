@@ -6,10 +6,10 @@ Iam is a space for collaborating and building. Use it to:
 
 A single interface provides all the tools to write and experiment with code on a highly scalable, highly available cluster. Machine Learning engineers need a way to minimize complexity in getting experimentation code into a production size computing environment. 
 
-This platform enables the same freedom and iteration speed as developing locally with tools like Jupyter Notebook. Transitioning code from a notebook to a highly scalable platform requires no additional effort from the developer, other than copying it from one editor to another.
+This platform enables the same freedom and iteration speed as developing locally with tools like [Jupyter Notebook](https://jupyter.org/). Transitioning code from a notebook to a highly scalable platform requires no additional effort from the developer, other than copying it from one editor to another.
 
-## Iam Cluster
-An Iam cluster is deployed to Kubernetes for creating environments that comprise of a Dockerfile and Kubernetes object yaml files. It stores your code, Dockerfiles and Kubernetes object files. Work with a simple user interface to manage your environments and code.
+## The Platform
+The Iam platform is deployed to [Kubernetes](https://kubernetes.io/). Create different environments that contain unique sets of dependencies and scale them as required. Each environment can use a completely custom image or use the executor image to expose pods for running executables. Write scripting code to run on these executors seemlessly through the UI, and combine them into graphs for optimal execution management of complex processes.
 
 #### Tutorials
 Follow the [introduction](https://github.com/tallen94/iam/blob/master/tutorials/introduction.md) tutorial to learn about the main concepts of Iam.
