@@ -15,3 +15,7 @@ The Iam platform is deployed to [Kubernetes](https://kubernetes.io/). Create dif
 Follow the [introduction](https://github.com/tallen94/iam/blob/master/tutorials/introduction.md) tutorial to learn about the main concepts of Iam.
 
 ![function](screenshots/function.png)
+
+### System Diagram
+
+<img src="./screenshots/system-diagram.png" width="500" height="400">
