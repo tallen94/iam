@@ -1,0 +1,79 @@
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: router
+spec:
+  selector:
+    matchLabels:
+      app: router
+  replicas: 1 # tells deployment to run 2 pods matching the template
+  template:
+    metadata:
+      labels:
+        app: router
+    spec:
+      imagePullSecrets:
+      - name: regcred
+      containers:
+      - name: router
+        image: icanplayguitar94/iam:base-673644d0670519918239cb4439aee396c6e315ba
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5000
+        readinessProbe:
+          httpGet:
+            path: /status
+            port: 5000
+          initialDelaySeconds: 3
+          periodSeconds: 3
+
+        env:
+        - name: HOME
+          value: "/usr/home/iam"
+        - name: TYPE 
+          value: "router"
+        - name: SERVER_PORT
+          value: "5000"
+
+        # FS CONFIG
+        - name: FS_HOST
+          value: "filesystem.default"
+        - name: FS_PORT
+          value: "80"
+          
+        # BUILDER CONFIG
+        - name: BUILDER_HOST
+          value: "builder.default"
+        - name: BUILDER_PORT
+          value: "80"
+          
+        ## DB CONFIG
+        - name: DB_HOST
+          value: "mysqldatabase.default"
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: dbconfig
+              key: user
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: dbconfig
+              key: password
+        - name: DB_NAME
+          valueFrom:
+            secretKeyRef:
+              name: dbconfig
+              key: db_name
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: router
+spec:
+  selector:
+    app: router
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 5000
