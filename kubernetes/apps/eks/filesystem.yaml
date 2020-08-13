@@ -18,7 +18,7 @@ spec:
         type: ng-1
       containers:
       - name: filesystem
-        image: icanplayguitar94/iam:base-673644d0670519918239cb4439aee396c6e315ba
+        image: icanplayguitar94/iam:base-ef20efb998ee593cb02b1f5ecbe21f8a142c3cf5
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
