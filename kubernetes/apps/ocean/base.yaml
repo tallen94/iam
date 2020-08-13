@@ -1,23 +1,21 @@
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
-  name: iam-job
+  name: base
 spec:
   selector:
     matchLabels:
-      app: iam-job
+      app: base
   replicas: 1 # tells deployment to run 2 pods matching the template
   template:
     metadata:
       labels:
-        app: iam-job
+        app: base
     spec:
       imagePullSecrets:
       - name: regcred
-      nodeSelector:
-        type: ng-1
       containers:
-      - name: iam-job
+      - name: base
         image: icanplayguitar94/iam:base-673644d0670519918239cb4439aee396c6e315ba
         imagePullPolicy: IfNotPresent
         ports:
@@ -28,19 +26,12 @@ spec:
             port: 5000
           initialDelaySeconds: 3
           periodSeconds: 3
-        
-        resources:
-          requests:
-            memory: "500Mi"
-            cpu: "250m"
-          limits:
-            memory: "500Mi"
-            cpu: "250m"
+
         env:
         - name: HOME
           value: "/usr/home/iam"
         - name: TYPE 
-          value: "job"
+          value: "executor"
         - name: SERVER_PORT
           value: "5000"
         - name: "ENVIRONMENT"
@@ -48,7 +39,7 @@ spec:
 
         # FS CONFIG
         - name: FS_HOST
-          value: "filesystem"
+          value: "filesystem.default"
         - name: FS_PORT
           value: "80"
 
@@ -74,10 +65,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: iam-job
+  name: base
 spec:
   selector:
-    app: iam-job
+    app: base
   ports:
     - protocol: TCP
       port: 80

@@ -5,6 +5,7 @@ import { Queries } from "../Constants/Queries";
 import { Client } from "../Client/Client";
 import { ClientCommunicator } from "../Communicator/ClientCommunicator";
 import { FileSystemCommunicator } from "../Communicator/FileSystemCommunicator";
+import * as uuid from "uuid";
 
 export class DataManager {
 
@@ -13,7 +14,7 @@ export class DataManager {
   }
 
   public addDataset(data: any) {
-    const queryData = JSON.stringify(data.query)
+    const executableData = JSON.stringify(data.executable)
     return this.getDataset(data.username, data.cluster, data.environment, data.name)
     .then((result) => {
       if (result == undefined) {
@@ -23,7 +24,7 @@ export class DataManager {
           cluster: data.cluster,
           environment: data.environment,
           description: data.description,
-          query: queryData,
+          executable: executableData,
           tag: JSON.stringify([])
         })
       }
@@ -33,7 +34,7 @@ export class DataManager {
         cluster: data.cluster,
         environment: data.environment,
         description: data.description,
-        query: queryData,
+        executable: executableData,
         tag: JSON.stringify(data.tag)
       })
     })
@@ -44,7 +45,7 @@ export class DataManager {
     .then((result) => {
       if (result.length > 0) {
         const item = result[0];
-        item.query = JSON.parse(item.query)
+        item.executable = JSON.parse(item.executable)
         item.tag = JSON.parse(item.tag)
         return item
       }
@@ -56,14 +57,14 @@ export class DataManager {
     return this.databaseCommunicator.execute(Queries.GET_DATASET_FOR_USER, {username: username})
     .then((results: any[]) => {
       return Promise.all(Lodash.map(results, (item) => {
-        item.query = JSON.parse(item.query)
+        item.executable = JSON.parse(item.executable)
         item.tag = JSON.parse(item.tag)
         return item
       }))
     })
   }
 
-  public loadDataset(username: string, cluster: string, environment: string, name: string, queryData: any) {
+  public loadDataset(username: string, cluster: string, environment: string, name: string, executableData: any) {
     return this.getDataset(username, cluster, environment, name)
     .then((dataset: any) => {
       const loadData = {
@@ -71,14 +72,41 @@ export class DataManager {
         cluster: dataset.cluster, 
         environment: dataset.environment,
         name: dataset.name,
-        queryData: queryData
+        executableData: executableData
       }
-      return this.environmentRouterClient.runExecutable(dataset.query.username, dataset.query.cluster, dataset.query.environment, "query", dataset.query.name, {loadData: loadData}, "")
+      return this.environmentRouterClient.runExecutable(dataset.executable.username, dataset.executable.cluster, dataset.executable.environment, dataset.executable.exe, dataset.executable.name, {loadData: loadData}, "")
       .then((result: any) => {
         dataset.tag.push(result.result.tag)
         return this.addDataset(dataset)
       }).then((result) => {
         return dataset
+      })
+    })
+  }
+
+  public transformData(username: string, cluster: string, environment: string, name: string, functionData: any) {
+    return this.getDataset(username, cluster, environment, name)
+    .then((dataset: any) => {
+      const transformData = functionData
+      transformData.prevTag = dataset.tag[dataset.tag.length - 1]
+      // Get endpoints 
+      // Generate new data tag
+      // Run function for each endpoint
+      return this.environmentClient.getEndpoints(transformData.username, transformData.environment, transformData.cluster)
+      .then((endpoints: any) => {
+        const subset = endpoints["subsets"][0]
+        const port = subset["ports"][0]["port"]
+        const addresses = subset["addresses"]
+        const tag = uuid.v4()
+        transformData.newTag = tag
+
+        return Promise.all(Lodash.map(addresses, (addr, index) => {
+          const host = addr["ip"]
+          const client = new Client(new ClientCommunicator(host, port)) 
+          return client.runExecutable(transformData.username, transformData.cluster, transformData.environment, transformData.exe, transformData.name, { transformData: transformData }, "")
+        })).then((results) => {
+          return {tag: tag}
+        })
       })
     })
   }
@@ -140,9 +168,5 @@ export class DataManager {
         return dataset
       })
     })
-  }
-
-  public transformData(username: string, cluster: string, environment: string, name: string, functionData: any) {
-    return Promise.resolve()
   }
 }

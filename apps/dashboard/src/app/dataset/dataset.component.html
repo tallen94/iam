@@ -43,7 +43,7 @@
 
     <div>
       <div>
-        <label class="nested-title" >Query</label>
+        <label class="nested-title" >Executable</label>
       </div>
       <div class="inline-input right-space">
         <label>Username</label>
@@ -52,9 +52,9 @@
           size="{{inputSize('username')}}"
           *ngIf="editing" 
           type="text" 
-          [(ngModel)]="data.query.username"
+          [(ngModel)]="data.executable.username"
           placeholder="name">
-        <p *ngIf="!editing" >{{data.query.username}}</p>
+        <p *ngIf="!editing" >{{data.executable.username}}</p>
       </div>
       <div class="inline-input right-space">
         <label>Cluster</label>
@@ -63,9 +63,9 @@
           size="{{inputSize('cluster')}}"
           *ngIf="editing" 
           type="text" 
-          [(ngModel)]="data.query.cluster"
+          [(ngModel)]="data.executable.cluster"
           placeholder="name">
-        <p *ngIf="!editing" >{{data.query.cluster}}</p>
+        <p *ngIf="!editing" >{{data.executable.cluster}}</p>
       </div>
       <div class="inline-input right-space">
         <label>Environment</label>
@@ -74,9 +74,20 @@
           size="{{inputSize('environment')}}"
           *ngIf="editing" 
           type="text" 
-          [(ngModel)]="data.query.environment"
+          [(ngModel)]="data.executable.environment"
           placeholder="name">
-        <p *ngIf="!editing" >{{data.query.environment}}</p>
+        <p *ngIf="!editing" >{{data.executable.environment}}</p>
+      </div>
+      <div class="inline-input right-space">
+        <label>Exe</label>
+        <input 
+          class="form-control"
+          size="{{inputSize('name')}}"
+          *ngIf="editing" 
+          type="text" 
+          [(ngModel)]="data.executable.exe"
+          placeholder="name">
+        <p *ngIf="!editing" >{{data.executable.exe}}</p>
       </div>
       <div class="inline-input">
         <label>Name</label>
@@ -85,9 +96,9 @@
           size="{{inputSize('name')}}"
           *ngIf="editing" 
           type="text" 
-          [(ngModel)]="data.query.name"
+          [(ngModel)]="data.executable.name"
           placeholder="name">
-        <p *ngIf="!editing" >{{data.query.name}}</p>
+        <p *ngIf="!editing" >{{data.executable.name}}</p>
       </div>
     </div>
 

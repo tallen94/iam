@@ -191,8 +191,8 @@ export class Iam {
     return this.client.get(ApiPaths.GET_DATASET_FOR_USER, {}, {username: username})
   }
 
-  public loadDataset(username: string, cluster: string, environment: string, name: string, queryData: any) {
-    return this.client.post(ApiPaths.LOAD_DATASET, {username: username, cluster: cluster, environment: environment, name: name, queryData: queryData})
+  public loadDataset(username: string, cluster: string, environment: string, name: string, executableData: any) {
+    return this.client.post(ApiPaths.LOAD_DATASET, {username: username, cluster: cluster, environment: environment, name: name, executableData: executableData})
   }
 
   public transformDataset(username: string, cluster: string, environment: string, name: string, functionData: any) {

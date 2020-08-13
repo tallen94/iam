@@ -74,7 +74,7 @@ export class DatasetComponent implements OnInit {
   loadDataset() {
     this.loadingDataset = true;
     this.spinnerService.show()
-    this.iam.loadDataset(this.data.username, this.data.cluster, this.data.environment, this.data.name, this.data.query)
+    this.iam.loadDataset(this.data.username, this.data.cluster, this.data.environment, this.data.name, this.data.executable)
     .subscribe((result) => {
       this.data = result
       this.loadingDataset = false;
@@ -91,6 +91,7 @@ export class DatasetComponent implements OnInit {
   selectDataPreviewTag(value: string) {
     this.iam.readDataset(this.data.username, this.data.cluster, this.data.environment, this.data.name, value, 5)
     .subscribe((result) => {
+      this.dataPreviewTag = value;
       this.dataPreview = result;
       this.dataPreviewColumns = Object.keys(this.dataPreview[0])
     })

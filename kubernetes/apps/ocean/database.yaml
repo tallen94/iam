@@ -7,22 +7,12 @@ metadata:
 spec:
   imagePullSecrets:
   - name: regcred
-  nodeSelector:
-    type: ng-1
   containers:
   - name: mysqldatabase
     image: icanplayguitar94/iam:database-0.0.15
     imagePullPolicy: IfNotPresent
     ports:
     - containerPort: 3306
-    
-    resources:
-      requests:
-        memory: "2000Mi"
-        cpu: "1000m"
-      limits:
-        memory: "2000Mi"
-        cpu: "1000m"
 
     env:
     - name: MYSQL_ROOT_PASSWORD
@@ -43,17 +33,6 @@ spec:
         secretKeyRef:
           name: dbconfig
           key: db_name
-    
-      
-    volumeMounts:
-    - mountPath: /var/lib/mysql
-      name: ebs-volume
-      
-  volumes:
-  - name: ebs-volume
-    awsElasticBlockStore:
-      volumeID: vol-0e7cd4ae9de4d64a2
-      fsType: ext4
 
 ---
 apiVersion: v1
