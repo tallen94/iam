@@ -18,7 +18,7 @@ export class LoginComponent implements OnInit {
   ngOnInit() { }
 
   login() {
-    this.iam.addUserSession(this.username, this.password)
+    this.iam.addUserSession(this.username.toLowerCase(), this.password)
     .subscribe((result: any) => {
       if (result.token) {
         this.iam.setUser(this.username, result.token);
@@ -29,7 +29,7 @@ export class LoginComponent implements OnInit {
   }
 
   signup() {
-    this.iam.addUser(this.username, this.email, this.password)
+    this.iam.addUser(this.username.toLowerCase(), this.email, this.password)
     .subscribe((result: any) => {
       if (result.success) {
         this.login()

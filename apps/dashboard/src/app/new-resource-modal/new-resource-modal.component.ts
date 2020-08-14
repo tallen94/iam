@@ -24,6 +24,7 @@ export class NewResourceModalComponent implements OnInit {
 
   done() {
     this.data.exe = this.type;
+    this.data.name = this.data.name.toLowerCase()
     this.newResourceMoalDone.emit(this.data)
     this.data = {}
   }
