@@ -1,2 +1,2 @@
-FROM icanplayguitar94/iam:base-ef20efb998ee593cb02b1f5ecbe21f8a142c3cf5
+FROM icanplayguitar94/iam:base-f8e34c6dc408172acfb2f9306b01d2ac570c6c24
 COPY ./src public/dist
