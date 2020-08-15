@@ -13,7 +13,7 @@ export class Iam {
   constructor(httpClient: HttpClient) {
     const routerProtocol = window.location.protocol;
     const routerUrl = window.location.hostname;
-    const routerPort = environment.production === true ? parseInt(window.location.port) : environment.port;
+    const routerPort = environment.production ? "" : environment.port;
     this.client = new ClientCommunicator(httpClient, routerProtocol, routerUrl, routerPort);
   }
 

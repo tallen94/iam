@@ -8,7 +8,7 @@ export class ClientCommunicator {
     private http: HttpClient,
     private protocol: string,
     private host: string,
-    private port: number
+    private port: string
   ) { }
 
   public getHost() {
@@ -17,13 +17,11 @@ export class ClientCommunicator {
 
   public get(url: string, params?: any, data?: any, headers?: any) {
     const absUrl = this.getAbsoluteUrl(url, params);
-    console.log(absUrl)
     return this.http.get(absUrl, { params: data, headers: headers });
   }
 
   public post(url: string, data?: any, params?: any, headers?: any, responseType?: string) {
     const absUrl = this.getAbsoluteUrl(url, params);
-    console.log(absUrl)
     const opts = { headers: headers };
     if (responseType) 
       opts["responseType"] = responseType;
@@ -45,6 +43,6 @@ export class ClientCommunicator {
 
   private getAbsoluteUrl(url: string, params?: any) {
     const path = params === undefined ? url : this.replace(url, params);
-    return this.protocol + "//" + this.host + ":" + this.port + path;
+    return this.protocol + "//" + this.host + this.port + path;
   }
 }

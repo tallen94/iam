@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  port: 443
+  port: undefined
 };
