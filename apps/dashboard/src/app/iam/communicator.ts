@@ -17,11 +17,13 @@ export class ClientCommunicator {
 
   public get(url: string, params?: any, data?: any, headers?: any) {
     const absUrl = this.getAbsoluteUrl(url, params);
+    console.log(absUrl)
     return this.http.get(absUrl, { params: data, headers: headers });
   }
 
   public post(url: string, data?: any, params?: any, headers?: any, responseType?: string) {
     const absUrl = this.getAbsoluteUrl(url, params);
+    console.log(absUrl)
     const opts = { headers: headers };
     if (responseType) 
       opts["responseType"] = responseType;
