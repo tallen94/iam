@@ -1,5 +1,7 @@
 export class Templates {
 
+  public static NONE = ""
+
   public static EXECUTOR_TEMPLATE = `
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment

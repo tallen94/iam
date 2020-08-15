@@ -60,11 +60,22 @@ apiVersion: v1
 kind: Service
 metadata:
   name: client
+  annotations:
+    service.beta.kubernetes.io/do-loadbalancer-protocol: "http"
+    service.beta.kubernetes.io/do-loadbalancer-algorithm: "round_robin"
+    service.beta.kubernetes.io/do-loadbalancer-tls-ports: "443"
+    service.beta.kubernetes.io/do-loadbalancer-certificate-id: "5bcb4fd7-1834-4360-855c-c7dc98f53a34"
+    service.beta.kubernetes.io/do-loadbalancer-redirect-http-to-https: "true"
 spec:
   selector:
     app: client
   type: LoadBalancer
   ports:
-    - protocol: TCP
+    - name: http
+      protocol: TCP
       port: 80
+      targetPort: 5000
+    - name: https
+      protocol: TCP
+      port: 443
       targetPort: 5000

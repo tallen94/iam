@@ -142,8 +142,8 @@
         </div>
         <p *ngIf="!editing">{{data.data.serviceType}}</p>
       </div>
-  
-      <div class="inline-input">
+
+      <div *ngIf="data.data.serviceType !== 'Executor'" class="inline-input">
         <label>ApplicationPort</label>
         <input 
           class="form-control"
@@ -177,6 +177,7 @@
         <label>Storage Type</label>
         <div *ngIf="editing">
           <select class="form-control" [(ngModel)]="data.data.storageType">
+            <option>None</option>
             <option>Local</option>
             <option>AwsElb</option>
           </select>
@@ -184,7 +185,7 @@
         <p *ngIf="!editing">{{data.data.storageType}}</p>
       </div>
 
-      <div class="inline-input right-space">
+      <div class="inline-input right-space" *ngIf="data.data.storageType !== 'None'">
         <label>MountPath</label>
         <input 
           class="form-control"
@@ -233,8 +234,6 @@
       </div>
     </div>
   </div>
-
- 
 
   <div class="action-buttons">
     <button class="btn-sm btn-secondary"  *ngIf="editing" (click)="save()">save</button>

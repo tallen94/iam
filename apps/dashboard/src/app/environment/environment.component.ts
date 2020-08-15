@@ -52,6 +52,10 @@ export class EnvironmentComponent implements OnInit {
   }
 
   save() {
+    if (this.data.data.serviceType === 'Executor') {
+      this.data.data.applicationPort = 5000
+    }
+
     this.iam.addEnvironment(this.data)
     .subscribe((result) => {
       this.editing = false;
