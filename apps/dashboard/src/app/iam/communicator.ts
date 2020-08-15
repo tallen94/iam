@@ -6,6 +6,7 @@ import * as Lodash from 'lodash';
 export class ClientCommunicator {
   constructor(
     private http: HttpClient,
+    private protocol: string,
     private host: string,
     private port: number
   ) { }
@@ -42,6 +43,6 @@ export class ClientCommunicator {
 
   private getAbsoluteUrl(url: string, params?: any) {
     const path = params === undefined ? url : this.replace(url, params);
-    return window.location.protocol + "//" + this.host + ":" + this.port + path;
+    return this.protocol + "//" + this.host + ":" + this.port + path;
   }
 }
