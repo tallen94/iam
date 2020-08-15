@@ -11,9 +11,10 @@ export class Iam {
   private client: ClientCommunicator;
 
   constructor(httpClient: HttpClient) {
+    const routerProtocol = window.location.protocol;
     const routerUrl = window.location.hostname;
     const routerPort = environment.production ? parseInt(window.location.port) : environment.port;
-    this.client = new ClientCommunicator(httpClient, routerUrl, routerPort);
+    this.client = new ClientCommunicator(httpClient, routerProtocol, routerUrl, routerPort);
   }
 
   public setUser(username: string, token: string) {
