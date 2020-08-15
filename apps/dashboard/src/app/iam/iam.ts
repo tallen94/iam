@@ -12,7 +12,7 @@ export class Iam {
 
   constructor(httpClient: HttpClient) {
     const routerUrl = window.location.hostname;
-    const routerPort = environment.port;
+    const routerPort = environment.production ? parseInt(window.location.port) : environment.port;
     this.client = new ClientCommunicator(httpClient, routerUrl, routerPort);
   }
 
