@@ -1,4 +1,4 @@
-FROM icanplayguitar94/iam:base-minikube
+FROM icanplayguitar94/iam:base-96f74fbb648be1a1d71c5b5736c5111bb6bebe8f
 
 RUN apt-get update
 RUN apt-get install docker.io -y
