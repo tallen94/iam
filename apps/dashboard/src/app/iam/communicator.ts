@@ -42,6 +42,6 @@ export class ClientCommunicator {
 
   private getAbsoluteUrl(url: string, params?: any) {
     const path = params === undefined ? url : this.replace(url, params);
-    return "http://" + this.host + ":" + this.port + path;
+    return window.location.protocol + "://" + this.host + ":" + this.port + path;
   }
 }
