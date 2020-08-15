@@ -71,7 +71,8 @@ export class InitData {
         replicas: 1,
         cpu: "500m",
         memory: "500Mi",
-        type: "executor"
+        serviceType: "Executor",
+        storageType: "None"
       }
     }
   }

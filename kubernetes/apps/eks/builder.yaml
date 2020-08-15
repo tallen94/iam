@@ -19,7 +19,7 @@ spec:
         type: ng-1
       containers:
       - name: builder
-        image: icanplayguitar94/iam:builder-ef20efb998ee593cb02b1f5ecbe21f8a142c3cf5
+        image: icanplayguitar94/iam:builder-f8e34c6dc408172acfb2f9306b01d2ac570c6c24
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000

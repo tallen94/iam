@@ -41,13 +41,14 @@ export class EnvironmentManager {
       })
     }).then(() => {
       let kubernetes;
-      if (data.data.type == "executor") {
+      if (data.data.serviceType == "Executor") {
         const serviceOptions = {
           "Executor": Templates.SERVICE,
           "NodePort": Templates.NODEPORT_SERVICE,
           "LoadBalancer": Templates.LOADBALANCER_SERVICE
         }
         const storageTypes = {
+          "None": Templates.NONE,
           "Local": Templates.LOCAL_VOLUME,
           "AwsElb": Templates.ELB_VOLUME
         }

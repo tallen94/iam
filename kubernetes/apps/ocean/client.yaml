@@ -16,7 +16,7 @@ spec:
       - name: regcred
       containers:
       - name: client
-        image: icanplayguitar94/iam:client-ef20efb998ee593cb02b1f5ecbe21f8a142c3cf5
+        image: icanplayguitar94/iam:client-f8e34c6dc408172acfb2f9306b01d2ac570c6c24
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
@@ -60,11 +60,22 @@ apiVersion: v1
 kind: Service
 metadata:
   name: client
+  annotations:
+    service.beta.kubernetes.io/do-loadbalancer-protocol: "http"
+    service.beta.kubernetes.io/do-loadbalancer-algorithm: "round_robin"
+    service.beta.kubernetes.io/do-loadbalancer-tls-ports: "443"
+    service.beta.kubernetes.io/do-loadbalancer-certificate-id: "5bcb4fd7-1834-4360-855c-c7dc98f53a34"
+    service.beta.kubernetes.io/do-loadbalancer-redirect-http-to-https: "true"
 spec:
   selector:
     app: client
   type: LoadBalancer
   ports:
-    - protocol: TCP
+    - name: http
+      protocol: TCP
       port: 80
+      targetPort: 5000
+    - name: https
+      protocol: TCP
+      port: 443
       targetPort: 5000
