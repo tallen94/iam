@@ -18,7 +18,7 @@ spec:
         type: ng-1
       containers:
       - name: client
-        image: icanplayguitar94/iam:client-4a28597260dd7fbb07a94c6f6e417fa770dab15c
+        image: icanplayguitar94/iam:client-db8ebc371fadcf9e7eb55852c901b82d188e0e52
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
