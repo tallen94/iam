@@ -1,5 +1,5 @@
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: filesystem
 spec:
@@ -7,6 +7,7 @@ spec:
     matchLabels:
       app: filesystem
   replicas: 1 # tells deployment to run 2 pods matching the template
+  serviceName: "filesystem"
   template:
     metadata:
       labels:
@@ -16,7 +17,7 @@ spec:
       - name: regcred
       containers:
       - name: filesystem
-        image: icanplayguitar94/iam:base-f0cb2fb48275e346abaf2472cd45112582ee1871
+        image: icanplayguitar94/iam:base-4a28597260dd7fbb07a94c6f6e417fa770dab15c
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
@@ -60,6 +61,18 @@ spec:
               name: dbconfig
               key: db_name
 
+        volumeMounts:
+        - name: root
+          mountPath: /usr/home/iam
+  volumeClaimTemplates:
+  - metadata:
+      name: root
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "do-block-storage"
+      resources:
+        requests:
+          storage: 20Gi
 ---
 apiVersion: v1
 kind: Service
