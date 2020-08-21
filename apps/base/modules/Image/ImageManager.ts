@@ -27,7 +27,8 @@ export class ImageManager {
           name: data.name,
           imageRepo: data.imageRepo,
           imageTag: "",
-          description: data.description
+          description: data.description,
+          state: data.state
         })
       }
       return this.databaseCommunicator.execute(Queries.UPDATE_IMAGE, { 
@@ -35,7 +36,8 @@ export class ImageManager {
         name: data.name,
         imageRepo: data.imageRepo,
         imageTag: data.imageTag,
-        description: data.description
+        description: data.description,
+        state: data.state
       })
     }).then(() => {
       return Promise.all([
@@ -52,9 +54,12 @@ export class ImageManager {
     .then((result: any[]) => {
       if (result.length > 0) {
         const item = result[0]
-        return this.fileSystemCommunicator.getFile("images", this.imageFullName(username, name))
-        .then((result) => {
-          item["image"] = result
+        return Promise.all([
+          this.fileSystemCommunicator.getFile("images", this.imageFullName(username, name)),
+          item.state != "BUILDING" ? this.fileSystemCommunicator.getFile(["image-builds", item.username, item.name].join("/"), "1") : Promise.resolve("")
+        ]).then((result) => {
+          item["image"] = result[0]
+          item["buildResult"] = result[1]
           return item;
         })
       }
@@ -65,9 +70,13 @@ export class ImageManager {
     return this.databaseCommunicator.execute(Queries.GET_IMAGE_FOR_USER, {username: username})
     .then((results) => {
       return Promise.all(Lodash.map(results, (item) => {
-        return this.fileSystemCommunicator.getFile("images", this.imageFullName(username, item.name))
+        return Promise.all([
+          this.fileSystemCommunicator.getFile("images", this.imageFullName(username, item.name)),
+          item.state != "BUILDING" ? this.fileSystemCommunicator.getFile(["image-builds", item.username, item.name].join("/"), "1") : Promise.resolve("")
+        ])
         .then((result) => {
-          item["image"] = result
+          item["image"] = result[0]
+          item["buildResult"] = result[1]
           return item;
         })
       }))
@@ -92,22 +101,38 @@ export class ImageManager {
       return this.fileSystem.put("run", imageUid, image.image)
       .then(() => {
         // build image
-        return this.shellCommunicator.exec(Functions.BUILD_IMAGE, "bash", "{tag} {image}", { 
+        this.shellCommunicator.exec(Functions.BUILD_IMAGE, "bash", "{tag} {image}", { 
           tag: imageTag, 
           image: this.fileSystem.path("run/" + imageUid)
-        })
-      }).then((result) => {
-        if (result.err) {
-          return { result: result.err, image: image }
-        }
+        }).then((result) => {
 
-        image.imageTag = imageTag
-        // save environment
+          let output = ""
+          if (result.err) {
+            output = result.err
+            image.state = "BUILD_ERROR"
+          } else {
+            output = result
+            image.state = "BUILD_SUCCESS"
+            image.imageTag = imageTag
+          }
+
+          // Save Output
+          const folder = ["image-builds", image.username, image.name].join("/")
+          return this.fileSystemCommunicator.putFile(folder, {
+            name: "1",
+            file: output
+          }).then(() => {
+            // save environment
+            return this.addImage(image).then(() => {
+              // delete run file
+              return this.fileSystem.delete(this.fileSystem.path("run/" + imageUid))
+            })
+          })
+        })
+
+        image.state = "BUILDING"
         return this.addImage(image).then(() => {
-          // delete run file
-          return this.fileSystem.delete(this.fileSystem.path("run/" + imageUid))
-        }).then(() => {
-          return { result: result, image: image }
+          return { image: image }
         })
       })
     })
