@@ -87,6 +87,7 @@ export class InitData {
       imageRepo: "icanplayguitar94/iam",
       imageTag: "",
       image: "FROM icanplayguitar94/iam:base-latest",
+      state: "NOT_BUILT"
     }
   }
 

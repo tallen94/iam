@@ -8,6 +8,9 @@ A single interface provides all the tools to write and experiment with code on a
 
 This platform enables the same freedom and iteration speed as developing locally with tools like [Jupyter Notebook](https://jupyter.org/). Transitioning code from a notebook to a highly scalable platform requires no additional effort from the developer, other than copying it from one editor to another.
 
+## Beta Testing Environment
+Request access to the beta testing environment for testing out the platform and giving collaborative feedback! [Email Me](mailto:coldassteveniceberg@gmail.com?Subject=IAM%20Beta%20Access)
+
 ## The Platform
 The Iam platform is deployed to [Kubernetes](https://kubernetes.io/). Create different environments that contain unique sets of dependencies and scale them as required. Each environment can use a completely custom image or use the executor image to expose pods for running executables. Write scripting code to run on these executors seemlessly through the UI, and combine them into graphs for optimal execution management of complex processes.
 

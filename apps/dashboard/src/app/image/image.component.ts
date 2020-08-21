@@ -65,16 +65,10 @@ export class ImageComponent implements OnInit {
   }
 
   buildImage() {
-    this.spinnerService.show()
-    this.buildingImage = true;
-    this.buildResult = undefined;
     this.iam.buildImage(this.data.username, this.data.name)
     .subscribe((result: any) => {
-      this.spinnerService.hide()
-      this.buildingImage = false;
       if (result.image) {
         this.data = result.image;
-        this.buildResult = result.result;
       }
     })
   }

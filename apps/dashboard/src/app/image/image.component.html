@@ -28,6 +28,11 @@
     </div>
 
     <div>
+      <label class="nested-title">State</label>
+      <p class="state">{{data.state}}</p>
+    </div>
+
+    <div>
       <label class="nested-title" *ngIf="editing || (!editing && !isEmpty(data.imageRepo))">Image Repo</label>
       <input 
         class="form-control"
@@ -56,8 +61,8 @@
         <ngx-md [data]="getCodeMarkdown('docker', data.image)" ></ngx-md>
       </div>
 
-      <div class="markdown" *ngIf="buildResult">
-        <ngx-md [data]="getCodeMarkdown('docker', buildResult)" ></ngx-md>
+      <div class="markdown" *ngIf="data.buildResult && data.state != 'BUILDING'">
+        <ngx-md [data]="getCodeMarkdown('docker', data.buildResult)"></ngx-md>
       </div>
     </div>
   </div>
@@ -70,10 +75,10 @@
   </div>
 </div>
 
-<div *ngIf="buildingImage" class="building">
+<!-- <div *ngIf="buildingImage" class="building">
   <div class="building-spinner">
     <ngx-spinner bdColor="rgba(51, 51, 51, 0.8)" size="default" type="ball-spin-clockwise">  
       <p style="color: white; font-size: 2em;">Relax, I'll be done shortly</p>  
     </ngx-spinner>
   </div>
-</div>
+</div> -->
