@@ -120,6 +120,7 @@ CREATE TABLE `image` (
   `description` text,
   `imageRepo` varchar(255) NOT NULL,
   `imageTag` varchar(1024) NOT NULL,
+  `state` varchar(50) NOT NULL,
   KEY `get_idx` (`name`, `username`),
   KEY `username` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

@@ -11,8 +11,8 @@ export class Queries {
 
 
   // Image
-  public static ADD_IMAGE = "insert into image(username, name, imageRepo, imageTag, description) values ({username}, {name}, {imageRepo}, {imageTag}, {description})"
-  public static UPDATE_IMAGE = "update image set imageRepo={imageRepo}, imageTag={imageTag}, description={description} where username={username} and name={name}"
+  public static ADD_IMAGE = "insert into image(username, name, imageRepo, imageTag, description, state) values ({username}, {name}, {imageRepo}, {imageTag}, {description}, {state})"
+  public static UPDATE_IMAGE = "update image set imageRepo={imageRepo}, imageTag={imageTag}, description={description}, state={state} where username={username} and name={name}"
   public static GET_IMAGE_FOR_USER = "select * from image where username={username}"
   public static GET_IMAGE = "select * from image where username={username} and name={name}"
   public static DELETE_IMAGE = "delete from image where username={username} and name={name}"
