@@ -5,11 +5,15 @@ metadata:
   labels:
     app: mysqldatabase
 spec:
+  volumes:
+    - name: mysqldatabase-claim
+      persistentVolumeClaim:
+        claimName: mysqldatabase-claim
   imagePullSecrets:
   - name: regcred
   containers:
   - name: mysqldatabase
-    image: icanplayguitar94/iam:database-0.1.1
+    image: icanplayguitar94/iam:database-0.1.2
     imagePullPolicy: IfNotPresent
     ports:
     - containerPort: 3306
@@ -34,6 +38,21 @@ spec:
           name: dbconfig
           key: db_name
 
+    volumeMounts:
+        - name: mysqldatabase-claim
+          mountPath: /usr/home/iam
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysqldatabase-claim
+spec:
+  storageClassName: "do-block-storage"
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
 ---
 apiVersion: v1
 kind: Service
