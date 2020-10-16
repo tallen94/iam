@@ -120,7 +120,7 @@ export class StepListManager {
   }
 
   public stepJsonToStep(stepJson, client?: Client) {
-    return new ProgramStep(stepJson.username, stepJson.cluster, stepJson.environment, stepJson.name, client, stepJson.exe, stepJson.foreach);
+    // return new ProgramStep(stepJson.username, stepJson.cluster, stepJson.environment, stepJson.name, client, stepJson.exe, stepJson.foreach);
   }
 
   private trimStepJson(data: any) {

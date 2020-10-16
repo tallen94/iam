@@ -4,8 +4,8 @@ import { Node } from "../Graph/Node";
 import * as Lodash from "lodash";
 import { Query } from "./Query";
 import { ClientCommunicator } from "../Communicator/ClientCommunicator";
-import { Client } from "../Client/Client";
 import { ProgramStep } from "../Step/ProgramStep";
+import { Client } from "../Client/Client";
 
 export class Graph implements Executable {
 
@@ -97,8 +97,8 @@ export class Graph implements Executable {
     return Promise.all(Lodash.map(nodes, (node) => {
       const host = "router.default"
       const clientCommunicator: ClientCommunicator = new ClientCommunicator(host, 80)
-      const client = new Client(clientCommunicator);
-      return new ProgramStep(node.username, node.cluster, node.environment, node.name, client, node.exe, node.foreach);
+      const client: Client = new Client(clientCommunicator);
+      return new ProgramStep(node, client, node.foreach);
     }))
   }
 }

@@ -104,8 +104,7 @@ export class ApiFactory {
       port: process.env.BUILDER_PORT || process.argv[13]
     }
     const databaseCommunicator: DatabaseCommunicator = this.constructDatabaseCommunicator(dbconfig)
-    const environment = process.env.ENVIRONMENT || process.argv[12] || "base"
-    const executor: Executor = this.constructExecutor(dbconfig, fsconfig, fileSystem, environment, envConfig)
+    const executor: Executor = this.constructExecutor(dbconfig, fsconfig, fileSystem, envConfig)
     const router: EnvironmentRouter = new EnvironmentRouter(databaseCommunicator, executor);
     const environmentClient: EnvironmentClient = new EnvironmentClient(new ClientCommunicator(envConfig.host, parseInt(envConfig.port)))
     const environmentRouterClient: Client = new Client(new ClientCommunicator("router.default", 80))
@@ -153,23 +152,11 @@ export class ApiFactory {
 
   // Internal service for managing and running executables
   executor(fileSystem: FileSystem, serverCommunicator: ServerCommunicator) {
-    const dbconfig = {
-      user: process.env.DB_USER || process.argv[5],
-      password: process.env.DB_PASSWORD || process.argv[6], 
-      host: process.env.DB_HOST || process.argv[7],
-      port: process.env.DB_PORT || process.argv[8],
-      database: process.env.DB_NAME || process.argv[9]
-    };
-    const fsconfig = {
-      host: process.env.FS_HOST || process.argv[10],
-      port: process.env.FS_PORT || process.argv[11]
-    };
     const envConfig = {
       host: process.env.BUILDER_HOST || process.argv[12],
       port: process.env.BUILDER_PORT || process.argv[13]
     }
-    const environment = process.env.ENVIRONMENT || process.argv[12] || "base"
-    const executor: Executor = this.constructExecutor(dbconfig, fsconfig, fileSystem, environment, envConfig)
+    const executor: Executor = this.constructExecutor({}, {}, fileSystem, envConfig)
     new ExecutableApi(executor, serverCommunicator);
     new FileSystemApi(fileSystem, serverCommunicator);
   }
@@ -191,24 +178,19 @@ export class ApiFactory {
       host: process.env.BUILDER_HOST || process.argv[12],
       port: process.env.BUILDER_PORT || process.argv[13]
     }
-    const environment = process.env.ENVIRONMENT || process.argv[12] || "base"
-    const executor: Executor = this.constructExecutor(dbconfig, fsconfig, fileSystem, environment, envConfig)
+    const executor: Executor = this.constructExecutor(dbconfig, fsconfig, fileSystem, envConfig)
     const executableFactory: ExecutableFactory = this.constructExecutableFactory(dbconfig, fileSystem, envConfig)
     new JobRunner(executor, executableFactory);
   }
 
-  private constructExecutor(dbconfig: any, fsConfig: any, fileSystem: FileSystem, environment: string, envConfig: any) {
+  private constructExecutor(dbconfig: any, fsConfig: any, fileSystem: FileSystem, envConfig: any) {
     const executableFactory: ExecutableFactory = this.constructExecutableFactory(dbconfig, fileSystem, envConfig)
     const fileSystemCommunicator: FileSystemCommunicator = this.constructFileSystemCommunicator(fsConfig)
     const databaseCommunicator: DatabaseCommunicator = this.constructDatabaseCommunicator(dbconfig)
-    const authClientCommunicator: ClientCommunicator = new ClientCommunicator("auth.default", 80)
-    const authorizationClient: AuthorizationClient = new AuthorizationClient(authClientCommunicator)
     const database: Database = this.constructDatabase(databaseCommunicator, fileSystemCommunicator);
     const shell: Shell = this.constructShell(fileSystem, fileSystemCommunicator, databaseCommunicator);
-    const environmentManager: EnvironmentManager = this.constructEnvironmentManager(fileSystemCommunicator, fileSystem, databaseCommunicator);
     const graphExecutor: GraphExecutor = this.constructGraphExecutor(databaseCommunicator);
-    const poolManager: PoolManager = this.constructPoolManager(shell, database, graphExecutor, fileSystem, environment, executableFactory)
-    return new Executor(database, shell, environmentManager, graphExecutor, poolManager, executableFactory, databaseCommunicator, authorizationClient);
+    return new Executor(database, shell, graphExecutor, executableFactory, databaseCommunicator);
   }
 
   private constructExecutableFactory(dbconfig: any, fileSystem: FileSystem, envConfig: any) {
@@ -225,11 +207,6 @@ export class ApiFactory {
   private constructShell(fileSystem: FileSystem, fileSystemCommunicator: FileSystemCommunicator, databaseCommunicator: DatabaseCommunicator) {
     const shellCommunicator: ShellCommunicator = new ShellCommunicator(fileSystem);
     return new Shell(shellCommunicator, fileSystemCommunicator, databaseCommunicator);
-  }
-
-  private constructEnvironmentManager(fileSystemCommunicator: FileSystemCommunicator, fileSystem: FileSystem, databaseCommunicator: DatabaseCommunicator) {
-    const shellCommunicator: ShellCommunicator = new ShellCommunicator(fileSystem)
-    return new EnvironmentManager(fileSystem, fileSystemCommunicator, databaseCommunicator, shellCommunicator);
   }
 
   private constructGraphExecutor(databaseCommunicator: DatabaseCommunicator) {
