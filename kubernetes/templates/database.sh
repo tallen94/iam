@@ -24,7 +24,10 @@ spec:
 
     env:
     - name: MYSQL_ROOT_PASSWORD
-      value: 'password'
+      valueFrom:
+        secretKeyRef:
+          name: dbconfig
+          key: root_password
     ## DB CONFIG
     - name: MYSQL_USER
       valueFrom:
@@ -89,7 +92,10 @@ spec:
 
     env:
     - name: MYSQL_ROOT_PASSWORD
-      value: 'password'
+      valueFrom:
+        secretKeyRef:
+          name: dbconfig
+          key: root_password
     ## DB CONFIG
     - name: MYSQL_USER
       valueFrom:

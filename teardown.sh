@@ -1,7 +1,5 @@
 #! /bin/bash
 
-NAMESPACE=$1
-
 ## DEFAULT NAMESPACE APPS
 echo Deleting kube client setup..
 kubectl delete deployment client
@@ -22,10 +20,11 @@ kubectl delete service user
 echo Deleting kube database setup...
 kubectl delete pod mysqldatabase
 kubectl delete service mysqldatabase
+kubectl delete pvc mysqldatabase-claim
 
 ## NAMESPACED APPS
 echo Deleting kube filesystem setup..
-kubectl delete deployment filesystem
+kubectl delete statefulset filesystem
 kubectl delete service filesystem
 
 echo Deleting kube builder
