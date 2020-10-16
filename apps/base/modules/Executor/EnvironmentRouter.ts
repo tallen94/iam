@@ -1,5 +1,5 @@
 import { ClientCommunicator } from "../Communicator/ClientCommunicator";
-import { Client } from "../Client/Client";
+import { ExecutableClient } from "../Client/ExecutableClient";
 import { DatabaseCommunicator } from "../Communicator/DatabaseCommunicator";
 import * as Lodash from "lodash";
 import { Queries } from "../Constants/Queries";
@@ -60,11 +60,14 @@ export class EnvironmentRouter {
     return this.getRoute(username, cluster, environment, name, exe)
     .then((results: any[]) => {
       if (results.length > 0) {
-        const route = results[0]
-        const host = route.route
-        const clientCommunicator: ClientCommunicator = new ClientCommunicator(host, 80)
-        const client: Client = new Client(clientCommunicator);
-        return client.runExecutable(route.username, route.cluster, route.environment, route.exe, route.name, data, token);
+        return this.executor.getExecutable(username, cluster, environment, name, exe)
+        .then((executable) => {
+          const route = results[0]
+          const host = route.route
+          const clientCommunicator: ClientCommunicator = new ClientCommunicator(host, 80)
+          const client: ExecutableClient = new ExecutableClient(clientCommunicator);
+          return client.runExecutable(executable, data);
+        })
       }
     })
   }
