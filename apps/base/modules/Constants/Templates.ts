@@ -49,37 +49,7 @@ spec:
           value: "5000"
         - name: "ENVIRONMENT"
           value: "{name}"
-
-        # FS CONFIG
-        - name: FS_HOST
-          value: "filesystem"
-        - name: FS_PORT
-          value: "80"
-        
-        # ROUTER CONFIG
-        - name: BUILDER_HOST
-          value: "builder.default"
-        - name: BUILDER_PORT
-          value: "80"
-
-        ## DB CONFIG
-        - name: DB_HOST
-          value: "mysqldatabase.default"
-        - name: DB_USER
-          valueFrom:
-            secretKeyRef:
-              name: dbconfig
-              key: user
-        - name: DB_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: dbconfig
-              key: password
-        - name: DB_NAME
-          valueFrom:
-            secretKeyRef:
-              name: dbconfig
-              key: db_name
+          
       {storage}
 ---
 {service}

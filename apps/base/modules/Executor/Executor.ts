@@ -5,13 +5,9 @@ import {
 import * as Lodash from "lodash";
 import { JobRunner } from "../Job/JobRunner";
 import { GraphExecutor } from "./GraphExecutor";
-import { EnvironmentManager } from "../Environment/EnvironmentManager";
-import { PoolManager } from "../Pool/PoolManager";
 import { DatabaseCommunicator } from "../Communicator/DatabaseCommunicator";
 import { Queries } from "../Constants/Queries";
 import { ExecutableFactory } from "../Executable/ExecutableFactory";
-import { AuthorizationClient } from "../Client/AuthorizationClient";
-import { ImageManager } from "../Image/ImageManager";
 
 export class Executor {
 
@@ -20,12 +16,9 @@ export class Executor {
   constructor(
     private database: Database,
     private shell: Shell,
-    private environmentManager: EnvironmentManager,
     private graphExecutor: GraphExecutor,
-    private poolManager: PoolManager,
     private executableFactory: ExecutableFactory,
-    private databaseCommunicator: DatabaseCommunicator,
-    private authorizationClient: AuthorizationClient) {
+    private databaseCommunicator: DatabaseCommunicator) {
   }
 
   public addExecutable(data: any) {
@@ -88,11 +81,8 @@ export class Executor {
     }
   }
 
-  public runExecutable(username: string, cluster: string, environment: string, name: string, exe: string, data: any, token: string) {
-    return this.getExecutable(username, cluster, environment, name, exe)
-    .then((executable: any) => {
-      return this.executableFactory[exe](executable).run(data)
-    })
+  public runExecutable(executable: any, data: any) {
+    return this.executableFactory[executable["exe"]](executable).run(data)
   }
 
   public searchExecutables(searchText: string) {
