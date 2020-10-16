@@ -20,9 +20,9 @@ export class HomeComponent implements OnInit {
   public environments: any[];
   public images: any[];
   public functions: any[];
-  public queries: any[];
+  // public queries: any[];
   public graphs: any[];
-  public datasets: any[];
+  // public datasets: any[];
 
   public iam: Iam;
   public data: any;
@@ -41,9 +41,9 @@ export class HomeComponent implements OnInit {
     this.iam.getExecutables(this.iam.getUser().username, "function").subscribe((data: any[]) => {
       this.functions = data;
     })
-    this.iam.getExecutables(this.iam.getUser().username, "query").subscribe((data: any[]) => {
-      this.queries = data;
-    })
+    // this.iam.getExecutables(this.iam.getUser().username, "query").subscribe((data: any[]) => {
+    //   this.queries = data;
+    // })
     this.iam.getExecutables(this.iam.getUser().username, "graph").subscribe((data: any[]) => {
       this.graphs = data;
     })
@@ -57,9 +57,9 @@ export class HomeComponent implements OnInit {
     .subscribe((data: any[]) => {
       this.clusters = data
     })
-    this.iam.getDatasetForUser(this.iam.getUser().username).subscribe((data: any[]) => {
-      this.datasets = data
-    })
+    // this.iam.getDatasetForUser(this.iam.getUser().username).subscribe((data: any[]) => {
+    //   this.datasets = data
+    // })
   }
 
   private initColumns() {
@@ -170,16 +170,16 @@ export class HomeComponent implements OnInit {
       case "function":
         this.functions.push(this.data)
         break;
-      case "query":
-        this.queries.push(this.data)
-        break;
+      // case "query":
+      //   this.queries.push(this.data)
+      //   break;
       case "graph":
         this.graphs.push(this.data)
         break;
       case "image":
         this.images.push(this.data)
-      case "dataset":
-        this.datasets.push(this.data)
+      // case "dataset":
+      //   this.datasets.push(this.data)
     }
 
     this.backHistory.push(this.data)
