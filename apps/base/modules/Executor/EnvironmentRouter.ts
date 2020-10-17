@@ -1,15 +1,15 @@
 import { ClientCommunicator } from "../Communicator/ClientCommunicator";
-import { ExecutableClient } from "../Client/ExecutableClient";
+import { ExecutorClient } from "../Client/ExecutorClient";
 import { DatabaseCommunicator } from "../Communicator/DatabaseCommunicator";
 import * as Lodash from "lodash";
 import { Queries } from "../Constants/Queries";
-import { Executor } from "./Executor";
+import { ExecutableAccessor } from "./ExecutableAccessor";
 
 export class EnvironmentRouter {
 
   constructor(
     private databaseCommunicator: DatabaseCommunicator,
-    private executor: Executor
+    private executableAccessor: ExecutableAccessor
   ) {}
 
   public addExecutable(data: any) {
@@ -20,7 +20,7 @@ export class EnvironmentRouter {
         return this.addRoute(data.username, data.cluster, data.environment, data.name, data.exe, route)
       }
     }).then(() => {
-      return this.executor.addExecutable(data);
+      return this.executableAccessor.addExecutable(data);
     })
   }
  
@@ -29,7 +29,7 @@ export class EnvironmentRouter {
     .then((results: any[]) => {
       if (results.length > 0) {
         const route = results[0]
-        return this.executor.getExecutable(username, cluster, environment, name, exe);
+        return this.executableAccessor.getExecutable(username, cluster, environment, name, exe);
       }
     })
   }
@@ -38,7 +38,7 @@ export class EnvironmentRouter {
     return this.getUserRoutes(username, exe)
     .then((results: any[]) => {
       return Promise.all(Lodash.map(results, (route) => {
-        return this.executor.getExecutable(route.username, route.cluster, route.environment, route.name, route.exe);
+        return this.executableAccessor.getExecutable(route.username, route.cluster, route.environment, route.name, route.exe);
       }))
     })
   }
@@ -48,7 +48,7 @@ export class EnvironmentRouter {
     .then((results: any[]) => {
       if (results.length > 0) {
         const route = results[0]
-        return this.executor.deleteExecutable(route.username, route.cluster, route.environment, route.exe, route.name)
+        return this.executableAccessor.deleteExecutable(route.username, route.cluster, route.environment, route.exe, route.name)
         .then(() => {
           return this.deleteRoute(route.username, route.cluster, route.environment, route.exe, route.name)
         });
@@ -60,14 +60,11 @@ export class EnvironmentRouter {
     return this.getRoute(username, cluster, environment, name, exe)
     .then((results: any[]) => {
       if (results.length > 0) {
-        return this.executor.getExecutable(username, cluster, environment, name, exe)
-        .then((executable) => {
-          const route = results[0]
-          const host = route.route
-          const clientCommunicator: ClientCommunicator = new ClientCommunicator(host, 80)
-          const client: ExecutableClient = new ExecutableClient(clientCommunicator);
-          return client.runExecutable(executable, data);
-        })
+        const route = results[0]
+        const host = route.route
+        const clientCommunicator: ClientCommunicator = new ClientCommunicator(host, 80)
+        const client: ExecutorClient = new ExecutorClient(clientCommunicator);
+        return client.runExecutable(username, cluster, environment, exe, name, data);
       }
     })
   }
