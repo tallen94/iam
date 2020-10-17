@@ -5,36 +5,17 @@ readPassword() {
    printf "Password: "
    read PASSWORD
    printf "\n"
-   printf "Confirm Password: "
-   read C_PASSWORD
+   printf "Root Password: "
+   read ROOT_PASSWORD
    stty echo
    printf "\n"
-}
-
-checkPassword() {
-   if [ $PASSWORD = $C_PASSWORD ]
-   then 
-      return 1
-   else 
-      return 0
-   fi
 }
 
 setupPassword() {
    INCR=0
    readPassword
-   while checkPassword
-   do
-      if [ $INCR = 3 ]
-      then
-         echo Passwords did not match, too many failed attempts;
-         exit 1
-      fi
-      echo Passwords did not match, try again
-      INCR=$((INCR+1))
-      readPassword
-   done
    PASSWORD=$(echo -ne "$PASSWORD" | base64)
+   ROOT_PASSWORD=$(echo -ne "$ROOT_PASSWORD" | base64)
 }
 
 applyConfig() {
@@ -93,6 +74,7 @@ data:
   user: aWFt
   db_name: aWFt
   password: $PASSWORD
+  root_password: $ROOT_PASSWORD
 EOF
 
 touch kubernetes/secrets/dockerconfig.yaml
