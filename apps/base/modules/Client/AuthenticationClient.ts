@@ -23,16 +23,16 @@ export class AuthenticationClient {
     return this.clientCommunicator.post(ApiPaths.VALIDATE_USER_SESSION, {token: token})
   }
 
-  public addUserToken(username: string, sessionToken: string) {
-    return this.clientCommunicator.post(ApiPaths.ADD_USER_TOKEN, {username: username}, {}, { sessiontoken: sessionToken })
+  public addUserToken(username: string, sessiontoken: string) {
+    return this.clientCommunicator.post(ApiPaths.ADD_USER_TOKEN, {username: username}, {}, { sessiontoken: sessiontoken })
   }
 
-  public getUserTokens(username: string, sessionToken: string) {
-    return this.clientCommunicator.get(ApiPaths.GET_USER_TOKENS, {username: username}, {}, {sessiontoken: sessionToken})
+  public getUserTokens(username: string, sessiontoken: string) {
+    return this.clientCommunicator.get(ApiPaths.GET_USER_TOKENS, {username: username}, {}, {sessiontoken: sessiontoken})
   }
 
-  public deleteUserToken(tokenId: string, sessionToken: string) {
-    return this.clientCommunicator.delete(ApiPaths.DELETE_USER_TOKEN, {tokenId: tokenId}, {}, { sessiontoken: sessionToken })
+  public deleteUserToken(tokenId: string, sessiontoken: string) {
+    return this.clientCommunicator.delete(ApiPaths.DELETE_USER_TOKEN, {tokenId: tokenId}, {}, { sessiontoken: sessiontoken })
   }
 
   public validateUserToken(tokenId: string, tokenSecret: string): Promise<any> {
@@ -40,8 +40,8 @@ export class AuthenticationClient {
   }
 
   public validateAuthData(authData: any, username: string, fn: () => any) {
-    if (authData.sessionToken) {
-      return this.validateUserSession(authData.sessionToken)
+    if (authData.sessiontoken) {
+      return this.validateUserSession(authData.sessiontoken)
       .then((result: any) => {
         if (result["username"] === username) {
           return fn()
@@ -51,8 +51,8 @@ export class AuthenticationClient {
       })
     }
 
-    if (authData.tokenId && authData.tokenSecret) {
-      return this.validateUserToken(authData.tokenId, authData.tokenSecret)
+    if (authData.tokenid && authData.tokensecret) {
+      return this.validateUserToken(authData.tokenid, authData.tokensecret)
       .then((result) => {
         if (result["username"] === username) {
           return fn()

@@ -14,7 +14,7 @@ export class Executor {
 
   public runExecutable(username: string, cluster: string, environment: string, exe: string, name: string, data: any, authData: any) { 
     return this.authenticationClient.validateAuthData(authData, username, () => {
-      return this.client.getExecutable(username, cluster, environment, exe, name)
+      return this.client.getExecutable(username, cluster, environment, exe, name, authData)
       .then((executable) => {
         return this.executableFactory[exe](executable).run(data)
       })

@@ -86,20 +86,20 @@ export class ClientManager {
     return this.environmentClient.stopEnvironment(username, name, cluster)
   }
 
-  public addExecutable(data: any) {
-    return this.routerClient.addExecutable(data)
+  public addExecutable(data: any, authData: any) {
+    return this.routerClient.addExecutable(data, authData)
   }
 
-  public getExecutable(username: string, cluster: string, environment: string, exe: string, name: string) {
-    return this.routerClient.getExecutable(username, cluster, environment, exe, name);
+  public getExecutable(username: string, cluster: string, environment: string, exe: string, name: string, authData: any) {
+    return this.routerClient.getExecutable(username, cluster, environment, exe, name, authData);
   }
 
-  public getExecutables(username: string, exe: string) {
-    return this.routerClient.getExecutables(username, exe);
+  public getExecutables(username: string, exe: string, authData: any) {
+    return this.routerClient.getExecutables(username, exe, authData);
   }
 
-  public deleteExecutable(username: string, cluster: string, environment: string, exe: string, name: string) {
-    return this.routerClient.deleteExecutable(username, cluster, environment, exe, name)
+  public deleteExecutable(username: string, cluster: string, environment: string, exe: string, name: string, authData: any) {
+    return this.routerClient.deleteExecutable(username, cluster, environment, exe, name, authData)
   }
 
   public runExecutable(username: string, cluster: string, environment: string, exe: string, name: string, data: any, authData: any) {
@@ -137,28 +137,28 @@ export class ClientManager {
     return this.authenticationClient.validateUserSession(token)
   }
 
-  public addUserToken(username: string, sessionToken: string) {
+  public addUserToken(username: string, sessiontoken: string) {
     return this.userClient.getUser(username)
     .then((result: any) => {
       if (!result.error) {
-        return this.authenticationClient.addUserToken(username, sessionToken)
+        return this.authenticationClient.addUserToken(username, sessiontoken)
       }
       return { error: "not found" }
     })
   }
 
-  public getUserTokens(username: string, sessionToken: string) {
+  public getUserTokens(username: string, sessiontoken: string) {
     return this.userClient.getUser(username)
     .then((result: any) => {
       if (!result.error) {
-        return this.authenticationClient.getUserTokens(username, sessionToken)
+        return this.authenticationClient.getUserTokens(username, sessiontoken)
       }
       return { error: "not found" }
     })
   }
 
-  public deleteUserToken(tokenId: string, sessionToken: string) {
-    return this.authenticationClient.deleteUserToken(tokenId, sessionToken)
+  public deleteUserToken(tokenId: string, sessiontoken: string) {
+    return this.authenticationClient.deleteUserToken(tokenId, sessiontoken)
   }
 
   public addAuthorization(resource_from: string, resource_to: string, visibility: string) {

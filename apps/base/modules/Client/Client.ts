@@ -10,24 +10,24 @@ export class Client {
     this.clientCommunicator = clientCommunicator;
   }
 
-  public addExecutable(data: any) {
-    return this.clientCommunicator.post(ApiPaths.ADD_EXECUTABLE, data)
+  public addExecutable(data: any, authData: any) {
+    return this.clientCommunicator.post(ApiPaths.ADD_EXECUTABLE, data, authData)
   }
 
-  public getExecutable(username: string, cluster: string, environment: string, exe: string, name: string) {
-    return this.clientCommunicator.get(ApiPaths.GET_EXECUTABLE, {}, {username: username, cluster: cluster, environment: environment, name: name, exe: exe});
+  public getExecutable(username: string, cluster: string, environment: string, exe: string, name: string, authData: any) {
+    return this.clientCommunicator.get(ApiPaths.GET_EXECUTABLE, {}, {username: username, cluster: cluster, environment: environment, name: name, exe: exe}, authData);
   }
 
-  public getExecutables(username: string, exe: string) {
-    return this.clientCommunicator.get(ApiPaths.GET_EXECUTABLES, {}, {username: username, exe: exe});
+  public getExecutables(username: string, exe: string, authData: any) {
+    return this.clientCommunicator.get(ApiPaths.GET_EXECUTABLES, {}, {username: username, exe: exe}, authData);
   }
 
   public runExecutable(username: string, cluster: string, environment: string, exe: string, name: string, data: any, authData: any) {
     return this.clientCommunicator.post(ApiPaths.RUN_EXECUTABLE, data, {username: username, cluster: cluster, environment: environment, exe: exe, name: name}, authData);
   }
 
-  public deleteExecutable(username: string, cluster: string, environment: string, exe: string, name: string) {
-    return this.clientCommunicator.delete(ApiPaths.DELETE_EXECUTABLE, {}, {username: username, cluster: cluster, environment: environment, exe: exe, name: name})
+  public deleteExecutable(username: string, cluster: string, environment: string, exe: string, name: string, authData: any) {
+    return this.clientCommunicator.delete(ApiPaths.DELETE_EXECUTABLE, {}, {username: username, cluster: cluster, environment: environment, exe: exe, name: name}, authData)
   }
 
   public searchExecutables(searchText: string) {
