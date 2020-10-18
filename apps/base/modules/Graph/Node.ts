@@ -1,6 +1,7 @@
 import { Step } from "../Step/Step";
 import * as Lodash from "lodash";
 import e = require("express");
+import { AuthData } from "../Auth/AuthData";
 
 export class Node {
 
@@ -12,18 +13,18 @@ export class Node {
     private step: Step
   ) {}
 
-  public execute(data: any, token: string) {
+  public execute(data: any, authData: AuthData) {
     if (this.parents.length == 1) {
       this.promise = this.parents[0].getPromise().then((result) => {
-        return this.step.execute(result, token);
+        return this.step.execute(result, authData);
       });
     } else if (this.parents.length > 1) {
       this.promise = Promise.all(Lodash.map(this.parents, (parent) => parent.getPromise()))
       .then((results) => {
-        return this.step.execute(results, token);
+        return this.step.execute(results, authData);
       });
     } else {
-      this.promise = this.step.execute(data, token);
+      this.promise = this.step.execute(data, authData);
     }
   }
 

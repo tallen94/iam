@@ -6,6 +6,7 @@ import { Client } from "../Client/Client";
 import { ClientCommunicator } from "../Communicator/ClientCommunicator";
 import { FileSystemCommunicator } from "../Communicator/FileSystemCommunicator";
 import * as uuid from "uuid";
+import { AuthData } from "../Auth/AuthData";
 
 export class DataManager {
 
@@ -74,7 +75,7 @@ export class DataManager {
         name: dataset.name,
         executableData: executableData
       }
-      return this.environmentRouterClient.runExecutable(dataset.executable.username, dataset.executable.cluster, dataset.executable.environment, dataset.executable.exe, dataset.executable.name, {loadData: loadData}, "")
+      return this.environmentRouterClient.runExecutable(dataset.executable.username, dataset.executable.cluster, dataset.executable.environment, dataset.executable.exe, dataset.executable.name, {loadData: loadData}, new AuthData(undefined, undefined, undefined))
       .then((result: any) => {
         dataset.tag.push(result.result.tag)
         return this.addDataset(dataset)
@@ -103,7 +104,7 @@ export class DataManager {
         return Promise.all(Lodash.map(addresses, (addr, index) => {
           const host = addr["ip"]
           const client = new Client(new ClientCommunicator(host, port)) 
-          return client.runExecutable(transformData.username, transformData.cluster, transformData.environment, transformData.exe, transformData.name, { transformData: transformData }, "")
+          return client.runExecutable(transformData.username, transformData.cluster, transformData.environment, transformData.exe, transformData.name, { transformData: transformData }, new AuthData(undefined, undefined, undefined))
         })).then((results) => {
           return {tag: tag}
         })

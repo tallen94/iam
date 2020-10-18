@@ -1,5 +1,6 @@
 import { ClientCommunicator } from "../Communicator/ClientCommunicator";
 import { ApiPaths } from "../Api/ApiPaths";
+import { AuthData } from "../Auth/AuthData";
 
 export class AuthenticationClient {
 
@@ -37,5 +38,29 @@ export class AuthenticationClient {
 
   public validateUserToken(tokenId: string, tokenSecret: string): Promise<any> {
     return this.clientCommunicator.post(ApiPaths.VALIDATE_USER_TOKEN, {tokenId: tokenId, tokenSecret: tokenSecret})
+  }
+
+  public validateAuthData(authData: AuthData, username: string, success: () => void, failure: (error) => void) {
+    if (authData.getSessionToken()) {
+      return this.validateUserSession(authData.getSessionToken())
+      .then((result) => {
+        if (result["username"] === username) {
+          success();
+        } else {
+          failure({ error: "not permitted" })
+        }
+      })
+    }
+
+    if (authData.getTokenId() && authData.getTokenSecret()) {
+      return this.validateUserToken(authData.getTokenSecret(), authData.getTokenSecret())
+      .then((result) => {
+        if (result["username"] === username) {
+          success();
+        } else {
+          failure({ error: "not permitted" })
+        }
+      })
+    }
   }
 }
