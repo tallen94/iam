@@ -5,7 +5,6 @@ import * as Lodash from "lodash";
 import { EnvironmentClient } from "../Client/EnvironmentClient";
 import { ClientCommunicator } from "../Communicator/ClientCommunicator";
 import { FileSystemCommunicator } from "../Communicator/FileSystemCommunicator";
-import { Client } from "../Client/Client";
 import { FileSystem } from "../FileSystem/FileSystem";
 
 export class Function implements Executable {

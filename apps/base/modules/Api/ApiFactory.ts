@@ -110,7 +110,9 @@ export class ApiFactory {
     const environmentClient: EnvironmentClient = new EnvironmentClient(new ClientCommunicator(envConfig.host, parseInt(envConfig.port)))
     const environmentRouterClient: Client = new Client(new ClientCommunicator("router.default", 80))
     const dataManager = new DataManager(databaseCommunicator, environmentClient, environmentRouterClient)
-    new EnvironmentRouterApi(router, serverCommunicator);
+    const authClientCommunicator = new ClientCommunicator("auth.default", 80)
+    const authenticationClient = new AuthenticationClient(authClientCommunicator)
+    new EnvironmentRouterApi(router, serverCommunicator, authenticationClient);
     new DataApi(serverCommunicator, dataManager)
   }
 
@@ -158,7 +160,9 @@ export class ApiFactory {
       port: process.env.BUILDER_PORT || process.argv[13]
     }
     const executor: Executor = this.constructExecutor(fileSystem, envConfig)
-    new ExecutorApi(executor, serverCommunicator);
+    const authClientCommunicator = new ClientCommunicator("auth.default", 80)
+    const authenticationClient = new AuthenticationClient(authClientCommunicator)
+    new ExecutorApi(executor, serverCommunicator, authenticationClient);
     new FileSystemApi(fileSystem, serverCommunicator);
   }
 

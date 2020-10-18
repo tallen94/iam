@@ -4,6 +4,7 @@ import { DatabaseCommunicator } from "../Communicator/DatabaseCommunicator";
 import * as Lodash from "lodash";
 import { Queries } from "../Constants/Queries";
 import { ExecutableAccessor } from "./ExecutableAccessor";
+import { AuthData } from "../Auth/AuthData";
 
 export class EnvironmentRouter {
 
@@ -56,7 +57,7 @@ export class EnvironmentRouter {
     })
   }
 
-  public runExecutable(exe: string, username: string, cluster: string, environment: string, name: string, data: any, token: string) {
+  public runExecutable(exe: string, username: string, cluster: string, environment: string, name: string, data: any, authData: AuthData) {
     return this.getRoute(username, cluster, environment, name, exe)
     .then((results: any[]) => {
       if (results.length > 0) {
@@ -64,7 +65,7 @@ export class EnvironmentRouter {
         const host = route.route
         const clientCommunicator: ClientCommunicator = new ClientCommunicator(host, 80)
         const client: ExecutorClient = new ExecutorClient(clientCommunicator);
-        return client.runExecutable(username, cluster, environment, exe, name, data);
+        return client.runExecutable(username, cluster, environment, exe, name, data, authData);
       }
     })
   }

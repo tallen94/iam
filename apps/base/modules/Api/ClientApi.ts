@@ -3,6 +3,7 @@ import {
   ApiPaths
 } from "../modules";
 import { ClientManager } from "../Client/ClientManager";
+import { AuthData } from "../Auth/AuthData";
 
 export class ClientApi {
 
@@ -138,7 +139,8 @@ export class ClientApi {
      */
     this.serverCommunicator.post(ApiPaths.ADD_EXECUTABLE, (req: any, res: any) => {
       const data = req.body;
-      this.clientManager.addExecutable(data)
+      const authData = AuthData.fromHeaders(req.headers)
+      this.clientManager.addExecutable(data, authData)
       .then((result: any) => {
         res.status(200).send(result);
       });
@@ -156,7 +158,9 @@ export class ClientApi {
       const environment = req.params.environment;
       const exe = req.params.exe;
       const name = req.params.name;
-      this.clientManager.getExecutable(username, cluster, environment, exe, name).then((result) => {
+      const authData = AuthData.fromHeaders(req.headers)
+      this.clientManager.getExecutable(username, cluster, environment, exe, name, authData)
+      .then((result) => {
         res.status(200).send(result);
       });
     });
@@ -170,7 +174,8 @@ export class ClientApi {
     this.serverCommunicator.get(ApiPaths.GET_EXECUTABLES, (req: any, res: any) => {
       const exe = req.params.exe;
       const username = req.params.username;
-      this.clientManager.getExecutables(username, exe)
+      const authData = AuthData.fromHeaders(req.headers)
+      this.clientManager.getExecutables(username, exe, authData)
       .then((results) => {
         res.status(200).send(results);
       });
@@ -188,7 +193,8 @@ export class ClientApi {
       const environment = req.params.environment;
       const exe = req.params.exe;
       const name = req.params.name;
-      this.clientManager.deleteExecutable(username, cluster, environment, exe, name)
+      const authData = AuthData.fromHeaders(req.headers)
+      this.clientManager.deleteExecutable(username, cluster, environment, exe, name, authData)
       .then((results) => {
         res.status(200).send(results);
       });
@@ -221,8 +227,8 @@ export class ClientApi {
       const name = req.params.name;
       const exe = req.params.exe;
       const data = req.body;
-      const token = req.headers.token;
-      this.clientManager.runExecutable(username, cluster, environment, exe, name, data, token)
+      const authData = AuthData.fromHeaders(req.headers)
+      this.clientManager.runExecutable(username, cluster, environment, exe, name, data, authData)
       .then((result: any) => {
         resp.status(200).send(result);
       });
