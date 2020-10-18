@@ -102,8 +102,8 @@ export class ClientManager {
     return this.routerClient.deleteExecutable(username, cluster, environment, exe, name)
   }
 
-  public runExecutable(username: string, cluster: string, environment: string, exe: string, name: string, data: any, token: string) {
-    return this.routerClient.runExecutable(username, cluster, environment, exe, name, data, token);
+  public runExecutable(username: string, cluster: string, environment: string, exe: string, name: string, data: any, authData: any) {
+    return this.routerClient.runExecutable(username, cluster, environment, exe, name, data, authData);
   }
 
   public searchExecutables(searchText: string) {

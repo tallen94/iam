@@ -22,8 +22,8 @@ export class Client {
     return this.clientCommunicator.get(ApiPaths.GET_EXECUTABLES, {}, {username: username, exe: exe});
   }
 
-  public runExecutable(username: string, cluster: string, environment: string, exe: string, name: string, data: any, token: string) {
-    return this.clientCommunicator.post(ApiPaths.RUN_EXECUTABLE, data, {username: username, cluster: cluster, environment: environment, exe: exe, name: name}, {token: token});
+  public runExecutable(username: string, cluster: string, environment: string, exe: string, name: string, data: any, authData: any) {
+    return this.clientCommunicator.post(ApiPaths.RUN_EXECUTABLE, data, {username: username, cluster: cluster, environment: environment, exe: exe, name: name}, authData);
   }
 
   public deleteExecutable(username: string, cluster: string, environment: string, exe: string, name: string) {

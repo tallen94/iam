@@ -38,4 +38,28 @@ export class AuthenticationClient {
   public validateUserToken(tokenId: string, tokenSecret: string): Promise<any> {
     return this.clientCommunicator.post(ApiPaths.VALIDATE_USER_TOKEN, {tokenId: tokenId, tokenSecret: tokenSecret})
   }
+
+  public validateAuthData(authData: any, username: string, fn: () => any) {
+    if (authData.sessionToken) {
+      return this.validateUserSession(authData.sessionToken)
+      .then((result: any) => {
+        if (result["username"] === username) {
+          return fn()
+        } else {
+          return { error: "not permitted" }
+        }
+      })
+    }
+
+    if (authData.tokenId && authData.tokenSecret) {
+      return this.validateUserToken(authData.tokenId, authData.tokenSecret)
+      .then((result) => {
+        if (result["username"] === username) {
+          return fn()
+        } else {
+          return { error: "not permitted" }
+        }
+      })
+    }
+  }
 }

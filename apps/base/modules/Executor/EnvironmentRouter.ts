@@ -4,59 +4,69 @@ import { DatabaseCommunicator } from "../Communicator/DatabaseCommunicator";
 import * as Lodash from "lodash";
 import { Queries } from "../Constants/Queries";
 import { ExecutableAccessor } from "./ExecutableAccessor";
+import { AuthenticationClient } from "../Client/AuthenticationClient";
 
 export class EnvironmentRouter {
 
   constructor(
     private databaseCommunicator: DatabaseCommunicator,
-    private executableAccessor: ExecutableAccessor
+    private executableAccessor: ExecutableAccessor,
+    private authenticationClient: AuthenticationClient
   ) {}
 
-  public addExecutable(data: any) {
-    return this.getRoute(data.username, data.cluster, data.environment, data.name, data.exe)
-    .then((result: any[]) => {
-      if (result.length == 0) {
-        const route = [data.username, data.cluster, data.environment].join("-")
-        return this.addRoute(data.username, data.cluster, data.environment, data.name, data.exe, route)
-      }
-    }).then(() => {
-      return this.executableAccessor.addExecutable(data);
+  public addExecutable(data: any, authData: any) {
+    return this.authenticationClient.validateAuthData(authData, data.username, () => {
+      return this.getRoute(data.username, data.cluster, data.environment, data.name, data.exe)
+      .then((result: any[]) => {
+        if (result.length == 0) {
+          const route = [data.username, data.cluster, data.environment].join("-")
+          return this.addRoute(data.username, data.cluster, data.environment, data.name, data.exe, route)
+        }
+      }).then(() => {
+        return this.executableAccessor.addExecutable(data);
+      })
     })
   }
  
-  public getExecutable(username: string, cluster: string, environment: string, name: string, exe: string) {
-    return this.getRoute(username, cluster, environment, name, exe)
-    .then((results: any[]) => {
-      if (results.length > 0) {
-        const route = results[0]
-        return this.executableAccessor.getExecutable(username, cluster, environment, name, exe);
-      }
+  public getExecutable(username: string, cluster: string, environment: string, name: string, exe: string, authData: any) {
+    return this.authenticationClient.validateAuthData(authData, username, () => {
+      return this.getRoute(username, cluster, environment, name, exe)
+      .then((results: any[]) => {
+        if (results.length > 0) {
+          const route = results[0]
+          return this.executableAccessor.getExecutable(username, cluster, environment, name, exe);
+        }
+      })
     })
   }
 
-  public getExecutables(username: string, exe: string) {
-    return this.getUserRoutes(username, exe)
-    .then((results: any[]) => {
-      return Promise.all(Lodash.map(results, (route) => {
-        return this.executableAccessor.getExecutable(route.username, route.cluster, route.environment, route.name, route.exe);
-      }))
+  public getExecutables(username: string, exe: string, authData: any) {
+    return this.authenticationClient.validateAuthData(authData, username, () => {
+      return this.getUserRoutes(username, exe)
+      .then((results: any[]) => {
+        return Promise.all(Lodash.map(results, (route) => {
+          return this.executableAccessor.getExecutable(route.username, route.cluster, route.environment, route.name, route.exe);
+        }))
+      })
     })
   }
 
-  public deleteExecutable(username: string, cluster: string, environment: string, exe: string, name: string) {
-    return this.getRoute(username, cluster, environment, name, exe)
-    .then((results: any[]) => {
-      if (results.length > 0) {
-        const route = results[0]
-        return this.executableAccessor.deleteExecutable(route.username, route.cluster, route.environment, route.exe, route.name)
-        .then(() => {
-          return this.deleteRoute(route.username, route.cluster, route.environment, route.exe, route.name)
-        });
-      }
+  public deleteExecutable(username: string, cluster: string, environment: string, exe: string, name: string, authData: any) {
+    return this.authenticationClient.validateAuthData(authData, username, () => {
+      return this.getRoute(username, cluster, environment, name, exe)
+      .then((results: any[]) => {
+        if (results.length > 0) {
+          const route = results[0]
+          return this.executableAccessor.deleteExecutable(route.username, route.cluster, route.environment, route.exe, route.name)
+          .then(() => {
+            return this.deleteRoute(route.username, route.cluster, route.environment, route.exe, route.name)
+          });
+        }
+      })
     })
   }
 
-  public runExecutable(exe: string, username: string, cluster: string, environment: string, name: string, data: any, token: string) {
+  public runExecutable(exe: string, username: string, cluster: string, environment: string, name: string, data: any, authData: any) {
     return this.getRoute(username, cluster, environment, name, exe)
     .then((results: any[]) => {
       if (results.length > 0) {
@@ -64,7 +74,7 @@ export class EnvironmentRouter {
         const host = route.route
         const clientCommunicator: ClientCommunicator = new ClientCommunicator(host, 80)
         const client: ExecutorClient = new ExecutorClient(clientCommunicator);
-        return client.runExecutable(username, cluster, environment, exe, name, data);
+        return client.runExecutable(username, cluster, environment, exe, name, data, authData);
       }
     })
   }

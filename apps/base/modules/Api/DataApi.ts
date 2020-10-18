@@ -34,14 +34,14 @@ export class DataApi {
     })
 
     this.serverCommunicator.post(ApiPaths.LOAD_DATASET, (req: any, res: any) => {
-      this.dataManager.loadDataset(req.body.username, req.body.cluster, req.body.environment, req.body.name, req.body.executableData)
+      this.dataManager.loadDataset(req.body.username, req.body.cluster, req.body.environment, req.body.name, req.body.executableData, req.headers)
       .then((result) => {
         res.status(200).send(result)
       })
     })
 
     this.serverCommunicator.post(ApiPaths.TRANSFORM_DATASET, (req: any, res: any) => {
-      this.dataManager.transformData(req.body.username, req.body.cluster, req.body.environment, req.body.name, req.body.functionData)
+      this.dataManager.transformData(req.body.username, req.body.cluster, req.body.environment, req.body.name, req.body.functionData, req.headers)
       .then((result) => {
         res.status(200).send(result)
       })

@@ -221,8 +221,8 @@ export class ClientApi {
       const name = req.params.name;
       const exe = req.params.exe;
       const data = req.body;
-      const token = req.headers.token;
-      this.clientManager.runExecutable(username, cluster, environment, exe, name, data, token)
+      const authData = req.headers;
+      this.clientManager.runExecutable(username, cluster, environment, exe, name, data, authData)
       .then((result: any) => {
         resp.status(200).send(result);
       });

@@ -26,7 +26,8 @@ export class ExecutorApi {
       const exe = req.params.exe;
       const name = req.params.name;
       const data = req.body;
-      this.executor.runExecutable(username, cluster, environment, exe, name, data)
+      const authData = req.headers;
+      this.executor.runExecutable(username, cluster, environment, exe, name, data, authData)
       .then((result: any) => {
         resp.status(200).send({result: result});
       });

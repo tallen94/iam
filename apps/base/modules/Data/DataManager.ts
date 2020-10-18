@@ -64,7 +64,7 @@ export class DataManager {
     })
   }
 
-  public loadDataset(username: string, cluster: string, environment: string, name: string, executableData: any) {
+  public loadDataset(username: string, cluster: string, environment: string, name: string, executableData: any, authData: any) {
     return this.getDataset(username, cluster, environment, name)
     .then((dataset: any) => {
       const loadData = {
@@ -74,7 +74,7 @@ export class DataManager {
         name: dataset.name,
         executableData: executableData
       }
-      return this.environmentRouterClient.runExecutable(dataset.executable.username, dataset.executable.cluster, dataset.executable.environment, dataset.executable.exe, dataset.executable.name, {loadData: loadData}, "")
+      return this.environmentRouterClient.runExecutable(dataset.executable.username, dataset.executable.cluster, dataset.executable.environment, dataset.executable.exe, dataset.executable.name, {loadData: loadData}, authData)
       .then((result: any) => {
         dataset.tag.push(result.result.tag)
         return this.addDataset(dataset)
@@ -84,7 +84,7 @@ export class DataManager {
     })
   }
 
-  public transformData(username: string, cluster: string, environment: string, name: string, functionData: any) {
+  public transformData(username: string, cluster: string, environment: string, name: string, functionData: any, authData: any) {
     return this.getDataset(username, cluster, environment, name)
     .then((dataset: any) => {
       const transformData = functionData
@@ -103,7 +103,7 @@ export class DataManager {
         return Promise.all(Lodash.map(addresses, (addr, index) => {
           const host = addr["ip"]
           const client = new Client(new ClientCommunicator(host, port)) 
-          return client.runExecutable(transformData.username, transformData.cluster, transformData.environment, transformData.exe, transformData.name, { transformData: transformData }, "")
+          return client.runExecutable(transformData.username, transformData.cluster, transformData.environment, transformData.exe, transformData.name, { transformData: transformData }, authData)
         })).then((results) => {
           return {tag: tag}
         })

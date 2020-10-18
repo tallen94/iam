@@ -36,7 +36,7 @@ export class Authentication {
     return this.databaseCommunicator.execute(Queries.GET_USER_SESSION, {token: token})
     .then((result: any[]) => {
       if (result.length > 0) {
-        return result[0]
+        return { username: result[0]["username"] }
       }
       return { error: "invalid session" }
     })

@@ -188,7 +188,11 @@ export class ApiFactory {
     const clientCommunicator: ClientCommunicator = new ClientCommunicator("router.default", 80)
     const client: Client = new Client(clientCommunicator)
     const executableFactory: ExecutableFactory = this.constructExecutableFactory(fileSystem, envConfig)
-    return new Executor(client, executableFactory)
+
+    const authClientCommunicator = new ClientCommunicator("auth.default", 80)
+    const authenticationClient: AuthenticationClient = new AuthenticationClient(authClientCommunicator)
+    const authorizationClient: AuthorizationClient = new AuthorizationClient(authClientCommunicator)
+    return new Executor(client, executableFactory, authorizationClient, authenticationClient)
   }
 
   private constructExecutableAccessor(dbconfig: any, fsConfig: any, fileSystem: FileSystem) {
