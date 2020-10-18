@@ -30,7 +30,7 @@ export class ExecutorApi {
       const name = req.params.name;
       const data = req.body;
       const authData = AuthData.fromHeaders(req.headers)
-      this.authenticationClient.validateAuthData(req.headers, username, () => {
+      this.authenticationClient.validateAuthData(authData, username, () => {
         this.executor.runExecutable(username, cluster, environment, exe, name, data, authData)
         .then((result: any) => {
           resp.status(200).send({result: result});

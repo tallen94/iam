@@ -12,7 +12,7 @@ export class Executor {
   public runExecutable(username: string, cluster: string, environment: string, exe: string, name: string, data: any, authData: AuthData) {
     return this.client.getExecutable(username, cluster, environment, exe, name, authData)
     .then((executable) => {
-      return this.executableFactory[exe](executable).run(data)
+      return this.executableFactory[exe](executable).run(data, authData)
     })
   }
 }
