@@ -5,13 +5,15 @@ import * as Lodash from "lodash";
 import { Queries } from "../Constants/Queries";
 import { ExecutableAccessor } from "./ExecutableAccessor";
 import { AuthenticationClient } from "../Client/AuthenticationClient";
+import { AuthorizationClient } from "../Client/AuthorizationClient";
 
 export class EnvironmentRouter {
 
   constructor(
     private databaseCommunicator: DatabaseCommunicator,
     private executableAccessor: ExecutableAccessor,
-    private authenticationClient: AuthenticationClient
+    private authenticationClient: AuthenticationClient,
+    private authorizationClient: AuthorizationClient
   ) {}
 
   public addExecutable(data: any, authData: any) {

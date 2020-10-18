@@ -23,7 +23,8 @@ export class EnvironmentRouterApi {
      */
     this.serverCommunicator.post(ApiPaths.ADD_EXECUTABLE, (req: any, res: any) => {
       const data = req.body;
-      this.router.addExecutable(data)
+      const authData = req.headers;
+      this.router.addExecutable(data, authData)
       .then((result: any) => {
         res.status(200).send(result);
       });
@@ -41,7 +42,9 @@ export class EnvironmentRouterApi {
       const environment = req.params.environment;
       const exe = req.params.exe;
       const name = req.params.name;
-      this.router.getExecutable(username, cluster, environment, name, exe).then((result) => {
+      const authData = req.headers;
+      this.router.getExecutable(username, cluster, environment, name, exe, authData)
+      .then((result) => {
         res.status(200).send(result);
       });
     });
@@ -55,7 +58,8 @@ export class EnvironmentRouterApi {
     this.serverCommunicator.get(ApiPaths.GET_EXECUTABLES, (req: any, res: any) => {
       const exe = req.params.exe;
       const username = req.params.username;
-      this.router.getExecutables(username, exe)
+      const authData = req.headers;
+      this.router.getExecutables(username, exe, authData)
       .then((results) => {
         res.status(200).send(results);
       });
@@ -73,7 +77,8 @@ export class EnvironmentRouterApi {
       const cluster = req.params.cluster;
       const environment = req.params.environment;
       const name = req.params.name;
-      this.router.deleteExecutable(username, cluster, environment, exe, name)
+      const authData = req.headers;
+      this.router.deleteExecutable(username, cluster, environment, exe, name, authData)
       .then((results) => {
         res.status(200).send(results);
       });

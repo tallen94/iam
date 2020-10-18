@@ -106,7 +106,10 @@ export class ApiFactory {
     }
     const databaseCommunicator: DatabaseCommunicator = this.constructDatabaseCommunicator(dbconfig)
     const executableAccessor: ExecutableAccessor = this.constructExecutableAccessor(dbconfig, fsconfig, fileSystem)
-    const router: EnvironmentRouter = new EnvironmentRouter(databaseCommunicator, executableAccessor);
+    const authClientCommunicator = new ClientCommunicator("auth.default", 80)
+    const authenticationClient = new AuthenticationClient(authClientCommunicator)
+    const authorizationClient = new AuthorizationClient(authClientCommunicator)
+    const router: EnvironmentRouter = new EnvironmentRouter(databaseCommunicator, executableAccessor, authenticationClient, authorizationClient);
     const environmentClient: EnvironmentClient = new EnvironmentClient(new ClientCommunicator(envConfig.host, parseInt(envConfig.port)))
     const environmentRouterClient: Client = new Client(new ClientCommunicator("router.default", 80))
     const dataManager = new DataManager(databaseCommunicator, environmentClient, environmentRouterClient)
