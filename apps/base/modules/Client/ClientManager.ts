@@ -6,6 +6,7 @@ import { ClusterClient } from "./ClusterClient";
 import { EnvironmentClient } from "./EnvironmentClient";
 import { ImageClient } from "./ImageClient";
 import { DataClient } from "./DataClient";
+import { AuthData } from "../Auth/AuthData";
 
 export class ClientManager {
 
@@ -86,24 +87,24 @@ export class ClientManager {
     return this.environmentClient.stopEnvironment(username, name, cluster)
   }
 
-  public addExecutable(data: any) {
-    return this.routerClient.addExecutable(data)
+  public addExecutable(data: any, authData: AuthData) {
+    return this.routerClient.addExecutable(data, authData)
   }
 
-  public getExecutable(username: string, cluster: string, environment: string, exe: string, name: string) {
-    return this.routerClient.getExecutable(username, cluster, environment, exe, name);
+  public getExecutable(username: string, cluster: string, environment: string, exe: string, name: string, authData: AuthData) {
+    return this.routerClient.getExecutable(username, cluster, environment, exe, name, authData);
   }
 
-  public getExecutables(username: string, exe: string) {
-    return this.routerClient.getExecutables(username, exe);
+  public getExecutables(username: string, exe: string, authData: AuthData) {
+    return this.routerClient.getExecutables(username, exe, authData);
   }
 
-  public deleteExecutable(username: string, cluster: string, environment: string, exe: string, name: string) {
-    return this.routerClient.deleteExecutable(username, cluster, environment, exe, name)
+  public deleteExecutable(username: string, cluster: string, environment: string, exe: string, name: string, authData: AuthData) {
+    return this.routerClient.deleteExecutable(username, cluster, environment, exe, name, authData)
   }
 
-  public runExecutable(username: string, cluster: string, environment: string, exe: string, name: string, data: any, token: string) {
-    return this.routerClient.runExecutable(username, cluster, environment, exe, name, data, token);
+  public runExecutable(username: string, cluster: string, environment: string, exe: string, name: string, data: any, authData: AuthData) {
+    return this.routerClient.runExecutable(username, cluster, environment, exe, name, data, authData);
   }
 
   public searchExecutables(searchText: string) {

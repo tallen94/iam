@@ -27,10 +27,10 @@ export class AsyncStep implements Step {
 
   public execute(data: any[]) {
     return Promise.all(Lodash.map(this.steps, (step, i) => {
-      return step.execute(data[i], "")
-      .then((result) => {
-        return result;
-      });
+      // return step.execute(data[i], "")
+      // .then((result) => {
+      //   return result;
+      // });
     }));
   }
 

@@ -6,6 +6,7 @@ import { Query } from "./Query";
 import { ClientCommunicator } from "../Communicator/ClientCommunicator";
 import { ProgramStep } from "../Step/ProgramStep";
 import { Client } from "../Client/Client";
+import { AuthData } from "../Auth/AuthData";
 
 export class Graph implements Executable {
 
@@ -32,17 +33,17 @@ export class Graph implements Executable {
     return this.visibility
   }
 
-  public run(data: any): Promise<any> {
+  public run(data: any, authData: AuthData): Promise<any> {
     return this.buildGraph(this.nodes, this.edges)
     .then((directedGraph: DirectedGraph) => {
       if (this.foreach) {
-        return this.runForeach(directedGraph, data)
+        return this.runForeach(directedGraph, data, authData)
       }
-      return directedGraph.execute(data);
+      return directedGraph.execute(data, authData);
     });
   }
 
-  private runForeach(directedGraph: DirectedGraph, data: any) {
+  private runForeach(directedGraph: DirectedGraph, data: any, authData: AuthData) {
     const numThreads = 2;
     const threads = [];
     const results = [];
@@ -50,7 +51,7 @@ export class Graph implements Executable {
     for (let index = 0; index < data.length; index++) {
       if (threads.length < numThreads) {
         threads.push(Promise.resolve().then(() => {
-          return directedGraph.execute(data[index])
+          return directedGraph.execute(data[index], authData)
           .then((result: any) => {
             results.push(result);
           })
@@ -58,7 +59,7 @@ export class Graph implements Executable {
       } else {
         threads[index % numThreads] = threads[index % numThreads]
         .then(() => {
-          return directedGraph.execute(data[index])
+          return directedGraph.execute(data[index], authData)
           .then((result: any) => {
             results.push(result);
           })

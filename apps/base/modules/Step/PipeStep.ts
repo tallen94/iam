@@ -48,7 +48,7 @@ export class PipeStep implements Step {
     let promise = Promise.resolve(data);
     Lodash.each(this.steps, (step) => {
       promise = promise.then((result) => {
-        return step.execute(result, "");
+        // return step.execute(result, "");
       });
     });
     return promise;
