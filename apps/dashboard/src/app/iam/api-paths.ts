@@ -66,4 +66,12 @@ export class ApiPaths {
   
   // User
   public static ADD_USER =    "/user"
+
+  // Job
+  public static ADD_JOB = "/job"
+  public static GET_JOB = "/job"
+  public static GET_JOBS_FOR_USER = "/job/user"
+  public static DELETE_JOB = "/job"
+  public static ENABLE_JOB = "/job/enable"
+  public static DISABLE_JOB = "/job/disable"
 }

@@ -134,4 +134,18 @@ export class InitData {
       transform: {}
     }
   }
+
+  job(id: number, data: any) {
+    return {
+      id: id,
+      username: this.iam.getUser().username,
+      exe: "job",
+      name: data.name,
+      description: "this is a job that runs every 5 minutes",
+      executable: {},
+      jobData: "",
+      enabled: false,
+      schedule: "*/5 * * * *"
+    }
+  }
 }

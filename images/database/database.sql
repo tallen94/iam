@@ -150,19 +150,22 @@ CREATE TABLE `executable` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `job_queue`
+-- Table structure for table `job`
 --
 
-DROP TABLE IF EXISTS `job_queue`;
+DROP TABLE IF EXISTS `job`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `job_queue` (
-  `id` bigint(20) NOT NULL,
-  `visible` int(11) NOT NULL,
-  `data` varchar(1024) DEFAULT NULL,
-  `jobId` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `jobId` (`jobId`)
+CREATE TABLE `job` (
+  `name` varchar(255) NOT NULL,
+  `username` varchar(50) NOT NULL,
+  `description` text,
+  `enabled` boolean NOT NULL,
+  `schedule` varchar(50) NOT NULL,
+  `jobData` text,
+  `executable` text,
+  key (`username`)
+  UNIQUE KEY (`name`, `username`, `cluster`),
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

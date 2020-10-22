@@ -75,4 +75,11 @@ export class Queries {
   // Users
   public static ADD_USER = "insert into user (username, email) values ({username}, {email});"
   public static GET_USER = "select * from user where username={username};"
+
+  // Jobs
+  public static ADD_JOB = "insert into job (name, username, description, enabled, schedule, jobData, executable) values ({name}, {username}, {description}, {enabled}, {schedule}, {jobData}, {executable})"
+  public static UPDATE_JOB = "update job set description={description}, enabled={enabled}, schedule={schedule}, jobData={jobData}, exeData={exeData} where name={name} and username={username}"
+  public static GET_JOB = "select * from job where name={name} and username={username}"
+  public static GET_JOBS_FOR_USER = "select * from job where username={username}"
+  public static DELETE_JOB = "delete from job where name={name} and username={username}"
 }

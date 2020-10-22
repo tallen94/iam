@@ -80,6 +80,17 @@
         <li class="sidebar-row-subrow" *ngFor="let item of filter(datasets)" (click)="select('dataset', item)">{{item.name}}</li>
       </ul>
     </div> -->
+
+    <div *ngIf="jobs && functions && functions.length > 0">
+      <div class="sidebar-row-title" (click)="showGroup('jobs')">
+        Jobs ({{jobs.length}})
+        <button class="btn add-button" (click)="newResource('job')"><i class="fa fa-plus"></i></button>
+      </div>
+      <p *ngIf="jobs.length == 0">Create a job to run a function or graph on a schedule. Click the <b>+</b> to add a new job.</p>
+      <ul *ngIf="show === 'jobs' || showAll" class="sidebar-row-subrows">
+        <li class="sidebar-row-subrow" *ngFor="let item of filter(jobs)" (click)="select('job', item)">{{item.name}}</li>
+      </ul>
+    </div>
   </div>
 
   <div class="list-section col-sm-10" *ngIf="data">

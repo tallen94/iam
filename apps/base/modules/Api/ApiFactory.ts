@@ -2,7 +2,7 @@ import {
   Executor, FileSystem, ServerCommunicator
 } from "../modules";
 import { ExecutorApi } from "./ExecutorApi";
-import { JobRunner } from "../Job/JobRunner";
+import { JobManager } from "../Job/JobManager";
 import { DashboardApi } from "./DashboardApi";
 import { FileSystemApi } from "../Api/FileSystemApi";
 import { EnvironmentRouter } from "../Executor/EnvironmentRouter";
@@ -42,6 +42,7 @@ import { DataClient } from "../Client/DataClient";
 import { DataApi } from "./DataApi";
 import { DataManager } from "../Data/DataManager";
 import { ExecutableAccessor } from "../Executor/ExecutableAccessor";
+import { JobClient } from "../Client/JobClient";
 
 export class ApiFactory {
 
@@ -55,7 +56,9 @@ export class ApiFactory {
       authHost: process.env.AUTH_HOST || process.argv[9],
       authPort: process.env.AUTH_PORT || process.argv[10],
       builderHost: process.env.BUILDER_HOST || process.argv[11],
-      builderPort: process.env.BUILDER_PORT || process.argv[12]
+      builderPort: process.env.BUILDER_PORT || process.argv[12],
+      jobHost: process.env.JOB_HOST || process.argv[13],
+      jobPort: process.env.JOB_PORT || process.argv[14]
     }
 
     const routerClient: Client = new Client(new ClientCommunicator(clientConfig.routerHost, parseInt(clientConfig.routerPort)))
@@ -66,7 +69,17 @@ export class ApiFactory {
     const environmentClient: EnvironmentClient = new EnvironmentClient(new ClientCommunicator(clientConfig.builderHost, parseInt(clientConfig.builderPort)))
     const imageClient: ImageClient = new ImageClient(new ClientCommunicator(clientConfig.builderHost, parseInt(clientConfig.builderPort)))
     const dataClient: DataClient = new DataClient(new ClientCommunicator(clientConfig.routerHost, parseInt(clientConfig.routerPort)))
-    const clientManager: ClientManager = new ClientManager(routerClient, authenticationClient, userClient, authorizationClient, clusterClient, environmentClient, imageClient, dataClient)
+    const jobClient: JobClient = new JobClient(new ClientCommunicator(clientConfig.jobHost, parseInt(clientConfig.jobPort)))
+    const clientManager: ClientManager = new ClientManager(
+      routerClient, 
+      authenticationClient, 
+      userClient, 
+      authorizationClient, 
+      clusterClient, 
+      environmentClient, 
+      imageClient, 
+      dataClient, 
+      jobClient)
     new ClientApi(serverCommunicator, clientManager)
     new DashboardApi(fileSystem, serverCommunicator);
   }
@@ -183,9 +196,11 @@ export class ApiFactory {
       host: process.env.BUILDER_HOST || process.argv[12],
       port: process.env.BUILDER_PORT || process.argv[13]
     }
-    const executor: Executor = this.constructExecutor(fileSystem, envConfig)
-    const executableFactory: ExecutableFactory = this.constructExecutableFactory(fileSystem, envConfig)
-    new JobRunner(executor, executableFactory);
+
+    const databaseCommunicator = this.constructDatabaseCommunicator(dbconfig)
+    const fileSystemCommunicator = this.constructFileSystemCommunicator(fsconfig)
+    const shellCommunicator = new ShellCommunicator(fileSystem)
+    new JobManager(databaseCommunicator, fileSystemCommunicator, shellCommunicator, fileSystem);
   }
 
   private constructExecutor(fileSystem, envConfig) {

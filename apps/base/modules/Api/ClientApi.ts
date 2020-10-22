@@ -381,5 +381,47 @@ export class ClientApi {
         res.status(200).send(result)
       })
     })
+
+    this.serverCommunicator.post(ApiPaths.ADD_JOB, (req: any, res: any) => {
+      this.clientManager.addJob(req.body)
+      .then((result) => {
+        res.status(200).send(result)
+      })
+    })
+
+    this.serverCommunicator.get(ApiPaths.GET_JOB, (req: any, res: any) => {
+      this.clientManager.getJob(req.query.username, req.query.name)
+      .then((result) => {
+        res.status(200).send(result)
+      })
+    })
+
+    this.serverCommunicator.get(ApiPaths.GET_JOBS_FOR_USER, (req: any, res: any) => {
+      this.clientManager.getJobsForUser(req.query.username)
+      .then((result) => {
+        res.status(200).send(result)
+      })
+    })
+
+    this.serverCommunicator.delete(ApiPaths.DELETE_JOB, (req: any, res: any) => {
+      this.clientManager.deleteJob(req.query.username, req.query.name)
+      .then((result) => {
+        res.status(200).send(result)
+      })
+    })
+
+    this.serverCommunicator.post(ApiPaths.ENABLE_JOB, (req: any, res: any) => {
+      this.clientManager.enableJob(req.body.username, req.body.name)
+      .then((result) => {
+        res.status(200).send(result)
+      })
+    })
+
+    this.serverCommunicator.post(ApiPaths.DISABLE_JOB, (req: any, res: any) => {
+      this.clientManager.disableJob(req.body.username, req.body.name)
+      .then((result) => {
+        res.status(200).send(result)
+      })
+    })
   }
 }

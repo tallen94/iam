@@ -61,6 +61,11 @@ spec:
           value: "builder.default"
         - name: BUILDER_PORT
           value: "80"
+
+        - name: JOB_HOST
+          value: "job.default"
+        - name: JOB_PORT
+          value: "80"
 ---
 apiVersion: v1
 kind: Service
@@ -146,6 +151,11 @@ spec:
         - name: BUILDER_HOST
           value: "builder.default"
         - name: BUILDER_PORT
+          value: "80"
+
+        - name: JOB_HOST
+          value: "job.default"
+        - name: JOB_PORT
           value: "80"
 
 ---

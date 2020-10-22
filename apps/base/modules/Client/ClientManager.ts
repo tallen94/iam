@@ -7,6 +7,7 @@ import { EnvironmentClient } from "./EnvironmentClient";
 import { ImageClient } from "./ImageClient";
 import { DataClient } from "./DataClient";
 import { AuthData } from "../Auth/AuthData";
+import { JobClient } from "./JobClient";
 
 export class ClientManager {
 
@@ -18,7 +19,8 @@ export class ClientManager {
     private clusterClient: ClusterClient,
     private environmentClient: EnvironmentClient,
     private imageClient: ImageClient,
-    private dataClient: DataClient
+    private dataClient: DataClient,
+    private jobClient: JobClient
   ) {
 
   }
@@ -208,5 +210,29 @@ export class ClientManager {
 
   public deleteDatasetTag(username: string, cluster: string, environment: string, name: string, tag: string) {
     return this.dataClient.deleteDatasetTag(username, cluster, environment, name, tag)
+  }
+
+  public addJob(data: any) {
+    return this.jobClient.addJob(data)
+  }
+
+  public getJob(username: string, name: string) {
+    return this.jobClient.getJob(username, name)
+  }
+
+  public getJobsForUser(username: string) {
+    return this.jobClient.getJobsForUser(username)
+  }
+
+  public deleteJob(username: string, name: string) {
+    return this.jobClient.deleteJob(username, name)
+  }
+
+  public enableJob(username: string, name: string) {
+    return this.jobClient.enableJob(username, name)
+  }
+
+  public disableJob(username: string, name: string) {
+    return this.jobClient.disableJob(username, name)
   }
 }

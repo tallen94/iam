@@ -29,3 +29,6 @@ bash builders/build-client.sh $VERSION $PUSH $PROVIDER -prod
 
 bash images/templates/builder.sh $TAG
 bash builders/build-builder.sh $VERSION $PUSH $PROVIDER
+
+bash images/templates/job.sh $TAG
+bash builders/build-job.sh $VERSION $PUSH $PROVIDER

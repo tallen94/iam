@@ -1,0 +1,132 @@
+<div class="card">
+  <div class="card-title">
+    <div class="inline-input exe">
+      [job]
+    </div>
+    <div class="inline-input username">
+      {{data.username}}
+    </div>
+    <div class="inline-input name">
+      .{{data.name}}
+    </div>
+  </div>
+
+  <div class="card-body">
+    <div>
+      <label class="nested-title" *ngIf="editing || (data.description && data.description != '')">Description</label>
+      <div *ngIf="editing" class="text-editor" ace-editor
+        [(text)]="data.description"
+        [mode]="'markdown'" 
+        [theme]="'eclipse'"
+        [options]="options"
+        [readOnly]="false"
+        [autoUpdateContent]="true" 
+        [durationBeforeCallback]="500"></div>
+      <div class="markdown"  *ngIf="!editing && data.description && data.description != ''">
+        <ngx-md [data]="data.description" ></ngx-md>
+      </div>
+    </div>
+
+    <div>
+      <label class="nested-title">State</label>
+      <p *ngIf="data.enabled" class="environment-state">Enabled</p>
+      <p *ngIf="!data.enabled" class="environment-state">Disabled</p>
+    </div>
+
+    <div>
+      <label class="nested-title">Schedule</label>
+      <input 
+        class="form-control"
+        size="{{inputSize('schedule')}}"
+        *ngIf="editing" 
+        type="text" 
+        [(ngModel)]="data.schedule"
+        placeholder="Schedule">
+      <p *ngIf="!editing">{{data.schedule}}</p>
+    </div>
+
+    <div>
+      <div>
+        <label class="nested-title" >Executable</label>
+      </div>
+      <div class="inline-input right-space">
+        <label>Username</label>
+        <input 
+          class="form-control"
+          size="{{inputSize('username')}}"
+          *ngIf="editing" 
+          type="text" 
+          [(ngModel)]="data.executable.username"
+          placeholder="name">
+        <p *ngIf="!editing" >{{data.executable.username}}</p>
+      </div>
+      <div class="inline-input right-space">
+        <label>Cluster</label>
+        <input 
+          class="form-control"
+          size="{{inputSize('cluster')}}"
+          *ngIf="editing" 
+          type="text" 
+          [(ngModel)]="data.executable.cluster"
+          placeholder="name">
+        <p *ngIf="!editing" >{{data.executable.cluster}}</p>
+      </div>
+      <div class="inline-input right-space">
+        <label>Environment</label>
+        <input 
+          class="form-control"
+          size="{{inputSize('environment')}}"
+          *ngIf="editing" 
+          type="text" 
+          [(ngModel)]="data.executable.environment"
+          placeholder="name">
+        <p *ngIf="!editing" >{{data.executable.environment}}</p>
+      </div>
+      <div class="inline-input right-space">
+        <label>Exe</label>
+        <input 
+          class="form-control"
+          size="{{inputSize('name')}}"
+          *ngIf="editing" 
+          type="text" 
+          [(ngModel)]="data.executable.exe"
+          placeholder="name">
+        <p *ngIf="!editing" >{{data.executable.exe}}</p>
+      </div>
+      <div class="inline-input">
+        <label>Name</label>
+        <input 
+          class="form-control"
+          size="{{inputSize('name')}}"
+          *ngIf="editing" 
+          type="text" 
+          [(ngModel)]="data.executable.name"
+          placeholder="name">
+        <p *ngIf="!editing" >{{data.executable.name}}</p>
+      </div>
+    </div>
+
+    <div>
+      <label class="nested-title">Job Data</label>
+      <div *ngIf="editing" class="text-editor" ace-editor
+        [(text)]="data.jobData"
+        [mode]="'markdown'" 
+        [theme]="'eclipse'"
+        [options]="options"
+        [readOnly]="false"
+        [autoUpdateContent]="true" 
+        [durationBeforeCallback]="500"></div>
+      <div class="markdown"  *ngIf="!editing && data.jobData && data.jobData != ''">
+        <ngx-md [data]="data.jobData" ></ngx-md>
+      </div>
+    </div>
+  </div>
+
+  <div class="action-buttons">
+    <button class="btn-sm btn-secondary"  *ngIf="editing" (click)="save()">save</button>
+    <button class="btn-sm btn-danger"  *ngIf="editing" (click)="cancelEdit()">cancel</button>
+    <button class="btn-sm btn-secondary" *ngIf="!editing" (click)="triggerEdit()">edit</button>
+    <button class="btn-sm btn-success" (click)="enableJob()">enable</button>
+    <button class="btn-sm btn-danger" (click)="disableJob()">disable</button>
+  </div>
+</div>
