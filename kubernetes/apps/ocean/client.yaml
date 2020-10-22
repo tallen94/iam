@@ -16,7 +16,7 @@ spec:
       - name: regcred
       containers:
       - name: client
-        image: icanplayguitar94/iam:client-6690712abffd2d4a72611e543c66222a10ee2dcf
+        image: icanplayguitar94/iam:client-4b3adde7d772a6f86c3fa076c9bf3c0d757445f4
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
