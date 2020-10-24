@@ -423,5 +423,39 @@ export class ClientApi {
         res.status(200).send(result)
       })
     })
+
+    this.serverCommunicator.post(ApiPaths.ADD_SECRET, (req: any, res: any) => {
+      const data = req.body
+      this.clientManager.addSecret(data)
+      .then((result) => {
+        res.status(200).send(result)
+      })
+    })
+
+    this.serverCommunicator.get(ApiPaths.GET_SECRET, (req: any, res: any) => {
+      const name = req.query.name
+      const username = req.query.username
+      this.clientManager.getSecret(name, username)
+      .then((result) => {
+        res.status(200).send(result)
+      })
+    })
+
+    this.serverCommunicator.get(ApiPaths.GET_SECRETS_FOR_USER, (req: any, res: any) => {
+      const username = req.query.username
+      this.clientManager.getSecretsForUser(username)
+      .then((result) => {
+        res.status(200).send(result)
+      })
+    })
+
+    this.serverCommunicator.delete(ApiPaths.DELETE_SECRET, (req: any, res: any) => {
+      const name = req.query.name
+      const username = req.query.username
+      this.clientManager.deleteSecret(name, username)
+      .then((result) => {
+        res.status(200).send(result)
+      })
+    })
   }
 }

@@ -19,6 +19,7 @@ fi
 
 # Create kubernetes apps
 bash kubernetes/templates/job.sh $TAG $PROVIDER
+bash kubernetes/templates/secret.sh $TAG $PROVIDER
 bash kubernetes/templates/filesystem.sh $TAG $PROVIDER
 bash kubernetes/templates/auth.sh $TAG $PROVIDER
 bash kubernetes/templates/router.sh $TAG $PROVIDER
@@ -32,3 +33,6 @@ bash builders/build-builder.sh $VERSION $PUSH $PROVIDER
 
 bash images/templates/job.sh $TAG
 bash builders/build-job.sh $VERSION $PUSH $PROVIDER
+
+bash images/templates/secret.sh $TAG
+bash builders/build-secret.sh $VERSION $PUSH $PROVIDER

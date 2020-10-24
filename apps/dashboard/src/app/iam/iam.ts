@@ -232,6 +232,22 @@ export class Iam {
     return this.client.post(ApiPaths.DISABLE_JOB, {username: username, name: name})
   }
 
+  public addSecret(data: any) {
+    return this.client.post(ApiPaths.ADD_SECRET, data)
+  }
+
+  public getSecret(name: string, username: string) {
+    return this.client.get(ApiPaths.GET_SECRET, {}, {name: name, username: username})
+  }
+
+  public getSecretsForUser(username: string) {
+    return this.client.get(ApiPaths.GET_SECRETS_FOR_USER, {}, {username: username})
+  }
+
+  public deleteSecret(name: string, username: string) {
+    return this.client.delete(ApiPaths.DELETE_SECRET, {name: name, username: username})
+  }
+
   public getHost() {
     return this.client.getHost();
   }

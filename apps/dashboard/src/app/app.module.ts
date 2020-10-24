@@ -39,6 +39,7 @@ import { NewResourceModalComponent } from './new-resource-modal/new-resource-mod
 import { ImageComponent } from './image/image.component';
 import { DatasetComponent } from './dataset/dataset.component';
 import { JobComponent } from './job/job.component';
+import { SecretComponent } from './secret/secret.component';
 
 const appRoutes: Routes = [
   { path: "login", component: LoginComponent },
@@ -75,7 +76,8 @@ const appRoutes: Routes = [
     NewResourceModalComponent,
     ImageComponent,
     DatasetComponent,
-    JobComponent
+    JobComponent,
+    SecretComponent
   ],
   imports: [
     RouterModule.forRoot(appRoutes,{ enableTracing: true }),

@@ -21,6 +21,8 @@ elif [ $APP_NAME = "builder" ]; then
   bash builders/build-$APP_NAME.sh $VERSION $PUSH $PROVIDER
 elif [ $APP_NAME = "job" ]; then
   bash builders/build-$APP_NAME.sh $VERSION $PUSH $PROVIDER
+elif [ $APP_NAME = "secret" ]; then
+  bash builders/build-$APP_NAME.sh $VERSION $PUSH $PROVIDER
 else
   echo "Invalid app"
 fi

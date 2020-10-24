@@ -91,6 +91,17 @@
         <li class="sidebar-row-subrow" *ngFor="let item of filter(jobs)" (click)="select('job', item)">{{item.name}}</li>
       </ul>
     </div>
+
+    <div *ngIf="secrets">
+      <div class="sidebar-row-title" (click)="showGroup('secrets')">
+        Secrets ({{secrets.length}})
+        <button class="btn add-button" (click)="newResource('secret')"><i class="fa fa-plus"></i></button>
+      </div>
+      <p *ngIf="secrets.length == 0">Secrets store sensitive information. Click the <b>+</b> to add a new job.</p>
+      <ul *ngIf="show === 'secrets' || showAll" class="sidebar-row-subrows">
+        <li class="sidebar-row-subrow" *ngFor="let item of filter(secrets)" (click)="select('secret', item)">{{item.name}}</li>
+      </ul>
+    </div>
   </div>
 
   <div class="list-section col-sm-10" *ngIf="data">

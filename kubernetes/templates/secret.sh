@@ -1,29 +1,30 @@
 #!/bin/bash
 TAG=$1
 PROVIDER=$2
-touch kubernetes/apps/$PROVIDER/client.yaml
+touch kubernetes/apps/$PROVIDER/secret.yaml
 
 if [ $PROVIDER = "minikube" ] 
 then
-cat > kubernetes/apps/minikube/client.yaml <<EOF
+cat > kubernetes/apps/minikube/secret.yaml <<EOF
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
-  name: client
+  name: secret
 spec:
   selector:
     matchLabels:
-      app: client
+      app: secret
   replicas: 1 # tells deployment to run 2 pods matching the template
   template:
     metadata:
       labels:
-        app: client
+        app: secret
     spec:
+      serviceAccountName: secret-service-account
       imagePullSecrets:
       - name: regcred
       containers:
-      - name: client
+      - name: secret
         image: $TAG
         imagePullPolicy: IfNotPresent
         ports:
@@ -34,83 +35,80 @@ spec:
             port: 5000
           initialDelaySeconds: 3
           periodSeconds: 3
+
         env:
         - name: HOME
           value: "/usr/home/iam"
         - name: TYPE 
-          value: "client"
+          value: "secret"
         - name: SERVER_PORT
           value: "5000"
+        - name: "ENVIRONMENT"
+          value: "base"
 
-        - name: ROUTER_HOST
-          value: "router.default"
-        - name: ROUTER_PORT
-          value: "80"
-        
-        - name: USER_HOST
-          value: "user.default"
-        - name: USER_PORT
-          value: "80"
-        
-        - name: AUTH_HOST
-          value: "auth.default"
-        - name: AUTH_PORT
+        # FS CONFIG
+        - name: FS_HOST
+          value: "filesystem.default"
+        - name: FS_PORT
           value: "80"
 
-        - name: BUILDER_HOST
-          value: "builder.default"
-        - name: BUILDER_PORT
-          value: "80"
-
-        - name: JOB_HOST
-          value: "job.default"
-        - name: JOB_PORT
-          value: "80"
-
-        - name: SECRET_HOST
-          value: "secret.default"
-        - name: SECRET_PORT
-          value: "80"
+        ## DB CONFIG
+        - name: DB_HOST
+          value: "mysqldatabase.default"
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: dbconfig
+              key: user
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: dbconfig
+              key: password
+        - name: DB_NAME
+          valueFrom:
+            secretKeyRef:
+              name: dbconfig
+              key: db_name
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: client
+  name: secret
 spec:
   selector:
-    app: client
-  type: NodePort
+    app: secret
   ports:
     - protocol: TCP
       port: 80
       targetPort: 5000
-      nodePort: 30000
 EOF
 fi 
 
 if [ $PROVIDER = "eks" ] 
 then
-cat > kubernetes/apps/eks/client.yaml <<EOF
+cat > kubernetes/apps/eks/secret.yaml <<EOF
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
-  name: client
+  name: secret
 spec:
   selector:
     matchLabels:
-      app: client
+      app: secret
   replicas: 1 # tells deployment to run 2 pods matching the template
   template:
     metadata:
       labels:
-        app: client
+        app: secret
     spec:
+      serviceAccountName: secret-service-account
       imagePullSecrets:
       - name: regcred
       nodeSelector:
         type: ng-1
       containers:
-      - name: client
+      - name: secret
         image: $TAG
         imagePullPolicy: IfNotPresent
         ports:
@@ -129,56 +127,48 @@ spec:
           limits:
             memory: "500Mi"
             cpu: "250m"
-
         env:
         - name: HOME
           value: "/usr/home/iam"
         - name: TYPE 
-          value: "client"
+          value: "secret"
         - name: SERVER_PORT
           value: "5000"
+        - name: "ENVIRONMENT"
+          value: "base"
 
-        - name: ROUTER_HOST
-          value: "router.default"
-        - name: ROUTER_PORT
-          value: "80"
-        
-        - name: USER_HOST
-          value: "user.default"
-        - name: USER_PORT
-          value: "80"
-        
-        - name: AUTH_HOST
-          value: "auth.default"
-        - name: AUTH_PORT
+        # FS CONFIG
+        - name: FS_HOST
+          value: "filesystem"
+        - name: FS_PORT
           value: "80"
 
-        - name: BUILDER_HOST
-          value: "builder.default"
-        - name: BUILDER_PORT
-          value: "80"
-
-        - name: JOB_HOST
-          value: "job.default"
-        - name: JOB_PORT
-          value: "80"
-
-        - name: SECRET_HOST
-          value: "secret.default"
-        - name: SECRET_PORT
-          value: "80"
-
+        ## DB CONFIG
+        - name: DB_HOST
+          value: "mysqldatabase.default"
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: dbconfig
+              key: user
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: dbconfig
+              key: password
+        - name: DB_NAME
+          valueFrom:
+            secretKeyRef:
+              name: dbconfig
+              key: db_name
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: client
-  annotations:
-    service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: "4000"
+  name: secret
 spec:
   selector:
-    app: client
-  type: LoadBalancer
+    app: secret
   ports:
     - protocol: TCP
       port: 80

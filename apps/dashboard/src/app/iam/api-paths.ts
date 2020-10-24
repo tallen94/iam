@@ -74,4 +74,10 @@ export class ApiPaths {
   public static DELETE_JOB = "/job"
   public static ENABLE_JOB = "/job/enable"
   public static DISABLE_JOB = "/job/disable"
+
+  // Secret
+  public static ADD_SECRET = "/secret"
+  public static GET_SECRET = "/secret"
+  public static GET_SECRETS_FOR_USER = "/secret/user"
+  public static DELETE_SECRET = "/secret"
 }

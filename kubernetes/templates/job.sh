@@ -20,6 +20,7 @@ spec:
       labels:
         app: job
     spec:
+      serviceAccountName: job-service-account
       imagePullSecrets:
       - name: regcred
       containers:
@@ -101,6 +102,7 @@ spec:
       labels:
         app: job
     spec:
+      serviceAccountName: job-service-account
       imagePullSecrets:
       - name: regcred
       nodeSelector:

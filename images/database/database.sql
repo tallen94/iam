@@ -162,10 +162,10 @@ CREATE TABLE `job` (
   `description` text,
   `enabled` boolean NOT NULL,
   `schedule` varchar(50) NOT NULL,
+  `executable` text NOT NULL,
   `jobData` text,
-  `executable` text,
-  key (`username`)
-  UNIQUE KEY (`name`, `username`, `cluster`),
+  KEY `k1` (`username`),
+  UNIQUE KEY `k2` (`name`, `username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -247,6 +247,22 @@ CREATE TABLE `user_token` (
   `tokenSecretHash` varchar(1024) NOT NULL,
   `tokenSalt` varchar(20) NOT NULL,
   KEY `tokenId` (`tokenId`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `secret`
+--
+
+DROP TABLE IF EXISTS `secret`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `secret` (
+  `name` varchar(100) NOT NULL,
+  `username` varchar(100) NOT NULL,
+  `description` text,
+  KEY `k1` (`name`, `username`),
+  KEY `k2` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

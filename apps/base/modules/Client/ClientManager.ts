@@ -8,6 +8,7 @@ import { ImageClient } from "./ImageClient";
 import { DataClient } from "./DataClient";
 import { AuthData } from "../Auth/AuthData";
 import { JobClient } from "./JobClient";
+import { SecretClient } from "./SecretClient";
 
 export class ClientManager {
 
@@ -20,7 +21,8 @@ export class ClientManager {
     private environmentClient: EnvironmentClient,
     private imageClient: ImageClient,
     private dataClient: DataClient,
-    private jobClient: JobClient
+    private jobClient: JobClient,
+    private secretClient: SecretClient
   ) {
 
   }
@@ -234,5 +236,21 @@ export class ClientManager {
 
   public disableJob(username: string, name: string) {
     return this.jobClient.disableJob(username, name)
+  }
+
+  public addSecret(data: any) {
+    return this.secretClient.addSecret(data)
+  }
+
+  public getSecret(name: string, username: string) {
+    return this.secretClient.getSecret(name, username)
+  }
+
+  public getSecretsForUser(username: string) {
+    return this.secretClient.getSecretsForUser(username)
+  }
+
+  public deleteSecret(name: string, username: string) {
+    return this.secretClient.deleteSecret(name, username)
   }
 }

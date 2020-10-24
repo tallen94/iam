@@ -2,15 +2,15 @@ import { Component, OnInit, Input } from '@angular/core';
 import { Iam } from '../iam/iam';
 
 @Component({
-  selector: 'job',
-  templateUrl: './job.component.html',
-  styleUrls: ['./job.component.css']
+  selector: 'secret',
+  templateUrl: './secret.component.html',
+  styleUrls: ['./secret.component.css']
 })
-export class JobComponent implements OnInit {
+export class SecretComponent implements OnInit {
 
   @Input() data: any;
-  public editing: boolean = false;
-  private prevData: any = {};
+  editing: boolean = false;
+  prevData: any;
   private options = {
     maxLines: 32,
     wrap: true,
@@ -21,27 +21,14 @@ export class JobComponent implements OnInit {
   constructor(private iam: Iam) { }
 
   ngOnInit() {
-    this.prevData = this.data
-  }
-
-  enableJob() {
-    this.iam.enableJob(this.data.username, this.data.name)
-    .subscribe((result: any) => {
-      this.data.enabled = result.enabled
-    })
-  }
-
-  disableJob() {
-    this.iam.disableJob(this.data.username, this.data.name)
-    .subscribe((result: any) => {
-      this.data.enabled = result.enabled
-    })
+    this.prevData = this.data;
   }
 
   save() {
-    this.iam.addJob(this.data)
+    this.iam.addSecret(this.data)
     .subscribe((result) => {
       this.editing = false;
+      this.data.value = ""
     })
   }
 
@@ -69,5 +56,4 @@ export class JobComponent implements OnInit {
     }
     return 8;
   }
-
 }

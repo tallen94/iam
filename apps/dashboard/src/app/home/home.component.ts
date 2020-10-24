@@ -24,6 +24,7 @@ export class HomeComponent implements OnInit {
   public graphs: any[];
   // public datasets: any[];
   public jobs: any[];
+  public secrets: any[];
 
   public iam: Iam;
   public data: any;
@@ -61,10 +62,13 @@ export class HomeComponent implements OnInit {
     // this.iam.getDatasetForUser(this.iam.getUser().username).subscribe((data: any[]) => {
     //   this.datasets = data
     // })
-    // this.iam.getJobsForUser(this.iam.getUser().username).subscribe((data: any[]) => {
-    //   this.jobs = data
-    // })
-    this.jobs = []
+    this.iam.getJobsForUser(this.iam.getUser().username).subscribe((data: any[]) => {
+      this.jobs = data
+    })
+    this.iam.getSecretsForUser(this.iam.getUser().username).subscribe((data: any[]) => {
+      this.secrets = data;
+    })
+
   }
 
   private initColumns() {
@@ -187,6 +191,8 @@ export class HomeComponent implements OnInit {
       //   this.datasets.push(this.data)
       case "job":
         this.jobs.push(this.data)
+      case "secret":
+        this.secrets.push(this.data)
     }
 
     this.backHistory.push(this.data)

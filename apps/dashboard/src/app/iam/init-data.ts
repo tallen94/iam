@@ -148,4 +148,15 @@ export class InitData {
       schedule: "*/5 * * * *"
     }
   }
+
+  secret(id: number, data: any) {
+    return {
+      id: id,
+      username: this.iam.getUser().username,
+      exe: "secret",
+      name: data.name,
+      description: "this is a secret and I store sensitive information.",
+      value: ""
+    }
+  }
 }
