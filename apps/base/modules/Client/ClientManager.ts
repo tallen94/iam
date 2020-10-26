@@ -27,68 +27,68 @@ export class ClientManager {
 
   }
 
-  public addCluster(data: any) {
-    return this.clusterClient.addCluster(data)
+  public addCluster(data: any, authData: AuthData) {
+    return this.clusterClient.addCluster(data, authData)
   }
 
-  public getCluster(username: string, name: string) {
-    return this.clusterClient.getCluster(username, name)
+  public getCluster(username: string, name: string, authData: AuthData) {
+    return this.clusterClient.getCluster(username, name, authData)
   }
 
-  public getClusterForUser(username: string) {
-    return this.clusterClient.getClustersForUser(username)
+  public getClusterForUser(username: string, authData: AuthData) {
+    return this.clusterClient.getClustersForUser(username, authData)
   }
 
-  public deleteCluster(username: string, name: string) {
-    return this.clusterClient.deleteCluster(username, name)
+  public deleteCluster(username: string, name: string, authData: AuthData) {
+    return this.clusterClient.deleteCluster(username, name, authData)
   }
 
-  public addEnvironment(data: any) {
-    return this.environmentClient.addEnvironment(data)
+  public addEnvironment(data: any, authData: AuthData) {
+    return this.environmentClient.addEnvironment(data, authData)
   }
 
-  public getEnvironment(username: string, name: string, cluster: string) {
-    return this.environmentClient.getEnvironment(username, name, cluster)
+  public getEnvironment(username: string, name: string, cluster: string, authData: AuthData) {
+    return this.environmentClient.getEnvironment(username, name, cluster, authData)
   }
 
-  public getEnvironmentForUser(username: string) {
-    return this.environmentClient.getEnvironmentForUser(username)
+  public getEnvironmentForUser(username: string, authData: AuthData) {
+    return this.environmentClient.getEnvironmentForUser(username, authData)
   }
 
-  public getEnvironmentForCluster(username: string, cluster: string) {
-    return this.environmentClient.getEnvironmentForCluster(username, cluster)
+  public getEnvironmentForCluster(username: string, cluster: string, authData: AuthData) {
+    return this.environmentClient.getEnvironmentForCluster(username, cluster, authData)
   }
 
-  public deleteEnvironment(username: string, name: string, cluster: string) {
-    return this.environmentClient.deleteEnvironment(username, name, cluster)
+  public deleteEnvironment(username: string, name: string, cluster: string, authData: AuthData) {
+    return this.environmentClient.deleteEnvironment(username, name, cluster, authData)
   }
 
-  public addImage(data: any) {
-    return this.imageClient.addImage(data)
+  public addImage(data: any, authData: AuthData) {
+    return this.imageClient.addImage(data, authData)
   }
 
-  public getImage(username: string, name: string) {
-    return this.imageClient.getImage(username, name)
+  public getImage(username: string, name: string, authData: AuthData) {
+    return this.imageClient.getImage(username, name, authData)
   }
 
-  public getImageForUser(username: string) {
-    return this.imageClient.getImageForUser(username)
+  public getImageForUser(username: string, authData: AuthData) {
+    return this.imageClient.getImageForUser(username, authData)
   }
 
-  public deleteImage(username: string, name: string) {
-    return this.imageClient.deleteImage(username, name)
+  public deleteImage(username: string, name: string, authData: AuthData) {
+    return this.imageClient.deleteImage(username, name, authData)
   }
 
-  public buildImage(username: string, name: string) {
-    return this.imageClient.buildImage(username, name)
+  public buildImage(username: string, name: string, authData: AuthData) {
+    return this.imageClient.buildImage(username, name, authData)
   }
 
-  public startEnvironment(username: string, name: string, cluster: string) {
-    return this.environmentClient.startEnvironment(username, name, cluster)
+  public startEnvironment(username: string, name: string, cluster: string, authData: AuthData) {
+    return this.environmentClient.startEnvironment(username, name, cluster, authData)
   }
 
-  public stopEnvironment(username: string, name: string, cluster: string) {
-    return this.environmentClient.stopEnvironment(username, name, cluster)
+  public stopEnvironment(username: string, name: string, cluster: string, authData: AuthData) {
+    return this.environmentClient.stopEnvironment(username, name, cluster, authData)
   }
 
   public addExecutable(data: any, authData: AuthData) {
@@ -214,43 +214,43 @@ export class ClientManager {
     return this.dataClient.deleteDatasetTag(username, cluster, environment, name, tag)
   }
 
-  public addJob(data: any) {
-    return this.jobClient.addJob(data)
+  public addJob(data: any, authData: AuthData) {
+    return this.jobClient.addJob(data, authData)
   }
 
-  public getJob(username: string, name: string) {
-    return this.jobClient.getJob(username, name)
+  public getJob(username: string, name: string, authData: AuthData) {
+    return this.jobClient.getJob(username, name, authData)
   }
 
-  public getJobsForUser(username: string) {
-    return this.jobClient.getJobsForUser(username)
+  public getJobsForUser(username: string, authData: AuthData) {
+    return this.jobClient.getJobsForUser(username, authData)
   }
 
-  public deleteJob(username: string, name: string) {
-    return this.jobClient.deleteJob(username, name)
+  public deleteJob(username: string, name: string, authData: AuthData) {
+    return this.jobClient.deleteJob(username, name, authData)
   }
 
-  public enableJob(username: string, name: string) {
-    return this.jobClient.enableJob(username, name)
+  public enableJob(username: string, name: string, authData: AuthData) {
+    return this.jobClient.enableJob(username, name, authData)
   }
 
-  public disableJob(username: string, name: string) {
-    return this.jobClient.disableJob(username, name)
+  public disableJob(username: string, name: string, authData: AuthData) {
+    return this.jobClient.disableJob(username, name, authData)
   }
 
-  public addSecret(data: any) {
-    return this.secretClient.addSecret(data)
+  public addSecret(data: any, authData: AuthData) {
+    return this.secretClient.addSecret(data, authData)
   }
 
-  public getSecret(name: string, username: string) {
-    return this.secretClient.getSecret(name, username)
+  public getSecret(name: string, username: string, authData: AuthData) {
+    return this.secretClient.getSecret(name, username, authData)
   }
 
-  public getSecretsForUser(username: string) {
-    return this.secretClient.getSecretsForUser(username)
+  public getSecretsForUser(username: string, authData: AuthData) {
+    return this.secretClient.getSecretsForUser(username, authData)
   }
 
-  public deleteSecret(name: string, username: string) {
-    return this.secretClient.deleteSecret(name, username)
+  public deleteSecret(name: string, username: string, authData: AuthData) {
+    return this.secretClient.deleteSecret(name, username, authData)
   }
 }

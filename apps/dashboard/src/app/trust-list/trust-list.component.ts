@@ -46,9 +46,7 @@ export class TrustListComponent implements OnInit {
     this.data.push(data)
     this.newAuthorization = false;
     this.iam.addAuthorization(data.resource_from, data.resource_to, "none")
-    .subscribe((result) => {
-      console.log(result)
-    })
+    .subscribe((result) => { })
   }
 
   receiveNewAuthorizationCancel() {

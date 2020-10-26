@@ -35,7 +35,7 @@ export class ExecutorApi {
       const data = req.body;
       const authData = AuthData.fromHeaders(req.headers)
       this.authenticationClient.validateAuthData(authData, username, () => {
-        this.hydrateSecrets(username, data)
+        this.hydrateSecrets(username, data, authData)
         .then((hydratedData) => {
           this.executor.runExecutable(username, cluster, environment, exe, name, hydratedData, authData)
           .then((result: any) => {
@@ -48,10 +48,10 @@ export class ExecutorApi {
     });
   }
 
-  private hydrateSecrets(username: string, data: any) {
+  private hydrateSecrets(username: string, data: any, authData: AuthData) {
     return Promise.all(Lodash.map(Object.keys(data), (key) => {
       if (data[key] === "$secret") {
-        return this.secretClient.getSecret(key, username)
+        return this.secretClient.getSecret(key, username, authData)
         .then((result: any) => {
           return [key, result.value]
         })

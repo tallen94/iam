@@ -93,67 +93,67 @@ export class Iam {
   }
 
   public addCluster(data: any) {
-    return this.client.post(ApiPaths.ADD_CLUSTER, data)
+    return this.client.post(ApiPaths.ADD_CLUSTER, data, {}, {sessiontoken: this.token})
   }
 
   public getCluster(username: string, name: string) {
-    return this.client.get(ApiPaths.GET_CLUSTER, {}, {username: username, name: name})
+    return this.client.get(ApiPaths.GET_CLUSTER, {}, {username: username, name: name}, {sessiontoken: this.token})
   }
 
   public getClusterForUser(username: string) {
-    return this.client.get(ApiPaths.GET_CLUSTER_FOR_USER, {}, {username: username})
+    return this.client.get(ApiPaths.GET_CLUSTER_FOR_USER, {}, {username: username}, {sessiontoken: this.token})
   }
 
   public deleteCluster(username: string, name: string) {
-    return this.client.delete(ApiPaths.DELETE_CLUSTER, {username: username, name: name})
+    return this.client.delete(ApiPaths.DELETE_CLUSTER, {username: username, name: name}, {}, {sessiontoken: this.token})
   }
 
   public addEnvironment(data: any) {
-    return this.client.post(ApiPaths.ADD_ENVIRONMENT, data)
+    return this.client.post(ApiPaths.ADD_ENVIRONMENT, data, {}, {sessiontoken: this.token})
   }
 
   public getEnvironment(username: string, name: string, cluster: string) {
-    return this.client.get(ApiPaths.GET_ENVIRONMENT, {}, {username: username, name: name, cluster: cluster})
+    return this.client.get(ApiPaths.GET_ENVIRONMENT, {}, {username: username, name: name, cluster: cluster}, {sessiontoken: this.token})
   }
 
   public getEnvironmentForUser(username: string) {
-    return this.client.get(ApiPaths.GET_ENVIRONMENT_FOR_USER, {}, {username: username})
+    return this.client.get(ApiPaths.GET_ENVIRONMENT_FOR_USER, {}, {username: username}, {sessiontoken: this.token})
   }
 
   public getEnvironmentForCluster(username: string, cluster: string) {
-    return this.client.get(ApiPaths.GET_ENVIRONMENT_FOR_CLUSTER, {}, {username: username, cluster: cluster})
+    return this.client.get(ApiPaths.GET_ENVIRONMENT_FOR_CLUSTER, {}, {username: username, cluster: cluster}, {sessiontoken: this.token})
   }
 
   public deleteEnvironment(username: string, name: string, cluster: string) {
-    return this.client.delete(ApiPaths.DELETE_CLUSTER, {username: username, name: name, cluster: cluster})
+    return this.client.delete(ApiPaths.DELETE_CLUSTER, {username: username, name: name, cluster: cluster}, {}, {sessiontoken: this.token})
   }
 
   public addImage(data: any) {
-    return this.client.post(ApiPaths.ADD_IMAGE, data)
+    return this.client.post(ApiPaths.ADD_IMAGE, data, {}, {sessiontoken: this.token})
   }
 
   public getImage(username: string, name: string) {
-    return this.client.get(ApiPaths.GET_IMAGE, {}, {username: username, name: name})
+    return this.client.get(ApiPaths.GET_IMAGE, {}, {username: username, name: name}, {sessiontoken: this.token})
   }
 
   public getImageForUser(username: string) {
-    return this.client.get(ApiPaths.GET_IMAGE_FOR_USER, {}, {username: username})
+    return this.client.get(ApiPaths.GET_IMAGE_FOR_USER, {}, {username: username}, {sessiontoken: this.token})
   }
 
   public deleteImage(username: string, name: string) {
-    return this.client.delete(ApiPaths.DELETE_IMAGE, {username: username, name: name})
+    return this.client.delete(ApiPaths.DELETE_IMAGE, {username: username, name: name}, {}, {sessiontoken: this.token})
   }
 
   public buildImage(username: string, name: string) {
-    return this.client.post(ApiPaths.BUILD_IMAGE, {username: username, name: name})
+    return this.client.post(ApiPaths.BUILD_IMAGE, {username: username, name: name}, {}, {sessiontoken: this.token})
   }
 
   public startEnvironment(username: string, name: string, cluster: string) {
-    return this.client.post(ApiPaths.START_ENVIRONMENT, {username: username, name: name, cluster: cluster})
+    return this.client.post(ApiPaths.START_ENVIRONMENT, {username: username, name: name, cluster: cluster}, {}, {sessiontoken: this.token})
   }
 
   public stopEnvironment(username: string, name: string, cluster: string) {
-    return this.client.post(ApiPaths.STOP_ENVIRONMENT, {username: username, name: name, cluster: cluster})
+    return this.client.post(ApiPaths.STOP_ENVIRONMENT, {username: username, name: name, cluster: cluster}, {}, {sessiontoken: this.token})
   }
 
   public addExecutable(data: any) {
@@ -209,43 +209,43 @@ export class Iam {
   }
 
   public addJob(data: any) {
-    return this.client.post(ApiPaths.ADD_JOB, data)
+    return this.client.post(ApiPaths.ADD_JOB, data, {}, {sessiontoken: this.token})
   }
 
   public getJob(username: string, name: string) {
-    return this.client.get(ApiPaths.GET_JOB, {}, {username: username, name: name})
+    return this.client.get(ApiPaths.GET_JOB, {}, {username: username, name: name}, {sessiontoken: this.token})
   }
 
   public getJobsForUser(username: string) {
-    return this.client.get(ApiPaths.GET_JOBS_FOR_USER, {}, {username: username})
+    return this.client.get(ApiPaths.GET_JOBS_FOR_USER, {}, {username: username}, {sessiontoken: this.token})
   }
 
   public deleteJob(username: string, name: string) {
-    return this.client.delete(ApiPaths.DELETE_JOB, {username: username, name: name})
+    return this.client.delete(ApiPaths.DELETE_JOB, {username: username, name: name}, {}, {sessiontoken: this.token})
   }
 
   public enableJob(username: string, name: string) {
-    return this.client.post(ApiPaths.ENABLE_JOB, {username: username, name: name})
+    return this.client.post(ApiPaths.ENABLE_JOB, {username: username, name: name}, {}, {sessiontoken: this.token})
   }
 
   public disableJob(username: string, name: string) {
-    return this.client.post(ApiPaths.DISABLE_JOB, {username: username, name: name})
+    return this.client.post(ApiPaths.DISABLE_JOB, {username: username, name: name}, {}, {sessiontoken: this.token})
   }
 
   public addSecret(data: any) {
-    return this.client.post(ApiPaths.ADD_SECRET, data)
+    return this.client.post(ApiPaths.ADD_SECRET, data, {}, {sessiontoken: this.token})
   }
 
   public getSecret(name: string, username: string) {
-    return this.client.get(ApiPaths.GET_SECRET, {}, {name: name, username: username})
+    return this.client.get(ApiPaths.GET_SECRET, {}, {name: name, username: username}, {sessiontoken: this.token})
   }
 
   public getSecretsForUser(username: string) {
-    return this.client.get(ApiPaths.GET_SECRETS_FOR_USER, {}, {username: username})
+    return this.client.get(ApiPaths.GET_SECRETS_FOR_USER, {}, {username: username}, {sessiontoken: this.token})
   }
 
   public deleteSecret(name: string, username: string) {
-    return this.client.delete(ApiPaths.DELETE_SECRET, {name: name, username: username})
+    return this.client.delete(ApiPaths.DELETE_SECRET, {name: name, username: username}, {}, {sessiontoken: this.token})
   }
 
   public getHost() {
