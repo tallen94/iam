@@ -9,21 +9,22 @@ cat > kubernetes/apps/minikube/job.yaml <<EOF
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
-  name: iam-job
+  name: job
 spec:
   selector:
     matchLabels:
-      app: iam-job
+      app: job
   replicas: 1 # tells deployment to run 2 pods matching the template
   template:
     metadata:
       labels:
-        app: iam-job
+        app: job
     spec:
+      serviceAccountName: job-service-account
       imagePullSecrets:
       - name: regcred
       containers:
-      - name: iam-job
+      - name: job
         image: $TAG
         imagePullPolicy: IfNotPresent
         ports:
@@ -73,10 +74,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: iam-job
+  name: job
 spec:
   selector:
-    app: iam-job
+    app: job
   ports:
     - protocol: TCP
       port: 80
@@ -90,23 +91,24 @@ cat > kubernetes/apps/eks/job.yaml <<EOF
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
-  name: iam-job
+  name: job
 spec:
   selector:
     matchLabels:
-      app: iam-job
+      app: job
   replicas: 1 # tells deployment to run 2 pods matching the template
   template:
     metadata:
       labels:
-        app: iam-job
+        app: job
     spec:
+      serviceAccountName: job-service-account
       imagePullSecrets:
       - name: regcred
       nodeSelector:
         type: ng-1
       containers:
-      - name: iam-job
+      - name: job
         image: $TAG
         imagePullPolicy: IfNotPresent
         ports:
@@ -163,10 +165,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: iam-job
+  name: job
 spec:
   selector:
-    app: iam-job
+    app: job
   ports:
     - protocol: TCP
       port: 80

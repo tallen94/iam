@@ -85,7 +85,7 @@ export class DataManager {
     })
   }
 
-  public transformData(username: string, cluster: string, environment: string, name: string, functionData: any) {
+  public transformData(username: string, cluster: string, environment: string, name: string, functionData: any, authData: AuthData) {
     return this.getDataset(username, cluster, environment, name)
     .then((dataset: any) => {
       const transformData = functionData
@@ -93,7 +93,7 @@ export class DataManager {
       // Get endpoints 
       // Generate new data tag
       // Run function for each endpoint
-      return this.environmentClient.getEndpoints(transformData.username, transformData.environment, transformData.cluster)
+      return this.environmentClient.getEndpoints(transformData.username, transformData.environment, transformData.cluster, authData)
       .then((endpoints: any) => {
         const subset = endpoints["subsets"][0]
         const port = subset["ports"][0]["port"]
@@ -112,10 +112,10 @@ export class DataManager {
     })
   }
 
-  public readDataset(username: string, cluster: string, environment: string, name: string, tag: string, limit: number) {
+  public readDataset(username: string, cluster: string, environment: string, name: string, tag: string, limit: number, authData: AuthData) {
     return this.getDataset(username, cluster, environment, name)
     .then((dataset: any) => {
-      return this.environmentClient.getEndpoints(username, environment, cluster)
+      return this.environmentClient.getEndpoints(username, environment, cluster, authData)
       .then((endpoints) => {
         const subset = endpoints["subsets"][0]
         const port = subset["ports"][0]["port"]
@@ -142,10 +142,10 @@ export class DataManager {
     })
   }
 
-  public deleteDatasetTag(username: string, cluster: string, environment: string, name: string, tag: string) {
+  public deleteDatasetTag(username: string, cluster: string, environment: string, name: string, tag: string, authData: AuthData) {
     return this.getDataset(username, cluster, environment, name)
     .then((dataset: any) => {
-      return this.environmentClient.getEndpoints(username, environment, cluster)
+      return this.environmentClient.getEndpoints(username, environment, cluster, authData)
       .then((endpoints) => {
         const subset = endpoints["subsets"][0]
         const port = subset["ports"][0]["port"]

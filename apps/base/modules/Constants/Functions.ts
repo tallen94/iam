@@ -11,5 +11,6 @@ export class Functions {
   public static KUBECTL_APPLY = "kubectl apply -f $1"
   public static KUBECTL_DELETE = "kubectl delete -f $1"
   public static GET_ENDPOINTS = "kubectl get endpoints $1 -o json"
-
+  public static KUBECTL_DELETE_SECRET = "kubectl delete secret $1"
+  public static KUBECTL_DECODE_SECRET = "kubectl get secrets/$1 --template={{.data.value}} | base64 -d"
 }

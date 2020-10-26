@@ -16,8 +16,9 @@ export class EnvironmentComponent implements OnInit {
   public functions: any[];
   public queries: any[];
   public graphs: any[];
-  public editing: boolean = false;
   public buildingImage: boolean = false;
+  
+  public editing: boolean = false;
   private prevData: any = {};
   private options = {
     maxLines: 32,

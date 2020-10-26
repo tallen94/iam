@@ -2,7 +2,7 @@ import {
   Executor, FileSystem, ServerCommunicator
 } from "../modules";
 import { ExecutorApi } from "./ExecutorApi";
-import { JobRunner } from "../Job/JobRunner";
+import { JobManager } from "../Job/JobManager";
 import { DashboardApi } from "./DashboardApi";
 import { FileSystemApi } from "../Api/FileSystemApi";
 import { EnvironmentRouter } from "../Executor/EnvironmentRouter";
@@ -42,6 +42,11 @@ import { DataClient } from "../Client/DataClient";
 import { DataApi } from "./DataApi";
 import { DataManager } from "../Data/DataManager";
 import { ExecutableAccessor } from "../Executor/ExecutableAccessor";
+import { JobClient } from "../Client/JobClient";
+import { SecretClient } from "../Client/SecretClient";
+import { JobApi } from "./JobApi";
+import { SecretManager } from "../Secret/SecretManager";
+import { SecretApi } from "./SecretApi";
 
 export class ApiFactory {
 
@@ -55,7 +60,11 @@ export class ApiFactory {
       authHost: process.env.AUTH_HOST || process.argv[9],
       authPort: process.env.AUTH_PORT || process.argv[10],
       builderHost: process.env.BUILDER_HOST || process.argv[11],
-      builderPort: process.env.BUILDER_PORT || process.argv[12]
+      builderPort: process.env.BUILDER_PORT || process.argv[12],
+      jobHost: process.env.JOB_HOST || process.argv[13],
+      jobPort: process.env.JOB_PORT || process.argv[14],
+      secretHost: process.env.SECRET_HOST || process.env[15],
+      secretPort: process.env.SECRET_PORT || process.env[16]
     }
 
     const routerClient: Client = new Client(new ClientCommunicator(clientConfig.routerHost, parseInt(clientConfig.routerPort)))
@@ -66,7 +75,19 @@ export class ApiFactory {
     const environmentClient: EnvironmentClient = new EnvironmentClient(new ClientCommunicator(clientConfig.builderHost, parseInt(clientConfig.builderPort)))
     const imageClient: ImageClient = new ImageClient(new ClientCommunicator(clientConfig.builderHost, parseInt(clientConfig.builderPort)))
     const dataClient: DataClient = new DataClient(new ClientCommunicator(clientConfig.routerHost, parseInt(clientConfig.routerPort)))
-    const clientManager: ClientManager = new ClientManager(routerClient, authenticationClient, userClient, authorizationClient, clusterClient, environmentClient, imageClient, dataClient)
+    const jobClient: JobClient = new JobClient(new ClientCommunicator(clientConfig.jobHost, parseInt(clientConfig.jobPort)))
+    const secretClient: SecretClient = new SecretClient(new ClientCommunicator(clientConfig.secretHost, parseInt(clientConfig.secretPort)))
+    const clientManager: ClientManager = new ClientManager(
+      routerClient, 
+      authenticationClient, 
+      userClient, 
+      authorizationClient, 
+      clusterClient, 
+      environmentClient, 
+      imageClient, 
+      dataClient, 
+      jobClient,
+      secretClient)
     new ClientApi(serverCommunicator, clientManager)
     new DashboardApi(fileSystem, serverCommunicator);
   }
@@ -83,8 +104,10 @@ export class ApiFactory {
     const databaseCommunicator: DatabaseCommunicator = this.constructDatabaseCommunicator(dbconfig)
     const userManager: UserManager = new UserManager(databaseCommunicator)
     const clusterManager: ClusterManager = new ClusterManager(databaseCommunicator)
+    const authClientCommunicator = new ClientCommunicator("auth.default", 80)
+    const authenticationClient = new AuthenticationClient(authClientCommunicator)
     new UserApi(serverCommunicator, userManager)
-    new ClusterApi(serverCommunicator, clusterManager)
+    new ClusterApi(serverCommunicator, clusterManager, authenticationClient)
   }
 
   // Internal service for routing executable requests
@@ -113,7 +136,7 @@ export class ApiFactory {
     const authClientCommunicator = new ClientCommunicator("auth.default", 80)
     const authenticationClient = new AuthenticationClient(authClientCommunicator)
     new EnvironmentRouterApi(router, serverCommunicator, authenticationClient);
-    new DataApi(serverCommunicator, dataManager)
+    new DataApi(serverCommunicator, dataManager, authenticationClient)
   }
 
   builder(fileSystem: FileSystem, serverCommunicator: ServerCommunicator) {
@@ -133,8 +156,10 @@ export class ApiFactory {
     const shellCommunicator: ShellCommunicator = new ShellCommunicator(fileSystem)
     const environmentManager: EnvironmentManager = new EnvironmentManager(fileSystem, fileSystemCommunicator, databaseCommunicator, shellCommunicator)
     const imageManager: ImageManager = new ImageManager(fileSystem, fileSystemCommunicator, databaseCommunicator, shellCommunicator)
-    new ImageApi(serverCommunicator, imageManager)
-    new EnvironmentApi(serverCommunicator, environmentManager)
+    const authClientCommunicator = new ClientCommunicator("auth.default", 80)
+    const authenticationClient = new AuthenticationClient(authClientCommunicator)
+    new ImageApi(serverCommunicator, imageManager, authenticationClient)
+    new EnvironmentApi(serverCommunicator, environmentManager, authenticationClient)
   }
 
   // Internal service for handling authentication and authorization
@@ -162,7 +187,9 @@ export class ApiFactory {
     const executor: Executor = this.constructExecutor(fileSystem, envConfig)
     const authClientCommunicator = new ClientCommunicator("auth.default", 80)
     const authenticationClient = new AuthenticationClient(authClientCommunicator)
-    new ExecutorApi(executor, serverCommunicator, authenticationClient);
+    const secretClientCommunicator  = new ClientCommunicator("secret.default", 80)
+    const secretClient = new SecretClient(secretClientCommunicator)
+    new ExecutorApi(executor, serverCommunicator, authenticationClient, secretClient);
     new FileSystemApi(fileSystem, serverCommunicator);
   }
 
@@ -179,13 +206,34 @@ export class ApiFactory {
       host: process.env.FS_HOST || process.argv[10],
       port: process.env.FS_PORT || process.argv[11]
     };
-    const envConfig = {
-      host: process.env.BUILDER_HOST || process.argv[12],
-      port: process.env.BUILDER_PORT || process.argv[13]
-    }
-    const executor: Executor = this.constructExecutor(fileSystem, envConfig)
-    const executableFactory: ExecutableFactory = this.constructExecutableFactory(fileSystem, envConfig)
-    new JobRunner(executor, executableFactory);
+
+    const databaseCommunicator = this.constructDatabaseCommunicator(dbconfig)
+    const fileSystemCommunicator = this.constructFileSystemCommunicator(fsconfig)
+    const shellCommunicator = new ShellCommunicator(fileSystem)
+    const jobManager = new JobManager(databaseCommunicator, fileSystemCommunicator, shellCommunicator, fileSystem);
+    const authClientCommunicator = new ClientCommunicator("auth.default", 80)
+    const authenticationClient = new AuthenticationClient(authClientCommunicator)
+    new JobApi(serverCommunicator, jobManager, authenticationClient)
+  }
+
+  secret(fileSystem: FileSystem, serverCommunicator: ServerCommunicator) {
+    const dbconfig = {
+      user: process.env.DB_USER || process.argv[5],
+      password: process.env.DB_PASSWORD || process.argv[6], 
+      host: process.env.DB_HOST || process.argv[7],
+      port: process.env.DB_PORT || process.argv[8],
+      database: process.env.DB_NAME || process.argv[9]
+    };
+    const fsconfig = {
+      host: process.env.FS_HOST || process.argv[10],
+      port: process.env.FS_PORT || process.argv[11]
+    };
+    const databaseCommunicator = this.constructDatabaseCommunicator(dbconfig)
+    const shellCommunicator = new ShellCommunicator(fileSystem)
+    const secretManager = new SecretManager(databaseCommunicator, shellCommunicator, fileSystem)
+    const authClientCommunicator = new ClientCommunicator("auth.default", 80)
+    const authenticationClient = new AuthenticationClient(authClientCommunicator)
+    new SecretApi(serverCommunicator, secretManager, authenticationClient)
   }
 
   private constructExecutor(fileSystem, envConfig) {

@@ -8,7 +8,7 @@ PROVIDER=$4
 if [ $APP_NAME = "base" ]; then
   PROVIDER=$4
   bash builders/build-$APP_NAME.sh $VERSION $PUSH $PROVIDER
-elif [ $APP_NAME = "router" ]; then
+elif [ $APP_NAME = "client" ]; then
   ENV=$5
   bash builders/build-$APP_NAME.sh $VERSION $PUSH $PROVIDER $ENV
 elif [ $APP_NAME = "database" ]; then 
@@ -16,6 +16,12 @@ elif [ $APP_NAME = "database" ]; then
 elif [ $APP_NAME = "dependencies" ]; then
   bash builders/build-$APP_NAME.sh $VERSION $PUSH
 elif [ $APP_NAME = "filesystem" ]; then
+  bash builders/build-$APP_NAME.sh $VERSION $PUSH $PROVIDER
+elif [ $APP_NAME = "builder" ]; then
+  bash builders/build-$APP_NAME.sh $VERSION $PUSH $PROVIDER
+elif [ $APP_NAME = "job" ]; then
+  bash builders/build-$APP_NAME.sh $VERSION $PUSH $PROVIDER
+elif [ $APP_NAME = "secret" ]; then
   bash builders/build-$APP_NAME.sh $VERSION $PUSH $PROVIDER
 else
   echo "Invalid app"

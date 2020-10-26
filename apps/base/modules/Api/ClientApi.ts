@@ -18,28 +18,32 @@ export class ClientApi {
 
     // Clusters
     this.serverCommunicator.post(ApiPaths.ADD_CLUSTER, (req: any, res: any) => {
-      this.clientManager.addCluster(req.body)
+      const authData = AuthData.fromHeaders(req.headers)
+      this.clientManager.addCluster(req.body, authData)
       .then((result) => {
         res.status(200).send(result)
       })
     })
 
     this.serverCommunicator.get(ApiPaths.GET_CLUSTER, (req: any, res: any) => {
-      this.clientManager.getCluster(req.query.username, req.query.name)
+      const authData = AuthData.fromHeaders(req.headers)
+      this.clientManager.getCluster(req.query.username, req.query.name, authData)
       .then((result) => {
         res.status(200).send(result)
       })
     })
 
     this.serverCommunicator.get(ApiPaths.GET_CLUSTER_FOR_USER, (req: any, res: any) => {
-      this.clientManager.getClusterForUser(req.query.username)
+      const authData = AuthData.fromHeaders(req.headers)
+      this.clientManager.getClusterForUser(req.query.username, authData)
       .then((result) => {
         res.status(200).send(result)
       })
     })
 
     this.serverCommunicator.delete(ApiPaths.DELETE_CLUSTER, (req: any, res: any) => {
-      this.clientManager.deleteCluster(req.query.username, req.query.name)
+      const authData = AuthData.fromHeaders(req.headers)
+      this.clientManager.deleteCluster(req.query.username, req.query.name, authData)
       .then((result) => {
         res.status(200).send(result)
       })
@@ -47,84 +51,96 @@ export class ClientApi {
 
     // Environments
     this.serverCommunicator.post(ApiPaths.ADD_ENVIRONMENT, (req: any, res: any) => {
-      this.clientManager.addEnvironment(req.body)
+      const authData = AuthData.fromHeaders(req.headers)
+      this.clientManager.addEnvironment(req.body, authData)
       .then((result) => {
         res.status(200).send(result)
       })
     })
 
     this.serverCommunicator.get(ApiPaths.GET_ENVIRONMENT, (req: any, res: any) => {
-      this.clientManager.getEnvironment(req.query.username, req.query.name, req.query.cluster)
+      const authData = AuthData.fromHeaders(req.headers)
+      this.clientManager.getEnvironment(req.query.username, req.query.name, req.query.cluster, authData)
       .then((result) => {
         res.status(200).send(result)
       })
     })
 
     this.serverCommunicator.get(ApiPaths.GET_ENVIRONMENT_FOR_USER, (req: any, res: any) => {
-      this.clientManager.getEnvironmentForUser(req.query.username)
+      const authData = AuthData.fromHeaders(req.headers)
+      this.clientManager.getEnvironmentForUser(req.query.username, authData)
       .then((result) => {
         res.status(200).send(result)
       })
     })
 
     this.serverCommunicator.get(ApiPaths.GET_ENVIRONMENT_FOR_CLUSTER, (req: any, res: any) => {
-      this.clientManager.getEnvironmentForCluster(req.query.username, req.query.cluster)
+      const authData = AuthData.fromHeaders(req.headers)
+      this.clientManager.getEnvironmentForCluster(req.query.username, req.query.cluster, authData)
       .then((result) => {
         res.status(200).send(result)
       })
     })
 
     this.serverCommunicator.delete(ApiPaths.DELETE_ENVIRONMENT, (req: any, res: any) => {
-      this.clientManager.deleteEnvironment(req.query.username, req.query.name, req.query.cluster)
+      const authData = AuthData.fromHeaders(req.headers)
+      this.clientManager.deleteEnvironment(req.query.username, req.query.name, req.query.cluster, authData)
       .then((result) => {
         res.status(200).send(result)
       })
     })
 
     this.serverCommunicator.post(ApiPaths.START_ENVIRONMENT, (req: any, res: any) => {
-      this.clientManager.startEnvironment(req.body.username, req.body.name, req.body.cluster)
+      const authData = AuthData.fromHeaders(req.headers)
+      this.clientManager.startEnvironment(req.body.username, req.body.name, req.body.cluster, authData)
       .then((result) => {
         res.status(200).send(result)
       })
     })
 
     this.serverCommunicator.post(ApiPaths.STOP_ENVIRONMENT, (req: any, res: any) => {
-      this.clientManager.stopEnvironment(req.body.username, req.body.name, req.body.cluster)
+      const authData = AuthData.fromHeaders(req.headers)
+      this.clientManager.stopEnvironment(req.body.username, req.body.name, req.body.cluster, authData)
       .then((result) => {
         res.status(200).send(result)
       })
     })
 
     this.serverCommunicator.post(ApiPaths.ADD_IMAGE, (req: any, res: any) => {
-      this.clientManager.addImage(req.body)
+      const authData = AuthData.fromHeaders(req.headers)
+      this.clientManager.addImage(req.body, authData)
       .then((result) => {
         res.status(200).send(result)
       })
     })
 
     this.serverCommunicator.get(ApiPaths.GET_IMAGE, (req: any, res: any) => {
-      this.clientManager.getImage(req.query.username, req.query.name)
+      const authData = AuthData.fromHeaders(req.headers)
+      this.clientManager.getImage(req.query.username, req.query.name, authData)
       .then((result) => {
         res.status(200).send(result)
       })
     })
 
     this.serverCommunicator.get(ApiPaths.GET_IMAGE_FOR_USER, (req: any, res: any) => {
-      this.clientManager.getImageForUser(req.query.username)
+      const authData = AuthData.fromHeaders(req.headers)
+      this.clientManager.getImageForUser(req.query.username, authData)
       .then((result) => {
         res.status(200).send(result)
       })
     })
 
     this.serverCommunicator.delete(ApiPaths.DELETE_IMAGE, (req: any, res: any) => {
-      this.clientManager.deleteImage(req.query.username, req.query.name)
+      const authData = AuthData.fromHeaders(req.headers)
+      this.clientManager.deleteImage(req.query.username, req.query.name, authData)
       .then((result) => {
         res.status(200).send(result)
       })
     })
 
     this.serverCommunicator.post(ApiPaths.BUILD_IMAGE, (req: any, res: any) => {
-      this.clientManager.buildImage(req.body.username, req.body.name)
+      const authData = AuthData.fromHeaders(req.headers)
+      this.clientManager.buildImage(req.body.username, req.body.name, authData)
       .then((result) => {
         res.status(200).send(result)
       })
@@ -270,6 +286,7 @@ export class ClientApi {
     })
 
     this.serverCommunicator.get(ApiPaths.GET_USER_TOKENS, (req: any, res: any) => {
+      const authData = AuthData.fromHeaders(req.headers)
       this.clientManager.getUserTokens(req.query.username, req.headers.sessiontoken)
       .then((result) => {
         res.status(200).send(result)
@@ -377,6 +394,92 @@ export class ClientApi {
 
     this.serverCommunicator.delete(ApiPaths.DELETE_DATASET_TAG, (req: any, res: any) => {
       this.clientManager.deleteDatasetTag(req.query.username, req.query.cluster, req.query.environment, req.query.name, req.query.tag)
+      .then((result) => {
+        res.status(200).send(result)
+      })
+    })
+
+    this.serverCommunicator.post(ApiPaths.ADD_JOB, (req: any, res: any) => {
+      const authData = AuthData.fromHeaders(req.headers)
+      this.clientManager.addJob(req.body, authData)
+      .then((result) => {
+        res.status(200).send(result)
+      })
+    })
+
+    this.serverCommunicator.get(ApiPaths.GET_JOB, (req: any, res: any) => {
+      const authData = AuthData.fromHeaders(req.headers)
+      this.clientManager.getJob(req.query.username, req.query.name, authData)
+      .then((result) => {
+        res.status(200).send(result)
+      })
+    })
+
+    this.serverCommunicator.get(ApiPaths.GET_JOBS_FOR_USER, (req: any, res: any) => {
+      const authData = AuthData.fromHeaders(req.headers)
+      this.clientManager.getJobsForUser(req.query.username, authData)
+      .then((result) => {
+        res.status(200).send(result)
+      })
+    })
+
+    this.serverCommunicator.delete(ApiPaths.DELETE_JOB, (req: any, res: any) => {
+      const authData = AuthData.fromHeaders(req.headers)
+      this.clientManager.deleteJob(req.query.username, req.query.name, authData)
+      .then((result) => {
+        res.status(200).send(result)
+      })
+    })
+
+    this.serverCommunicator.post(ApiPaths.ENABLE_JOB, (req: any, res: any) => {
+      const authData = AuthData.fromHeaders(req.headers)
+      this.clientManager.enableJob(req.body.username, req.body.name, authData)
+      .then((result) => {
+        res.status(200).send(result)
+      })
+    })
+
+    this.serverCommunicator.post(ApiPaths.DISABLE_JOB, (req: any, res: any) => {
+      const authData = AuthData.fromHeaders(req.headers)
+      this.clientManager.disableJob(req.body.username, req.body.name, authData)
+      .then((result) => {
+        res.status(200).send(result)
+      })
+    })
+
+    this.serverCommunicator.post(ApiPaths.ADD_SECRET, (req: any, res: any) => {
+      const data = req.body
+      const authData = AuthData.fromHeaders(req.headers)
+      this.clientManager.addSecret(data, authData)
+      .then((result) => {
+        res.status(200).send(result)
+      })
+    })
+
+    this.serverCommunicator.get(ApiPaths.GET_SECRET, (req: any, res: any) => {
+      const name = req.query.name
+      const username = req.query.username
+      const authData = AuthData.fromHeaders(req.headers)
+      this.clientManager.getSecret(name, username, authData)
+      .then((result) => {
+        res.status(200).send(result)
+      })
+    })
+
+    this.serverCommunicator.get(ApiPaths.GET_SECRETS_FOR_USER, (req: any, res: any) => {
+      const username = req.query.username
+      const authData = AuthData.fromHeaders(req.headers)
+      this.clientManager.getSecretsForUser(username, authData)
+      .then((result) => {
+        res.status(200).send(result)
+      })
+    })
+
+    this.serverCommunicator.delete(ApiPaths.DELETE_SECRET, (req: any, res: any) => {
+      const name = req.query.name
+      const username = req.query.username
+      const authData = AuthData.fromHeaders(req.headers)
+      this.clientManager.deleteSecret(name, username, authData)
       .then((result) => {
         res.status(200).send(result)
       })
