@@ -9,7 +9,7 @@ export class ClusterClient {
   }
 
   public addCluster(data: any, authData: AuthData) {
-    return this.clientCommunicator.post(ApiPaths.ADD_CLUSTER, data)
+    return this.clientCommunicator.post(ApiPaths.ADD_CLUSTER, data, {}, authData.getHeaders())
   }
 
   public getCluster(username: string, name: string, authData: AuthData) {
