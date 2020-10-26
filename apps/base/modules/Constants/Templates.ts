@@ -202,7 +202,7 @@ kind: CronJob
 metadata:
   name: {name}
 spec:
-  schedule: {schedule}
+  schedule: "{schedule}"
   jobTemplate:
     spec:
       template:
@@ -214,7 +214,17 @@ spec:
             - /bin/sh
             - -ec
             - | 
-              curl -H 'Content-type: application/json' -d '{data}' -X POST http://iam-router.default/executable/{exeUser}/{exeType}/{exeName}/run
+              curl -H 'Content-type: application/json' -d '{data}' -X POST http://router.default/executable/{exeUser}/{exeCluster}/{exeEnvironment}/{exeType}/{exeName}/run
           restartPolicy: Never
+  `
+
+  public static SECRET = `
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {name}
+type: Opaque
+data:
+  value: {value}
   `
 }

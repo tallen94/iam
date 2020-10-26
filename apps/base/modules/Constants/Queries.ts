@@ -75,4 +75,18 @@ export class Queries {
   // Users
   public static ADD_USER = "insert into user (username, email) values ({username}, {email});"
   public static GET_USER = "select * from user where username={username};"
+
+  // Jobs
+  public static ADD_JOB = "insert into job (name, username, description, enabled, schedule, jobData, executable) values ({name}, {username}, {description}, {enabled}, {schedule}, {jobData}, {executable})"
+  public static UPDATE_JOB = "update job set description={description}, enabled={enabled}, schedule={schedule}, jobData={jobData}, executable={executable} where name={name} and username={username}"
+  public static GET_JOB = "select * from job where name={name} and username={username}"
+  public static GET_JOBS_FOR_USER = "select * from job where username={username}"
+  public static DELETE_JOB = "delete from job where name={name} and username={username}"
+
+  // Secret
+  public static ADD_SECRET = "insert into secret (name, username, description) values ({name}, {username}, {description})"
+  public static UPDATE_SECRET = "update secret set description={description} where name={name} and username={username}"
+  public static GET_SECRET = "select * from secret where name={name} and username={username}"
+  public static GET_SECRETS_FOR_USER = "select * from secret where username={username}"
+  public static DELETE_SECRET = "delete from secret where name={name} and username={username}" 
 }

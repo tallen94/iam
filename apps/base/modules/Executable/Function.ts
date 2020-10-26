@@ -6,6 +6,7 @@ import { EnvironmentClient } from "../Client/EnvironmentClient";
 import { ClientCommunicator } from "../Communicator/ClientCommunicator";
 import { FileSystemCommunicator } from "../Communicator/FileSystemCommunicator";
 import { FileSystem } from "../FileSystem/FileSystem";
+import { AuthData } from "../Auth/AuthData";
 
 export class Function implements Executable {
 
@@ -35,7 +36,7 @@ export class Function implements Executable {
     return this.visibility
   }
 
-  public run(data: any): Promise<any> {
+  public run(data: any, authData: AuthData): Promise<any> {
     // TRANSORMATION
     if (data.transformData !== undefined) {
       // Get data from uid
@@ -56,7 +57,7 @@ export class Function implements Executable {
       const loadData = data.loadData 
       return Promise.all([
         this.shell.exec(this.file, this.command, this.args, {}),
-        this.environmentClient.getEndpoints(loadData.username, loadData.environment, loadData.cluster)
+        this.environmentClient.getEndpoints(loadData.username, loadData.environment, loadData.cluster, authData)
       ]).then((results: any[]) => {
         const functionResult = results[0]
         const endpoints = results[1]

@@ -5,6 +5,7 @@ import * as Lodash from "lodash";
 import { ClientCommunicator } from "../Communicator/ClientCommunicator";
 import { FileSystemCommunicator } from "../Communicator/FileSystemCommunicator";
 import * as uuid from "uuid";
+import { AuthData } from "../Auth/AuthData";
 
 export class Query implements Executable {
 
@@ -31,14 +32,14 @@ export class Query implements Executable {
     return this.visibility
   }
 
-  public run(data: any): Promise<any> {
+  public run(data: any, authData: AuthData): Promise<any> {
     if (data.loadData == undefined) {
       return this.database.execute(this.file, data)
     }
     const loadData = data.loadData
     return Promise.all([
       this.database.execute(this.file, loadData.executableData),
-      this.environmentClient.getEndpoints(loadData.username, loadData.environment, loadData.cluster)
+      this.environmentClient.getEndpoints(loadData.username, loadData.environment, loadData.cluster, authData)
     ]).then((results: any[]) => {
       const queryResult = results[0]
       const endpoints = results[1]
