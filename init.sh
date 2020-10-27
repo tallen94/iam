@@ -21,9 +21,9 @@ setupPassword() {
 applyConfig() {
    echo [...Initializing config...]
    kubectl apply -f kubernetes/secrets/dbconfig.yaml
-
    kubectl apply -f kubernetes/secrets/dockerconfig.yaml
-   kubectl apply -f kubernetes/secrets/clustertoken.yaml
+   kubectl apply -f kubernetes/secrets/admintoken.yaml
+   
    kubectl apply -f kubernetes/serviceaccounts/builder.yaml
    kubectl apply -f kubernetes/serviceaccounts/job.yaml
    kubectl apply -f kubernetes/serviceaccounts/secret.yaml
@@ -91,15 +91,18 @@ data:
   password: $(echo -ne $DOCKER_PASSWORD | base64)
 EOF
 
-touch kubernetes/secrets/clustertoken.yaml
-cat > kubernetes/secrets/clustertoken.yaml <<EOF
+printf "Admin Token: "
+read ADMIN_TOKEN
+
+touch kubernetes/secrets/admintoken.yaml
+cat > kubernetes/secrets/admintoken.yaml <<EOF
 apiVersion: v1
 kind: Secret
 metadata:
-  name: clustertoken
+  name: admintoken
 type: Opaque
 data:
-  token: $(openssl rand -base64 24 | base64 | base64)
+  token: $(echo -ne "$ADMIN_TOKEN" | base64)
 EOF
 
 printf "Provider (minikube|eks):"

@@ -19,6 +19,8 @@ kubectl delete deployment job
 kubectl delete service job
 kubectl delete deployment secret
 kubectl delete service secret
+kubectl delete deployment admin
+kubectl delete service admin
 
 # Database
 # kubectl delete pod mysqldatabase --namespace=$NAMESPACE

@@ -484,5 +484,21 @@ export class ClientApi {
         res.status(200).send(result)
       })
     })
+
+    this.serverCommunicator.post(ApiPaths.RUN_DATABASE_MIGRATIONS, (req: any, res: any) => {
+      const adminToken = req.body.adminToken
+      this.clientManager.runDatabaseMigrations(adminToken)
+      .then((result) => {
+        res.status(200).send(result)
+      })
+    })
+
+    this.serverCommunicator.post(ApiPaths.GET_DATABASE_MIGRATION_VERSION, (req: any, res: any) => {
+      const adminToken = req.body.adminToken
+      this.clientManager.getDatabaseMigrationVersion(adminToken)
+      .then((result) => {
+        res.status(200).send(result)
+      })
+    })
   }
 }

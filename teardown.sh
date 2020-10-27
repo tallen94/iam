@@ -35,7 +35,7 @@ echo Deleting kube secrets...
 kubectl delete secret regcred
 kubectl delete secret dbconfig
 kubectl delete secret dockerconfig
-kubectl delete secret clustertoken
+kubectl delete secret admintoken
 
 echo Deleting kube service accounts
 kubectl delete serviceaccount builder-service-account

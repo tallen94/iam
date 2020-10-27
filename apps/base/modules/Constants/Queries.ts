@@ -1,4 +1,8 @@
 export class Queries {
+
+  // Admin
+  public static GET_MIGRATION_VERSION = "select * from migration_version"
+  public static UPDATE_MIGRATION_VERSION = "update migration_version set version={version}"
   
   // Executable
   public static GET_EXE ="select * from executable where username={username} and cluster={cluster} and environment={environment} and name={name}  and exe={exe}"
@@ -8,7 +12,6 @@ export class Queries {
                                 + " VALUES ({username},{uuid},{name},{data},{exe},{input},{output},{description},{environment},{cluster},{visibility})"
   public static UPDATE_EXECUTABLE = "UPDATE executable SET data={data}, input={input}, output={output}, description={description}, visibility={visibility} WHERE exe={exe} AND name={name} AND username={username} AND environment={environment} AND cluster={cluster};"
   public static DELETE_EXECUTABLE = "delete from executable where username={username} and exe={exe} and name={name};"
-
 
   // Image
   public static ADD_IMAGE = "insert into image(username, name, imageRepo, imageTag, description, state) values ({username}, {name}, {imageRepo}, {imageTag}, {description}, {state})"
