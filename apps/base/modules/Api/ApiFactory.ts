@@ -47,6 +47,9 @@ import { SecretClient } from "../Client/SecretClient";
 import { JobApi } from "./JobApi";
 import { SecretManager } from "../Secret/SecretManager";
 import { SecretApi } from "./SecretApi";
+import { DatabaseManager } from "../Admin/DatabaseManager";
+import { AdminApi } from "./AdminApi";
+import { AdminClient } from "../Client/AdminClient";
 
 export class ApiFactory {
 
@@ -63,8 +66,10 @@ export class ApiFactory {
       builderPort: process.env.BUILDER_PORT || process.argv[12],
       jobHost: process.env.JOB_HOST || process.argv[13],
       jobPort: process.env.JOB_PORT || process.argv[14],
-      secretHost: process.env.SECRET_HOST || process.env[15],
-      secretPort: process.env.SECRET_PORT || process.env[16]
+      secretHost: process.env.SECRET_HOST || process.argv[15],
+      secretPort: process.env.SECRET_PORT || process.argv[16],
+      adminHost: process.env.ADMIN_HOST || process.argv[17],
+      adminPort: process.env.ADMIN_PORT || process.argv[18]
     }
 
     const routerClient: Client = new Client(new ClientCommunicator(clientConfig.routerHost, parseInt(clientConfig.routerPort)))
@@ -77,6 +82,7 @@ export class ApiFactory {
     const dataClient: DataClient = new DataClient(new ClientCommunicator(clientConfig.routerHost, parseInt(clientConfig.routerPort)))
     const jobClient: JobClient = new JobClient(new ClientCommunicator(clientConfig.jobHost, parseInt(clientConfig.jobPort)))
     const secretClient: SecretClient = new SecretClient(new ClientCommunicator(clientConfig.secretHost, parseInt(clientConfig.secretPort)))
+    const adminClient: AdminClient = new AdminClient(new ClientCommunicator(clientConfig.adminHost, parseInt(clientConfig.adminPort)))
     const clientManager: ClientManager = new ClientManager(
       routerClient, 
       authenticationClient, 
@@ -87,7 +93,8 @@ export class ApiFactory {
       imageClient, 
       dataClient, 
       jobClient,
-      secretClient)
+      secretClient,
+      adminClient)
     new ClientApi(serverCommunicator, clientManager)
     new DashboardApi(fileSystem, serverCommunicator);
   }
@@ -224,16 +231,25 @@ export class ApiFactory {
       port: process.env.DB_PORT || process.argv[8],
       database: process.env.DB_NAME || process.argv[9]
     };
-    const fsconfig = {
-      host: process.env.FS_HOST || process.argv[10],
-      port: process.env.FS_PORT || process.argv[11]
-    };
     const databaseCommunicator = this.constructDatabaseCommunicator(dbconfig)
     const shellCommunicator = new ShellCommunicator(fileSystem)
     const secretManager = new SecretManager(databaseCommunicator, shellCommunicator, fileSystem)
     const authClientCommunicator = new ClientCommunicator("auth.default", 80)
     const authenticationClient = new AuthenticationClient(authClientCommunicator)
     new SecretApi(serverCommunicator, secretManager, authenticationClient)
+  }
+
+  admin(fileSystem: FileSystem, serverCommunicator: ServerCommunicator) {
+    const dbconfig = {
+      user: process.env.DB_USER || process.argv[5],
+      password: process.env.DB_PASSWORD || process.argv[6], 
+      host: process.env.DB_HOST || process.argv[7],
+      port: process.env.DB_PORT || process.argv[8],
+      database: process.env.DB_NAME || process.argv[9]
+    };
+    const databaseCommunicator = this.constructDatabaseCommunicator(dbconfig)
+    const databaseManager = new DatabaseManager(databaseCommunicator)
+    new AdminApi(serverCommunicator, databaseManager)
   }
 
   private constructExecutor(fileSystem, envConfig) {

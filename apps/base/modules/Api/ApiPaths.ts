@@ -2,6 +2,8 @@ export class ApiPaths {
   // IamManager endpoints
   public static ADD_CLIENT = "/client";
   public static GET_STATUS = "/status";
+  public static RUN_DATABASE_MIGRATIONS = "/admin/dbmigration"
+  public static GET_DATABASE_MIGRATION_VERSION = "/admin/dbmigration/version"
 
   // IamClient endpoints
 

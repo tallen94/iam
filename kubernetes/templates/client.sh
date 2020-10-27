@@ -71,6 +71,11 @@ spec:
           value: "secret.default"
         - name: SECRET_PORT
           value: "80"
+
+        - name: ADMIN_HOST
+          value: "admin.default"
+        - name: ADMIN_PORT
+          value: "80"
 ---
 apiVersion: v1
 kind: Service
@@ -166,6 +171,11 @@ spec:
         - name: SECRET_HOST
           value: "secret.default"
         - name: SECRET_PORT
+          value: "80"
+
+        - name: ADMIN_HOST
+          value: "admin.default"
+        - name: ADMIN_PORT
           value: "80"
 
 ---

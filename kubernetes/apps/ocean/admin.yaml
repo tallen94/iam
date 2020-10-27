@@ -1,21 +1,21 @@
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
 metadata:
-  name: auth
+  name: admin
 spec:
   selector:
     matchLabels:
-      app: auth
+      app: admin
   replicas: 1 # tells deployment to run 2 pods matching the template
   template:
     metadata:
       labels:
-        app: auth
+        app: admin
     spec:
       imagePullSecrets:
       - name: regcred
       containers:
-      - name: auth
+      - name: admin
         image: icanplayguitar94/iam:base-420dd9067d7c1dfa371abbae8d493b9dba200689
         imagePullPolicy: IfNotPresent
         ports:
@@ -31,9 +31,16 @@ spec:
         - name: HOME
           value: "/usr/home/iam"
         - name: TYPE 
-          value: "auth"
+          value: "admin"
         - name: SERVER_PORT
           value: "5000"
+
+        ## ADMIN CONFIG
+        - name: ADMIN_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: admintoken
+              key: token
 
         ## DB CONFIG
         - name: DB_HOST
@@ -57,10 +64,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: auth
+  name: admin
 spec:
   selector:
-    app: auth
+    app: admin
   ports:
     - protocol: TCP
       port: 80

@@ -9,6 +9,7 @@ import { DataClient } from "./DataClient";
 import { AuthData } from "../Auth/AuthData";
 import { JobClient } from "./JobClient";
 import { SecretClient } from "./SecretClient";
+import { AdminClient } from "./AdminClient";
 
 export class ClientManager {
 
@@ -22,7 +23,8 @@ export class ClientManager {
     private imageClient: ImageClient,
     private dataClient: DataClient,
     private jobClient: JobClient,
-    private secretClient: SecretClient
+    private secretClient: SecretClient,
+    private adminClient: AdminClient
   ) {
 
   }
@@ -252,5 +254,13 @@ export class ClientManager {
 
   public deleteSecret(name: string, username: string, authData: AuthData) {
     return this.secretClient.deleteSecret(name, username, authData)
+  }
+
+  public runDatabaseMigrations(adminToken: string) {
+    return this.adminClient.runDatabaseMigrations(adminToken)
+  }
+
+  public getDatabaseMigrationVersion(adminToken: string) {
+    return this.adminClient.getDatabaseMigrationVersion(adminToken)
   }
 }
