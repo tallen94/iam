@@ -18,7 +18,7 @@ spec:
         type: ng-1
       containers:
       - name: router
-        image: icanplayguitar94/iam:base-08ddde4052d4b1b4d17c58e12db42ef88233d723
+        image: icanplayguitar94/iam:base-f8ae1ae69d982bc1e0ce25d632a9f7dedd0eada7
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
