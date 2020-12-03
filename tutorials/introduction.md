@@ -68,3 +68,8 @@ There are a few different ways of specifying input into a graph.
 - Graphs with multiple start nodes will expect an `[]` of data where the ith object is passed to the corresponding ith start node.
 - Using the `FOREACH` option will make a node expect an `[]` of data input and execute the node for each item in that dataset.
 
+#### Jobs
+Jobs are schedules to automatically trigger executables. You provide the schedule, executable, and any input data. Currently, output data
+is not saved anywhere.
+
+![job](../screenshots/job.png)
