@@ -16,7 +16,7 @@ These are load balanced services for running executables. Environments allow con
 - CPU and Memory allocation per instance
 - Volume Storage
 
-Environments that extend the base image `icanplayguitar/iam:base-08ddde4052d4b1b4d17c58e12db42ef88233d723`, and are of type `executor`, can be used to run any other `executable`.
+Environments that extend the base image `icanplayguitar/iam:base-*`, and are of type `executor`, can be used to run any other `executable`.
 
 Each `executable` must specify what environment it is run in. By default they run in the `base` environment. 
 
