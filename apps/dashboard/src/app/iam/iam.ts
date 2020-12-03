@@ -44,6 +44,10 @@ export class Iam {
     );
   }
 
+  public getBaseImage() {
+    return this.client.get(ApiPaths.GET_BASE_IMAGE)
+  }
+
   public addUser(username: string, email: string, password: string) {
     return this.client.post(ApiPaths.ADD_USER, {username: username, email: email, password: password}, {})
   }
