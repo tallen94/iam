@@ -3,7 +3,7 @@ Iam is a limitless tool for developing highly scalable code
 
 This tutorial will introduce you to the main concepts.
 
-#### Cluster
+#### Clusters
 Clusters are organizations of Environments.
 
 ![cluster](../screenshots/cluster.png)
@@ -45,12 +45,14 @@ If specifying an additional set of arguments in the `args` field, use `{key}` as
 
 ![function](../screenshots/function-editing.png)
 
-#### Queries
-Queries are SQL queries to communicate with the local database. Currently you can only access the cluster database through native `queries`.
-It would be ideal to allow queries to specify what datasource they want, in the same way that functions can specify what `environment` they use.
-For now, you can use functions to hook up a mysql client library in python for example.
+#### Secrets
+Secrets are sensitive information that does not ever leave the context of the entire system. Meaning, their values cannot be returned to the client or passed between. In order to reference a secret, use the `$secret` value to have the system automatically hydrate it.
 
-![query](../screenshots/query.png)
+```
+curl -X POST -d '{ "test": "$secret" }' localhost/executable/:username/:exe/:name/run
+```
+
+![secret](../screenshots/secrets_editing.png)
 
 #### Graphs 
 Graphs are descriptions of the execution plan of a series of `functions` and `queries`. Steps can be linked in sequential and parallel patterns.
