@@ -1,20 +1,38 @@
-<div class="login-form container">
-  <div class="form-group">
-    <label for="email">Email Address</label>
-    <input [(ngModel)]="email" type="email" class="form-control" id="email" placeholder="Email">
+<div class="login-form">
+
+  <h1>Hello, I am</h1>
+
+  <div class="status-select">
+      
+    <div>
+      <button *ngIf="status !== 'new'" class="btn btn-outline-primary" (click)="new()">New</button>
+      <button *ngIf="status == 'new'" class="btn btn-primary">New</button>
+    </div>
+
+    <div>
+      <button *ngIf="status !== 'returning'" class="btn btn-outline-primary" (click)="returning()">Returning</button>
+      <button *ngIf="status === 'returning'" class="btn btn-primary">Returning</button>
+    </div>
+
   </div>
-  <div class="form-group">
-    <label for="username">Username</label>
+
+  <div *ngIf="status && status !== ''" class="form-group">
+    <label for="username">Who are you?</label>
     <input [(ngModel)]="username" class="form-control" id="username" placeholder="Username">
   </div>
-  <div class="form-group">
-    <label for="password">Password</label>
+
+  <div *ngIf="username && username !== '' && status && status === 'new'" class="form-group">
+    <label for="email">Where can I contact you?</label>
+    <input [(ngModel)]="email" type="email" class="form-control" id="email" placeholder="Email">
+  </div>
+  
+  <div *ngIf="(status === 'new' && email && email !== '') || (status === 'returning' && username && username !== '')" class="form-group">
+    <label *ngIf="status === 'new'" for="password">Tell me a password, so I know it's you next time.</label>
+    <label *ngIf="status === 'returning'" for="password">What was your password?</label>
     <input [(ngModel)]="password" type="password" class="form-control" id="password" placeholder="Password">
   </div>
-  <div class="row">
-      <button class="btn btn-primary" (click)="login()">Login</button>
-  </div>
-  <div class="row">
-      <button class="btn btn-outline-primary" (click)="signup()">Signup</button>
+
+  <div *ngIf="password && password !== ''" class="continue">
+    <button class="btn btn-success" (click)="continue()">Continue <i class="fa fa-sign-in"></i></button>
   </div>
 </div>

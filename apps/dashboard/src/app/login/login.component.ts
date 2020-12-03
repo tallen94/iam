@@ -12,10 +12,29 @@ export class LoginComponent implements OnInit {
   public email: string;
   public password: string;
   public username: string;
+  public status: string = "";
 
   constructor(private iam: Iam, private router: Router) { }
 
   ngOnInit() { }
+
+  returning() {
+    this.status = "returning"
+  }
+
+  new() {
+    this.status = "new"
+  }
+
+  continue() {
+    if (this.status === "returning") {
+      this.login()
+    }
+
+    if (this.status === "new") {
+      this.signup()
+    }
+  }
 
   login() {
     this.iam.addUserSession(this.username.toLowerCase(), this.password)
