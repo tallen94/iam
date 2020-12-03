@@ -42,6 +42,12 @@ export class EnvironmentComponent implements OnInit {
     this.iam.getExecutables(this.iam.getUser().username, "graph").subscribe((result: any[]) => {
       this.graphs = Lodash.filter(result, (item) => item.cluster === this.data.cluster && item.environment === this.data.name);
     })
+
+    if (this._data.data.imageTag == undefined || this._data.data.imageTag === "") {
+      this.iam.getBaseImage().subscribe((result: any) => {
+        this._data.data.imageTag = result.image
+      })
+    }
   }
 
   get data() {

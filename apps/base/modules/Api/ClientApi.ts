@@ -16,6 +16,10 @@ export class ClientApi {
 
   private init(): void {
 
+    this.serverCommunicator.get(ApiPaths.GET_BASE_IMAGE, (req: any, res: any) => {
+      res.status(200).send({ image: process.env.BASE_IMAGE })
+    })
+
     // Clusters
     this.serverCommunicator.post(ApiPaths.ADD_CLUSTER, (req: any, res: any) => {
       const authData = AuthData.fromHeaders(req.headers)

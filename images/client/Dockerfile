@@ -1,2 +1,5 @@
-FROM icanplayguitar94/iam:base-08ddde4052d4b1b4d17c58e12db42ef88233d723
+FROM icanplayguitar94/iam:base-minikube
 COPY ./src public/dist
+
+ENV BASE_IMAGE="icanplayguitar94/iam:base-minikube"
+
