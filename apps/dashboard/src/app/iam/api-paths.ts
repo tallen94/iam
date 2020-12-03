@@ -2,6 +2,7 @@ export class ApiPaths {
   // IamManager endpoints
   public static ADD_CLIENT = "/client";
   public static GET_STATUS = "/status";
+  public static GET_BASE_IMAGE = "/image"
 
   // IamClient endpoints
 

@@ -4,6 +4,7 @@ export class ApiPaths {
   public static GET_STATUS = "/status";
   public static RUN_DATABASE_MIGRATIONS = "/admin/dbmigration"
   public static GET_DATABASE_MIGRATION_VERSION = "/admin/dbmigration/version"
+  public static GET_BASE_IMAGE = "/image"
 
   // IamClient endpoints
 
