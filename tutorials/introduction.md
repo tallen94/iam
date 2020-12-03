@@ -3,6 +3,13 @@ Iam is a limitless tool for developing highly scalable code
 
 This tutorial will introduce you to the main concepts.
 
+### Signup / Login
+The first step if you are a new user is to `signup`. Create a cool `username` and fill out the rest of the form, then click `Sign Up`. 
+
+If you are a returning user, click the `Login` button instead.
+
+![login](../screenshots/login.png)
+
 #### Clusters
 Clusters are organizations of Environments.
 
@@ -22,7 +29,7 @@ Each `executable` must specify what environment it is run in. By default they ru
 
 ![environment](../screenshots/environment.png)
 
-### Executable
+### Executables
 Executables are the resources available on the cluster. You can:
 - Add and executable
 - Get and executable
