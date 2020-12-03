@@ -4,7 +4,7 @@ Iam is a limitless tool for developing highly scalable code
 This tutorial will introduce you to the main concepts.
 
 ### Signup / Login
-The first step if you are a new user is to `signup`. Create a cool `username` and fill out the rest of the form, then click `Sign Up`. 
+The first step if you are a new user is to `signup`. Create a cool `username` and fill out the rest of the form, then click `Signup`. 
 
 If you are a returning user, click the `Login` button instead.
 
