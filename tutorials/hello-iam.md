@@ -19,14 +19,24 @@ You can navigate between recent visited items by using the arrow keys near the t
 - Create your first cluster by hitting the `+` next to the `Clusters` in the navigation. 
 - Enter in a name, perhaps __main__, and click `Create`.
 
-
 *Note: After clicking the `Create` button you need to save what was created by hitting the `edit` button, followed by the `save` button in the 
 top right.*
 
 Now you have a cluster created where you can add environments to it.
 
-- Edit the description to something a little better, perhaps *"This is my first cluster and is for testing purposes"*
+#### Cluster Data
+Clusters only have the basic set of attributes
 
+- **Name**: who it is
+- **Description**: what it is
+
+Descriptions can be edited using `Markdown` syntax and will render when saved.
+
+- Edit the description to something a little better, perhaps 
+```
+### Purpose
+- This is the first cluster and is for testing purposes
+```
 
 ### Environments
 An Environment describes a set of dependencies and resources for allocation in the Cluster.
@@ -39,7 +49,19 @@ An Environment describes a set of dependencies and resources for allocation in t
 *Note: After clicking the `Create` button you need to save what was created by hitting the `edit` button, followed by the `save` button in the 
 top right.*
 
+#### Environment Data
 There is more information in an Environment than a Cluster. It starts with a good description though. 
+
+- **State**: if the environment is running or not
+- **Image Tag**: docker image reference to use
+- **Resource Limits**:
+  - *Replicas*: number of hosts to deploy
+  - *Cpu*: cpu capacity for each host
+  - *Memory*: memory capacity for each host
+- **Service Details**
+  - *Service Type*: the type of this environment in the cluster
+- **Storage Details**
+  - *Storage Type*: none is a fine choice for now
 
 - Click the `edit` button and edit the description, followed by the `save` button.
 
@@ -68,7 +90,7 @@ Function data includes the basic information like name, description but also has
 - **Input**: data type expected as input into the Function
 - **Output**: data type expected as output from the Function
 - **Command**: the command to run
-- **Args**: arguments obtained from the **Input** data
+- **Args**: arguments obtained from the **Request Data** data
 - **Function** the script from you, make it count
 
 For more information, see more about Syntax in the [Appendix](#appendix)
