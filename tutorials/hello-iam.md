@@ -5,7 +5,7 @@
 
 Welcome to Iam. Please follow the onscreen prompts and come back to this tutorial after completing the form.
 
-Select `New` if you are a new user.
+- Select `New` if you are a new user.
 
 ## Home
 The screen you are taken to is the `Home` screen. The navigation for the system is to the left, where you can create and select items. 
