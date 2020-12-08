@@ -32,11 +32,12 @@ Clusters only have the basic set of attributes
 
 Descriptions can be edited using `Markdown` syntax and will render when saved.
 
-- Edit the description to something a little better, perhaps 
+- Click the `edit` button in the top right and update the description to something a little better, perhaps 
 ```
 ### Purpose
 - This is the first cluster and is for testing purposes
 ```
+  - Click the `save` button
 
 ### Environments
 An Environment describes a set of dependencies and resources for allocation in the Cluster.
