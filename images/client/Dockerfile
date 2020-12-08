@@ -1,5 +1,5 @@
-FROM icanplayguitar94/iam:base-f3eb6c76cc255d2d4e612a869cbc6c82be7a3fc0
+FROM icanplayguitar94/iam:base-dcdf74373f53a78981d22dcc3af8a15a203e5665
 COPY ./src public/dist
 
-ENV BASE_IMAGE="icanplayguitar94/iam:base-f3eb6c76cc255d2d4e612a869cbc6c82be7a3fc0"
+ENV BASE_IMAGE="icanplayguitar94/iam:base-dcdf74373f53a78981d22dcc3af8a15a203e5665"
 
