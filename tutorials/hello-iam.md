@@ -56,6 +56,8 @@ A Function is a script of code that you write. Your Function can run any command
 - Create a Function
   - Click the `+` button in the navigation bar
 - Enter in a name, perhaps __test__, and click `Create`
+- Select the **Cluster** name you created or `main`
+- Select the **Environment** name you created or `base`
 
 *Note: After clicking the `Create` button you need to save what was created by hitting the `edit` button, followed by the `save` button in the 
 top right.*
@@ -69,7 +71,7 @@ Function data includes the basic information like name, description but also has
 - **Args**: arguments obtained from the **Input** data
 - **Function** the script from you, make it count
 
-For more information, see more about syntax
+For more information, see more about Syntax in the [Appendix](#appendix)
 
 The default function template that gets provided to you is a simple `python` script that returns `{}`.
 
