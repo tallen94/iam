@@ -66,7 +66,8 @@ There is more information in an Environment than a Cluster. It starts with a goo
 
 Keep all of these the default values for now.
 
-- Click the `edit` button and edit the description, followed by the `save` button.
+- Click the `edit` button and edit the description
+- Click the `save` button to save the changes
 
 The __State__ informs you if the Environment is available for use. Currently, your environment is __Stopped__.
 
