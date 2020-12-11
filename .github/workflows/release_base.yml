@@ -14,7 +14,7 @@ jobs:
       run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
     
     - name: Build Base
-      run: opctl run -a version="$GITHUB_SHA" -a push="true"
+      run: opctl run -a dockerSocket="/var/run/docker.sock" -a version="$GITHUB_SHA" -a push="true"
     
     - name: Commit Changes
       run: |
