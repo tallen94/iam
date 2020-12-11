@@ -1,0 +1,16 @@
+name: test-app
+description: run tests for apps
+
+inputs:
+  appDir:
+    dir:
+      default: ./apps/base
+
+run:
+  container:
+    image:
+      ref: node:11.15
+    dirs:
+      /src: $(appDir)
+    workDir: /src
+    cmd: [npm, run, test]
