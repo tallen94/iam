@@ -1,4 +1,4 @@
-name: test-app
+name: test
 description: run tests for apps
 
 inputs:
