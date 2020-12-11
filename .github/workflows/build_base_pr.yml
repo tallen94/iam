@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: opctl:0.1.45-dind
+    container: opctl:0.1.45-dind
     steps:
     - uses: actions/checkout@v1
 
