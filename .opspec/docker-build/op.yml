@@ -2,6 +2,10 @@ name: docker-build
 description: run the docker build command
 
 inputs:
+  HOME:
+    dir:
+      description: path to home dir
+
   dockerSocket:
     socket:
       description: socket to use
@@ -13,7 +17,7 @@ inputs:
   
   imageRef:
     string:
-      description: image ref to use
+      description: ref to use for image
 
   src:
     dir:
@@ -25,6 +29,7 @@ run:
       ref: docker:dind
     dirs: 
       /src: $(src)
+      /root/.docker: $(HOME/.docker)
     sockets:
       /var/run/docker.sock: $(dockerSocket)
     workDir: /src
@@ -32,6 +37,7 @@ run:
     - sh
     - -c 
     - |
+  
       docker build --no-cache -t $(imageRef) .
 
       if [ "$(push)" = "true" ]; then

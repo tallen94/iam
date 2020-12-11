@@ -2,6 +2,10 @@ name: build-client
 description: builds iam client nodejs app
 
 inputs:
+  HOME:
+    dir:  
+      description: path to home dir
+
   appDir:
     dir:
       default: ./
@@ -34,6 +38,7 @@ run:
   - op:
       ref: docker-build
       inputs:
+        HOME:
         dockerSocket:
         push:
         imageRef: icanplayguitar94/iam:client-$(version)

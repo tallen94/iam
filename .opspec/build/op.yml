@@ -2,6 +2,10 @@ name: build
 description: builds iam app
 
 inputs:
+  HOME:
+    dir:
+      description: path to home directory
+
   dockerSocket:
     socket:
       description: docker socket to use for building
@@ -28,43 +32,23 @@ run:
       - op:
           ref: build-base
           inputs:
+            HOME:
             appDir:
             version:
             push:
             provider:
             dockerSocket:
-      - container:
-          image:
-            ref: ubuntu:18.04
-          dirs:
-            /src/kubernetes: $(appDir/kubernetes)
-            /src/images: $(appDir/images)
-          envVars:
-            TAG: "icanplayguitar94/iam:base-$(version)"
-            PROVIDER: $(provider)
-          workDir: /src
-          cmd: 
-          - bash
-          - -c
-          - | 
-            bash kubernetes/templates/filesystem.sh $TAG $PROVIDER
-            bash kubernetes/templates/auth.sh $TAG $PROVIDER
-            bash kubernetes/templates/router.sh $TAG $PROVIDER
-            bash kubernetes/templates/user.sh $TAG $PROVIDER
-            bash kubernetes/templates/admin.sh $TAG $PROVIDER
-            bash images/templates/client.sh $TAG
-            bash images/templates/builder.sh $TAG
-            bash images/templates/job.sh $TAG
-            bash images/templates/secret.sh $TAG
-
-            bash kubernetes/templates/builder.sh icanplayguitar94/iam:builder-$(version) $PROVIDER
-            bash kubernetes/templates/client.sh icanplayguitar94/iam:client-$(version) $PROVIDER
-            bash kubernetes/templates/job.sh icanplayguitar94/iam:job-$(version) $PROVIDER
-
+      - op:
+          ref: templates
+          inputs:
+            appDir:
+            version:
+            provider:
     - parallel:
       - op:
           ref: build-client
           inputs:
+            HOME:
             appDir:
             version:
             push:
@@ -73,6 +57,7 @@ run:
       - op:
           ref: docker-build
           inputs:
+            HOME:
             dockerSocket:
             push:
             imageRef: icanplayguitar94/iam:builder-$(version)
@@ -80,6 +65,7 @@ run:
       - op:
           ref: docker-build
           inputs:
+            HOME:
             dockerSocket:
             push:
             imageRef: icanplayguitar94/iam:job-$(version)
@@ -87,6 +73,7 @@ run:
       - op:
           ref: docker-build
           inputs:
+            HOME:
             dockerSocket:
             push:
             imageRef: icanplayguitar94/iam:secret-$(version)
