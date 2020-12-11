@@ -1,0 +1,93 @@
+name: build
+description: builds iam app
+
+inputs:
+  dockerSocket:
+    socket:
+      description: docker socket to use for building
+
+  appDir:
+    dir:
+      default: .
+
+  version:
+    string:
+      description: version to use for iam
+  
+  push:
+    string:
+      default: "false"
+
+  provider:
+    string:
+      description: provider building for (minikube | ec2 | ocean)
+
+run:
+  serial:
+    - parallel:
+      - op:
+          ref: build-base
+          inputs:
+            appDir:
+            version:
+            push:
+            provider:
+            dockerSocket:
+      - container:
+          image:
+            ref: ubuntu:18.04
+          dirs:
+            /src/kubernetes: $(appDir/kubernetes)
+            /src/images: $(appDir/images)
+          envVars:
+            TAG: "icanplayguitar94/iam:base-$(version)"
+            PROVIDER: $(provider)
+          workDir: /src
+          cmd: 
+          - bash
+          - -c
+          - | 
+            bash kubernetes/templates/filesystem.sh $TAG $PROVIDER
+            bash kubernetes/templates/auth.sh $TAG $PROVIDER
+            bash kubernetes/templates/router.sh $TAG $PROVIDER
+            bash kubernetes/templates/user.sh $TAG $PROVIDER
+            bash kubernetes/templates/admin.sh $TAG $PROVIDER
+            bash images/templates/client.sh $TAG
+            bash images/templates/builder.sh $TAG
+            bash images/templates/job.sh $TAG
+            bash images/templates/secret.sh $TAG
+
+            bash kubernetes/templates/builder.sh icanplayguitar94/iam:builder-$(version) $PROVIDER
+            bash kubernetes/templates/client.sh icanplayguitar94/iam:client-$(version) $PROVIDER
+            bash kubernetes/templates/job.sh icanplayguitar94/iam:job-$(version) $PROVIDER
+
+    - parallel:
+      - op:
+          ref: build-client
+          inputs:
+            appDir:
+            version:
+            push:
+            provider:
+            dockerSocket:
+      - op:
+          ref: docker-build
+          inputs:
+            dockerSocket:
+            push:
+            imageRef: icanplayguitar94/iam:builder-$(version)
+            src: $(appDir/images/builder)
+      - op:
+          ref: docker-build
+          inputs:
+            dockerSocket:
+            push:
+            imageRef: icanplayguitar94/iam:job-$(version)
+            src: $(appDir/images/job)
+      - op:
+          ref: docker-build
+          inputs:
+            dockerSocket:
+            push:
+            imageRef: icanplayguitar94/iam:secret-$(version)
+            src: $(appDir/images/secret)

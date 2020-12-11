@@ -7,17 +7,14 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    container: opctl:0.1.45-dind
     steps:
     - uses: actions/checkout@v1
     - name: Docker login
       run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
-    - uses: actions/setup-node@v1
-      with:
-        node-version: '11.14.0'
     
     - name: Build Base
-      run: bash build.sh base $GITHUB_SHA push eks
+      run: opctl run -a version="$GITHUB_SHA" -a push="true"
     
     - name: Commit Changes
       run: |

@@ -1,0 +1,40 @@
+name: build-client
+description: builds iam client nodejs app
+
+inputs:
+  appDir:
+    dir:
+      default: ./
+
+  version:
+    string:
+      description: version to use for iam
+  
+  push:
+    string:
+      default: "false"
+
+  provider:
+    string:
+      description: provider building for (minikube | ec2 | ocean)
+
+  dockerSocket:
+    socket:
+      description: docker socket to use for building
+run:
+  serial:
+  - container:
+      image: 
+        ref: node:11.15
+      dirs:
+        /src: $(appDir)
+      workDir: /src/apps/dashboard
+      cmd: [bash, build.sh, -prod]
+
+  - op:
+      ref: docker-build
+      inputs:
+        dockerSocket:
+        push:
+        imageRef: icanplayguitar94/iam:client-$(version)
+        src: $(appDir/images/client)

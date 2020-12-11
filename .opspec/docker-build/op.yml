@@ -1,0 +1,40 @@
+name: docker-build
+description: run the docker build command
+
+inputs:
+  dockerSocket:
+    socket:
+      description: socket to use
+  
+  push:
+    string:
+      description: whether or not to push the image
+      default: "false"
+  
+  imageRef:
+    string:
+      description: image ref to use
+
+  src:
+    dir:
+      description: source dir to build from
+
+run:
+  container:
+    image:
+      ref: docker:dind
+    dirs: 
+      /src: $(src)
+    sockets:
+      /var/run/docker.sock: $(dockerSocket)
+    workDir: /src
+    cmd: 
+    - sh
+    - -c 
+    - |
+      docker build --no-cache -t $(imageRef) .
+
+      if [ "$(push)" = "true" ]; then
+        echo "Pushing Docker TAG: $(imageRef)"
+        docker push $(imageRef)
+      fi

@@ -1,4 +1,4 @@
-FROM icanplayguitar94/iam:base-dcdf74373f53a78981d22dcc3af8a15a203e5665
+FROM icanplayguitar94/iam:base-opctl-local
 
 RUN apt-get update
 

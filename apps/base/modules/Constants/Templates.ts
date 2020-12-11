@@ -214,7 +214,7 @@ spec:
             - /bin/sh
             - -ec
             - | 
-              curl -H 'Content-type: application/json' -d '{data}' -X POST http://router.default/executable/{exeUser}/{exeCluster}/{exeEnvironment}/{exeType}/{exeName}/run
+              curl -H 'Content-type: application/json' -d '{data}' -X POST http://router/executable/{exeUser}/{exeCluster}/{exeEnvironment}/{exeType}/{exeName}/run
           restartPolicy: Never
   `
 

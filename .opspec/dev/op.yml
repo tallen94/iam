@@ -1,0 +1,197 @@
+name: dev
+description: run the iam service locally
+
+inputs:
+
+  version:
+    string:
+      description: version of IAM to use
+  
+  adminToken:
+    string:
+      description: token for admin endpoints
+  
+  DB_USER:
+    string:
+      description: user for database
+      default: iam
+
+  DB_PASSWORD:
+    string:
+      description: password for database
+      default: password
+  
+  DB_NAME:
+    string:
+      description: name of database
+      default: iam
+
+  dockerSocket:
+    socket:
+      description: docker socket to connect for builder
+      
+  databaseVersion:
+    string:
+      description: version of database to use
+
+run:
+  parallel:
+    - container: 
+        name: client
+        image:
+          ref: icanplayguitar94/iam:client-$(version)
+        envVars:
+          HOME: "/usr/home/iam"
+          TYPE: "client"
+          SERVER_PORT: 5000
+          ROUTER_HOST: "router"
+          ROUTER_PORT: 5000
+          USER_HOST: "user"
+          USER_PORT: 5000
+          AUTH_HOST: "auth"
+          AUTH_PORT: 5000
+          BUILDER_HOST: "builder"
+          BUILDER_PORT: 5000
+          JOB_HOST: "job"
+          JOB_PORT: 5000
+          SECRET_HOST: "secret"
+          SECRET_PORT: 5000
+          ADMIN_HOST: "admin"
+          ADMIN_PORT: 5000
+        ports:
+          5000: 80
+    - container:
+        name: admin
+        image:
+          ref: icanplayguitar94/iam:base-$(version)
+        envVars:
+          HOME: "/usr/home/iam"
+          TYPE: "admin"
+          SERVER_PORT: 5000
+          ADMIN_TOKEN: $(adminToken)
+          DB_HOST: database
+          DB_USER:
+          DB_NAME:
+          DB_PASSWORD:
+    - container:
+        name: auth
+        image:
+          ref: icanplayguitar94/iam:base-$(version)
+        envVars:
+          HOME: "/usr/home/iam"
+          TYPE: "auth"
+          SERVER_PORT: 5000
+          DB_HOST: database
+          DB_USER:
+          DB_NAME:
+          DB_PASSWORD:
+    - container:
+        name: builder
+        image:
+          ref: icanplayguitar94/iam:builder-$(version)
+        envVars:
+          HOME: "/usr/home/iam"
+          TYPE: "builder"
+          SERVER_PORT: 5000
+          FS_HOST: filesystem
+          FS_PORT: 5000
+          AUTH_HOST: auth
+          AUTH_PORT: 5000
+          DB_HOST: database
+          DB_USER:
+          DB_NAME:
+          DB_PASSWORD:
+        sockets:
+          /var/run/docker.sock: $(dockerSocket)
+    - container:
+        name: database
+        image:
+          ref: icanplayguitar94/iam:database-$(databaseVersion)
+        envVars:
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_USER: $(DB_USER)
+          MYSQL_PASSWORD: $(DB_PASSWORD)
+          MYSQL_DATABASE: $(DB_NAME)
+        ports:
+          3306: 3306
+    - container:
+        name: filesystem
+        image:
+          ref: icanplayguitar94/iam:base-$(version)
+        envVars:
+          HOME: "/usr/home/iam"
+          TYPE: "executor"
+          SERVER_PORT: 5000
+          AUTH_HOST: auth
+          AUTH_PORT: 5000
+          SECRET_HOST: secret
+          SECRET_PORT: 5000
+          DB_HOST: database
+          DB_USER:
+          DB_NAME:
+          DB_PASSWORD:
+    - container:
+        name: job
+        image:
+          ref: icanplayguitar94/iam:job-$(version)
+        envVars:
+          HOME: "/usr/home/iam"
+          TYPE: "job"
+          SERVER_PORT: 5000
+          FS_HOST: filesystem
+          FS_PORT: 5000
+          AUTH_HOST: auth
+          AUTH_PORT: 5000
+          DB_HOST: database
+          DB_USER:
+          DB_NAME:
+          DB_PASSWORD:
+    - container:
+        name: router
+        image:
+          ref: icanplayguitar94/iam:base-$(version)
+        envVars:
+          HOME: "/usr/home/iam"
+          TYPE: "router"
+          SERVER_PORT: 5000
+          FS_HOST: filesystem
+          FS_PORT: 5000
+          BUILDER_HOST: builder
+          BUILDER_PORT: 5000
+          AUTH_HOST: auth
+          AUTH_PORT: 5000
+          DB_HOST: database
+          DB_USER:
+          DB_NAME:
+          DB_PASSWORD:
+    - container:
+        name: secret
+        image:
+          ref: icanplayguitar94/iam:base-$(version)
+        envVars:
+          HOME: "/usr/home/iam"
+          TYPE: "secret"
+          SERVER_PORT: 5000
+          FS_HOST: filesystem
+          FS_PORT: 5000
+          AUTH_HOST: auth
+          AUTH_PORT: 5000
+          DB_HOST: database
+          DB_USER:
+          DB_NAME:
+          DB_PASSWORD:
+    - container:
+        name: user
+        image:
+          ref: icanplayguitar94/iam:base-$(version)
+        envVars:
+          HOME: "/usr/home/iam"
+          TYPE: "user"
+          SERVER_PORT: 5000
+          AUTH_HOST: auth
+          AUTH_PORT: 5000
+          DB_HOST: database
+          DB_USER:
+          DB_NAME:
+          DB_PASSWORD:
+

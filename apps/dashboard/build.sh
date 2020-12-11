@@ -1,3 +1,5 @@
 #!/bin/bash
 ENV=$1
-npm install --prefix apps/dashboard && npm run --prefix apps/dashboard build$ENV
+
+npm install && npm run build$ENV
+mv dist /src/images/client/src
