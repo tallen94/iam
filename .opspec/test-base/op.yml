@@ -1,17 +1,17 @@
-name: test
+name: test-base
 description: run tests for apps
 
 inputs:
   appDir:
     dir:
-      default: ./apps/base
+      default: ./
 
 run:
   container:
     image:
       ref: node:11.15
     dirs:
-      /src: $(appDir)
+      /src: $(appDir/apps/base)
     workDir: /src
     cmd: 
     - sh
