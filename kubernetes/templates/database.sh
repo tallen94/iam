@@ -139,3 +139,80 @@ spec:
       targetPort: 3306
 EOF
 fi
+
+if [ $PROVIDER = "ocean" ] 
+then
+cat > kubernetes/apps/ocean/database.yaml <<EOF
+apiVersion: v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Pod
+metadata:
+  name: mysqldatabase
+  labels:
+    app: mysqldatabase
+spec:
+  volumes:
+    - name: mysqldatabase-claim
+      persistentVolumeClaim:
+        claimName: mysqldatabase-claim
+  imagePullSecrets:
+  - name: regcred
+  containers:
+  - name: mysqldatabase
+    image: $TAG
+    imagePullPolicy: IfNotPresent
+    ports:
+    - containerPort: 3306
+
+    env:
+    - name: MYSQL_ROOT_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: dbconfig
+          key: root_password
+    ## DB CONFIG
+    - name: MYSQL_USER
+      valueFrom:
+        secretKeyRef:
+          name: dbconfig
+          key: user
+    - name: MYSQL_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: dbconfig
+          key: password
+    - name: MYSQL_DATABASE
+      valueFrom:
+        secretKeyRef:
+          name: dbconfig
+          key: db_name
+
+    volumeMounts:
+        - name: mysqldatabase-claim
+          mountPath: /usr/home/iam
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysqldatabase-claim
+spec:
+  storageClassName: "do-block-storage"
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysqldatabase
+spec:
+  selector:
+    app: mysqldatabase
+  ports:
+    - protocol: TCP
+      port: 3306
+      targetPort: 3306
+
+EOF
+fi

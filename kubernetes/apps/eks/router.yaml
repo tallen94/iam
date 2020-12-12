@@ -18,7 +18,7 @@ spec:
         type: ng-1
       containers:
       - name: router
-        image: icanplayguitar94/iam:base-dcdf74373f53a78981d22dcc3af8a15a203e5665
+        image: icanplayguitar94/iam:base-opctl-local
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
@@ -49,6 +49,12 @@ spec:
         - name: FS_HOST
           value: "filesystem.default"
         - name: FS_PORT
+          value: "80"
+
+        # AUTH CONFIG
+        - name: AUTH_HOST
+          value: auth.default
+        - name: AUTH_PORT
           value: "80"
           
         # BUILDER CONFIG
