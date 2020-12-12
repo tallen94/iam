@@ -17,7 +17,7 @@ spec:
       - name: regcred
       containers:
       - name: builder
-        image: icanplayguitar94/iam:builder-opctl-local
+        image: icanplayguitar94/iam:builder-3ec29202cfed3a0d6618aed52525218caf48acd7
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
