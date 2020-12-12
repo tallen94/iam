@@ -13,4 +13,8 @@ run:
     dirs:
       /src: $(appDir)
     workDir: /src
-    cmd: [npm, run, test]
+    cmd: 
+    - sh
+    - -c
+    - |
+      npm install && npm run test
