@@ -94,7 +94,7 @@ export class RunComponent implements OnInit {
   }
 
   dhms(difference) {
-    var mins, secs, millis;
+    let mins, secs, millis;
     mins = Math.floor(((difference % (60 * 60 * 1000 * 24)) % (60 * 60 * 1000)) / (60 * 1000) * 1);
     secs = Math.floor((((difference % (60 * 60 * 1000 * 24)) % (60 * 60 * 1000)) % (60 * 1000)) / 1000 * 1);
     millis = Math.floor((((difference % (60 * 60 * 1000 * 24)) % (60 * 60 * 1000)) % (60 * 1000) % 1000) * 1);

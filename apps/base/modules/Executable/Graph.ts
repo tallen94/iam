@@ -96,8 +96,8 @@ export class Graph implements Executable {
 
   private getSteps(nodes: any[]) {
     return Promise.all(Lodash.map(nodes, (node) => {
-      const host = "router.default"
-      const clientCommunicator: ClientCommunicator = new ClientCommunicator(host, 80)
+      const host = process.env.ROUTER_HOST
+      const clientCommunicator: ClientCommunicator = new ClientCommunicator(host, parseInt(process.env.ROUTER_PORT))
       const client: Client = new Client(clientCommunicator);
       return new ProgramStep(node, client, node.foreach);
     }))

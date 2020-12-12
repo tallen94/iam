@@ -1,9 +1,9 @@
-name: Release Dashboard
+name: Release
 
 on: 
   push:
     branches:
-    - 'release/router'
+    - 'release/base'
 
 jobs:
   build:
@@ -12,21 +12,21 @@ jobs:
     - uses: actions/checkout@v1
     - name: Docker login
       run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
-    - uses: actions/setup-node@v1
-      with:
-        node-version: '11.14.0'
     
-    - name: Build Dashboard
-      run: bash build.sh router $GITHUB_SHA push eks -prod
+    - name: Install Opctl
+      run: curl -L https://github.com/opctl/opctl/releases/download/0.1.45/opctl0.1.45.linux.tgz | sudo tar -xzv -C /usr/local/bin
+    
+    - name: Build
+      run: opctl run -a dockerSocket="/var/run/docker.sock" -a version="$GITHUB_SHA" -a push="true" -a provider="eks" build
     
     - name: Commit Changes
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git checkout -b deploy/dashboard-${{ github.sha }}
-        git commit -m "Deploy Request for dashboard ${{ github.sha }}" -a
+        git checkout -b deploy/base-${{ github.sha }}
+        git commit -m "Deploy Request for base ${{ github.sha }}" -a
     - name: Push changes
       uses: ad-m/github-push-action@master
       with:
-        branch: deploy/dashboard-${{ github.sha }}
+        branch: deploy/base-${{ github.sha }}
         github_token: ${{ secrets.ACTIONS_TOKEN }}

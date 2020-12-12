@@ -1,0 +1,18 @@
+name: Build Base Pull Request
+
+on: 
+  pull_request:
+    paths:
+    - 'apps/base/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Install opctl
+      run: curl -L https://github.com/opctl/opctl/releases/download/0.1.45/opctl0.1.45.linux.tgz | sudo tar -xzv -C /usr/local/bin
+
+    - name: Test Base
+      run: opctl run test-base
