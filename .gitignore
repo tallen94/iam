@@ -26,11 +26,10 @@ db
 local
 
 kubernetes/secrets
+kubernetes/apps
 images/base/deploy.tgz
 images/client/src
 
 yarn.lock
-
-kubernetes/apps/minikube
 
 ssl

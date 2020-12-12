@@ -34,6 +34,8 @@ run:
         - -c
         - | 
 
+          mkdir -p kubernetes/apps/$PROVIDER
+
           # Base Image apps
           bash kubernetes/templates/filesystem.sh $TAG $PROVIDER
           bash kubernetes/templates/auth.sh $TAG $PROVIDER
