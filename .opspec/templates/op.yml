@@ -29,16 +29,22 @@ run:
     - bash
     - -c
     - | 
+
+      # Base Image apps
       bash kubernetes/templates/filesystem.sh $TAG $PROVIDER
       bash kubernetes/templates/auth.sh $TAG $PROVIDER
       bash kubernetes/templates/router.sh $TAG $PROVIDER
       bash kubernetes/templates/user.sh $TAG $PROVIDER
       bash kubernetes/templates/admin.sh $TAG $PROVIDER
+
+      # Image Templates
       bash images/templates/client.sh $TAG
       bash images/templates/builder.sh $TAG
       bash images/templates/job.sh $TAG
       bash images/templates/secret.sh $TAG
-
+      
+      # Image apps 
       bash kubernetes/templates/builder.sh icanplayguitar94/iam:builder-$(version) $PROVIDER
       bash kubernetes/templates/client.sh icanplayguitar94/iam:client-$(version) $PROVIDER
       bash kubernetes/templates/job.sh icanplayguitar94/iam:job-$(version) $PROVIDER
+      bash kubernetes/templates/secret.sh icanplayguitar94/iam:secret-$(version) $PROVIDER
