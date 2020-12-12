@@ -7,11 +7,14 @@ on:
 
 jobs:
   build:
-    container: opctl:0.1.45-dind
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
     - name: Docker login
       run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
+    
+    - name: Install Opctl
+      run: curl -L https://github.com/opctl/opctl/releases/download/0.1.45/opctl0.1.45.linux.tgz | sudo tar -xzv -C /usr/local/bin
     
     - name: Build
       run: opctl run -a dockerSocket="/var/run/docker.sock" -a version="$GITHUB_SHA" -a push="true" -a provider="eks" build
