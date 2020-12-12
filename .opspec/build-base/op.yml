@@ -1,0 +1,46 @@
+name: build-base
+description: builds iam base nodejs app
+
+inputs:
+  HOME:
+    dir:  
+      description: path to home dir
+      
+  appDir:
+    dir:
+      default: ./
+
+  version:
+    string:
+      description: version to use for iam
+  
+  push:
+    string:
+      default: "false"
+
+  provider:
+    string:
+      description: provider building for (minikube | ec2 | ocean)
+
+  dockerSocket:
+    socket:
+      description: docker socket to use for building
+run:
+  serial:
+  - container:
+      image: 
+        ref: node:11.15
+      dirs:
+        /src: $(appDir)
+      workDir: /src/apps/base
+      cmd: [bash, build.sh]
+  
+  - op:
+      ref: docker-build
+      inputs:
+        HOME:
+        dockerSocket:
+        push:
+        imageRef: icanplayguitar94/iam:base-$(version)
+        src: $(appDir/images/base)
+        

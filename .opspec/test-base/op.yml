@@ -1,0 +1,20 @@
+name: test-base
+description: run tests for apps
+
+inputs:
+  appDir:
+    dir:
+      default: ./
+
+run:
+  container:
+    image:
+      ref: node:11.15
+    dirs:
+      /src: $(appDir/apps/base)
+    workDir: /src
+    cmd: 
+    - sh
+    - -c
+    - |
+      npm install && npm run test

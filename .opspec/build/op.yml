@@ -1,0 +1,80 @@
+name: build
+description: builds iam app
+
+inputs:
+  HOME:
+    dir:
+      description: path to home directory
+
+  dockerSocket:
+    socket:
+      description: docker socket to use for building
+
+  appDir:
+    dir:
+      default: .
+
+  version:
+    string:
+      description: version to use for iam
+  
+  push:
+    string:
+      default: "false"
+
+  provider:
+    string:
+      description: provider building for (minikube | ec2 | ocean)
+
+run:
+  serial:
+    - parallel:
+      - op:
+          ref: build-base
+          inputs:
+            HOME:
+            appDir:
+            version:
+            push:
+            provider:
+            dockerSocket:
+      - op:
+          ref: templates
+          inputs:
+            appDir:
+            version:
+            provider:
+    - parallel:
+      - op:
+          ref: build-client
+          inputs:
+            HOME:
+            appDir:
+            version:
+            push:
+            provider:
+            dockerSocket:
+      - op:
+          ref: docker-build
+          inputs:
+            HOME:
+            dockerSocket:
+            push:
+            imageRef: icanplayguitar94/iam:builder-$(version)
+            src: $(appDir/images/builder)
+      - op:
+          ref: docker-build
+          inputs:
+            HOME:
+            dockerSocket:
+            push:
+            imageRef: icanplayguitar94/iam:job-$(version)
+            src: $(appDir/images/job)
+      - op:
+          ref: docker-build
+          inputs:
+            HOME:
+            dockerSocket:
+            push:
+            imageRef: icanplayguitar94/iam:secret-$(version)
+            src: $(appDir/images/secret)
