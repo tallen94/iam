@@ -18,7 +18,7 @@ spec:
         type: ng-1
       containers:
       - name: user
-        image: icanplayguitar94/iam:base-dcdf74373f53a78981d22dcc3af8a15a203e5665
+        image: icanplayguitar94/iam:base-3a7a114d0832368f11612b610d1a015a2b67bdab
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
@@ -44,6 +44,12 @@ spec:
           value: "user"
         - name: SERVER_PORT
           value: "5000"
+
+        # AUTH CONFIG
+        - name: AUTH_HOST
+          value: auth.default
+        - name: AUTH_PORT
+          value: "80"
 
         ## DB CONFIG
         - name: DB_HOST
