@@ -18,10 +18,6 @@ inputs:
     string:
       default: "false"
 
-  provider:
-    string:
-      description: provider building for (minikube | ec2 | ocean)
-
   dockerSocket:
     socket:
       description: docker socket to use for building

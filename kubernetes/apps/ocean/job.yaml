@@ -17,7 +17,7 @@ spec:
       - name: regcred
       containers:
       - name: job
-        image: icanplayguitar94/iam:job-dcdf74373f53a78981d22dcc3af8a15a203e5665
+        image: icanplayguitar94/iam:job-opctl-local
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000

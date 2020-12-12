@@ -22,9 +22,10 @@ inputs:
     string:
       default: "false"
 
-  provider:
-    string:
+  providers:
+    array:
       description: provider building for (minikube | ec2 | ocean)
+      default: []
 
 run:
   serial:
@@ -36,14 +37,21 @@ run:
             appDir:
             version:
             push:
-            provider:
             dockerSocket:
+
       - op:
-          ref: templates
+          ref: kube-templates
           inputs:
             appDir:
             version:
-            provider:
+            providers:
+
+      - op:
+          ref: img-templates
+          inputs:
+            appDir:
+            version:
+            
     - parallel:
       - op:
           ref: build-client
@@ -52,7 +60,6 @@ run:
             appDir:
             version:
             push:
-            provider:
             dockerSocket:
       - op:
           ref: docker-build
