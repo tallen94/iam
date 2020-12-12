@@ -1,4 +1,3 @@
 dockerSocket: /var/run/docker.sock
 databaseVersion: 0.1.4
-providers: [ocean, eks]
 push: "true"

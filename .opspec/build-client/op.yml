@@ -32,7 +32,7 @@ run:
       cmd: [bash, build.sh, -prod]
 
   - op:
-      ref: docker-build
+      ref: ../docker-build
       inputs:
         HOME:
         dockerSocket:

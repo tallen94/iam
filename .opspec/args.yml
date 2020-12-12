@@ -2,4 +2,4 @@ dockerSocket: /var/run/docker.sock
 version: 3ec29202cfed3a0d6618aed52525218caf48acd7
 adminToken: token
 databaseVersion: 0.1.4
-providers: [ocean]
+provider: minikube

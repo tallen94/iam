@@ -32,11 +32,30 @@ run:
       cmd: [bash, build.sh]
   
   - op:
-      ref: docker-build
+      ref: ../docker-build
       inputs:
         HOME:
         dockerSocket:
         push:
         imageRef: icanplayguitar94/iam:base-$(version)
         src: $(appDir/images/base)
+  
+  - container:
+      image:
+        ref: ubuntu:18.04
+      dirs:
+        /src: $(appDir)
+      envVars:
+        TAG: "icanplayguitar94/iam:base-$(version)"
+      workDir: /src
+      cmd: 
+      - bash
+      - -c
+      - | 
+
+        # Image Templates
+        bash images/templates/client.sh $TAG
+        bash images/templates/builder.sh $TAG
+        bash images/templates/job.sh $TAG
+        bash images/templates/secret.sh $TAG
         

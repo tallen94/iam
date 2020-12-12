@@ -22,39 +22,20 @@ inputs:
     string:
       default: "false"
 
-  providers:
-    array:
-      description: provider building for (minikube | ec2 | ocean)
-      default: []
-
 run:
   serial:
-    - parallel:
-      - op:
-          ref: build-base
-          inputs:
-            HOME:
-            appDir:
-            version:
-            push:
-            dockerSocket:
-
-      - op:
-          ref: kube-templates
-          inputs:
-            appDir:
-            version:
-            providers:
-
-      - op:
-          ref: img-templates
-          inputs:
-            appDir:
-            version:
+    - op:
+        ref: ../build-base
+        inputs:
+          HOME:
+          appDir:
+          version:
+          push:
+          dockerSocket:
             
     - parallel:
       - op:
-          ref: build-client
+          ref: ../build-client
           inputs:
             HOME:
             appDir:
@@ -62,7 +43,7 @@ run:
             push:
             dockerSocket:
       - op:
-          ref: docker-build
+          ref: ../docker-build
           inputs:
             HOME:
             dockerSocket:
@@ -70,7 +51,7 @@ run:
             imageRef: icanplayguitar94/iam:builder-$(version)
             src: $(appDir/images/builder)
       - op:
-          ref: docker-build
+          ref: ../docker-build
           inputs:
             HOME:
             dockerSocket:
@@ -78,7 +59,7 @@ run:
             imageRef: icanplayguitar94/iam:job-$(version)
             src: $(appDir/images/job)
       - op:
-          ref: docker-build
+          ref: ../docker-build
           inputs:
             HOME:
             dockerSocket:
