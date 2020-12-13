@@ -1,9 +1,9 @@
 # Iam: Distributed Computing Platform
 
 Iam is a space for collaborating and building. Use it to: 
+- Create custom environments.
 - Create highly available functions. 
-- Combine functions into distributed pipelines.
-- Create custom environments 
+- Combine functions into distributed pipelines. 
 
 A single interface provides all the tools to write and experiment with code on a highly scalable, highly available cluster. Machine Learning engineers need a way to minimize complexity in getting experimentation code into a production size computing environment. 
 
