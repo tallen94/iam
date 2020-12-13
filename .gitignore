@@ -28,7 +28,11 @@ local
 kubernetes/secrets
 kubernetes/apps
 images/base/deploy.tgz
-images/client/src
+
+images/client
+images/builder
+images/job
+images/secret
 
 yarn.lock
 

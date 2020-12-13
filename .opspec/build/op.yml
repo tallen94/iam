@@ -24,6 +24,31 @@ inputs:
 
 run:
   serial:
+    - container:
+        name: init
+        image:
+          ref: ubuntu:18.04
+        dirs:
+          /src: $(appDir)
+        envVars:
+          TAG: "icanplayguitar94/iam:base-$(version)"
+        workDir: /src
+        cmd: 
+        - bash
+        - -c
+        - | 
+
+          mkdir -p images/client
+          mkdir -p images/builder
+          mkdir -p images/job
+          mkdir -p images/secret
+
+          # Image Templates
+          bash images/templates/client.sh $TAG
+          bash images/templates/builder.sh $TAG
+          bash images/templates/job.sh $TAG
+          bash images/templates/secret.sh $TAG
+          
     - op:
         ref: ../build-base
         inputs:
