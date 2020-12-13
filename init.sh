@@ -27,6 +27,9 @@ applyConfig() {
    kubectl apply -f kubernetes/serviceaccounts/builder.yaml
    kubectl apply -f kubernetes/serviceaccounts/job.yaml
    kubectl apply -f kubernetes/serviceaccounts/secret.yaml
+
+   kubectl apply -f kubernetes/apps/$PROVIDER/database.yaml
+   
    echo [...Init...]
    ./kubernetes/update.sh $PROVIDER
    echo IAM is ready to use.
