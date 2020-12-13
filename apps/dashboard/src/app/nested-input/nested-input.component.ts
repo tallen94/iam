@@ -14,7 +14,7 @@ export class NestedInputComponent implements OnInit {
   @Output() emitRunning: EventEmitter<any> = new EventEmitter();
   @Output() emitUpdateData: EventEmitter<any> = new EventEmitter();
 
-  @Input() data: any;
+  private _data: any;
   @Input() border: boolean;
   @Input() hidden: any[] = [];
   @Input() editing: any[] = [];
@@ -31,12 +31,27 @@ export class NestedInputComponent implements OnInit {
 
   constructor(private iam: Iam) { }
 
-  ngOnInit() {
-    this.prevData = JSON.parse(JSON.stringify(this.data));
-    if (this.data.id == undefined) {
-      this.data.id = (this.data.exe == "graph" ? "0" : "1")
-    }
+  @Input()
+  set data(value: any) {
+    this.iam.getExecutable(value.username, value.cluster, value.environment, value.exe, value.name)
+    .subscribe((result) => {
+      if (result == undefined) {
+        this._data = value;
+      } else {
+        this._data = result;
+      }
+      this.prevData = JSON.parse(JSON.stringify(this._data));
+      if (this.data.id == undefined) {
+        this.data.id = (this.data.exe == "graph" ? "0" : "1")
+      }
+    })
   }
+
+  get data() {
+    return this._data;
+  }
+
+  ngOnInit() { }
 
   addStep() {
     const newData = []
@@ -48,11 +63,11 @@ export class NestedInputComponent implements OnInit {
   }
 
   isHidden() {
-    return (this.data.id !== undefined && Lodash.indexOf(this.hidden, this.data.id) != -1);
+    return this.data && (this.data.id !== undefined && Lodash.indexOf(this.hidden, this.data.id) != -1);
   }
 
   isEditing() {
-    return this.data.id !== undefined && Lodash.indexOf(this.editing, this.data.id) != -1;
+    return this.data && this.data.id !== undefined && Lodash.indexOf(this.editing, this.data.id) != -1;
   }
 
   triggerShow() {
