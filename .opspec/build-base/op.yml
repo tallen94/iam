@@ -32,11 +32,13 @@ run:
       cmd: [bash, build.sh]
   
   - op:
-      ref: docker-build
+      ref: ../docker-build
       inputs:
         HOME:
         dockerSocket:
         push:
         imageRef: icanplayguitar94/iam:base-$(version)
         src: $(appDir/images/base)
+  
+  
         

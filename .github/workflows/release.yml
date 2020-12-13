@@ -18,15 +18,3 @@ jobs:
     
     - name: Build
       run: opctl run --arg-file .opspec/args-release.yml -a version="$GITHUB_SHA" build
-    
-    - name: Commit Changes
-      run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        git checkout -b deploy/base-${{ github.sha }}
-        git commit -m "Deploy Request for base ${{ github.sha }}" -a
-    - name: Push changes
-      uses: ad-m/github-push-action@master
-      with:
-        branch: deploy/base-${{ github.sha }}
-        github_token: ${{ secrets.ACTIONS_TOKEN }}

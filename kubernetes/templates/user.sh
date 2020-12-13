@@ -210,6 +210,12 @@ spec:
         - name: SERVER_PORT
           value: "5000"
 
+        # AUTH CONFIG
+        - name: AUTH_HOST
+          value: auth.default
+        - name: AUTH_PORT
+          value: "80"
+
         ## DB CONFIG
         - name: DB_HOST
           value: "mysqldatabase.default"

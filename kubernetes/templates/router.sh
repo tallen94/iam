@@ -239,6 +239,12 @@ spec:
           value: "filesystem.default"
         - name: FS_PORT
           value: "80"
+
+        # AUTH CONFIG
+        - name: AUTH_HOST
+          value: auth.default
+        - name: AUTH_PORT
+          value: "80"
           
         # BUILDER CONFIG
         - name: BUILDER_HOST

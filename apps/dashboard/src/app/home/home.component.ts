@@ -187,12 +187,15 @@ export class HomeComponent implements OnInit {
         break;
       case "image":
         this.images.push(this.data)
+        break;
       // case "dataset":
       //   this.datasets.push(this.data)
       case "job":
         this.jobs.push(this.data)
+        break;
       case "secret":
         this.secrets.push(this.data)
+        break;
     }
 
     this.backHistory.push(this.data)

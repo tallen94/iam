@@ -22,39 +22,45 @@ inputs:
     string:
       default: "false"
 
-  providers:
-    array:
-      description: provider building for (minikube | ec2 | ocean)
-      default: []
-
 run:
   serial:
-    - parallel:
-      - op:
-          ref: build-base
-          inputs:
-            HOME:
-            appDir:
-            version:
-            push:
-            dockerSocket:
+    - container:
+        name: init
+        image:
+          ref: ubuntu:18.04
+        dirs:
+          /src: $(appDir)
+        envVars:
+          TAG: "icanplayguitar94/iam:base-$(version)"
+        workDir: /src
+        cmd: 
+        - bash
+        - -c
+        - | 
 
-      - op:
-          ref: kube-templates
-          inputs:
-            appDir:
-            version:
-            providers:
+          mkdir -p images/client
+          mkdir -p images/builder
+          mkdir -p images/job
+          mkdir -p images/secret
 
-      - op:
-          ref: img-templates
-          inputs:
-            appDir:
-            version:
+          # Image Templates
+          bash images/templates/client.sh $TAG
+          bash images/templates/builder.sh $TAG
+          bash images/templates/job.sh $TAG
+          bash images/templates/secret.sh $TAG
+          
+    - op:
+        ref: ../build-base
+        inputs:
+          HOME:
+          appDir:
+          version:
+          push:
+          dockerSocket:
             
     - parallel:
       - op:
-          ref: build-client
+          ref: ../build-client
           inputs:
             HOME:
             appDir:
@@ -62,7 +68,7 @@ run:
             push:
             dockerSocket:
       - op:
-          ref: docker-build
+          ref: ../docker-build
           inputs:
             HOME:
             dockerSocket:
@@ -70,7 +76,7 @@ run:
             imageRef: icanplayguitar94/iam:builder-$(version)
             src: $(appDir/images/builder)
       - op:
-          ref: docker-build
+          ref: ../docker-build
           inputs:
             HOME:
             dockerSocket:
@@ -78,7 +84,7 @@ run:
             imageRef: icanplayguitar94/iam:job-$(version)
             src: $(appDir/images/job)
       - op:
-          ref: docker-build
+          ref: ../docker-build
           inputs:
             HOME:
             dockerSocket:
