@@ -1,23 +1,21 @@
-## Development Setup
-### Docker Hub
+# Development Setup
+## Docker Hub
 Request access to docker hub via [email](mailto:coldassteveniceberg@gmail.com?Subject=IAM%20Docker%20Access&Body=Docker%20pull%20request), include your docker hub username in the email.
 
-### Kubernetes
-Iam runs on a Kubernetes cluster. 
+## Dependencies
+- Iam runs on a Kubernetes cluster, and uses [minikube](https://kubernetes.io/docs/tutorials/hello-minikube/) as a local test cluster.
+- Uses [Opctl](https://opctl.io/docs/setup/bare-metal) for build, local development and deployment.
 
-### Building
-Building the project requires [Opctl](https://opctl.io/docs/setup/bare-metal).
-
+## Building
 `>$ opctl run -a version="minikube" build`
 
-This builds IAM with a version named `minikube`.
+This builds IAM with a **version** named `minikube`.
 
-### Running Locally
-Run the platform locally with
+## Running With Opctl
 
 `>$ opctl run -a version="minikube" dev`
 
-## Deploy Minikube
+## Running With Minikube
 Follow the [minikube](https://kubernetes.io/docs/tutorials/hello-minikube/) tutorial for local development setup.
 
 Check status of cluster through `minikube dashboard`
