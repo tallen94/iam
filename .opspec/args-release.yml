@@ -1,3 +1,0 @@
-dockerSocket: /var/run/docker.sock
-databaseVersion: 0.1.4
-push: "true"

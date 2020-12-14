@@ -24,7 +24,7 @@ inputs:
   
   push:
     string:
-      default: "false"
+      description: whether or not to push the images to the remote registry
 
 run:
   serial:
