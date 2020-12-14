@@ -38,13 +38,16 @@ Deploy the application by executing the init.sh bash script.
 
 `>$ ./init.sh`
 
-Navigate to dashboard at `http://localhost`
+This will ask you for:
+- Database configuration
+- Docker credentials
+- Which provider you are deploying to (minikube|eks|ocean)
 
-Create a user with username, email and generate a secure password.
+Navigate to dashboard at `http://localhost`
 
 ### Updating IAM Versions
 You can change versions of software while the cluster is up and running. To change versions:
 ```
->$ opctl run -a version="<iam_version" -a provider="minikube" deploy
+>$ opctl run -a version="<iam_version>" -a provider="minikube" deploy
 >$ ./kubernetes/update.sh minikube
 ```
