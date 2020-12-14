@@ -1,0 +1,42 @@
+name: push
+description: start a minikube cluster
+
+inputs:
+  HOME:
+    dir:
+      description: path to home directory
+
+  version:
+    string:
+      description: iam version to push
+    
+  provider:
+    string:
+      description: provider being built
+  
+  registry:
+    string:
+      description: registry to push images to
+      default: icanplayguitar94/iam
+
+  dockerSocket:
+    socket:
+      description: path to running docker socket
+run:
+  container:
+    image:
+      ref: icanplayguitar94/iam:minikube
+    dirs:
+      /root/.docker: $(HOME/.docker)
+      /root/.minikube: $(HOME/.minikube)
+    sockets:
+      /var/run/docker.sock: $(dockerSocket)
+    cmd: 
+    - sh
+    - -c
+    - |
+      minikube cache add base-$(version)
+      minikube cache add builder-$(version)
+      minikube cache add client-$(version)
+      minikube cache add job-$(version)
+      minikube cache add secret-$(version)

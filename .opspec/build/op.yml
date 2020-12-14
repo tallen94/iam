@@ -17,6 +17,10 @@ inputs:
   version:
     string:
       description: version to use for iam
+
+  imageRegistry:
+    string:
+      description: image registry to use
   
   push:
     string:
@@ -31,7 +35,7 @@ run:
         dirs:
           /src: $(appDir)
         envVars:
-          TAG: "icanplayguitar94/iam:base-$(version)"
+          TAG: "$(imageRegistry):base-$(version)"
         workDir: /src
         cmd: 
         - bash
@@ -73,7 +77,7 @@ run:
             HOME:
             dockerSocket:
             push:
-            imageRef: icanplayguitar94/iam:builder-$(version)
+            imageRef: $(imageRegistry):builder-$(version)
             src: $(appDir/images/builder)
       - op:
           ref: ../docker-build
@@ -81,7 +85,7 @@ run:
             HOME:
             dockerSocket:
             push:
-            imageRef: icanplayguitar94/iam:job-$(version)
+            imageRef: $(imageRegistry):job-$(version)
             src: $(appDir/images/job)
       - op:
           ref: ../docker-build
@@ -89,5 +93,5 @@ run:
             HOME:
             dockerSocket:
             push:
-            imageRef: icanplayguitar94/iam:secret-$(version)
+            imageRef: $(imageRegistry):secret-$(version)
             src: $(appDir/images/secret)

@@ -13,6 +13,10 @@ inputs:
   version:
     string:
       description: version to use for iam
+
+  imageRegistry:
+    string:
+      description: image registry to use
   
   push:
     string:
@@ -37,5 +41,5 @@ run:
         HOME:
         dockerSocket:
         push:
-        imageRef: icanplayguitar94/iam:client-$(version)
+        imageRef: $(imageRegistry):client-$(version)
         src: $(appDir/images/client)
