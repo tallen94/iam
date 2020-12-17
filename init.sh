@@ -27,12 +27,6 @@ applyConfig() {
    kubectl apply -f kubernetes/serviceaccounts/builder.yaml
    kubectl apply -f kubernetes/serviceaccounts/job.yaml
    kubectl apply -f kubernetes/serviceaccounts/secret.yaml
-
-   kubectl apply -f kubernetes/apps/$PROVIDER/database.yaml
-   
-   echo [...Init...]
-   ./kubernetes/update.sh $PROVIDER
-   echo IAM is ready to use.
 }
 
 readDockerCreds() {
@@ -108,13 +102,13 @@ data:
   token: $(echo -ne "$ADMIN_TOKEN" | base64)
 EOF
 
-printf "Provider (minikube|eks):"
+applyConfig
+
+printf "Provider (minikube|eks|ocean):"
 read PROVIDER
 
-if [ $PROVIDER = "minikube" ]
-then
-mkdir kubernetes/apps/minikube
-fi
+echo [Starting Services...]
+kubectl apply -f kubernetes/apps/$PROVIDER/database.yaml
+./kubernetes/update.sh $PROVIDER
 
-
-applyConfig
+echo IAM is ready to use.
