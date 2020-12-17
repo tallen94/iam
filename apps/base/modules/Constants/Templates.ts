@@ -61,6 +61,12 @@ spec:
           value: secret.default
         - name: SECRET_PORT
           value: "80"
+
+        # ROUTER CONFIG
+        - name: ROUTER_HOST
+          value: router.default
+        - name: ROUTER_PORT
+          value: "80"
           
       {storage}
 ---
