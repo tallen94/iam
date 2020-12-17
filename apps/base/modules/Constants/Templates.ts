@@ -49,6 +49,18 @@ spec:
           value: "5000"
         - name: "ENVIRONMENT"
           value: "{name}"
+        
+        # AUTH CONFIG
+        - name: AUTH_HOST
+          value: auth.default
+        - name: AUTH_PORT
+          value: "80"
+        
+        # SECRET CONFIG
+        - name: SECRET_HOST
+          value: secret.default
+        - name: SECRET_PORT
+          value: "80"
           
       {storage}
 ---
