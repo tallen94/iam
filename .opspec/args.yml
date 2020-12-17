@@ -1,5 +1,4 @@
 dockerSocket: /var/run/docker.sock
-version: local
-adminToken: token
 databaseVersion: 0.1.4
-provider: minikube
+imageRegistry: icanplayguitar94/iam
+push: "true"

@@ -17,4 +17,4 @@ jobs:
       run: curl -L https://github.com/opctl/opctl/releases/download/0.1.45/opctl0.1.45.linux.tgz | sudo tar -xzv -C /usr/local/bin
     
     - name: Build
-      run: opctl run --arg-file .opspec/args-release.yml -a version="$GITHUB_SHA" build
+      run: opctl run -a version="$GITHUB_SHA" build

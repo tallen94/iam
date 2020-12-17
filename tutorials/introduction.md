@@ -1,17 +1,12 @@
 # Introduction
-Iam is a limitless tool for developing highly scalable code
+This tutorial will introduce you to the main concepts of IAM.
 
-This tutorial will introduce you to the main concepts.
-
-### Signup / Login
-The first step if you are a new user is to `signup`. Create a cool `username` and fill out the rest of the form, then click `Signup`. 
-
-If you are a returning user, click the `Login` button instead.
-
-![login](../screenshots/login.png)
+### Users
+Each person that uses IAM creates their own personal account. These accounts are meant to be private repositories for development. 
+Users can give other users permission to use the resources in their account.
 
 #### Clusters
-Clusters are organizations of Environments.
+Clusters are organizations of Environments and Executables. This is an abstraction meant to provide a space for several users to contribute to resources owned by a single account.
 
 ![cluster](../screenshots/cluster.png)
 
@@ -25,22 +20,18 @@ These are load balanced services for running executables. Environments allow con
 
 Environments that extend the base image `icanplayguitar/iam:base-*`, and are of type `executor`, can be used to run any other `executable`.
 
-Each `executable` must specify what environment it is run in. By default they run in the `base` environment. 
+Each `executable` must specify what environment it is run in. 
 
 ![environment](../screenshots/environment.png)
 
 ### Executables
-Executables are the resources available on the cluster. You can:
+Executables are the runnable resources available on the cluster. You can:
 - Add and executable
 - Get and executable
 - Get a list of executables for a user
 - Run and executable
 
 These operations are available as the `Executable Api`
-- `/executable`
-- `/executable/:username/:exe/:name`
-- `/executable/:username/:exe`
-- `/executable/:username/:exe/:name/run`
 
 #### Function
 Functions are pieces of code. Functions require a command and code to run that takes input from stdin and outputs to stdout.
@@ -53,16 +44,16 @@ If specifying an additional set of arguments in the `args` field, use `{key}` as
 ![function](../screenshots/function-editing.png)
 
 #### Secrets
-Secrets are sensitive information that does not ever leave the context of the entire system. Meaning, their values cannot be returned to the client or passed between. In order to reference a secret, use the `$secret` value to have the system automatically hydrate it.
+Secrets are sensitive information. In order to reference a secret, use the `$secret` value to have the system automatically hydrate it.
 
 ```
-curl -X POST -d '{ "test": "$secret" }' localhost/executable/:username/:exe/:name/run
+curl -X POST -d '{ "test": "$secret" }' <iam_url>/executable/:username/:cluster/:environment/:exe/:name/run
 ```
 
 ![secret](../screenshots/secrets_editing.png)
 
 #### Graphs 
-Graphs are descriptions of the execution plan of a series of `functions` and `queries`. Steps can be linked in sequential and parallel patterns.
+Graphs are descriptions of the execution plan of a series of `functions`. Steps can be linked in sequential and parallel patterns.
 
 Graphs are Directed Acyclic Graphs. They can have as many starting and ending nodes, with any edges as long as no cycles are created.
 

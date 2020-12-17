@@ -25,7 +25,7 @@ spec:
       containers:
       - name: admin
         image: $TAG
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Never
         ports:
         - containerPort: 5000
         readinessProbe:

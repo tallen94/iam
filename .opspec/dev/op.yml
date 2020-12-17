@@ -10,6 +10,7 @@ inputs:
   adminToken:
     string:
       description: token for admin endpoints
+      default: token
   
   DB_USER:
     string:

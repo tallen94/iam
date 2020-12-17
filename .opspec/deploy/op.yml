@@ -9,6 +9,10 @@ inputs:
   version:
     string:
       description: version to use for iam
+  
+  imageRegistry:
+    string:
+      description: image registry to use
 
   provider:
     string:
@@ -21,7 +25,7 @@ run:
     dirs:
       /src: $(appDir)
     envVars:
-      TAG: "icanplayguitar94/iam:base-$(version)"
+      TAG: "$(imageRegistry):base-$(version)"
       PROVIDER: $(provider)
     workDir: /src
     cmd: 
@@ -38,7 +42,7 @@ run:
       bash kubernetes/templates/admin.sh $TAG $PROVIDER
       
       # Image apps 
-      bash kubernetes/templates/builder.sh icanplayguitar94/iam:builder-$(version) $PROVIDER
-      bash kubernetes/templates/client.sh icanplayguitar94/iam:client-$(version) $PROVIDER
-      bash kubernetes/templates/job.sh icanplayguitar94/iam:job-$(version) $PROVIDER
-      bash kubernetes/templates/secret.sh icanplayguitar94/iam:secret-$(version) $PROVIDER
+      bash kubernetes/templates/builder.sh $(imageRegistry):builder-$(version) $PROVIDER
+      bash kubernetes/templates/client.sh $(imageRegistry):client-$(version) $PROVIDER
+      bash kubernetes/templates/job.sh $(imageRegistry):job-$(version) $PROVIDER
+      bash kubernetes/templates/secret.sh $(imageRegistry):secret-$(version) $PROVIDER
