@@ -86,6 +86,18 @@ export class Queries {
   public static GET_JOBS_FOR_USER = "select * from job where username={username}"
   public static DELETE_JOB = "delete from job where name={name} and username={username}"
 
+  // Job Run
+  public static ADD_JOB_RUN = `
+    insert into job_run (username, cluster, environment, exe, name, uid, status, createdOn, updatedOn)
+      values ({username}, {cluster}, {environment}, {exe}, {name}, {uid}, {status}, {createdOn}, {updatedOn})
+  `
+  public static UPDATE_JOB_RUN = `
+    update job_run set status={status}, updatedOn={updatedOn} where uid={uid}
+  `
+  public static GET_JOB_RUNS = `
+    select * from job_run where username={username} and cluster={cluster} and environment={environment} and name={name} and exe={exe}
+  `
+
   // Secret
   public static ADD_SECRET = "insert into secret (name, username, description) values ({name}, {username}, {description})"
   public static UPDATE_SECRET = "update secret set description={description} where name={name} and username={username}"

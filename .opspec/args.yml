@@ -1,4 +1,4 @@
 dockerSocket: /var/run/docker.sock
-databaseVersion: 0.1.4
+databaseVersion: 0.1.5
 imageRegistry: icanplayguitar94/iam
 push: "true"

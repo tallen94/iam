@@ -2,11 +2,13 @@ import Express from "express";
 import Http, { Server } from "http";
 import BodyParser from "body-parser";
 import Cors from "cors";
+import {Server as SocketServer, Socket} from "socket.io"
 
 export class ServerCommunicator {
   private api: Express.Application;
   private server: Server;
   private port: number;
+  private ioServer: SocketServer;
 
   constructor(port: number) {
     this.port = port;
@@ -16,6 +18,7 @@ export class ServerCommunicator {
     this.api.use(BodyParser.urlencoded({extended: false, limit: "100mb"}));
     this.server = Http.createServer(this.api);
     this.server.timeout = 9999999
+    this.ioServer = new SocketServer(this.server);
   }
 
   public static(fileDir: string, path?: string) {
@@ -40,6 +43,10 @@ export class ServerCommunicator {
 
   public use(fn: (req, res, next) => void) {
     this.api.use(fn)
+  }
+
+  public socketConnect(fn: (socket: Socket) => void) {
+    this.ioServer.on("connection", fn)
   }
   
   public listen() {

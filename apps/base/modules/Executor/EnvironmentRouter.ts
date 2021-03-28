@@ -1,16 +1,19 @@
 import { ClientCommunicator } from "../Communicator/ClientCommunicator";
 import { ExecutorClient } from "../Client/ExecutorClient";
 import { DatabaseCommunicator } from "../Communicator/DatabaseCommunicator";
+import { FileSystemCommunicator } from "../Communicator/FileSystemCommunicator";
 import * as Lodash from "lodash";
 import { Queries } from "../Constants/Queries";
 import { ExecutableAccessor } from "./ExecutableAccessor";
 import { AuthData } from "../Auth/AuthData";
+import uuid from "uuid";
 
 export class EnvironmentRouter {
 
   constructor(
     private databaseCommunicator: DatabaseCommunicator,
-    private executableAccessor: ExecutableAccessor
+    private executableAccessor: ExecutableAccessor, 
+    private fileSystemCommunicator: FileSystemCommunicator
   ) {}
 
   public addExecutable(data: any) {
@@ -65,8 +68,41 @@ export class EnvironmentRouter {
         const host = route.route
         const clientCommunicator: ClientCommunicator = new ClientCommunicator(host, 80)
         const client: ExecutorClient = new ExecutorClient(clientCommunicator);
-        return client.runExecutable(username, cluster, environment, exe, name, data, authData);
+        return this.trackJob(username, cluster, environment, exe, name, () => {
+          return client.runExecutable(username, cluster, environment, exe, name, data, authData);
+        })
       }
+    })
+  }
+
+  private trackJob(username, cluster, environment, exe, name, job: () => Promise<any>) {
+    const job_uid = uuid.v4()
+    return this.databaseCommunicator.execute(Queries.ADD_JOB_RUN, {
+      username: username,
+      cluster: cluster,
+      environment: environment,
+      exe: exe,
+      name: name,
+      uid: job_uid,
+      status: "RUNNING",
+      createdOn: Date.now(),
+      updatedOn: Date.now()
+    }).then(() => {
+      return job()
+    }).then((result) => {
+      return Promise.all([
+        this.databaseCommunicator.execute(Queries.UPDATE_JOB_RUN, {
+          uid: job_uid,
+          status: "COMPLETE",
+          updatedOn: Date.now()
+        }),
+        this.fileSystemCommunicator.putFile([username, cluster, environment, exe, name].join("/"), {
+          name: job_uid,
+          file: result
+        })
+      ]).then(() => {
+        return result
+      })
     })
   }
 

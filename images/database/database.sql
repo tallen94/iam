@@ -170,6 +170,26 @@ CREATE TABLE `job` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `job_run`
+--
+
+DROP TABLE IF EXISTS `job_run`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `job_run` (
+  `username` varchar(50) NOT NULL,
+  `cluster` varchar(255) NOT NULL,
+  `environment` varchar(255) NOT NULL,
+  `exe` varchar(50) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `uid` varchar(64) NOT NULL,
+  `status` varchar(10) NOT NULL,
+  `createdOn` datetime(3) NOT NULL,
+  `updatedOn` datetime(3) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `route`
 --
 
