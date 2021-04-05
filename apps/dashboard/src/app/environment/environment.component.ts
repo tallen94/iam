@@ -145,4 +145,8 @@ export class EnvironmentComponent implements OnInit {
       value: "Value"
     })
   }
+
+  deleteEnvironmentVariable(index) {
+    this._data.data.variables.splice(index, 1)
+  }
 }

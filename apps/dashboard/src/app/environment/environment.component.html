@@ -242,7 +242,7 @@
       </div>
 
       <div *ngIf="data.data.variables && data.data.variables.length > 0">
-        <div *ngFor="let variable of data.data.variables">
+        <div *ngFor="let variable of data.data.variables; let i = index;">
           <div class="env-variable">
             <div class="inline-input right-space col-w-2">
               <label>Name</label>
@@ -268,7 +268,7 @@
               <p *ngIf="!editing">{{variable.value}}</p>
             </div>
 
-            <div class="inline-input col-w-1">
+            <div class="inline-input right-space col-w-1">
               <label>Type</label>
               <div *ngIf="editing">
                 <select class="form-control" [(ngModel)]="variable.type">
@@ -277,6 +277,10 @@
                 </select>
               </div>
               <p *ngIf="!editing">{{variable.type}}</p>
+            </div>
+
+            <div class="inline-input" *ngIf="editing">
+              <button class="btn-sm btn-danger" (click)="deleteEnvironmentVariable(i)">Delete</button>
             </div>
           </div>
         </div>
