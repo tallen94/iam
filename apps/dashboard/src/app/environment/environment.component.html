@@ -246,42 +246,40 @@
       <div *ngIf="data.data.variables && data.data.variables.length > 0">
 
         <div *ngFor="let variable of data.data.variables">
-          <div class="card">
-            <div class="card-body">
-              <div class="inline-input right-space">
-                <label>Name</label>
-                <input 
-                  class="form-control"
-                  size="{{inputSize('variableName')}}"
-                  *ngIf="editing" 
-                  type="text" 
-                  [(ngModel)]="variable.name"
-                  placeholder="Name">
-                <p *ngIf="!editing">{{variable.name}}</p>
-              </div>
+          <div class="env-variable">
+            <div class="inline-input right-space col-2">
+              <label>Name</label>
+              <input 
+                class="form-control"
+                size="{{inputSize('variableName')}}"
+                *ngIf="editing" 
+                type="text" 
+                [(ngModel)]="variable.name"
+                placeholder="Name">
+              <p *ngIf="!editing"><strong>{{variable.name}}</strong></p>
+            </div>
 
-              <div class="inline-input right-space">
-                <label>Value</label>
-                <input 
-                  class="form-control"
-                  size="{{inputSize('variableName')}}"
-                  *ngIf="editing" 
-                  type="text" 
-                  [(ngModel)]="variable.value"
-                  placeholder="Name">
-                <p *ngIf="!editing">{{variable.value}}</p>
-              </div>
+            <div class="inline-input right-space col-2">
+              <label>Value</label>
+              <input 
+                class="form-control"
+                size="{{inputSize('variableName')}}"
+                *ngIf="editing" 
+                type="text" 
+                [(ngModel)]="variable.value"
+                placeholder="Name">
+              <p *ngIf="!editing">{{variable.value}}</p>
+            </div>
 
-              <div class="inline-input">
-                <label>Type</label>
-                <div *ngIf="editing">
-                  <select class="form-control" [(ngModel)]="variable.type">
-                    <option>Plaintext</option>
-                    <option>Secret</option>
-                  </select>
-                </div>
-                <p *ngIf="!editing">{{variable.type}}</p>
+            <div class="inline-input col-2">
+              <label>Type</label>
+              <div *ngIf="editing">
+                <select class="form-control" [(ngModel)]="variable.type">
+                  <option>Plaintext</option>
+                  <option>Secret</option>
+                </select>
               </div>
+              <p *ngIf="!editing">{{variable.type}}</p>
             </div>
           </div>
         </div>
