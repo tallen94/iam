@@ -63,7 +63,6 @@ export class EnvironmentManager {
       data.service = this.kubernetesTemplate(data, data.data, serviceOptions[data.data.serviceType])
       data.environmentVariables = this.environmentVariablesTemplate(data.data.serviceType, data.data.variables)
       kubernetes = this.kubernetesTemplate(data, data.data, applicationTemplates[data.data.serviceType])
-      console.log(kubernetes)
       return this.fileSystemCommunicator.putFile("kubernetes", {
         name: this.environmentFullName(data.username, data.cluster, data.name),
         file: kubernetes

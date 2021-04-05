@@ -104,10 +104,10 @@ label {
   margin-bottom: 16px;
 }
 
-.col-1 {
-  min-width: 60px;
+.col-w-1 {
+  width: 150px;
 }
 
-.col-2 {
-  min-width: 120px;
+.col-w-2 {
+  width: 300px;
 }
