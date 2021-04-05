@@ -133,4 +133,12 @@ export class EnvironmentComponent implements OnInit {
       } 
     })
   }
+
+  addEnvironmentVariable() {
+    this._data.data.variables.push({
+      name: "Name",
+      type: "Plaintext",
+      value: "Value"
+    })
+  }
 }

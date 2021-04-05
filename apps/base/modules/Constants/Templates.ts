@@ -67,13 +67,15 @@ spec:
           value: router.default
         - name: ROUTER_PORT
           value: "80"
+
+        {environmentVariables}
           
       {storage}
 ---
 {service}
   `
 
-  public static SERVICE = `
+  public static EXECUTOR_SERVICE = `
 apiVersion: v1
 kind: Service
 metadata:
@@ -85,6 +87,20 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: {applicationPort}
+  `
+
+  public static DATABASE_SERVICE = `
+apiVersion: v1
+kind: Service
+metadata:
+  name: {username}-{cluster}-{name}
+spec:
+  selector:
+    app: {username}-{cluster}-{name}
+  ports:
+    - protocol: TCP
+      port: 3306
+      targetPort: 3306
   `
 
   public static NODEPORT_SERVICE = `
@@ -139,21 +155,37 @@ spec:
           fsType: {fsType}
   `
 
-  public static DATABASE = `
+  public static OCEAN_VOLUME = `
+    volumeMounts:
+      - name: {username}-{cluster}-{name}-claim
+        mountPath: {mountPath}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+name: {username}-{cluster}-{name}-claim
+spec:
+storageClassName: "do-block-storage"
+accessModes:
+- ReadWriteOnce
+resources:
+requests:
+  storage: 20Gi
+  `
+
+  public static DATABASE_TEMPLATE = `
 apiVersion: v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Pod
 metadata:
-  name: {name}
+  name: {username}-{cluster}-{name}
   labels:
-    app: {name}
+    app: {username}-{cluster}-{name}
 spec:
   imagePullSecrets:
   - name: regcred
-  nodeSelector:
-    type: basic
   containers:
-  - name: {name}
-    image: {imageRepo}:{name}
+  - name: {username}-{cluster}-{name}
+    image: {imageTag}
     imagePullPolicy: IfNotPresent
     ports:
     - containerPort: 3306
@@ -167,50 +199,11 @@ spec:
         cpu: "{cpu}"
 
     env:
-    - name: MYSQL_ROOT_PASSWORD
-      valueFrom:
-        secretKeyRef:
-          name: {name}dbmasterpw
-          key: secret
-    ## DB CONFIG
-    - name: MYSQL_USER
-      valueFrom:
-        secretKeyRef:
-          name: {name}dbuser
-          key: secret
-    - name: MYSQL_PASSWORD
-      valueFrom:
-        secretKeyRef:
-          name: {name}dbpassword
-          key: secret
-    - name: MYSQL_DATABASE
-      valueFrom:
-        secretKeyRef:
-          name: {name}dbname
-          key: secret
+    {environmentVariables}
         
-    volumeMounts:
-    - mountPath: /var/lib/mysql
-      name: ebs-volume
-      
-  volumes:
-  - name: ebs-volume
-    awsElasticBlockStore:
-      volumeID: {ebsVolumeId}
-      fsType: ext4
-
+{storage}
 ---
-apiVersion: v1
-kind: Service
-metadata:
-  name: {name}
-spec:
-  selector:
-    app: {name}
-  ports:
-    - protocol: TCP
-      port: 3306
-      targetPort: 3306
+{service}
 
   `
 
@@ -245,4 +238,29 @@ type: Opaque
 data:
   value: {value}
   `
+
+  public static DATABASE_PLAINTEXT_VARIABLE = `
+    - name: {name}
+      value: {value}
+  `
+
+  public static DATABASE_SECRET_VARIABLE = `
+    - name: {name}
+      valueFrom:
+        secretKeyRef:
+          name: {value}
+          key: value
+  `
+  public static EXECUTOR_PLAINTEXT_VARIABLE = `
+        - name: {name}
+          value: {value}
+`
+
+  public static EXECUTOR_SECRET_VARIABLE = `
+        - name: {name}
+          valueFrom:
+            secretKeyRef:
+              name: {value}
+              key: value
+`
 }

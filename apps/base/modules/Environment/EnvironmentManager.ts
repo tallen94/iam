@@ -41,24 +41,29 @@ export class EnvironmentManager {
       })
     }).then(() => {
       let kubernetes;
-      if (data.data.serviceType == "Executor") {
-        const serviceOptions = {
-          "Executor": Templates.SERVICE,
-          "NodePort": Templates.NODEPORT_SERVICE,
-          "LoadBalancer": Templates.LOADBALANCER_SERVICE
-        }
-        const storageTypes = {
-          "None": Templates.NONE,
-          "Local": Templates.LOCAL_VOLUME,
-          "AwsElb": Templates.ELB_VOLUME
-        }
-        data.storage = this.kubernetesTemplate(data, data.data, storageTypes[data.data.storageType])
-        data.service = this.kubernetesTemplate(data, data.data, serviceOptions[data.data.serviceType])
-        kubernetes = this.kubernetesTemplate(data, data.data, Templates.EXECUTOR_TEMPLATE)
-      } else {
-        kubernetes = data.kubernetes
+      const serviceOptions = {
+        "Executor": Templates.EXECUTOR_SERVICE,
+        "Database": Templates.DATABASE_SERVICE,
+        "NodePort": Templates.NODEPORT_SERVICE,
+        "LoadBalancer": Templates.LOADBALANCER_SERVICE
       }
-
+      const storageTypes = {
+        "None": Templates.NONE,
+        "Local": Templates.LOCAL_VOLUME,
+        "AwsElb": Templates.ELB_VOLUME,
+        "Ocean": Templates.OCEAN_VOLUME
+      }
+      const applicationTemplates = {
+        "Executor": Templates.EXECUTOR_TEMPLATE,
+        "Database": Templates.DATABASE_TEMPLATE,
+        "NodePort": Templates.EXECUTOR_TEMPLATE,
+        "LoadBalancer": Templates.EXECUTOR_TEMPLATE
+      }
+      data.storage = this.kubernetesTemplate(data, data.data, storageTypes[data.data.storageType])
+      data.service = this.kubernetesTemplate(data, data.data, serviceOptions[data.data.serviceType])
+      data.environmentVariables = this.environmentVariablesTemplate(data.data.serviceType, data.data.variables)
+      kubernetes = this.kubernetesTemplate(data, data.data, applicationTemplates[data.data.serviceType])
+      console.log(kubernetes)
       return this.fileSystemCommunicator.putFile("kubernetes", {
         name: this.environmentFullName(data.username, data.cluster, data.name),
         file: kubernetes
@@ -197,6 +202,24 @@ export class EnvironmentManager {
 
   private kubernetesTemplate(data: any, otherData: any, template: string) {
     return this.replace(this.replace(template, data), otherData)
+  }
+
+  private environmentVariablesTemplate(serviceType: string, variables: any[]) {
+    let s = ""
+    const variableTemplates = {
+      Executor: {
+        Plaintext: Templates.EXECUTOR_PLAINTEXT_VARIABLE,
+        Secret: Templates.EXECUTOR_SECRET_VARIABLE
+      },
+      Database: {
+        Plaintext: Templates.DATABASE_PLAINTEXT_VARIABLE,
+        Secret: Templates.DATABASE_SECRET_VARIABLE
+      }
+    }
+    variables.forEach(variable => {
+      s = s + this.replace(variableTemplates[serviceType][variable.type], variable) + "\n"
+    });
+    return s;
   }
 
   private replace(s: string, data: any): string {
