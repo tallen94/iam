@@ -187,8 +187,8 @@ spec:
           key: db_name
 
     volumeMounts:
-        - name: mysqldatabase-claim
-          mountPath: /usr/home/iam
+      - name: mysqldatabase-claim
+        mountPath: /var/lib/mysql
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

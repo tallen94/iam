@@ -92,7 +92,7 @@
       </ul>
     </div>
 
-    <div *ngIf="secrets && functions && functions.length > 0">
+    <div *ngIf="secrets">
       <div class="sidebar-row-title" (click)="showGroup('secrets')">
         Secrets ({{secrets.length}})
         <button class="btn add-button" (click)="newResource('secret')"><i class="fa fa-plus"></i></button>

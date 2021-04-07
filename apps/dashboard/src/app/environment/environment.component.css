@@ -99,3 +99,15 @@ label {
 .resource .col5 {
   margin-left: 64px;
 }
+
+.env-variable {
+  margin-bottom: 16px;
+}
+
+.col-w-1 {
+  width: 150px;
+}
+
+.col-w-2 {
+  width: 300px;
+}
