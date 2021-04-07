@@ -72,7 +72,8 @@ export class InitData {
         cpu: "500m",
         memory: "500Mi",
         serviceType: "Executor",
-        storageType: "None"
+        storageType: "None",
+        variables: []
       }
     }
   }

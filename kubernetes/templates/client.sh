@@ -280,7 +280,7 @@ metadata:
     service.beta.kubernetes.io/do-loadbalancer-protocol: "http"
     service.beta.kubernetes.io/do-loadbalancer-algorithm: "round_robin"
     service.beta.kubernetes.io/do-loadbalancer-tls-ports: "443"
-    service.beta.kubernetes.io/do-loadbalancer-certificate-id: "9537e02d-8b6b-4981-ae42-17362ba07301"
+    service.beta.kubernetes.io/do-loadbalancer-certificate-id: "ac74a54c-01ca-449e-88cf-eb535b946669"
     service.beta.kubernetes.io/do-loadbalancer-redirect-http-to-https: "true"
 spec:
   selector:

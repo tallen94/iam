@@ -34,6 +34,49 @@
       <p class="environment-state">{{data.state}}</p>
     </div>
 
+    <!-- <div>
+      <div>
+        <label class="nested-title">Service Details</label>
+      </div>
+  
+      <div class="inline-input right-space">
+        <label>Service Type</label>
+        <div *ngIf="editing">
+          <select class="form-control" [(ngModel)]="data.data.serviceType">
+            <option>Executor</option>
+            <option>Database</option>
+            <option>NodePort</option>
+            <option>LoadBalancer</option>
+          </select>
+        </div>
+        <p *ngIf="!editing">{{data.data.serviceType}}</p>
+      </div>
+
+      <div *ngIf="data.data.serviceType !== 'Executor' && data.data.serviceType !== 'Database'" class="inline-input">
+        <label>ApplicationPort</label>
+        <input 
+          class="form-control"
+          size="{{inputSize('nodePort')}}"
+          *ngIf="editing" 
+          type="text" 
+          [(ngModel)]="data.data.applicationPort"
+          placeholder="ApplicationPort">
+        <p *ngIf="!editing">{{data.data.applicationPort}}</p>
+      </div>
+  
+      <div class="inline-input" *ngIf="data.data.serviceType == 'NodePort'">
+        <label>NodePort</label>
+        <input 
+          class="form-control"
+          size="{{inputSize('nodePort')}}"
+          *ngIf="editing" 
+          type="text" 
+          [(ngModel)]="data.data.nodePort"
+          placeholder="NodePort">
+        <p *ngIf="!editing">{{data.data.nodePort}}</p>
+      </div>
+    </div> -->
+
     <!-- <div class="inline-input right-space">
       <label *ngIf="editing || (!editing && !isEmpty(data.data.type))">Type</label>
       <div *ngIf="editing">
@@ -72,7 +115,7 @@
     <div>
       <label class="nested-title">Resource Limits</label>
       <div>
-        <div class="inline-input right-space">
+        <div *ngIf="data.data.serviceType !== 'Database'" class="inline-input right-space">
           <label *ngIf="editing || (!editing && !isEmpty(data.data.replicas))">Replicas</label>
           <input 
             class="form-control"
@@ -110,7 +153,7 @@
       </div>
     </div>
 
-    <div *ngIf="data.data.type == 'yaml'">
+    <!-- <div *ngIf="data.data.type == 'yaml'">
       <label class="nested-title" *ngIf="editing || (!editing && !isEmpty(data.kubernetes))">Kubernetes</label>
       <div>
         <button class="btn-sm btn-primary" (click)="applyKubernetes()">apply</button>
@@ -124,51 +167,9 @@
       <div class="markdown" *ngIf="!editing">
         <ngx-md [data]="getCodeMarkdown('yaml', data.kubernetes)" ></ngx-md>
       </div>
-    </div>
+    </div> -->
 
-    <div>
-      <div>
-        <label class="nested-title">Service Details</label>
-      </div>
-  
-      <div class="inline-input right-space">
-        <label>Service Type</label>
-        <div *ngIf="editing">
-          <select class="form-control" [(ngModel)]="data.data.serviceType">
-            <option>Executor</option>
-            <option>NodePort</option>
-            <option>LoadBalancer</option>
-          </select>
-        </div>
-        <p *ngIf="!editing">{{data.data.serviceType}}</p>
-      </div>
-
-      <div *ngIf="data.data.serviceType !== 'Executor'" class="inline-input">
-        <label>ApplicationPort</label>
-        <input 
-          class="form-control"
-          size="{{inputSize('nodePort')}}"
-          *ngIf="editing" 
-          type="text" 
-          [(ngModel)]="data.data.applicationPort"
-          placeholder="ApplicationPort">
-        <p *ngIf="!editing">{{data.data.applicationPort}}</p>
-      </div>
-  
-      <div class="inline-input" *ngIf="data.data.serviceType == 'NodePort'">
-        <label>NodePort</label>
-        <input 
-          class="form-control"
-          size="{{inputSize('nodePort')}}"
-          *ngIf="editing" 
-          type="text" 
-          [(ngModel)]="data.data.nodePort"
-          placeholder="NodePort">
-        <p *ngIf="!editing">{{data.data.nodePort}}</p>
-      </div>
-    </div>
-
-    <div>
+    <!-- <div>
       <div>
         <label class="nested-title">Storage Details</label>
       </div>
@@ -180,6 +181,7 @@
             <option>None</option>
             <option>Local</option>
             <option>AwsElb</option>
+            <option>Ocean</option>
           </select>
         </div>
         <p *ngIf="!editing">{{data.data.storageType}}</p>
@@ -232,6 +234,61 @@
           placeholder="FsType">
         <p *ngIf="!editing">{{data.data.fsType}}</p>
       </div>
+    </div> -->
+
+    <div>
+      <div>
+        <label class="nested-title">Environment Variables</label>
+      </div>
+
+      <div *ngIf="data.data.variables && data.data.variables.length > 0">
+        <div *ngFor="let variable of data.data.variables; let i = index;">
+          <div class="env-variable">
+            <div class="inline-input right-space col-w-2">
+              <label>Name</label>
+              <input 
+                class="form-control"
+                size="{{inputSize('variableName')}}"
+                *ngIf="editing" 
+                type="text" 
+                [(ngModel)]="variable.name"
+                placeholder="Name">
+              <p *ngIf="!editing"><strong>{{variable.name}}</strong></p>
+            </div>
+
+            <div class="inline-input right-space col-w-2">
+              <label>Value</label>
+              <input 
+                class="form-control"
+                size="{{inputSize('variableName')}}"
+                *ngIf="editing" 
+                type="text" 
+                [(ngModel)]="variable.value"
+                placeholder="Name">
+              <p *ngIf="!editing">{{variable.value}}</p>
+            </div>
+
+            <div class="inline-input right-space col-w-1">
+              <label>Type</label>
+              <div *ngIf="editing">
+                <select class="form-control" [(ngModel)]="variable.type">
+                  <option>Plaintext</option>
+                  <option>Secret</option>
+                </select>
+              </div>
+              <p *ngIf="!editing">{{variable.type}}</p>
+            </div>
+
+            <div class="inline-input" *ngIf="editing">
+              <button class="btn-sm btn-danger" (click)="deleteEnvironmentVariable(i)">Delete</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    <div>
+      <button class="btn btn-outline-success" *ngIf="editing" (click)="addEnvironmentVariable()">Add Variable</button>
+    </div>
     </div>
   </div>
 

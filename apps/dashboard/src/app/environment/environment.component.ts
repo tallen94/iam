@@ -63,6 +63,10 @@ export class EnvironmentComponent implements OnInit {
       this.data.data.applicationPort = 5000
     }
 
+    if (this.data.data.serviceType === "Database") {
+      this.data.data.applicationPort = 3360
+    }
+
     this.iam.addEnvironment(this.data)
     .subscribe((result) => {
       this.editing = false;
@@ -132,5 +136,17 @@ export class EnvironmentComponent implements OnInit {
         this.data.state = result.state;
       } 
     })
+  }
+
+  addEnvironmentVariable() {
+    this._data.data.variables.push({
+      name: "Name",
+      type: "Plaintext",
+      value: "Value"
+    })
+  }
+
+  deleteEnvironmentVariable(index) {
+    this._data.data.variables.splice(index, 1)
   }
 }
