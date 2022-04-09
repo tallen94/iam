@@ -171,30 +171,44 @@ export class HomeComponent implements OnInit {
     this.data = new InitData(this.iam)[data.exe]("0", data);
     switch (data.exe) {
       case "cluster":
-        this.clusters.push(this.data)
+        this.iam.addCluster(this.data).subscribe((result) => {
+          this.clusters.push(this.data)
+        })
         break;
       case "environment":
-        this.environments.push(this.data)
+        this.iam.addEnvironment(this.data).subscribe((result) => {
+          this.environments.push(this.data)
+        })
         break;
       case "function":
-        this.functions.push(this.data)
+        this.iam.addExecutable(this.data).subscribe((result) => {
+          this.functions.push(this.data)
+        })
         break;
       // case "query":
       //   this.queries.push(this.data)
       //   break;
       case "graph":
-        this.graphs.push(this.data)
+        this.iam.addExecutable(this.data).subscribe((result) => {
+          this.graphs.push(this.data)
+        })
         break;
       case "image":
-        this.images.push(this.data)
+        this.iam.addImage(this.data).subscribe((result) => {
+          this.images.push(this.data)
+        })
         break;
       // case "dataset":
       //   this.datasets.push(this.data)
       case "job":
-        this.jobs.push(this.data)
+        this.iam.addJob(this.data).subscribe((result) => {
+          this.jobs.push(this.data)
+        })
         break;
       case "secret":
-        this.secrets.push(this.data)
+        this.iam.addSecret(this.data).subscribe((result) => {
+          this.secrets.push(this.data)
+        })
         break;
     }
 
