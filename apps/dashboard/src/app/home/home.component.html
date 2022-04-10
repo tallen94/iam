@@ -59,7 +59,7 @@
       </ul>
     </div> -->
 
-    <div *ngIf="graphs && environments && functions && environments.length > 0 && (functions.length > 1)">
+    <div *ngIf="graphs && environments && functions && environments.length > 0">
       <div class="sidebar-row-title" (click)="showGroup('graphs')">
         Graphs ({{graphs.length}})
         <button class="btn add-button" (click)="newResource('graph')"><i class="fa fa-plus"></i></button>

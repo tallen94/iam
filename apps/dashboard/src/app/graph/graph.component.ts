@@ -3,6 +3,8 @@ import { Subject } from 'rxjs';
 
 import * as Lodash from "lodash";
 import { ThrowStmt } from '@angular/compiler';
+import { Iam } from '../iam/iam';
+import { InitData } from '../iam/init-data';
 
 @Component({
   selector: 'graph',
@@ -10,7 +12,7 @@ import { ThrowStmt } from '@angular/compiler';
   styleUrls: ['./graph.component.css']
 })
 export class GraphComponent implements OnInit {
-
+  
   public _nodes: any;
   public _links: any;
   public newNodeType: string;
@@ -32,7 +34,7 @@ export class GraphComponent implements OnInit {
     orientation: "TB"
   }
 
-  constructor() { }
+  constructor(private iam: Iam) { }
 
   ngOnInit() { }
 

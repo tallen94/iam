@@ -60,19 +60,31 @@ export class EditorComponent implements OnInit {
 
   public receiveEmitNewNode(data: any) {
     this.iam.getExecutable(this.iam.getUser().username, data.cluster, data.environment, data.exe, data.name)
-    .subscribe((result: any) => {
-      if (result == undefined) {
-        result = this.initData(data);
+    .subscribe((executable: any) => {
+      if (executable == undefined) {
+        executable = this.initData(data);
+        this.iam.addExecutable(executable).subscribe((result) => {
+          executable.id = data.id
+          this.data.graph.nodes.push(executable)
+          this.saveGraph(this.data)
+        })
+      } else {
+        executable.id = data.id
+        this.data.graph.nodes.push(executable)
+        this.saveGraph(this.data)
       }
-      result.id = data.id
-      this.data.graph.nodes.push(result)
-      this.data.graph.nodes = [...this.data.graph.nodes]
+    })
+  }
+
+  public saveGraph(data: any) {
+    this.iam.addExecutable(data).subscribe((graph) => {
+      this.data = JSON.parse(JSON.stringify(this.data))
     })
   }
 
   public receiveEmitNewEdge(edge: any) {
     this.data.graph.edges.push(edge);
-    this.data.graph.edges = [...this.data.graph.edges]  
+    this.saveGraph(this.data)
   }
 
   public receiveUpdateData(data: any) {
@@ -107,8 +119,7 @@ export class EditorComponent implements OnInit {
         return hiddenId == id;
       })
     })
-    this.data.graph.nodes = [...this.data.graph.nodes];
-    this.data.graph.edges = [...this.data.graph.edges];
+    this.saveGraph(this.data)
     this.editing = []
   }
 
