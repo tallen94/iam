@@ -5,12 +5,14 @@ import * as Lodash from "lodash";
 import { Queries } from "../Constants/Queries";
 import { ExecutableAccessor } from "./ExecutableAccessor";
 import { AuthData } from "../Auth/AuthData";
+import { EnvironmentClient } from "../Client/EnvironmentClient";
 
 export class EnvironmentRouter {
 
   constructor(
     private databaseCommunicator: DatabaseCommunicator,
-    private executableAccessor: ExecutableAccessor
+    private executableAccessor: ExecutableAccessor,
+    private environmentClient: EnvironmentClient
   ) {}
 
   public addExecutable(data: any) {
@@ -65,7 +67,20 @@ export class EnvironmentRouter {
         const host = route.route
         const clientCommunicator: ClientCommunicator = new ClientCommunicator(host, 80)
         const client: ExecutorClient = new ExecutorClient(clientCommunicator);
-        return client.runExecutable(username, cluster, environment, exe, name, data, authData);
+        return client.status().then((initialStatus) => {
+          if (initialStatus !== 'okay') {
+            return this.environmentClient.startEnvironment(username, environment, cluster, authData).then((result) => {
+              return client.waitForStatus(10).then((status) => {
+                if (status === 'unavailable') {
+                  return 'unavailable'
+                }
+                return client.runExecutable(username, cluster, environment, exe, name, data, authData);
+              })
+            })
+          } else {
+            return client.runExecutable(username, cluster, environment, exe, name, data, authData);
+          }
+        })
       }
     })
   }

@@ -11,4 +11,27 @@ export class ExecutorClient {
   public runExecutable(username: string, cluster: string, environment: string, exe: string, name: string, data: any, authData: AuthData) {
     return this.clientCommunicator.post(ApiPaths.RUN_EXECUTABLE, data, {username: username, cluster: cluster, environment: environment, exe: exe, name: name}, authData.getHeaders());
   }
+
+  public status() {
+    return this.clientCommunicator.get(ApiPaths.GET_STATUS)
+  }
+
+  public waitForStatus(n) {
+    return new Promise((resolve, reject) => {
+      if (n === 0) {
+        resolve('unavailable')
+      } else {
+        this.status().then((result) => {
+          console.log(result)
+          if (result !== 'okay') {
+            setTimeout(() => {
+              this.waitForStatus(n-1).then((r) => { resolve(r) })
+            }, 1000)
+          } else {
+            resolve('okay')
+          }
+        })
+      }
+    })
+  }
 }
